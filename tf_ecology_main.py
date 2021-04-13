@@ -86,8 +86,6 @@ def feasible_mutation(ind, MUTATION_RATE):
 toolbox.register("feasible_mutation", feasible_mutation)
 toolbox.register("mutate", toolbox.feasible_mutation)
 
-
-
 # Creation of our customised selection operator
 def selRoulette_first_item (individuals, k, fit_attr="fitness"):
     s_inds = sorted(individuals, key=attrgetter(fit_attr), reverse=True)
@@ -99,7 +97,6 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
         for ind in s_inds:
             sum_ += getattr(ind, fit_attr).values[0]
             if sum_ > u:
-
                 MIN_WEALTH_temp = individuals[i][1]
                 MAX_WEALTH_temp = individuals[i][1]
                 MIN_TIME_HORIZON_temp = ind[0]
@@ -108,25 +105,13 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
                 toolbox.register("generate_strategy_param2", random.randint, MIN_TIME_HORIZON_temp, MAX_TIME_HORIZON_temp)
                 toolbox.register("generate_individual_param", tools.initCycle, creator.individual,
                  (toolbox.generate_strategy_param2, toolbox.generate_wealth_param2), n=1)
-
                 ind_sel = toolbox.generate_individual_param()
-                
-                # toolbox.unregister(generate_wealth_param2)
-                # toolbox.unregister(generate_strategy_param2)
-                # toolbox.unregister(generate_individual_param)
-                
-                # print(str(ind_sel) + " was added to chosen")
                 chosen.append(ind_sel)
-                #chosen.append(ind)
                 break
-            
-
     return chosen
 
 toolbox.register("selRoulette_first_item", selRoulette_first_item)
 toolbox.register("select", toolbox.selRoulette_first_item)
-
-# toolbox.register("select", tools.selRoulette)
 
 # Define the hypermutation (insolvency) parameter
 round_replacements = 0
