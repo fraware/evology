@@ -99,28 +99,13 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
         for ind in s_inds:
             sum_ += getattr(ind, fit_attr).values[0]
             if sum_ > u:
-                # print(str(i) + " i is")
-                # print(str(ind) + " was selected")
-                # ind = [ind[0],individuals[i][1]] 
-                #Otherwise, selection copies both strategy and wealth; agents can win wealth from nothing
-                # issue: the result is not an individual, so has no fitness attribute
-                # idea: create a new individual
-                # ind_sel.fitness.values = ind.fitness.values
-                # print("wealth is " + str(individuals[i][1]))
-                MIN_WEALTH = individuals[i][1]
-                MAX_WEALTH = individuals[i][1]
-                MIN_TIME_HORIZON = ind[0]
-                MAX_TIME_HORIZON = ind[0]
-                # print("theta is " + str(MAX_TIME_HORIZON))
-                #okay above works. Now the generate individuals does not behave as expected.
-                # ind_sel = toolbox.generate_individual_param(n=1, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
-                
-                # print(toolbox.generate_strategy_param(MIN_TIME_HORIZON, MAX_TIME_HORIZON))
-                # print(toolbox.generate_wealth_param(MIN_WEALTH, MAX_WEALTH))
-                
-                
-                toolbox.register("generate_wealth_param2", random.randint, MIN_WEALTH, MAX_WEALTH)
-                toolbox.register("generate_strategy_param2", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
+
+                MIN_WEALTH_temp = individuals[i][1]
+                MAX_WEALTH_temp = individuals[i][1]
+                MIN_TIME_HORIZON_temp = ind[0]
+                MAX_TIME_HORIZON_temp = ind[0]
+                toolbox.register("generate_wealth_param2", random.randint, MIN_WEALTH_temp, MAX_WEALTH_temp)
+                toolbox.register("generate_strategy_param2", random.randint, MIN_TIME_HORIZON_temp, MAX_TIME_HORIZON_temp)
                 toolbox.register("generate_individual_param", tools.initCycle, creator.individual,
                  (toolbox.generate_strategy_param2, toolbox.generate_wealth_param2), n=1)
 
