@@ -127,6 +127,13 @@ def hypermutate(pop):
     return pop
 toolbox.register("hypermutate", hypermutate)
 
+# Function to recompute fitness of invalid individuals
+def fitness_for_invalid(offspring):
+    freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
+    freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
+    for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
+        individual.fitness.values = fitnessValue
+
 # =============================================================================
 # Define the main evolutionary loop
 # =============================================================================
@@ -155,7 +162,7 @@ def main():
     
     while generationCounter < MAX_GENERATIONS:
         print("--------------------------")
-        print("Iteration " + str(generationCounter))
+        print("Generation " + str(generationCounter))
         generationCounter += 1
         print(pop)
 
@@ -172,15 +179,12 @@ def main():
         
         # Selection
         offspring = toolbox.select(pop, POPULATION_SIZE)
-        # print("offspring after select")
-        # print(offspring)
-        freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
-        freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-        for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
-            individual.fitness.values = fitnessValue
+        fitness_for_invalid(offspring)
+        # freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
+        # freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
+        # for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
+        #     individual.fitness.values = fitnessValue
         offspring = list(map(toolbox.clone, offspring))
-        print("offspring after fitness and clone")
-        print(offspring)
         
         # Crossover
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
@@ -194,10 +198,11 @@ def main():
             del mutant.fitness.values
     
         # Recomputing fitness
-        freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
-        freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-        for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
-            individual.fitness.values = fitnessValue
+        fitness_for_invalid(offspring)
+        # freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
+        # freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
+        # for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
+        #     individual.fitness.values = fitnessValue
             
         # Replacing
         pop[:] = offspring
