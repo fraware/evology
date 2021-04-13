@@ -19,9 +19,9 @@ from operator import attrgetter
 RANDOM_SEED = random.random()
 POPULATION_SIZE = 10
 MAX_TIME_HORIZON = 10
-MUTATION_RATE = 0
-MAX_GENERATIONS = 50
-CROSSOVER_RATE = 0
+MUTATION_RATE = 0.05
+MAX_GENERATIONS = 20
+CROSSOVER_RATE = 0.5
 MIN_WEALTH = 10
 MAX_WEALTH = 10
 MIN_TIME_HORIZON = 1
@@ -241,7 +241,7 @@ plt.show()
 # Plot the fitness evolution over time
 plt.plot(maxFitnessValues, color='red', label='Maximum fitness')
 plt.plot(meanFitnessValues, color='green', label = 'Average fitness')
-plt.plot(replacements, color='black', label = 'Hypermutations')
+plt.plot(replacements, color='gray', label = 'Hypermutations')
 # plt.plot(np.mean(pop, axis =1), color='orange', label = 'Wealth')
 plt.xlabel('Generations')
 plt.ylabel('Max / Average Fitness')
