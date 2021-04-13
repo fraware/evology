@@ -22,7 +22,6 @@ MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0
 MAX_GENERATIONS = 10
 CROSSOVER_RATE = 0
-# INITIAL_WEALTH = 10
 MIN_WEALTH = 1
 MAX_WEALTH = 10
 MIN_TIME_HORIZON = 1
@@ -170,8 +169,6 @@ def main():
         freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
         for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
             individual.fitness.values = fitnessValue
-        # print("After hypermutation")
-        # print(pop)
         
         # Selection
         offspring = toolbox.select(pop, POPULATION_SIZE)
