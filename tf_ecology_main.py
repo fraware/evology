@@ -20,9 +20,9 @@ RANDOM_SEED = random.random()
 POPULATION_SIZE = 10
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0
-MAX_GENERATIONS = 10
+MAX_GENERATIONS = 50
 CROSSOVER_RATE = 0
-MIN_WEALTH = 1
+MIN_WEALTH = 10
 MAX_WEALTH = 10
 MIN_TIME_HORIZON = 1
 
@@ -172,18 +172,16 @@ def main():
         round_replacements = 0
         hypermutate(pop)
         # Recomputing fitness
-        freshIndividuals = [ind for ind in pop if not ind.fitness.valid]
-        freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-        for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
-            individual.fitness.values = fitnessValue
+        fitness_for_invalid(pop)
+        # freshIndividuals = [ind for ind in pop if not ind.fitness.valid]
+        # freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
+        # for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
+        #     individual.fitness.values = fitnessValue
+        print(pop)
         
         # Selection
         offspring = toolbox.select(pop, POPULATION_SIZE)
         fitness_for_invalid(offspring)
-        # freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
-        # freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-        # for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
-        #     individual.fitness.values = fitnessValue
         offspring = list(map(toolbox.clone, offspring))
         
         # Crossover
@@ -199,19 +197,11 @@ def main():
     
         # Recomputing fitness
         fitness_for_invalid(offspring)
-        # freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
-        # freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-        # for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
-        #     individual.fitness.values = fitnessValue
-            
+
         # Replacing
         pop[:] = offspring
-        print("pop after replacing")
-        print(pop)
         fitnessValues = [ind.fitness.values[0] for ind in pop]
-        
-        # I know what the issue is. THe selection operator at L190 copies the wealth of the most succesful agent.
-        
+                
         # Print some results
         maxFitness = max(fitnessValues)
         meanFitness = sum(fitnessValues) / len(pop)
