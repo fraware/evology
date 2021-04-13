@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Apr  7 11:01:00 2021
-
-@author: aymeric vie
-"""
-
 # =============================================================================
 # Imports
 # =============================================================================
@@ -24,14 +17,14 @@ from operator import attrgetter
 # =============================================================================
 
 RANDOM_SEED = random.random()
-POPULATION_SIZE = 2
+POPULATION_SIZE = 10
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0
-MAX_GENERATIONS = 2
+MAX_GENERATIONS = 10
 CROSSOVER_RATE = 0
-INITIAL_WEALTH = 11
+# INITIAL_WEALTH = 10
 MIN_WEALTH = 1
-MAX_WEALTH = 4
+MAX_WEALTH = 10
 MIN_TIME_HORIZON = 1
 
 # =============================================================================
@@ -47,15 +40,13 @@ creator.create("individual", list, fitness=creator.fitness_strategy)#, wealth = 
 
 #Z Create the individual list 
 toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
-toolbox.register("generate_strategy_param", random.randint)
+# toolbox.register("generate_strategy_param", random.randint)
 
 #toolbox.register("generate_wealth", random.randint, INITIAL_WEALTH, INITIAL_WEALTH)
 toolbox.register("generate_wealth", random.randint, MIN_WEALTH, MAX_WEALTH)
-toolbox.register("generate_wealth_param", random.randint)
-
+# toolbox.register("generate_wealth_param", random.randint)
 toolbox.register("generate_individual", tools.initCycle, creator.individual,
                  (toolbox.generate_strategy, toolbox.generate_wealth), n=1)
-
 toolbox.register("population_creation", tools.initRepeat, list, toolbox.generate_individual)
 
 # Temporary Fitness definition
@@ -99,21 +90,6 @@ toolbox.register("mutate", toolbox.feasible_mutation)
 
 # Creation of our customised selection operator
 def selRoulette_first_item (individuals, k, fit_attr="fitness"):
-    """Select *k* individuals from the input *individuals* using *k*
-    spins of a roulette. The selection is made by looking only at the first
-    objective of each individual. The list returned contains references to
-    the input *individuals*.
-    :param individuals: A list of individuals to select from.
-    :param k: The number of individuals to select.
-    :param fit_attr: The attribute of individuals to use as selection criterion
-    :returns: A list of selected individuals.
-    This function uses the :func:`~random.random` function from the python base
-    :mod:`random` module.
-    .. warning::
-       The roulette selection by definition cannot be used for minimization
-       or when the fitness can be smaller or equal to 0.
-    """
-
     s_inds = sorted(individuals, key=attrgetter(fit_attr), reverse=True)
     sum_fits = sum(getattr(ind, fit_attr).values[0] for ind in individuals)
     chosen = []
@@ -123,24 +99,24 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
         for ind in s_inds:
             sum_ += getattr(ind, fit_attr).values[0]
             if sum_ > u:
-                print(str(i) + " i is")
-                print(str(ind) + " was selected")
+                # print(str(i) + " i is")
+                # print(str(ind) + " was selected")
                 # ind = [ind[0],individuals[i][1]] 
                 #Otherwise, selection copies both strategy and wealth; agents can win wealth from nothing
                 # issue: the result is not an individual, so has no fitness attribute
                 # idea: create a new individual
                 # ind_sel.fitness.values = ind.fitness.values
-                print("wealth is " + str(individuals[i][1]))
+                # print("wealth is " + str(individuals[i][1]))
                 MIN_WEALTH = individuals[i][1]
                 MAX_WEALTH = individuals[i][1]
                 MIN_TIME_HORIZON = ind[0]
                 MAX_TIME_HORIZON = ind[0]
-                print("theta is " + str(MAX_TIME_HORIZON))
+                # print("theta is " + str(MAX_TIME_HORIZON))
                 #okay above works. Now the generate individuals does not behave as expected.
                 # ind_sel = toolbox.generate_individual_param(n=1, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
                 
-                print(toolbox.generate_strategy_param(MIN_TIME_HORIZON, MAX_TIME_HORIZON))
-                print(toolbox.generate_wealth_param(MIN_WEALTH, MAX_WEALTH))
+                # print(toolbox.generate_strategy_param(MIN_TIME_HORIZON, MAX_TIME_HORIZON))
+                # print(toolbox.generate_wealth_param(MIN_WEALTH, MAX_WEALTH))
                 
                 
                 toolbox.register("generate_wealth_param2", random.randint, MIN_WEALTH, MAX_WEALTH)
@@ -154,12 +130,12 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
                 # toolbox.unregister(generate_strategy_param2)
                 # toolbox.unregister(generate_individual_param)
                 
-                print(str(ind_sel) + " was added to chosen")
+                # print(str(ind_sel) + " was added to chosen")
                 chosen.append(ind_sel)
                 #chosen.append(ind)
                 break
             
-            # also need to cancel these changes
+
     return chosen
 
 toolbox.register("selRoulette_first_item", selRoulette_first_item)
@@ -224,13 +200,13 @@ def main():
         freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
         for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
             individual.fitness.values = fitnessValue
-        print("After hypermutation")
-        print(pop)
+        # print("After hypermutation")
+        # print(pop)
         
         # Selection
         offspring = toolbox.select(pop, POPULATION_SIZE)
-        print("offspring after select")
-        print(offspring)
+        # print("offspring after select")
+        # print(offspring)
         freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
         freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
         for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
