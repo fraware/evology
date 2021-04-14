@@ -7,7 +7,6 @@ from deap import creator
 from deap import tools
 import random
 import math
-import decimal
 import seaborn as sns
 sns.set_theme(style="darkgrid")
 import numpy as np
@@ -19,7 +18,7 @@ from operator import attrgetter
 # =============================================================================
 
 RANDOM_SEED = random.random()
-POPULATION_SIZE = 10
+POPULATION_SIZE = 2
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0.05
 MAX_GENERATIONS = 20
@@ -128,6 +127,21 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
                 toolbox.register("generate_loan_selection", random_decimal, individuals[i][4], individuals[i][4])
                 toolbox.register("generate_trading_signal_selection", random_decimal, individuals[i][5], individuals[i][5])
                 toolbox.register("generate_excess_demand_selection", random_decimal, individuals[i][6], individuals[i][6])
+                
+                print("testing")
+                print(toolbox.generate_strategy_selection())
+                
+                #☻ issue with cash and wealth
+                print("wealth")
+                print(individuals[i][1])
+                print(random_decimal(individuals[i][1],individuals[i][1]))
+                print(toolbox.generate_wealth_selection())
+                print("cash")
+                print(individuals[i][2])
+                print(random_decimal(individuals[i][2],individuals[i][2]))
+                print(toolbox.generate_cash_selection())
+                
+                
                 toolbox.register("generate_individual_selection", tools.initCycle, creator.individual,
                  (toolbox.generate_strategy_selection, toolbox.generate_wealth_selection, toolbox.generate_cash_selection, 
                   toolbox.generate_asset_selection, toolbox.generate_loan_selection, toolbox.generate_trading_signal_selection, 
