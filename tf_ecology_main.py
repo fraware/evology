@@ -6,6 +6,8 @@ from deap import base
 from deap import creator
 from deap import tools
 import random
+import math
+import decimal
 import seaborn as sns
 sns.set_theme(style="darkgrid")
 import numpy as np
@@ -25,6 +27,10 @@ CROSSOVER_RATE = 0.5
 MIN_WEALTH = 10
 MAX_WEALTH = 10
 MIN_TIME_HORIZON = 1
+INITIAL_PRICE = 1
+
+REINVESTMENT_RATE = 1
+INTEREST_RATE = 0
 
 # =============================================================================
 # Setup the evolutionary operators
@@ -43,8 +49,8 @@ creator.create("individual", list, fitness=creator.fitness_strategy)
 # Create the individual list 
 toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
 toolbox.register("generate_wealth", random.randint, MIN_WEALTH, MAX_WEALTH)
-toolbox.register("generate_cash", random.randint, 0, 0)
-toolbox.register("generate_asset", random.randint, 0, 0)
+toolbox.register("generate_cash", random.randint, 5, 5)
+toolbox.register("generate_asset", random.randint, 5, 5)
 toolbox.register("generate_loan", random.randint, 0, 0)
 toolbox.register("generate_trading_signal", random.randint, 0, 0)
 toolbox.register("generate_excess_demand", random.randint, 0, 0)
@@ -53,6 +59,15 @@ toolbox.register("generate_individual", tools.initCycle, creator.individual,
                   toolbox.generate_asset, toolbox.generate_loan, toolbox.generate_trading_signal, 
                   toolbox.generate_excess_demand), n=1)
 toolbox.register("population_creation", tools.initRepeat, list, toolbox.generate_individual)
+
+
+'''
+For the initialisation:
+    - Wealth is not determined first, it will depend on cash asset and loan
+    - Cash and Assets are initialiased at 50-50
+    - @Maarten: what price? what initial wealth amount?
+    - I am temporarily setting cash as 5, asset as 5 and initial price as 1
+'''
 
 # Temporary Fitness definition
 def max_horizon_fitness(individual):
@@ -91,6 +106,10 @@ def feasible_mutation(ind, MUTATION_RATE):
 toolbox.register("feasible_mutation", feasible_mutation)
 toolbox.register("mutate", toolbox.feasible_mutation)
 
+def random_decimal(low, high):
+    number = float(random.randint(low*1000, high*1000))/1000
+    return number
+
 # Creation of our customised selection operator
 def selRoulette_first_item (individuals, k, fit_attr="fitness"):
     s_inds = sorted(individuals, key=attrgetter(fit_attr), reverse=True)
@@ -102,12 +121,14 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
         for ind in s_inds:
             sum_ += getattr(ind, fit_attr).values[0]
             if sum_ > u:
-                MIN_WEALTH_temp = individuals[i][1]
-                MAX_WEALTH_temp = individuals[i][1]
-                MIN_TIME_HORIZON_temp = ind[0]
-                MAX_TIME_HORIZON_temp = ind[0]
-                toolbox.register("generate_wealth_param2", random.randint, MIN_WEALTH_temp, MAX_WEALTH_temp)
-                toolbox.register("generate_strategy_param2", random.randint, MIN_TIME_HORIZON_temp, MAX_TIME_HORIZON_temp)
+                # MIN_WEALTH_temp = individuals[i][1]
+                # MAX_WEALTH_temp = individuals[i][1]
+                # MIN_TIME_HORIZON_temp = ind[0]
+                # MAX_TIME_HORIZON_temp = ind[0]
+                
+
+                toolbox.register("generate_wealth_param2", random_decimal, individuals[i][1], individuals[i][1])
+                toolbox.register("generate_strategy_param2", random_decimal, ind[0], ind[0])
                 toolbox.register("generate_individual_param", tools.initCycle, creator.individual,
                  (toolbox.generate_strategy_param2, toolbox.generate_wealth_param2), n=1)
                 ind_sel = toolbox.generate_individual_param()
@@ -140,6 +161,36 @@ def fitness_for_invalid(offspring):
     for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
         individual.fitness.values = fitnessValue
 
+
+# Agent representaiton:
+#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand]
+#     [ 0       1     2    3     4         5             6    ]
+
+def draw_dividend():
+    '''
+    @Maarten: issues with the equations defining  the dividend process
+    I temporarily have a random dividend in (0,1)
+    '''
+    global dividend
+    dividend = random.random()
+    return dividend
+
+def truncate(number, digits) -> float:
+    stepper = 10.0 ** digits
+    return math.trunc(stepper * number) / stepper
+        
+def wealth_earnings(pop):
+    for ind in pop:
+        ind[2] += REINVESTMENT_RATE * (INTEREST_RATE * ind[2] + dividend * ind[3])
+        ind[2] = truncate(ind[2],3)
+    return ind
+
+def update_wealth(pop, price):
+    for ind in pop:
+        ind[1] = ind[2] + ind[3] * price  - ind[4]
+    return ind
+        
+
 # =============================================================================
 # Define the main evolutionary loop
 # =============================================================================
@@ -151,6 +202,7 @@ def main():
     pop = toolbox.population_creation(n=POPULATION_SIZE)
     initial_pop = pop.copy()
     generationCounter = 1
+    price = INITIAL_PRICE
     maxFitnessValues = []
     meanFitnessValues = []
     replacements = []
@@ -171,6 +223,22 @@ def main():
         print("Generation " + str(generationCounter))
         generationCounter += 1
         print(pop)
+        
+        '''
+        Here we will need to
+        A) Draw dividends
+        B) Apply dividends, interest rate and reinvestment
+        C) Update wealth sums
+        D) Hypermutation (+ update wealth?)
+        
+    
+        @Maarten: where does the extra money from f, r, D(t) go? In the cash?
+        D) I'll need to write the dividends, f, r allocation mechanism
+        '''
+        global dividend
+        dividend = draw_dividend()
+        wealth_earnings(pop)
+        update_wealth(pop, price)
 
         
         # Hypermutation
@@ -181,6 +249,18 @@ def main():
         fitness_for_invalid(pop)
         print(pop)
         
+        '''
+        E) Update trading signals
+        F) Deduce excess demand
+        G) Clear the market
+        H) Update inventories
+        I) Update wealth
+        J) Deduce fitness and GA
+    '''
+        
+        # price = market_clearing_function()
+    
+    
         # Selection
         offspring = toolbox.select(pop, POPULATION_SIZE)
         fitness_for_invalid(offspring)
