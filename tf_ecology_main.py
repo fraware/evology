@@ -30,18 +30,28 @@ MIN_TIME_HORIZON = 1
 # Setup the evolutionary operators
 # =============================================================================
 
+# Agent representaiton:
+#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand]
+#     [ 0       1     2    3     4         5             6    ]
+
 toolbox = base.Toolbox()
 
 # Create the fitness object
 creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 # Create the individual object
 creator.create("individual", list, fitness=creator.fitness_strategy)
-
-#Z Create the individual list 
+# Create the individual list 
 toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
 toolbox.register("generate_wealth", random.randint, MIN_WEALTH, MAX_WEALTH)
-toolbox.register("generate_individual", tools.initCycle, creator.individual,
-                 (toolbox.generate_strategy, toolbox.generate_wealth), n=1)
+toolbox.register("generate_cash", random.randint, 0, 0)
+toolbox.register("generate_asset", random.randint, 0, 0)
+toolbox.register("generate_loan", random.randint, 0, 0)
+toolbox.register("generate_trading_signal", random.randint, 0, 0)
+toolbox.register("generate_excess_demand", random.randint, 0, 0)
+toolbox.register("generate_individual", tools.initCycle, creator.individual, 
+                 (toolbox.generate_strategy, toolbox.generate_wealth, toolbox.generate_cash, 
+                  toolbox.generate_asset, toolbox.generate_loan, toolbox.generate_trading_signal, 
+                  toolbox.generate_excess_demand), n=1)
 toolbox.register("population_creation", tools.initRepeat, list, toolbox.generate_individual)
 
 # Temporary Fitness definition
@@ -233,7 +243,6 @@ plt.show()
 plt.plot(maxFitnessValues, color='red', label='Maximum fitness')
 plt.plot(meanFitnessValues, color='green', label = 'Average fitness')
 plt.plot(replacements, color='gray', label = 'Hypermutations')
-# plt.plot(np.mean(pop, axis =1), color='orange', label = 'Wealth')
 plt.xlabel('Generations')
 plt.ylabel('Max / Average Fitness')
 plt.title('Max and Average Fitness over Generations')
