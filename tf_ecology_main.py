@@ -35,15 +35,11 @@ toolbox = base.Toolbox()
 # Create the fitness object
 creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 # Create the individual object
-creator.create("individual", list, fitness=creator.fitness_strategy)#, wealth = None)
+creator.create("individual", list, fitness=creator.fitness_strategy)
 
 #Z Create the individual list 
 toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
-# toolbox.register("generate_strategy_param", random.randint)
-
-#toolbox.register("generate_wealth", random.randint, INITIAL_WEALTH, INITIAL_WEALTH)
 toolbox.register("generate_wealth", random.randint, MIN_WEALTH, MAX_WEALTH)
-# toolbox.register("generate_wealth_param", random.randint)
 toolbox.register("generate_individual", tools.initCycle, creator.individual,
                  (toolbox.generate_strategy, toolbox.generate_wealth), n=1)
 toolbox.register("population_creation", tools.initRepeat, list, toolbox.generate_individual)
@@ -173,10 +169,6 @@ def main():
         hypermutate(pop)
         # Recomputing fitness
         fitness_for_invalid(pop)
-        # freshIndividuals = [ind for ind in pop if not ind.fitness.valid]
-        # freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-        # for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
-        #     individual.fitness.values = fitnessValue
         print(pop)
         
         # Selection
@@ -209,7 +201,6 @@ def main():
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
         print("- Generation {}: Max Fitness = {}, Avg Fitness = {}".format(generationCounter, maxFitness, meanFitness))
-        
         
                 
         # Temporary function to apply some fixed cost
