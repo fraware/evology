@@ -48,7 +48,7 @@ creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 creator.create("individual", list, fitness=creator.fitness_strategy)
 # Create the individual list 
 toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
-toolbox.register("generate_wealth", random.randint, MIN_WEALTH, MAX_WEALTH)
+toolbox.register("generate_wealth", random.randint, 0, 0)
 toolbox.register("generate_cash", random.randint, 5, 5)
 toolbox.register("generate_asset", random.randint, 5, 5)
 toolbox.register("generate_loan", random.randint, 0, 0)
@@ -121,17 +121,19 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
         for ind in s_inds:
             sum_ += getattr(ind, fit_attr).values[0]
             if sum_ > u:
-                # MIN_WEALTH_temp = individuals[i][1]
-                # MAX_WEALTH_temp = individuals[i][1]
-                # MIN_TIME_HORIZON_temp = ind[0]
-                # MAX_TIME_HORIZON_temp = ind[0]
-                
+                toolbox.register("generate_wealth_selection", random_decimal, individuals[i][1], individuals[i][1])
+                toolbox.register("generate_strategy_selection", random_decimal, ind[0], ind[0])
+                toolbox.register("generate_cash_selection", random_decimal, individuals[i][2], individuals[i][2])
+                toolbox.register("generate_asset_selection", random_decimal, individuals[i][3], individuals[i][3])
+                toolbox.register("generate_loan_selection", random_decimal, individuals[i][4], individuals[i][4])
+                toolbox.register("generate_trading_signal_selection", random_decimal, individuals[i][5], individuals[i][5])
+                toolbox.register("generate_excess_demand_selection", random_decimal, individuals[i][6], individuals[i][6])
+                toolbox.register("generate_individual_selection", tools.initCycle, creator.individual,
+                 (toolbox.generate_strategy_selection, toolbox.generate_wealth_selection, toolbox.generate_cash_selection, 
+                  toolbox.generate_asset_selection, toolbox.generate_loan_selection, toolbox.generate_trading_signal_selection, 
+                  toolbox.generate_excess_demand_selection), n=1)
 
-                toolbox.register("generate_wealth_param2", random_decimal, individuals[i][1], individuals[i][1])
-                toolbox.register("generate_strategy_param2", random_decimal, ind[0], ind[0])
-                toolbox.register("generate_individual_param", tools.initCycle, creator.individual,
-                 (toolbox.generate_strategy_param2, toolbox.generate_wealth_param2), n=1)
-                ind_sel = toolbox.generate_individual_param()
+                ind_sel = toolbox.generate_individual_selection()
                 chosen.append(ind_sel)
                 break
     return chosen
@@ -166,28 +168,32 @@ def fitness_for_invalid(offspring):
 #     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand]
 #     [ 0       1     2    3     4         5             6    ]
 
+def truncate(number, digits) -> float:
+    stepper = 10.0 ** digits
+    return math.trunc(stepper * number) / stepper
+
 def draw_dividend():
     '''
     @Maarten: issues with the equations defining  the dividend process
     I temporarily have a random dividend in (0,1)
     '''
     global dividend
-    dividend = random.random()
+    dividend = truncate(random.random(),3)
+    print(dividend)
     return dividend
 
-def truncate(number, digits) -> float:
-    stepper = 10.0 ** digits
-    return math.trunc(stepper * number) / stepper
         
 def wealth_earnings(pop):
     for ind in pop:
+        
+        print(ind)
         ind[2] += REINVESTMENT_RATE * (INTEREST_RATE * ind[2] + dividend * ind[3])
         ind[2] = truncate(ind[2],3)
     return ind
 
 def update_wealth(pop, price):
     for ind in pop:
-        ind[1] = ind[2] + ind[3] * price  - ind[4]
+        ind[1] = truncate(ind[2] + ind[3] * price  - ind[4],3)
     return ind
         
 
@@ -239,6 +245,8 @@ def main():
         dividend = draw_dividend()
         wealth_earnings(pop)
         update_wealth(pop, price)
+        print("after wealth and dividends")
+        print(pop)
 
         
         # Hypermutation
@@ -296,7 +304,7 @@ def main():
         # Temporary function to apply some fixed cost
         if generationCounter > 0:
             for ind in pop:
-                ind[1] -= 1
+                ind[1] -= 5
 
     
     return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements
