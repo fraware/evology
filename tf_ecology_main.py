@@ -21,7 +21,7 @@ RANDOM_SEED = random.random()
 POPULATION_SIZE = 2
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0.05
-MAX_GENERATIONS = 500
+MAX_GENERATIONS = 10
 CROSSOVER_RATE = 0.5
 MIN_WEALTH = 10
 MAX_WEALTH = 10
@@ -29,15 +29,17 @@ MIN_TIME_HORIZON = 1
 INITIAL_PRICE = 1
 
 REINVESTMENT_RATE = 1
-INTEREST_RATE = 0
+INTEREST_RATE = 0.1
+
+EMA_HORIZON = 252
 
 # =============================================================================
 # Setup the evolutionary operators
 # =============================================================================
 
 # Agent representaiton:
-#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand]
-#     [ 0       1     2    3     4         5             6    ]
+#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]
+#     [ 0       1     2    3     4         5             6           7            8 ]
 
 toolbox = base.Toolbox()
 
@@ -53,10 +55,13 @@ toolbox.register("generate_asset", random.randint, 1, 5)
 toolbox.register("generate_loan", random.randint, 0, 0)
 toolbox.register("generate_trading_signal", random.randint, 0, 0)
 toolbox.register("generate_excess_demand", random.randint, 0, 0)
+toolbox.register("generate_profit", random.randint, 0, 0)
+toolbox.register("generate_ema", random.randint, 0, 0)
+
 toolbox.register("generate_individual", tools.initCycle, creator.individual, 
                  (toolbox.generate_strategy, toolbox.generate_wealth, toolbox.generate_cash, 
                   toolbox.generate_asset, toolbox.generate_loan, toolbox.generate_trading_signal, 
-                  toolbox.generate_excess_demand), n=1)
+                  toolbox.generate_excess_demand,toolbox.generate_profit,toolbox.generate_ema), n=1)
 toolbox.register("population_creation", tools.initRepeat, list, toolbox.generate_individual)
 
 
@@ -107,7 +112,11 @@ toolbox.register("mutate", toolbox.feasible_mutation)
 
 def random_decimal(low, high):
     # number = float(random.randint(low*1000, high*1000))/1000
-    number = float(random.randint(round(low*1000),round(high*1000))/1000)
+    global number
+    if low >= 0 and high >= 0:
+        number = float(random.randint(round(low*1000),round(high*1000))/1000)
+    if low < 0 and high < 0:
+        number = - float(random.randint(round(-low*1000),round(-high*1000))/1000)
     return number
 
 # Creation of our customised selection operator
@@ -128,11 +137,19 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
                 toolbox.register("generate_loan_selection", random_decimal, individuals[i][4], individuals[i][4])
                 toolbox.register("generate_trading_signal_selection", random_decimal, individuals[i][5], individuals[i][5])
                 toolbox.register("generate_excess_demand_selection", random_decimal, individuals[i][6], individuals[i][6])
+                # print(toolbox.generate_excess_demand_selection())
+                toolbox.register("generate_profit_selection", random_decimal, individuals[i][7], individuals[i][7])
+                # print(individuals[i][7])
+                # print(random.randint(round(individuals[i][7]*1000),round(individuals[i][7]*1000)))
+                # print(float(random.randint(round(individuals[i][7]*1000),round(individuals[i][7]*1000))/1000))
+                # print(toolbox.generate_profit_selection())
+                toolbox.register("generate_ema_selection", random_decimal, individuals[i][8], individuals[i][8])
                 toolbox.register("generate_individual_selection", tools.initCycle, creator.individual,
                  (toolbox.generate_strategy_selection, toolbox.generate_wealth_selection, toolbox.generate_cash_selection, 
                   toolbox.generate_asset_selection, toolbox.generate_loan_selection, toolbox.generate_trading_signal_selection, 
-                  toolbox.generate_excess_demand_selection), n=1)
+                  toolbox.generate_excess_demand_selection, toolbox.generate_profit_selection, toolbox.generate_ema_selection), n=1)
 
+                # Is there a simpler wayN Just copy ind_sel = individuals[i] and only modify ind_sel[0] by ind[0]?
                 ind_sel = toolbox.generate_individual_selection()
                 chosen.append(ind_sel)
 
@@ -186,6 +203,11 @@ def draw_dividend():
         
 def wealth_earnings(pop):
     for ind in pop:
+        # Update profit
+        ind[7] = truncate(REINVESTMENT_RATE * (INTEREST_RATE * ind[2] + dividend * ind[3]),3)
+        print("profit is " + str(ind[7]))
+        
+        # Update cash
         ind[2] += REINVESTMENT_RATE * (INTEREST_RATE * ind[2] + dividend * ind[3])
         ind[2] = truncate(ind[2],3)
     return ind
@@ -211,6 +233,7 @@ def main():
     maxFitnessValues = []
     meanFitnessValues = []
     replacements = []
+    print(pop)
     
     fitnessValues = list(map(toolbox.evaluate, pop))
     for individual, fitnessValue in zip(pop, fitnessValues):
@@ -263,7 +286,9 @@ def main():
         G) Clear the market
         H) Update inventories
         I) Update wealth
-        J) Deduce fitness and GA
+        J) Update profits
+        K) Deduce fitness as EMA
+        J) GA
     '''
         
         # price = market_clearing_function()
@@ -302,9 +327,9 @@ def main():
         
                 
         # Temporary function to apply some fixed cost
-        if generationCounter > 0:
-            for ind in pop:
-                ind[1] -= 10 / ind[0]
+        # if generationCounter > 0:
+        #     for ind in pop:
+        #         ind[1] -= 1
 
     
     return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements
