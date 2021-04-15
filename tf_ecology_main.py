@@ -21,7 +21,7 @@ RANDOM_SEED = random.random()
 POPULATION_SIZE = 2
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0.05
-MAX_GENERATIONS = 10
+MAX_GENERATIONS = 50
 CROSSOVER_RATE = 0.5
 MIN_WEALTH = 10
 MAX_WEALTH = 10
@@ -31,7 +31,7 @@ INITIAL_PRICE = 1
 REINVESTMENT_RATE = 1
 INTEREST_RATE = 0.1
 
-EMA_HORIZON = 252
+EMA_HORIZON = 20 #♣252
 
 # =============================================================================
 # Setup the evolutionary operators
@@ -76,6 +76,11 @@ For the initialisation:
 # Temporary Fitness definition
 def max_horizon_fitness(individual):
     return individual
+toolbox.register("evaluate", max_horizon_fitness)
+# def max_horizon_fitness(pop):
+#     for ind in pop:
+#         print(ind)
+#         # return ind[8]
 toolbox.register("evaluate", max_horizon_fitness)
 
 # Creating our own crossover operator:
@@ -196,7 +201,7 @@ def draw_dividend():
     I temporarily have a random dividend in (0,1)
     '''
     global dividend
-    dividend = truncate(random.random(),3)
+    dividend = truncate(random.randint(-3,3),3)
     print("Dividend today is " + str(dividend))
     return dividend
 
@@ -217,7 +222,11 @@ def update_wealth(pop, price):
         ind[1] = truncate(ind[2] + ind[3] * price  - ind[4],3)
     return ind
         
-
+def compute_ema(pop):
+    for ind in pop:
+        ind[8] = (2 / (EMA_HORIZON + 1)) * (ind[7] - ind[8]) + ind[8]
+    return ind
+    
 # =============================================================================
 # Define the main evolutionary loop
 # =============================================================================
@@ -233,6 +242,11 @@ def main():
     maxFitnessValues = []
     meanFitnessValues = []
     replacements = []
+    
+    # Temp
+    agent0_profit = []
+    agent0_ema = []
+    
     print(pop)
     
     fitnessValues = list(map(toolbox.evaluate, pop))
@@ -245,6 +259,9 @@ def main():
     maxFitnessValues.append(maxFitness)
     meanFitnessValues.append(meanFitness)
     replacements.append(0)
+    # Temp
+    agent0_profit.append(pop[0][7])
+    agent0_ema.append(pop[0][8])
     
     while generationCounter < MAX_GENERATIONS:
         print("--------------------------")
@@ -292,6 +309,8 @@ def main():
     '''
         
         # price = market_clearing_function()
+        
+        compute_ema(pop)
     
     
         # Selection
@@ -323,6 +342,11 @@ def main():
         maxFitnessValues.append(maxFitness)
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
+                # Temp
+        agent0_profit.append(pop[0][7])
+        agent0_ema.append(pop[0][8])
+        #  Could this print results be automated? We have it twice
+        
         print("- Generation {}: Max Fitness = {}, Avg Fitness = {}".format(generationCounter, maxFitness, meanFitness))
         
                 
@@ -332,14 +356,14 @@ def main():
         #         ind[1] -= 1
 
     
-    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements
+    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema
 
 
 # =============================================================================
 # Exploit the results
 # =============================================================================
 
-initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements = main()
+initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema = main()
 
 # Plot population histograms at the start and at the end
 print("--------------------------")
@@ -364,9 +388,20 @@ plt.xlim(0,MAX_GENERATIONS+1)
 plt.legend()
 plt.show()
 
+plt.plot(agent0_ema, color='red', label='EMA')
+plt.plot(agent0_profit, color='green', label = 'Profits')
+plt.xlabel('Generations')
+plt.ylabel('Profit')
+plt.title('Profit and EMA profit of Albert')
+plt.xlim(0,MAX_GENERATIONS+1)
+plt.legend()
+plt.show()
+
       
-
-
+print(pop[0])
+print(toolbox.evaluate(pop[0]))
+print(list(map(toolbox.evaluate, pop)))
+print(list(map(toolbox.evaluate, pop))[1])
 
 
 
