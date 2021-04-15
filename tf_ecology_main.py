@@ -21,7 +21,7 @@ RANDOM_SEED = random.random()
 POPULATION_SIZE = 2
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0.05
-MAX_GENERATIONS = 20
+MAX_GENERATIONS = 5000
 CROSSOVER_RATE = 0.5
 MIN_WEALTH = 10
 MAX_WEALTH = 10
@@ -48,8 +48,8 @@ creator.create("individual", list, fitness=creator.fitness_strategy)
 # Create the individual list 
 toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
 toolbox.register("generate_wealth", random.randint, 0, 0)
-toolbox.register("generate_cash", random.randint, 5, 5)
-toolbox.register("generate_asset", random.randint, 5, 5)
+toolbox.register("generate_cash", random.randint, 1, 5)
+toolbox.register("generate_asset", random.randint, 1, 5)
 toolbox.register("generate_loan", random.randint, 0, 0)
 toolbox.register("generate_trading_signal", random.randint, 0, 0)
 toolbox.register("generate_excess_demand", random.randint, 0, 0)
@@ -106,7 +106,8 @@ toolbox.register("feasible_mutation", feasible_mutation)
 toolbox.register("mutate", toolbox.feasible_mutation)
 
 def random_decimal(low, high):
-    number = float(random.randint(low*1000, high*1000))/1000
+    # number = float(random.randint(low*1000, high*1000))/1000
+    number = float(random.randint(round(low*1000),round(high*1000))/1000)
     return number
 
 # Creation of our customised selection operator
@@ -127,21 +128,6 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
                 toolbox.register("generate_loan_selection", random_decimal, individuals[i][4], individuals[i][4])
                 toolbox.register("generate_trading_signal_selection", random_decimal, individuals[i][5], individuals[i][5])
                 toolbox.register("generate_excess_demand_selection", random_decimal, individuals[i][6], individuals[i][6])
-                
-                print("testing")
-                print(toolbox.generate_strategy_selection())
-                
-                #☻ issue with cash and wealth
-                print("wealth")
-                print(individuals[i][1])
-                print(random_decimal(individuals[i][1],individuals[i][1]))
-                print(toolbox.generate_wealth_selection())
-                print("cash")
-                print(individuals[i][2])
-                print(random_decimal(individuals[i][2],individuals[i][2]))
-                print(toolbox.generate_cash_selection())
-                
-                
                 toolbox.register("generate_individual_selection", tools.initCycle, creator.individual,
                  (toolbox.generate_strategy_selection, toolbox.generate_wealth_selection, toolbox.generate_cash_selection, 
                   toolbox.generate_asset_selection, toolbox.generate_loan_selection, toolbox.generate_trading_signal_selection, 
@@ -149,6 +135,7 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
 
                 ind_sel = toolbox.generate_individual_selection()
                 chosen.append(ind_sel)
+
                 break
     return chosen
 
