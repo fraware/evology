@@ -46,7 +46,7 @@ toolbox = base.Toolbox()
 # Create the fitness object
 creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 # Create the individual object
-creator.create("individual", list, fitness=creator.fitness_strategy)
+creator.create("individual", list, typecode = 'd', fitness=creator.fitness_strategy)
 # Create the individual list 
 toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
 toolbox.register("generate_wealth", random.randint, 0, 0)
@@ -397,13 +397,46 @@ plt.xlim(0,MAX_GENERATIONS+1)
 plt.legend()
 plt.show()
 
-      
-print(pop[0])
-print(toolbox.evaluate(pop[0]))
-print(list(map(toolbox.evaluate, pop)))
-print(list(map(toolbox.evaluate, pop))[1])
-
 print("-----------------------")
+
 print(pop)
+for ind in pop:
+    # print(ind) returns the first item
+    # print(type(ind))
+    # print(ind[0])
+    print(ind[8])
+    
+def ema_evaluate(pop):
+    values = []
+    for ind in pop:
+        values.append(ind[8])
+    return values
+    
+result = ema_evaluate(pop)
+print(result)
+print(type(result))
+
+'''
+This is the normal code
+'''
+result_tradi = toolbox.evaluate(pop)
+print(result_tradi)
+print(type(result_tradi))
+fitnessValues = list(map(toolbox.evaluate, pop))
+for individual, fitnessValue in zip(pop, fitnessValues):
+    individual.fitness.values = fitnessValue
+fitnessValues = [individual.fitness.values[0] for individual in pop]
+print(fitnessValues)
 
 
+'''
+This is the new code
+'''
+result_tradi = toolbox.evaluate(pop)
+print(result_tradi)
+print(type(result_tradi))
+fitnessValues = list(map(toolbox.evaluate, pop))
+for individual, fitnessValue in zip(pop, fitnessValues):
+    individual.fitness.values = fitnessValue
+fitnessValues = [individual.fitness.values[0] for individual in pop]
+print(fitnessValues)
