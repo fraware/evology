@@ -81,7 +81,7 @@ toolbox.register("evaluate", max_horizon_fitness)
 #     for ind in pop:
 #         print(ind)
 #         # return ind[8]
-toolbox.register("evaluate", max_horizon_fitness)
+
 
 # Creating our own crossover operator:
 def feasible_crossover(ind1,ind2,CROSSOVER_RATE):
@@ -403,5 +403,7 @@ print(toolbox.evaluate(pop[0]))
 print(list(map(toolbox.evaluate, pop)))
 print(list(map(toolbox.evaluate, pop))[1])
 
+print("-----------------------")
+print(pop)
 
 
