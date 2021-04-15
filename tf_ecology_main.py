@@ -432,10 +432,11 @@ print(fitnessValues)
 '''
 This is the new code
 '''
-result_tradi = toolbox.evaluate(pop)
-print(result_tradi)
-print(type(result_tradi))
-fitnessValues = list(map(toolbox.evaluate, pop))
+toolbox.register("evaluate_ema", ema_evaluate)
+
+# fitnessValues = list(map(toolbox.evaluate_ema, pop))
+fitnessValues = toolbox.evaluate_ema(pop)
+print(fitnessValues)
 for individual, fitnessValue in zip(pop, fitnessValues):
     individual.fitness.values = fitnessValue
 fitnessValues = [individual.fitness.values[0] for individual in pop]
