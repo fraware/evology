@@ -21,7 +21,7 @@ RANDOM_SEED = random.random()
 POPULATION_SIZE = 2
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0.05
-MAX_GENERATIONS = 5000
+MAX_GENERATIONS = 500
 CROSSOVER_RATE = 0.5
 MIN_WEALTH = 10
 MAX_WEALTH = 10
@@ -180,14 +180,12 @@ def draw_dividend():
     '''
     global dividend
     dividend = truncate(random.random(),3)
-    print(dividend)
+    print("Dividend today is " + str(dividend))
     return dividend
 
         
 def wealth_earnings(pop):
     for ind in pop:
-        
-        print(ind)
         ind[2] += REINVESTMENT_RATE * (INTEREST_RATE * ind[2] + dividend * ind[3])
         ind[2] = truncate(ind[2],3)
     return ind
@@ -229,7 +227,7 @@ def main():
         print("--------------------------")
         print("Generation " + str(generationCounter))
         generationCounter += 1
-        print(pop)
+        
         
         '''
         Here we will need to
@@ -246,7 +244,8 @@ def main():
         dividend = draw_dividend()
         wealth_earnings(pop)
         update_wealth(pop, price)
-        print("after wealth and dividends")
+        
+        
         print(pop)
 
         
@@ -256,7 +255,7 @@ def main():
         hypermutate(pop)
         # Recomputing fitness
         fitness_for_invalid(pop)
-        print(pop)
+        
         
         '''
         E) Update trading signals
@@ -305,7 +304,7 @@ def main():
         # Temporary function to apply some fixed cost
         if generationCounter > 0:
             for ind in pop:
-                ind[1] -= 5
+                ind[1] -= 10 / ind[0]
 
     
     return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements
@@ -321,12 +320,12 @@ initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements = main()
 print("--------------------------")
 print("--------------------------")
 print("--------------------------")
-print("Initial population was " + str(initial_pop))
-sns.histplot(data=np.array(initial_pop), legend = False, stat = "density", shrink = 0.85, discrete=True, binrange = (1,10))
-plt.show()
-print("Current population is " + str(pop))
-sns.histplot(data=np.array(pop), legend = False, stat = "density", shrink = 0.85, discrete=True, binrange = (1,10))
-plt.show()
+# print("Initial population was " + str(initial_pop))
+# sns.histplot(data=np.array(initial_pop), legend = False, stat = "density", shrink = 0.85, discrete=True, bins = 11)
+# plt.show()
+# print("Current population is " + str(pop))
+# sns.histplot(data=np.array(pop), legend = False, stat = "density", shrink = 0.85, discrete=True, bins = 11)
+# plt.show()
 
 # Plot the fitness evolution over time
 plt.plot(maxFitnessValues, color='red', label='Maximum fitness')
