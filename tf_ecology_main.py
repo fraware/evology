@@ -410,7 +410,7 @@ def ema_evaluate(pop):
     values = []
     for ind in pop:
         values.append(ind[8])
-    return values
+    return values,
     
 result = ema_evaluate(pop)
 print(result)
@@ -418,7 +418,7 @@ print(type(result))
 
 '''
 This is the normal code
-'''
+
 result_tradi = toolbox.evaluate(pop)
 print(result_tradi)
 print(type(result_tradi))
@@ -427,7 +427,7 @@ for individual, fitnessValue in zip(pop, fitnessValues):
     individual.fitness.values = fitnessValue
 fitnessValues = [individual.fitness.values[0] for individual in pop]
 print(fitnessValues)
-
+'''
 
 '''
 This is the new code
@@ -437,7 +437,23 @@ toolbox.register("evaluate_ema", ema_evaluate)
 # fitnessValues = list(map(toolbox.evaluate_ema, pop))
 fitnessValues = toolbox.evaluate_ema(pop)
 print(fitnessValues)
+print("here")
 for individual, fitnessValue in zip(pop, fitnessValues):
     individual.fitness.values = fitnessValue
+    print(individual)
+    print(fitnessValue)
+    print(individual.fitness)
+fitnessValues = [individual.fitness.values[0] for individual in pop]
+print(fitnessValues)
+
+print("again")
+fitnessValues = toolbox.evaluate_ema(pop)
+print(fitnessValues)
+print("here")
+for individual in pop:
+    individual.fitness.values = fitnessValues
+    print(individual)
+    print(fitnessValue)
+    print(individual.fitness)
 fitnessValues = [individual.fitness.values[0] for individual in pop]
 print(fitnessValues)
