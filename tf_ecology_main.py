@@ -155,6 +155,8 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
                   toolbox.generate_excess_demand_selection, toolbox.generate_profit_selection, toolbox.generate_ema_selection), n=1)
 
                 # Is there a simpler wayN Just copy ind_sel = individuals[i] and only modify ind_sel[0] by ind[0]?
+                # or toolbox.clone?
+                
                 ind_sel = toolbox.generate_individual_selection()
                 chosen.append(ind_sel)
 
