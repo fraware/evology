@@ -21,7 +21,7 @@ RANDOM_SEED = random.random()
 POPULATION_SIZE = 4
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0
-MAX_GENERATIONS = 10
+MAX_GENERATIONS = 200
 CROSSOVER_RATE = 0
 MIN_WEALTH = 10
 MAX_WEALTH = 10
@@ -162,56 +162,18 @@ def selRandom(individuals, k):
 
 # Creation of our customised selection operator (outnrament) that handles positive & negative fitness values
 def selTournament(individuals, k, tournsize, fit_attr="fitness"):
-    """Select the best individual among *tournsize* randomly chosen
-    individuals, *k* times. The list returned contains
-    references to the input *individuals*.
-    :param individuals: A list of individuals to select from.
-    :param k: The number of individuals to select.
-    :param tournsize: The number of individuals participating in each tournament.
-    :param fit_attr: The attribute of individuals to use as selection criterion
-    :returns: A list of selected individuals.
-    This function uses the :func:`~random.choice` function from the python base
-    :mod:`random` module.
-    """
     chosen = []
     for i in range(k):
-        print(i)
-        print("individuals i")
-        print(individuals[i])
         chosen_i = []
-        aspirants = selRandom(individuals, tournsize-1)
-        print("aspirants1")
-        print(aspirants)
-        print(type(aspirants))
+        aspirants = selRandom(individuals, tournsize-1) 
         aspirants.append(individuals[i])
-        print("aspirants2")
-        print(aspirants)
         chosen_i = max(aspirants, key=attrgetter(fit_attr))
-        
-        print("chosen i")
-        print(chosen_i)
-        print(type(chosen_i))
-        print("chosen i before modif")
-        print(chosen_i)
         chosen_i[1:9] = individuals[i][1:9]
-        print("chosen i after modif")
-        print(chosen_i)
         chosen.append(chosen_i)
-        print("chosen")
-        print(chosen)
-        print("-------------")
     return chosen
 
-
 toolbox.register("selTournament", selTournament)
-# toolbox.sel_tournament(pop, 2, 3)
-
-
-# toolbox.register("selRoulette_first_item", selRoulette_first_item)
-# toolbox.register("select", toolbox.selRoulette_first_item)
-
 toolbox.register("select", toolbox.selTournament)
-
 
 # Define the hypermutation (insolvency) parameter
 round_replacements = 0
@@ -250,7 +212,7 @@ def draw_dividend():
     I temporarily have a random dividend in (0,1)
     '''
     global dividend
-    dividend = truncate(random.randint(-3,3),3)
+    dividend = truncate(random.randint(0,1),3)
     print("Dividend today is " + str(dividend))
     return dividend
 
@@ -393,14 +355,14 @@ def main():
         fitness_for_invalid(offspring)
 
         # Replacing
-        print(offspring)
+        # print(offspring)
         pop[:] = offspring
-        print(pop)
+        # print(pop)
         fitnessValues = [ind.fitness.values[0] for ind in pop]
                 
         
         # Print some results
-        print(fitnessValues)
+        # print(fitnessValues)
         maxFitness = max(fitnessValues)
         meanFitness = sum(fitnessValues) / len(pop)
         maxFitnessValues.append(maxFitness)
