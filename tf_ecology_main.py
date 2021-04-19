@@ -20,13 +20,14 @@ from operator import attrgetter
 RANDOM_SEED = random.random()
 POPULATION_SIZE = 4
 MAX_TIME_HORIZON = 10
-MUTATION_RATE = 0.05
-MAX_GENERATIONS = 50
-CROSSOVER_RATE = 0.5
+MUTATION_RATE = 0
+MAX_GENERATIONS = 10
+CROSSOVER_RATE = 0
 MIN_WEALTH = 10
 MAX_WEALTH = 10
 MIN_TIME_HORIZON = 1
 INITIAL_PRICE = 1
+TOURNAMENT_SIZE = 3
 
 REINVESTMENT_RATE = 1
 INTEREST_RATE = 0.1
@@ -50,8 +51,8 @@ creator.create("individual", list, typecode = 'd', fitness=creator.fitness_strat
 # Create the individual list 
 toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
 toolbox.register("generate_wealth", random.randint, 0, 0)
-toolbox.register("generate_cash", random.randint, 1, 5)
-toolbox.register("generate_asset", random.randint, 1, 5)
+toolbox.register("generate_cash", random.randint, 5, 10)
+toolbox.register("generate_asset", random.randint, 5, 5)
 toolbox.register("generate_loan", random.randint, 0, 0)
 toolbox.register("generate_trading_signal", random.randint, 0, 0)
 toolbox.register("generate_excess_demand", random.randint, 0, 0)
@@ -122,44 +123,39 @@ def random_decimal(low, high):
         number = - float(random.randint(round(-low*1000),round(-high*1000))/1000)
     return number
 
-# Creation of our customised selection operator
-def selRoulette_first_item (individuals, k, fit_attr="fitness"):
-    s_inds = sorted(individuals, key=attrgetter(fit_attr), reverse=True)
-    sum_fits = sum(getattr(ind, fit_attr).values[0] for ind in individuals)
-    chosen = []
-    for i in range(k):
-        u = random.random() * sum_fits
-        sum_ = 0
-        for ind in s_inds:
-            sum_ += getattr(ind, fit_attr).values[0]
-            if sum_ > u:
-                toolbox.register("generate_wealth_selection", random_decimal, individuals[i][1], individuals[i][1])
-                toolbox.register("generate_strategy_selection", random_decimal, ind[0], ind[0])
-                toolbox.register("generate_cash_selection", random_decimal, individuals[i][2], individuals[i][2])
-                toolbox.register("generate_asset_selection", random_decimal, individuals[i][3], individuals[i][3])
-                toolbox.register("generate_loan_selection", random_decimal, individuals[i][4], individuals[i][4])
-                toolbox.register("generate_trading_signal_selection", random_decimal, individuals[i][5], individuals[i][5])
-                toolbox.register("generate_excess_demand_selection", random_decimal, individuals[i][6], individuals[i][6])
-                # print(toolbox.generate_excess_demand_selection())
-                toolbox.register("generate_profit_selection", random_decimal, individuals[i][7], individuals[i][7])
-                # print(individuals[i][7])
-                # print(random.randint(round(individuals[i][7]*1000),round(individuals[i][7]*1000)))
-                # print(float(random.randtoolbox.sel_tournament(pop, 2, 2)int(round(individuals[i][7]*1000),round(individuals[i][7]*1000))/1000))
-                # print(toolbox.generate_profit_selection())
-                toolbox.register("generate_ema_selection", random_decimal, individuals[i][8], individuals[i][8])
-                toolbox.register("generate_individual_selection", tools.initCycle, creator.individual,
-                 (toolbox.generate_strategy_selection, toolbox.generate_wealth_selection, toolbox.generate_cash_selection, 
-                  toolbox.generate_asset_selection, toolbox.generate_loan_selection, toolbox.generate_trading_signal_selection, 
-                  toolbox.generate_excess_demand_selection, toolbox.generate_profit_selection, toolbox.generate_ema_selection), n=1)
+# # Creation of our customised selection operator
+# def selRoulette_first_item (individuals, k, fit_attr="fitness"):
+#     s_inds = sorted(individuals, key=attrgetter(fit_attr), reverse=True)
+#     sum_fits = sum(getattr(ind, fit_attr).values[0] for ind in individuals)
+#     chosen = []
+#     for i in range(k):
+#         u = random.random() * sum_fits
+#         sum_ = 0
+#         for ind in s_inds:
+#             sum_ += getattr(ind, fit_attr).values[0]
+#             if sum_ > u:
+#                 toolbox.register("generate_wealth_selection", random_decimal, individuals[i][1], individuals[i][1])
+#                 toolbox.register("generate_strategy_selection", random_decimal, ind[0], ind[0])
+#                 toolbox.register("generate_cash_selection", random_decimal, individuals[i][2], individuals[i][2])
+#                 toolbox.register("generate_asset_selection", random_decimal, individuals[i][3], individuals[i][3])
+#                 toolbox.register("generate_loan_selection", random_decimal, individuals[i][4], individuals[i][4])
+#                 toolbox.register("generate_trading_signal_selection", random_decimal, individuals[i][5], individuals[i][5])
+#                 toolbox.register("generate_excess_demand_selection", random_decimal, individuals[i][6], individuals[i][6])
+#                 toolbox.register("generate_profit_selection", random_decimal, individuals[i][7], individuals[i][7])
+#                 toolbox.register("generate_ema_selection", random_decimal, individuals[i][8], individuals[i][8])
+#                 toolbox.register("generate_individual_selection", tools.initCycle, creator.individual,
+#                  (toolbox.generate_strategy_selection, toolbox.generate_wealth_selection, toolbox.generate_cash_selection, 
+#                   toolbox.generate_asset_selection, toolbox.generate_loan_selection, toolbox.generate_trading_signal_selection, 
+#                   toolbox.generate_excess_demand_selection, toolbox.generate_profit_selection, toolbox.generate_ema_selection), n=1)
 
-                # Is there a simpler wayN Just copy ind_sel = individuals[i] and only modify ind_sel[0] by ind[0]?
-                # or toolbox.clone?
+#                 # Is there a simpler wayN Just copy ind_sel = individuals[i] and only modify ind_sel[0] by ind[0]?
+#                 # or toolbox.clone?
                 
-                ind_sel = toolbox.generate_individual_selection()
-                chosen.append(ind_sel)
+#                 ind_sel = toolbox.generate_individual_selection()
+#                 chosen.append(ind_sel)
 
-                break
-    return chosen
+#                 break
+#     return chosen
 
 def selRandom(individuals, k):
     return [random.choice(individuals) for i in range(k)]
@@ -179,6 +175,9 @@ def selTournament(individuals, k, tournsize, fit_attr="fitness"):
     """
     chosen = []
     for i in range(k):
+        print(i)
+        print("individuals i")
+        print(individuals[i])
         chosen_i = []
         aspirants = selRandom(individuals, tournsize-1)
         print("aspirants1")
@@ -194,20 +193,25 @@ def selTournament(individuals, k, tournsize, fit_attr="fitness"):
         print(type(chosen_i))
         print("chosen i before modif")
         print(chosen_i)
-        chosen_i[1:8] = individuals[i][1:8]
+        chosen_i[1:9] = individuals[i][1:9]
         print("chosen i after modif")
         print(chosen_i)
         chosen.append(chosen_i)
-        # print(chosen)
+        print("chosen")
+        print(chosen)
+        print("-------------")
     return chosen
 
 
-toolbox.register("sel_tournament", selTournament)
+toolbox.register("selTournament", selTournament)
 # toolbox.sel_tournament(pop, 2, 3)
 
 
-toolbox.register("selRoulette_first_item", selRoulette_first_item)
-toolbox.register("select", toolbox.selRoulette_first_item)
+# toolbox.register("selRoulette_first_item", selRoulette_first_item)
+# toolbox.register("select", toolbox.selRoulette_first_item)
+
+toolbox.register("select", toolbox.selTournament)
+
 
 # Define the hypermutation (insolvency) parameter
 round_replacements = 0
@@ -368,7 +372,7 @@ def main():
     
     
         # Selection
-        offspring = toolbox.select(pop, POPULATION_SIZE)
+        offspring = toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
         print("offspring")
         print(offspring)
         fitness_for_invalid(offspring)
