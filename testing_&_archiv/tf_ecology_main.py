@@ -21,7 +21,7 @@ RANDOM_SEED = random.random()
 POPULATION_SIZE = 4
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0
-MAX_GENERATIONS = 200
+MAX_GENERATIONS = 50
 CROSSOVER_RATE = 0
 MIN_WEALTH = 10
 MAX_WEALTH = 10
@@ -65,7 +65,6 @@ toolbox.register("generate_individual", tools.initCycle, creator.individual,
                   toolbox.generate_excess_demand,toolbox.generate_profit,toolbox.generate_ema), n=1)
 toolbox.register("population_creation", tools.initRepeat, list, toolbox.generate_individual)
 
-
 '''
 For the initialisation:
     - Wealth is not determined first, it will depend on cash asset and loan
@@ -79,7 +78,6 @@ def ema_fitness(individual):
     return individual[8],
 
 toolbox.register("evaluate", ema_fitness)
-
 
 
 # Creating our own crossover operator:
@@ -123,39 +121,6 @@ def random_decimal(low, high):
         number = - float(random.randint(round(-low*1000),round(-high*1000))/1000)
     return number
 
-# # Creation of our customised selection operator
-# def selRoulette_first_item (individuals, k, fit_attr="fitness"):
-#     s_inds = sorted(individuals, key=attrgetter(fit_attr), reverse=True)
-#     sum_fits = sum(getattr(ind, fit_attr).values[0] for ind in individuals)
-#     chosen = []
-#     for i in range(k):
-#         u = random.random() * sum_fits
-#         sum_ = 0
-#         for ind in s_inds:
-#             sum_ += getattr(ind, fit_attr).values[0]
-#             if sum_ > u:
-#                 toolbox.register("generate_wealth_selection", random_decimal, individuals[i][1], individuals[i][1])
-#                 toolbox.register("generate_strategy_selection", random_decimal, ind[0], ind[0])
-#                 toolbox.register("generate_cash_selection", random_decimal, individuals[i][2], individuals[i][2])
-#                 toolbox.register("generate_asset_selection", random_decimal, individuals[i][3], individuals[i][3])
-#                 toolbox.register("generate_loan_selection", random_decimal, individuals[i][4], individuals[i][4])
-#                 toolbox.register("generate_trading_signal_selection", random_decimal, individuals[i][5], individuals[i][5])
-#                 toolbox.register("generate_excess_demand_selection", random_decimal, individuals[i][6], individuals[i][6])
-#                 toolbox.register("generate_profit_selection", random_decimal, individuals[i][7], individuals[i][7])
-#                 toolbox.register("generate_ema_selection", random_decimal, individuals[i][8], individuals[i][8])
-#                 toolbox.register("generate_individual_selection", tools.initCycle, creator.individual,
-#                  (toolbox.generate_strategy_selection, toolbox.generate_wealth_selection, toolbox.generate_cash_selection, 
-#                   toolbox.generate_asset_selection, toolbox.generate_loan_selection, toolbox.generate_trading_signal_selection, 
-#                   toolbox.generate_excess_demand_selection, toolbox.generate_profit_selection, toolbox.generate_ema_selection), n=1)
-
-#                 # Is there a simpler wayN Just copy ind_sel = individuals[i] and only modify ind_sel[0] by ind[0]?
-#                 # or toolbox.clone?
-                
-#                 ind_sel = toolbox.generate_individual_selection()
-#                 chosen.append(ind_sel)
-
-#                 break
-#     return chosen
 
 def selRandom(individuals, k):
     return [random.choice(individuals) for i in range(k)]
@@ -198,9 +163,7 @@ def fitness_for_invalid(offspring):
         individual.fitness.values = fitnessValue
 
 
-# Agent representaiton:
-#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand]
-#     [ 0       1     2    3     4         5             6    ]
+
 
 def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
