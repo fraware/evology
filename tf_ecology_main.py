@@ -18,7 +18,7 @@ from operator import attrgetter
 # =============================================================================
 
 RANDOM_SEED = random.random()
-POPULATION_SIZE = 2
+POPULATION_SIZE = 4
 MAX_TIME_HORIZON = 10
 MUTATION_RATE = 0.05
 MAX_GENERATIONS = 50
@@ -144,7 +144,7 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
                 toolbox.register("generate_profit_selection", random_decimal, individuals[i][7], individuals[i][7])
                 # print(individuals[i][7])
                 # print(random.randint(round(individuals[i][7]*1000),round(individuals[i][7]*1000)))
-                # print(float(random.randint(round(individuals[i][7]*1000),round(individuals[i][7]*1000))/1000))
+                # print(float(random.randtoolbox.sel_tournament(pop, 2, 2)int(round(individuals[i][7]*1000),round(individuals[i][7]*1000))/1000))
                 # print(toolbox.generate_profit_selection())
                 toolbox.register("generate_ema_selection", random_decimal, individuals[i][8], individuals[i][8])
                 toolbox.register("generate_individual_selection", tools.initCycle, creator.individual,
@@ -160,6 +160,51 @@ def selRoulette_first_item (individuals, k, fit_attr="fitness"):
 
                 break
     return chosen
+
+def selRandom(individuals, k):
+    return [random.choice(individuals) for i in range(k)]
+
+# Creation of our customised selection operator (outnrament) that handles positive & negative fitness values
+def selTournament(individuals, k, tournsize, fit_attr="fitness"):
+    """Select the best individual among *tournsize* randomly chosen
+    individuals, *k* times. The list returned contains
+    references to the input *individuals*.
+    :param individuals: A list of individuals to select from.
+    :param k: The number of individuals to select.
+    :param tournsize: The number of individuals participating in each tournament.
+    :param fit_attr: The attribute of individuals to use as selection criterion
+    :returns: A list of selected individuals.
+    This function uses the :func:`~random.choice` function from the python base
+    :mod:`random` module.
+    """
+    chosen = []
+    for i in range(k):
+        chosen_i = []
+        aspirants = selRandom(individuals, tournsize-1)
+        print("aspirants1")
+        print(aspirants)
+        print(type(aspirants))
+        aspirants.append(individuals[i])
+        print("aspirants2")
+        print(aspirants)
+        chosen_i = max(aspirants, key=attrgetter(fit_attr))
+        
+        print("chosen i")
+        print(chosen_i)
+        print(type(chosen_i))
+        print("chosen i before modif")
+        print(chosen_i)
+        chosen_i[1:8] = individuals[i][1:8]
+        print("chosen i after modif")
+        print(chosen_i)
+        chosen.append(chosen_i)
+        # print(chosen)
+    return chosen
+
+
+toolbox.register("sel_tournament", selTournament)
+# toolbox.sel_tournament(pop, 2, 3)
+
 
 toolbox.register("selRoulette_first_item", selRoulette_first_item)
 toolbox.register("select", toolbox.selRoulette_first_item)
