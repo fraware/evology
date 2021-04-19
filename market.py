@@ -1,27 +1,9 @@
 import math
 import random
-
 import parameters
-
-# =============================================================================
-# Fixed parameters
-# =============================================================================
-
-# RANDOM_SEED = random.random()
-# POPULATION_SIZE = 4
-# MAX_TIME_HORIZON = 10
-# MUTATION_RATE = 0
-# MAX_GENERATIONS = 50
-# CROSSOVER_RATE = 0
-# MIN_WEALTH = 10
-# MAX_WEALTH = 10
-# MIN_TIME_HORIZON = 1
-# INITIAL_PRICE = 1
-# TOURNAMENT_SIZE = 3
 
 REINVESTMENT_RATE = parameters.REINVESTMENT_RATE
 INTEREST_RATE = parameters.REINVESTMENT_RATE
-
 EMA_HORIZON = parameters.EMA_HORIZON
 
 

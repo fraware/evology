@@ -5,7 +5,6 @@ import random
 import seaborn as sns
 sns.set_theme(style="darkgrid")
 from operator import attrgetter
-
 import parameters
 
 # # =============================================================================
