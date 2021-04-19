@@ -73,14 +73,12 @@ For the initialisation:
     - I am temporarily setting cash as 5, asset as 5 and initial price as 1
 '''
 
-# Temporary Fitness definition
-def max_horizon_fitness(individual):
-    return individual
-toolbox.register("evaluate", max_horizon_fitness)
-# def max_horizon_fitness(pop):
-#     for ind in pop:
-#         print(ind)
-#         # return ind[8]
+# Fitness definition
+def ema_fitness(individual):
+    return individual[8],
+
+toolbox.register("evaluate", ema_fitness)
+
 
 
 # Creating our own crossover operator:
@@ -226,7 +224,7 @@ def update_wealth(pop, price):
         
 def compute_ema(pop):
     for ind in pop:
-        ind[8] = (2 / (EMA_HORIZON + 1)) * (ind[7] - ind[8]) + ind[8]
+        ind[8] = truncate((2 / (EMA_HORIZON + 1)) * (ind[7] - ind[8]) + ind[8],3)
     return ind
     
 # =============================================================================
@@ -313,10 +311,21 @@ def main():
         # price = market_clearing_function()
         
         compute_ema(pop)
+        print("after ema")
+        
+        fitnessValues = list(map(toolbox.evaluate, pop))
+        for individual, fitnessValue in zip(pop, fitnessValues):
+            individual.fitness.values = fitnessValue
+        fitnessValues = [individual.fitness.values[0] for individual in pop]
+    
+        print(pop)
+        print(fitnessValues)
     
     
         # Selection
         offspring = toolbox.select(pop, POPULATION_SIZE)
+        print("offspring")
+        print(offspring)
         fitness_for_invalid(offspring)
         offspring = list(map(toolbox.clone, offspring))
         
@@ -335,10 +344,14 @@ def main():
         fitness_for_invalid(offspring)
 
         # Replacing
+        print(offspring)
         pop[:] = offspring
+        print(pop)
         fitnessValues = [ind.fitness.values[0] for ind in pop]
                 
+        
         # Print some results
+        print(fitnessValues)
         maxFitness = max(fitnessValues)
         meanFitness = sum(fitnessValues) / len(pop)
         maxFitnessValues.append(maxFitness)
@@ -385,7 +398,6 @@ plt.plot(replacements, color='gray', label = 'Hypermutations')
 plt.xlabel('Generations')
 plt.ylabel('Max / Average Fitness')
 plt.title('Max and Average Fitness over Generations')
-plt.ylim(0,MAX_TIME_HORIZON+1)
 plt.xlim(0,MAX_GENERATIONS+1)
 plt.legend()
 plt.show()
@@ -400,62 +412,3 @@ plt.legend()
 plt.show()
 
 print("-----------------------")
-
-print(pop)
-for ind in pop:
-    # print(ind) returns the first item
-    # print(type(ind))
-    # print(ind[0])
-    print(ind[8])
-    
-def ema_evaluate(pop):
-    values = []
-    for ind in pop:
-        values.append(ind[8])
-    return values,
-    
-result = ema_evaluate(pop)
-print(result)
-print(type(result))
-
-'''
-This is the normal code
-
-result_tradi = toolbox.evaluate(pop)
-print(result_tradi)
-print(type(result_tradi))
-fitnessValues = list(map(toolbox.evaluate, pop))
-for individual, fitnessValue in zip(pop, fitnessValues):
-    individual.fitness.values = fitnessValue
-fitnessValues = [individual.fitness.values[0] for individual in pop]
-print(fitnessValues)
-'''
-
-'''
-This is the new code
-'''
-toolbox.register("evaluate_ema", ema_evaluate)
-
-# fitnessValues = list(map(toolbox.evaluate_ema, pop))
-fitnessValues = toolbox.evaluate_ema(pop)
-print(fitnessValues)
-print("here")
-for individual, fitnessValue in zip(pop, fitnessValues):
-    individual.fitness.values = fitnessValue
-    print(individual)
-    print(fitnessValue)
-    print(individual.fitness)
-fitnessValues = [individual.fitness.values[0] for individual in pop]
-print(fitnessValues)
-
-print("again")
-fitnessValues = toolbox.evaluate_ema(pop)
-print(fitnessValues)
-print("here")
-for individual in pop:
-    individual.fitness.values = fitnessValues
-    print(individual)
-    print(fitnessValue)
-    print(individual.fitness)
-fitnessValues = [individual.fitness.values[0] for individual in pop]
-print(fitnessValues)
