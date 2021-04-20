@@ -3,36 +3,41 @@ import random
 import parameters
 
 REINVESTMENT_RATE = parameters.REINVESTMENT_RATE
-INTEREST_RATE = parameters.REINVESTMENT_RATE
+INTEREST_RATE = parameters.INTEREST_RATE
 EMA_HORIZON = parameters.EMA_HORIZON
 DIVIDEND_GROWTH_RATE = parameters.DIVIDEND_GROWTH_RATE
 DIVIDEND_GROWTH_VOLATILITY = parameters.DIVIDEND_GROWTH_RATE
 DIVIDEND_AUTOCORRELATION = parameters.DIVIDEND_AUTOCORRELATION
 
 dividend_history = parameters.dividend_history
+random_dividend_history = parameters.random_dividend_history
+random_dividend = parameters.INITIAL_RANDOM_DIVIDEND
+dividend = parameters.INITIAL_DIVIDEND
+tau = parameters.TAU
+
+# Agent representaiton:
+#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]
+#     [ 0       1     2    3     4         5             6           7            8 ]
 
 def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
 
 def draw_dividend():
-    '''
-    @Maarten: issues with the equations defining  the dividend process
-    I temporarily have a random dividend in (0,1)
-    '''
-    
-    past_dividend = dividend_history[-1]
     
     global dividend
-    dividend = truncate(random.randint(0,1),3)
+    global random_dividend
+    random_dividend = random.normalvariate(0, 1)
+    if len(random_dividend_history) > tau:
+        random_dividend = (1 - DIVIDEND_AUTOCORRELATION ** 2) * random.normalvariate(0,1) + DIVIDEND_AUTOCORRELATION * random_dividend_history[-1 - tau]
+    dividend = abs(dividend + DIVIDEND_GROWTH_RATE * dividend + DIVIDEND_GROWTH_VOLATILITY * dividend * random_dividend)
     print("Dividend today is " + str(dividend))
-    
-    dividend_history.append(dividend)
-    
-    return dividend
+    return dividend, random_dividend
 
         
 def wealth_earnings(pop):
+    print(INTEREST_RATE)
+    print(REINVESTMENT_RATE)
     for ind in pop:
         # Update profit
         ind[7] = truncate(REINVESTMENT_RATE * (INTEREST_RATE * ind[2] + dividend * ind[3]),3)

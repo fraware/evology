@@ -16,6 +16,9 @@ MAX_WEALTH = parameters.MAX_WEALTH
 MIN_TIME_HORIZON = parameters.MIN_TIME_HORIZON
 INITIAL_PRICE = parameters.INITIAL_PRICE
 TOURNAMENT_SIZE = parameters.TOURNAMENT_SIZE 
+INITIAL_DIVIDEND = parameters.INITIAL_DIVIDEND
+INTEREST_RATE = parameters.INTEREST_RATE
+
 
 def main():
     random.seed(RANDOM_SEED)
@@ -28,10 +31,15 @@ def main():
     maxFitnessValues = []
     meanFitnessValues = []
     replacements = []
+    dividend_history = []
+    random_dividend_history = []
+
     
     # Temp
     agent0_profit = []
     agent0_ema = []
+    
+    dividend_history.append(INITIAL_DIVIDEND)
     
     print(pop)
     
@@ -67,7 +75,10 @@ def main():
         D) I'll need to write the dividends, f, r allocation mechanism
         '''
         global dividend
-        dividend = market.draw_dividend()
+        dividend, random_dividend = market.draw_dividend()
+        dividend_history.append(dividend)
+        random_dividend_history.append(random_dividend)
+        
         market.wealth_earnings(pop)
         market.update_wealth(pop, price)
         
@@ -154,4 +165,4 @@ def main():
         #         ind[1] -= 1
 
     
-    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema
+    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, random_dividend_history

@@ -4,7 +4,7 @@ import parameters
 MAX_GENERATIONS = parameters.MAX_GENERATIONS
 
 
-initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema = main.main()
+initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, random_dividend_history = main.main()
 
 # Plot population histograms at the start and at the end
 print("--------------------------")
@@ -33,6 +33,23 @@ plt.xlabel('Generations')
 plt.ylabel('Profit')
 plt.title('Profit and EMA profit of Albert')
 plt.xlim(0,MAX_GENERATIONS+1)
+plt.legend()
+plt.show()
+
+
+plt.plot(agent0_ema, color='red', label='EMA')
+plt.plot(agent0_profit, color='green', label = 'Profits')
+plt.xlabel('Generations')
+plt.ylabel('Profit')
+plt.title('Profit and EMA profit of Albert')
+plt.xlim(0,MAX_GENERATIONS+1)
+plt.legend()
+plt.show()
+
+plt.plot(dividend_history, color='red', label='dividend')
+plt.xlabel('Generations')
+plt.ylabel('Dividend')
+plt.title('Dividends over time')
 plt.legend()
 plt.show()
 
