@@ -5,7 +5,11 @@ import parameters
 REINVESTMENT_RATE = parameters.REINVESTMENT_RATE
 INTEREST_RATE = parameters.REINVESTMENT_RATE
 EMA_HORIZON = parameters.EMA_HORIZON
+DIVIDEND_GROWTH_RATE = parameters.DIVIDEND_GROWTH_RATE
+DIVIDEND_GROWTH_VOLATILITY = parameters.DIVIDEND_GROWTH_RATE
+DIVIDEND_AUTOCORRELATION = parameters.DIVIDEND_AUTOCORRELATION
 
+dividend_history = parameters.dividend_history
 
 def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
@@ -16,9 +20,15 @@ def draw_dividend():
     @Maarten: issues with the equations defining  the dividend process
     I temporarily have a random dividend in (0,1)
     '''
+    
+    past_dividend = dividend_history[-1]
+    
     global dividend
     dividend = truncate(random.randint(0,1),3)
     print("Dividend today is " + str(dividend))
+    
+    dividend_history.append(dividend)
+    
     return dividend
 
         
