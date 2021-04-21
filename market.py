@@ -5,8 +5,8 @@ import parameters
 REINVESTMENT_RATE = parameters.REINVESTMENT_RATE
 INTEREST_RATE = parameters.INTEREST_RATE
 EMA_HORIZON = parameters.EMA_HORIZON
-DIVIDEND_GROWTH_RATE = parameters.DIVIDEND_GROWTH_RATE
-DIVIDEND_GROWTH_VOLATILITY = parameters.DIVIDEND_GROWTH_RATE
+DIVIDEND_GROWTH_RATE_G = parameters.DIVIDEND_GROWTH_RATE_G
+DIVIDEND_GROWTH_VOLATILITY = parameters.DIVIDEND_GROWTH_VOLATILITY
 DIVIDEND_AUTOCORRELATION = parameters.DIVIDEND_AUTOCORRELATION
 
 dividend_history = parameters.dividend_history
@@ -22,6 +22,11 @@ tau = parameters.TAU
 def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
+
+def determine_dividend_growth(generationCounter):
+    global DIVIDEND_GROWTH_RATE
+    DIVIDEND_GROWTH_RATE = (1 + DIVIDEND_GROWTH_RATE_G) ** (1 / generationCounter) - 1
+    return DIVIDEND_GROWTH_RATE
 
 def draw_dividend():
     
