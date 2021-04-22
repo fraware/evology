@@ -74,7 +74,7 @@ def main():
         @Maarten: where does the extra money from f, r, D(t) go? In the cash?
         D) I'll need to write the dividends, f, r allocation mechanism
         '''
-        market.determine_dividend_growth(generationCounter)
+        market.determine_dividend_growth()
         
         global dividend
         dividend, random_dividend = market.draw_dividend()

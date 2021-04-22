@@ -13,7 +13,8 @@ dividend_history = parameters.dividend_history
 random_dividend_history = parameters.random_dividend_history
 random_dividend = parameters.INITIAL_RANDOM_DIVIDEND
 dividend = parameters.INITIAL_DIVIDEND
-tau = parameters.TAU
+DIVIDEND_ATC_TAU = parameters.DIVIDEND_ATC_TAU
+TRADING_DAYS = parameters.TRADING_DAYS
 
 # Agent representaiton:
 #     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]
@@ -23,9 +24,9 @@ def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
 
-def determine_dividend_growth(generationCounter):
+def determine_dividend_growth():
     global DIVIDEND_GROWTH_RATE
-    DIVIDEND_GROWTH_RATE = (1 + DIVIDEND_GROWTH_RATE_G) ** (1 / generationCounter) - 1
+    DIVIDEND_GROWTH_RATE = (1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS) - 1
     return DIVIDEND_GROWTH_RATE
 
 def draw_dividend():
@@ -33,8 +34,8 @@ def draw_dividend():
     global dividend
     global random_dividend
     random_dividend = random.normalvariate(0, 1)
-    if len(random_dividend_history) > tau:
-        random_dividend = (1 - DIVIDEND_AUTOCORRELATION ** 2) * random.normalvariate(0,1) + DIVIDEND_AUTOCORRELATION * random_dividend_history[-1 - tau]
+    if len(random_dividend_history) > DIVIDEND_ATC_TAU:
+        random_dividend = (1 - DIVIDEND_AUTOCORRELATION ** 2) * random.normalvariate(0,1) + DIVIDEND_AUTOCORRELATION * random_dividend_history[-1 - DIVIDEND_ATC_TAU]
     dividend = abs(dividend + DIVIDEND_GROWTH_RATE * dividend + DIVIDEND_GROWTH_VOLATILITY * dividend * random_dividend)
     print("Dividend today is " + str(dividend))
     return dividend, random_dividend
