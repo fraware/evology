@@ -1,1 +1,65 @@
-experiments
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+\usepackage{hyperref}
+
+\title{Numerical experiments - market ecology}
+\author{Aymeric Vi\'{e}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\clearpage
+
+\section{Preambule: baseline configuration}
+
+Necessary condition: running GA with complete market structure
+Objective: be as close as possible to Maarten's paper configuration, notably for market environment parameters.
+Add Agent leverage, aggressiveness of response to be closer to Maarten
+\section{Preambule 2: observables}
+
+Necessary condition: running GA with complete market structure
+To implement:
+\begin{itemize}
+    \item Observe market dynamics over time (easy): price, returns, assets, volatility, dividends, profits
+    \item Observe ecology dynamics over time (hard): proportions? heatmap?
+    Perhaps H (for max time horizon) plots with clear color codes (like jet) over time, and hoepfully we see something clear happen.
+    \item Develop a GUI or something nice/updating iteself over time to observe that?
+\end{itemize}
+
+\section{Trend follower market ecology}
+
+Necessary condition: a running GA with a single asset, market clearing, and adequate starting conditions, and the baseline configuration.
+
+\subsection{Influence of learning vs non-learning}
+The non-lerning case (replacement dynamics only) can be illustrated with:
+\begin{itemize}
+    \item No selection (selection rate equal to 0)
+    \item No crossover (crossover rate equal to 0)
+    \item No mutation (mutation rate equal to 0)
+\end{itemize}
+The objective is to assess the behavior of the model in this no-learning setup, establish a benchmark.
+
+Then, we can introduce learning at different degrees, and channels. Learning requires activation of selection.
+
+\begin{enumerate}
+    \item Mutation alone, with different values
+    \item Crossover alone, with different values
+    \item Mutation and crossover
+\end{enumerate}
+
+How does learning affect market dynamics? Ecology dynamics?
+
+There are many many things we can also study:
+\begin{itemize}
+    \item Influence of strategy space with H
+    \item Time horizon of EMA fitness profit
+    \item Market parameters: dividend growth rate, volatility, interest rate
+    \item Alternative values for agent leverage, aggressiveness of response 
+\end{itemize}
+
+\end{document}
