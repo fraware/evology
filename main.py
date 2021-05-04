@@ -122,6 +122,14 @@ def main():
     
     
         # Selection
+        
+        '''
+        Need to add a probability of selection (1 or 0 is enough) to be able to model a case without any learning.
+        If selection_priba is 0, offspring is just a copy of the population.
+        
+        We will also be needing to add these key parameters as arguments to main
+        '''
+        
         offspring = ga.toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
         print("offspring")
         print(offspring)
