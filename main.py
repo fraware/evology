@@ -65,73 +65,39 @@ def main(selection_proba):
         print("Generation " + str(generationCounter))
         generationCounter += 1
         
-        
-        '''
-        Here we will need to
-        A) Draw dividends
-        B) Apply dividends, interest rate and reinvestment
-        C) Update wealth sums
-        D) Hypermutation (+ update wealth?)
-        
-    
-        @Maarten: where does the extra money from f, r, D(t) go? In the cash?
-        D) I'll need to write the dividends, f, r allocation mechanism
-        '''
+        ''' A) Draw dividends '''       
         DIVIDEND_GROWTH_RATE = market.determine_dividend_growth(DIVIDEND_GROWTH_RATE_G)
-        
-        # global dividend
         dividend, random_dividend = market.draw_dividend(DIVIDEND_GROWTH_RATE)
         dividend_history.append(dividend)
         random_dividend_history.append(random_dividend)
         
+        ''' B) Apply dividends, interest rate and reinvestment, update profit '''
         market.wealth_earnings(pop)
-        market.update_wealth(pop, price)
         
+        ''' C) Update wealth sum as a function of price '''
+        market.update_wealth(pop, price) 
+        # print(pop)
         
-        print(pop)
-
-        
-        # Hypermutation
+        ''' D) Hypermutation operator '''
         global round_replacements
         round_replacements = 0
         ga.hypermutate(pop)
         # Recomputing fitness
         ga.fitness_for_invalid(pop)
         
-        
-        '''
-        E) Update trading signals
-        F) Deduce excess demand
-        G) Clear the market
-        H) Update inventories
-        I) Update wealth
-        J) Update profits
-        K) Deduce fitness as EMA
-        J) GA
-    '''
-        
-        # price = market_clearing_function()
-        
+        ''' E) Deduce fitness as EMA ''' 
         market.compute_ema(pop)
-        # print("after ema")
-        
         fitnessValues = list(map(ga.toolbox.evaluate, pop))
         for individual, fitnessValue in zip(pop, fitnessValues):
             individual.fitness.values = fitnessValue
         fitnessValues = [individual.fitness.values[0] for individual in pop]
-    
+        #turn this into a one-line function?
         print(pop)
-        print(fitnessValues)
-    
-    
+        # print(fitnessValues)
+        
+        '''  F) GA evolution of strategies with last period fitness  '''
+
         # Selection
-        
-        '''
-        Need to add a probability of selection (1 or 0 is enough) to be able to model a case without any learning.
-        If selection_proba is 0, offspring is just a copy of the population.
-        
-        We will also be needing to add these key parameters as arguments to main
-        '''
         if selection_proba == 1:
             offspring = ga.toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
            
@@ -159,7 +125,18 @@ def main(selection_proba):
             fitnessValues = [ind.fitness.values[0] for ind in pop]
                 
         
-        # Print some results
+        ''' G) Actions are now set. Update trading signals '''
+        
+        
+        ''' H) Deduce excess demand ''' 
+        
+        ''' I) Clear the market ''' 
+        # In progress with Maarten
+        
+        ''' J) Update inventories ''' 
+        
+        
+        ''' K) Record results '''
         maxFitness = max(fitnessValues)
         meanFitness = sum(fitnessValues) / len(pop)
         maxFitnessValues.append(maxFitness)
