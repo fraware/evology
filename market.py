@@ -26,9 +26,10 @@ def truncate(number, digits) -> float:
 
 def determine_dividend_growth(DIVIDEND_GROWTH_RATE_G):
     global DIVIDEND_GROWTH_RATE
-    DIVIDEND_GROWTH_RATE = (1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS) - 1
+    DIVIDEND_GROWTH_RATE = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
     return DIVIDEND_GROWTH_RATE
 
+'''
 def draw_dividend(DIVIDEND_GROWTH_RATE):
     
     global dividend
@@ -37,17 +38,32 @@ def draw_dividend(DIVIDEND_GROWTH_RATE):
     if len(random_dividend_history) > DIVIDEND_ATC_TAU:
         random_dividend = (1 - DIVIDEND_AUTOCORRELATION ** 2) * random.normalvariate(0,1) + DIVIDEND_AUTOCORRELATION * random_dividend_history[-1 - DIVIDEND_ATC_TAU]
     dividend = abs(dividend + DIVIDEND_GROWTH_RATE * dividend + DIVIDEND_GROWTH_VOLATILITY * dividend * random_dividend)
-    print("Dividend today is " + str(dividend))
+    # print("Dividend today is " + str(dividend))
+    return dividend, random_dividend
+'''
+
+def draw_dividend(DIVIDEND_GROWTH_RATE):
+    
+    global dividend
+    global random_dividend
+    
+    random_dividend = random.normalvariate(0, 1)
+    if len(random_dividend_history) > DIVIDEND_ATC_TAU:
+        random_dividend = (1 - DIVIDEND_AUTOCORRELATION ** 2) * random_dividend + DIVIDEND_AUTOCORRELATION * random_dividend_history[len(random_dividend_history) - 1 - DIVIDEND_ATC_TAU]
+    # wiener.append(random_dividend)
+    
+    dividend = abs(dividend + DIVIDEND_GROWTH_RATE * dividend + DIVIDEND_GROWTH_VOLATILITY * dividend * random_dividend)
+    
     return dividend, random_dividend
 
         
 def wealth_earnings(pop):
-    print(INTEREST_RATE)
-    print(REINVESTMENT_RATE)
+    # print(INTEREST_RATE)
+    # print(REINVESTMENT_RATE)
     for ind in pop:
         # Update profit
         ind[7] = truncate(REINVESTMENT_RATE * (INTEREST_RATE * ind[2] + dividend * ind[3]),3)
-        print("profit is " + str(ind[7]))
+        # print("profit is " + str(ind[7]))
         
         # Update cash
         ind[2] += REINVESTMENT_RATE * (INTEREST_RATE * ind[2] + dividend * ind[3])
@@ -61,5 +77,5 @@ def update_wealth(pop, price):
         
 def compute_ema(pop):
     for ind in pop:
-        ind[8] = truncate((2 / (EMA_HORIZON + 1)) * (ind[7] - ind[8]) + ind[8],3)
+        ind[8] = (2 / (EMA_HORIZON + 1)) * (ind[7] - ind[8]) + ind[8]
     return ind

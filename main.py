@@ -111,7 +111,7 @@ def main():
         # price = market_clearing_function()
         
         market.compute_ema(pop)
-        print("after ema")
+        # print("after ema")
         
         fitnessValues = list(map(ga.toolbox.evaluate, pop))
         for individual, fitnessValue in zip(pop, fitnessValues):
