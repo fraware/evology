@@ -106,4 +106,6 @@ def update_trading_signal(pop, price_history):
 def update_excess_demand(pop):
     for ind in pop:
         ind[6] = ind[1] * LAMBDA_TF * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind[5]) + 0.5)  - ind[3]
+    ''' This will need to add the division by the price '''
+    ''' This will probably have to be translated into a function '''
     return ind
