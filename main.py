@@ -40,6 +40,7 @@ def main():
     agent0_profit = []
     agent0_ema = []
     
+    dividend = INITIAL_DIVIDEND
     dividend_history.append(INITIAL_DIVIDEND)
     
     print(pop)
@@ -77,7 +78,7 @@ def main():
         '''
         DIVIDEND_GROWTH_RATE = market.determine_dividend_growth(DIVIDEND_GROWTH_RATE_G)
         
-        global dividend
+        # global dividend
         dividend, random_dividend = market.draw_dividend(DIVIDEND_GROWTH_RATE)
         dividend_history.append(dividend)
         random_dividend_history.append(random_dividend)
