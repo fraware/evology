@@ -1,6 +1,7 @@
 import random
 import seaborn as sns
 sns.set_theme(style="darkgrid")
+import numpy as np
 import genetic_algorithm_functions as ga
 import market as market
 import parameters
@@ -21,7 +22,7 @@ INTEREST_RATE = parameters.INTEREST_RATE
 DIVIDEND_GROWTH_RATE_G = parameters.DIVIDEND_GROWTH_RATE_G
 
 
-def main():
+def main(selection_proba):
     random.seed(RANDOM_SEED)
     
     # Create the population and the results accumulators
@@ -127,34 +128,35 @@ def main():
         
         '''
         Need to add a probability of selection (1 or 0 is enough) to be able to model a case without any learning.
-        If selection_priba is 0, offspring is just a copy of the population.
+        If selection_proba is 0, offspring is just a copy of the population.
         
         We will also be needing to add these key parameters as arguments to main
         '''
+        if selection_proba == 1:
+            offspring = ga.toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
+           
+            print("offspring")
+            print(offspring)
+            ga.fitness_for_invalid(offspring)
+            offspring = list(map(ga.toolbox.clone, offspring))
+            
+            # Crossover
+            for child1, child2 in zip(offspring[::2], offspring[1::2]):
+                ga.toolbox.mate(child1,child2,CROSSOVER_RATE)
+                del child1.fitness.values
+                del child2.fitness.values
+            
+            # Mutation
+            for mutant in offspring:
+                ga.toolbox.mutate(mutant, MUTATION_RATE)
+                del mutant.fitness.values
         
-        offspring = ga.toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
-        print("offspring")
-        print(offspring)
-        ga.fitness_for_invalid(offspring)
-        offspring = list(map(ga.toolbox.clone, offspring))
-        
-        # Crossover
-        for child1, child2 in zip(offspring[::2], offspring[1::2]):
-            ga.toolbox.mate(child1,child2,CROSSOVER_RATE)
-            del child1.fitness.values
-            del child2.fitness.values
-        
-        # Mutation
-        for mutant in offspring:
-            ga.toolbox.mutate(mutant, MUTATION_RATE)
-            del mutant.fitness.values
+            # Recomputing fitness
+            ga.fitness_for_invalid(offspring)
     
-        # Recomputing fitness
-        ga.fitness_for_invalid(offspring)
-
-        # Replacing
-        pop[:] = offspring
-        fitnessValues = [ind.fitness.values[0] for ind in pop]
+            # Replacing
+            pop[:] = offspring
+            fitnessValues = [ind.fitness.values[0] for ind in pop]
                 
         
         # Print some results

@@ -4,7 +4,7 @@ import parameters
 MAX_GENERATIONS = parameters.MAX_GENERATIONS
 
 
-initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, random_dividend_history = main.main()
+initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, random_dividend_history = main.main(0)
 
 # Plot population histograms at the start and at the end
 print("--------------------------")
