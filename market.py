@@ -24,12 +24,12 @@ def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
 
-def determine_dividend_growth():
+def determine_dividend_growth(DIVIDEND_GROWTH_RATE_G):
     global DIVIDEND_GROWTH_RATE
     DIVIDEND_GROWTH_RATE = (1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS) - 1
     return DIVIDEND_GROWTH_RATE
 
-def draw_dividend():
+def draw_dividend(DIVIDEND_GROWTH_RATE):
     
     global dividend
     global random_dividend

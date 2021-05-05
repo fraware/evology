@@ -18,6 +18,7 @@ INITIAL_PRICE = parameters.INITIAL_PRICE
 TOURNAMENT_SIZE = parameters.TOURNAMENT_SIZE 
 INITIAL_DIVIDEND = parameters.INITIAL_DIVIDEND
 INTEREST_RATE = parameters.INTEREST_RATE
+DIVIDEND_GROWTH_RATE_G = parameters.DIVIDEND_GROWTH_RATE_G
 
 
 def main():
@@ -74,10 +75,10 @@ def main():
         @Maarten: where does the extra money from f, r, D(t) go? In the cash?
         D) I'll need to write the dividends, f, r allocation mechanism
         '''
-        market.determine_dividend_growth()
+        DIVIDEND_GROWTH_RATE = market.determine_dividend_growth(DIVIDEND_GROWTH_RATE_G)
         
         global dividend
-        dividend, random_dividend = market.draw_dividend()
+        dividend, random_dividend = market.draw_dividend(DIVIDEND_GROWTH_RATE)
         dividend_history.append(dividend)
         random_dividend_history.append(random_dividend)
         
