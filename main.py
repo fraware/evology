@@ -35,6 +35,7 @@ def main(selection_proba):
     replacements = []
     dividend_history = []
     random_dividend_history = []
+    price_history = []
 
     
     # Temp
@@ -126,12 +127,22 @@ def main(selection_proba):
                 
         
         ''' G) Actions are now set. Update trading signals '''
-        
+        # Agent representaiton:
+#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]
+#     [ 0       1     2    3     4         5             6           7            8 ]
+
+        market.update_trading_signal(pop, price_history)
         
         ''' H) Deduce excess demand ''' 
         
         ''' I) Clear the market ''' 
         # In progress with Maarten
+        # Outputs new_price
+        
+        #temp
+        new_price = 0
+        
+        price_history.append(new_price)
         
         ''' J) Update inventories ''' 
         
@@ -156,4 +167,4 @@ def main(selection_proba):
         #         ind[1] -= 1
 
     
-    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, random_dividend_history
+    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history
