@@ -64,7 +64,7 @@ def main(selection_proba):
     while generationCounter < MAX_GENERATIONS:
         print("--------------------------")
         print("Generation " + str(generationCounter))
-        generationCounter += 1
+        
         
         ''' A) Draw dividends '''       
         DIVIDEND_GROWTH_RATE = market.determine_dividend_growth(DIVIDEND_GROWTH_RATE_G)
@@ -140,7 +140,7 @@ def main(selection_proba):
         # Outputs new_price
         
         #temp
-        new_price = 0
+        new_price = generationCounter
         
         price_history.append(new_price)
         
@@ -159,7 +159,7 @@ def main(selection_proba):
         #  Could this print results be automated? We have it twice
         
         print("- Generation {}: Max Fitness = {}, Avg Fitness = {}".format(generationCounter, maxFitness, meanFitness))
-        
+        generationCounter += 1
                 
         # Temporary function to apply some fixed cost
         # if generationCounter > 0:

@@ -86,10 +86,19 @@ def compute_ema(pop):
 #     [ 0       1     2    3     4         5             6           7            8 ]
 
 def update_trading_signal(pop, price_history):
+    print("pop and price_history")
+    print(pop)
+    print(price_history)
     for ind in pop:
-        if len(price_history) >= ind[1]:
-            ind[5] = np.log2(price_history[-1]) - np.log2(price_history[-1 - ind[1]])
-        if len(price_history) < ind[1]:
-            # The trader does not have the information to run her strategy. She waits in indifference.
+        print(ind)
+        print(-1 - ind[0])
+        if len(price_history) > 1:
+            print(price_history[-1])
+            if len(price_history) > ind[0]:
+                ind[5] = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
+            if len(price_history) <= ind[0]:
+                # The trader does not have the information to run her strategy. She waits in indifference.
+                ind[5] = 0
+        if len(price_history) <= 1:
             ind[5] = 0
     return ind
