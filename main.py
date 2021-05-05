@@ -127,13 +127,10 @@ def main(selection_proba):
                 
         
         ''' G) Actions are now set. Update trading signals '''
-        # Agent representaiton:
-#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]
-#     [ 0       1     2    3     4         5             6           7            8 ]
-
         market.update_trading_signal(pop, price_history)
         
         ''' H) Deduce excess demand ''' 
+        market.update_excess_demand(pop)
         
         ''' I) Clear the market ''' 
         # In progress with Maarten

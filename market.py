@@ -16,6 +16,8 @@ random_dividend = parameters.INITIAL_RANDOM_DIVIDEND
 dividend = parameters.INITIAL_DIVIDEND
 DIVIDEND_ATC_TAU = parameters.DIVIDEND_ATC_TAU
 TRADING_DAYS = parameters.TRADING_DAYS
+LAMBDA_TF = parameters.LAMBDA_TF
+STRATEGY_AGGRESSIVENESS_TF = parameters.STRATEGY_AGGRESSIVENESS_TF
 
 # Agent representaiton:
 #     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]
@@ -86,14 +88,12 @@ def compute_ema(pop):
 #     [ 0       1     2    3     4         5             6           7            8 ]
 
 def update_trading_signal(pop, price_history):
-    print("pop and price_history")
-    print(pop)
-    print(price_history)
+    '''
+    Will require an update once we add different strategies
+    '''
+
     for ind in pop:
-        print(ind)
-        print(-1 - ind[0])
         if len(price_history) > 1:
-            print(price_history[-1])
             if len(price_history) > ind[0]:
                 ind[5] = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
             if len(price_history) <= ind[0]:
@@ -101,4 +101,9 @@ def update_trading_signal(pop, price_history):
                 ind[5] = 0
         if len(price_history) <= 1:
             ind[5] = 0
+    return ind
+
+def update_excess_demand(pop):
+    for ind in pop:
+        ind[6] = ind[1] * LAMBDA_TF * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind[5]) + 0.5)  - ind[3]
     return ind
