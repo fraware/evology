@@ -59,6 +59,7 @@ Short selling
 from esl.economics.markets.walras import excess_demand_model, differentiable_order_message
 model = excess_demand_model({p: initial_quote, p2: initial_quote})
 
+
 market_agent = esl.simulation.identity([0])
 trader_agent = esl.simulation.identity([1])
 
@@ -129,4 +130,8 @@ for k, v in multipliers.items():
 
 
 print("We can access the numeric value of the price with float(new_price) = " + str(float(new_price)))
+
+''' IMPORTANT: We may have to del model afterwards, or put it inside a function, 
+so that we don't have the error attempt to activate an adept when one is already active in this thread'''
+del model
 
