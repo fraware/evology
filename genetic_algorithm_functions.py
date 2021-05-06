@@ -17,11 +17,11 @@ MAX_TIME_HORIZON = parameters.MAX_TIME_HORIZON
 MUTATION_RATE = parameters.MUTATION_RATE
 MAX_GENERATIONS = parameters.MAX_GENERATIONS
 CROSSOVER_RATE = parameters.CROSSOVER_RATE
-MIN_WEALTH = parameters.MIN_WEALTH
-MAX_WEALTH = parameters.MAX_WEALTH
 MIN_TIME_HORIZON = parameters.MIN_TIME_HORIZON
 INITIAL_PRICE = parameters.INITIAL_PRICE
 TOURNAMENT_SIZE = parameters.TOURNAMENT_SIZE 
+INITIAL_ASSETS = parameters.INITIAL_ASSETS
+INITIAL_CASH = parameters.INITIAL_CASH
 
 # =============================================================================
 # Setup the evolutionary operators
@@ -40,8 +40,8 @@ creator.create("individual", list, typecode = 'd', fitness=creator.fitness_strat
 # Create the individual list 
 toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
 toolbox.register("generate_wealth", random.randint, 0, 0)
-toolbox.register("generate_cash", random.randint, 5, 10)
-toolbox.register("generate_asset", random.randint, 5, 5)
+toolbox.register("generate_cash", random.randint, INITIAL_CASH, INITIAL_CASH)
+toolbox.register("generate_asset", random.randint, INITIAL_ASSETS, INITIAL_ASSETS)
 toolbox.register("generate_loan", random.randint, 0, 0)
 toolbox.register("generate_trading_signal", random.randint, 0, 0)
 toolbox.register("generate_excess_demand", random.randint, 0, 0)
