@@ -9,9 +9,9 @@ import parameters
 RANDOM_SEED = parameters.RANDOM_SEED
 POPULATION_SIZE = parameters.POPULATION_SIZE
 MAX_TIME_HORIZON = parameters.MAX_TIME_HORIZON
-MUTATION_RATE = parameters.MUTATION_RATE
+# MUTATION_RATE = parameters.MUTATION_RATE
 MAX_GENERATIONS = parameters.MAX_GENERATIONS
-CROSSOVER_RATE = parameters.CROSSOVER_RATE
+# CROSSOVER_RATE = parameters.CROSSOVER_RATE
 MIN_TIME_HORIZON = parameters.MIN_TIME_HORIZON
 INITIAL_PRICE = parameters.INITIAL_PRICE
 TOURNAMENT_SIZE = parameters.TOURNAMENT_SIZE 
@@ -20,7 +20,7 @@ INTEREST_RATE = parameters.INTEREST_RATE
 DIVIDEND_GROWTH_RATE_G = parameters.DIVIDEND_GROWTH_RATE_G
 
 
-def main(selection_proba):
+def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     random.seed(RANDOM_SEED)
     
     # Create the population and the results accumulators

@@ -3,8 +3,12 @@ import main
 import parameters
 MAX_GENERATIONS = parameters.MAX_GENERATIONS
 
+# Optional because they are arguments to main
+CROSSOVER_RATE = parameters.CROSSOVER_RATE
+MUTATION_RATE = parameters.MUTATION_RATE 
 
-initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history = main.main(0)
+
+initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history = main.main(1, CROSSOVER_RATE, MUTATION_RATE)
 
 # Plot population histograms at the start and at the end
 print("--------------------------")
