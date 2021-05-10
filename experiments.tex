@@ -10,7 +10,7 @@ sorting=ynt
 ]{biblatex}
 \addbibresource{bibliography.bib}
 
-\title{Numerical experiments - market ecology}
+\title{Evolutionary market ecologies \\ Model \& Numerical experiments}
 \author{Aymeric Vi\'{e}}
 \date{\today}
 
@@ -22,7 +22,7 @@ sorting=ynt
 
 \clearpage
 
-\section{Current Model description}
+\section{Trend following Model description}
 
 \subsection{Initialisation}
 
@@ -45,14 +45,42 @@ Where $g$ is the dividend growth rate, $\sigma$ its variance, $\omega$ is the au
 The market is initialised with an initial price of $100$ that matches the fundamental value of the asset, and initial dividends of $100$. 
 
 \subsection{Strategy and market behavior}
+At each time period, trend followers look at past prices to decide the content of their next portfolio, choosing between cash and an asset. The share of their wealth that will be devoted to asset shares is proportional to the agent trading signal $\phi(t)$. Here, the agent compares the logarithm of the prices at last period, and at another period $\theta$. This $\theta$ is the time horizon of this agent's trend following strategy, and is subject to evolution. We consider $\theta \in (1, H]$ with $H$ the maximum allowed time horizon. In \cite{scholl2020market}, trend followers all had $\theta = 2$; this generalisation allows us to look at a larger space of strategies.
 % here we write what the agents do, trading signal (write an example with a time series and a few different agents? that would be very nice. Inspire from David's figure 1?), excess demand, market clearing
 % mention the next strategy extensions
 % mention hypermutation & replacement
 
 \begin{equation}
     \label{trend_following_equation}
-    
+    \phi_i(t) = \log_2 p(t-1) - \log_2 p(t-\theta_i)
 \end{equation}
+
+Once the trading signals have been updated, the agents express their excess demand for the asset, as shown in Equation \ref{excess_demand_equation}. 
+
+\begin{equation}
+\label{excess_demand_equation}
+   E_i(t) = \frac{W_i(t) {\lambda_i}}{p(t)} \left( \tanh{({c} \phi_i(t)}) + \frac{1}{2} \right) - S_i(t)
+\end{equation}
+
+The use of $\tanh$ ensures that the function is bounded and differentiable, for the use of the market clearing algorithm. $c$ denotes the aggressiveness of the agent strategic response, i.e. how much its demand is sensitive to the trading signal. $\lambda$ is the agent leverage. The term $\frac{1}{2}$ ensures that when the agent is indifferent to assets (i.e. when $\phi(t) = 0$), then the agent equally splits its wealth into cash and asset shares.
+
+\subsection{Market clearing}
+
+Once all agents have formulated their excess demand functions as a function of the unknown current price $p(t)$, we use Walrasian market clearing to identify the clearing price, as described in \cite{scholl2020market}. In short, excess demands of all agents $a$ in the population $ \mathcal{A}$ are submitted to a price maker agent who attempts to find the root of the aggregate demand, i.e. the price such that the aggregate excess demand is equal to 0.
+
+\begin{equation}
+\label{market_clearing_root}
+\sum_{a \in \mathcal{A}} E_{a}(p)=0
+\end{equation}
+
+If such root does not exist, the price maker instead minimises the mismatch between supply and demand, under the constraint that $p$ is finite.
+
+\begin{equation}
+\label{market_clearing_mismatch}
+\min_p\left(\sum_{a \in, \mathcal{A}} E_{a}(p)\right)^{2}
+\end{equation}
+
+This process allows to pin down the clearing price $p(t)$. We can thus compute the realised demands of the agents, update their asset shares ownership, wealth and profit. The agents receive dividends $D(t)$ in proportion of their asset shares, receive interest $r$ on their cash. Finally, investment inflows and outflows are modelled by the reinvestment parameter $f$, which is the multiplier of the agent profit, i.e. $W(t+1) - W(t)$. For $f > 1$, profits cause an inflow in capital. When $f < 1$, profits cause investors to withdraw funds from the agent-fund; finally, when $f=1$, no particular reinvestment dynamic occurs. 
 
 \begin{table}[]
     \centering
@@ -60,7 +88,8 @@ The market is initialised with an initial price of $100$ that matches the fundam
     Mathematical notation & Meaning & Value \\
     \hline
         $n$ & Number of agents & 100 \\
-        $t$ & Time index & $[1,t_{\text{max}}]$\\
+        $t$ & Time index & $[1,T]$\\
+        $T$ & Maximum time index & $[1000;100,000]$\\
         $\theta_i(t)$ & Agent strategy at time $t$ & $(1, H]$\\
         $C_i(0)$ & Initial cash & 50,000,000 \\
         $S_i(0)$ & Initial asset shares & 500,000 \\
@@ -68,13 +97,57 @@ The market is initialised with an initial price of $100$ that matches the fundam
         $g$ & Dividend growth rate & $0.02$ annually \\
         $\sigma$ & Dividend variance & $0.06$ annually \\
         $\omega$ & Dividend autocorrelation & $0.1$ \\
+        $c$ & Strategy aggressiveness & $[1,10]$ \\
+        $\lambda$ & Agent leverage & $[1,10]$ \\
+        $f$ & Reinvestment rate & $[0,2]$ \\
+        $\tau$ & Tournament size & $(1,n]$ \\
+        $\nu$ & EMA length & $[1,2520]$ \\
+        $\rho$ & Crossover rate & $[0,1]$ \\
+        $\mu$ & Mutation rate & $[0,1]$ \\
+        $\varsigma$ & Selection rate & $\{0,1\}$
     \end{tabular}
     \caption{Parameters and notations}
     \label{parameters_correspondence}
 \end{table}
+% some here are not parameters, and will have to be removed
 
 \subsection{Evolution of strategies}
-% here we describe fitness as EMA, the GA operators, what the GA imitates (learning, imitation).
+The main contribution of this model is to emphasise the evolution of strategies. This models funds, managers, who look at the profits and performance of other funds, and tend to imperfectly imitate stronger financial strategies. Each fund can also independently choose to marginally change its strategy, in an exploratory behavior.\\
+% some refs needed here to support that this behavior exists and is well documented
+
+First, we implement an \textit{hypermutation} operator in which insolvent agents are removed from the populations. Agents with wealth $W \leq 0$ disappear from the market, and are replaced by new individuals with random strategies and usual initial endowments.
+% they may have to be initialised only with cash because otherwise we are creating new asset shares ex nihilo.
+
+The \textit{fitness} variable looked at for imitation is the exponential moving average of profits $\eta(t)$. For an agent $i$ with current profit $\pi_i(t)$:
+
+\begin{equation}
+    \eta_i(t) =  \frac{2}{ \nu + 1} \left(\pi_i(t) -  \eta_i(t-1)\right) +  \eta_i(t-1)
+\end{equation}
+
+Where $\nu$ represents the length of the EMA, i.e. the number of day considered. Typical examples of EMAs are 10-day, 50-day or 200-day moving averages. Here, $\nu$ encodes a $\nu$-day EMA for profits. $2$ is chosen as an arbitrary smoothing factor.\\
+
+In this model, this imitation and exploration behavior are modeled using a genetic algorithm. We first operate a modified tournament \textit{selection} with probability $\varsigma$, the step in which each fund selects a few funds it will compare itself to. The number of selected funds in this tournament is equal to the tournament size $\tau$, set by default to 3. The $\tau$ randomly drawn funds are compared, and the one with the highest fitness is selected. The closer $\tau$ is to the population size $n$, the more reliable the tournament selection outputs the best performing strategy. For each agent $i$ in the population, a tournament selection is operated, and this agent $i$ will imitate the strategy $\theta$ of the highest fitness individual in this tournament.\\
+
+Once imitation by tournament selection is operated, we allow strategies to recombine together and explore alternative regions of the strategy space with probability $\rho$. This is the \textit{crossover} operator. In the population, pairs of individuals are gathered, such that each individual is the member of a single pair. For a pair with individuals $A$ and $B$ with respective strategies $^\theta_A$ and $\theta_B$, the resulting individuals $A'$ and $B'$ from the crossover operator are characterised by strategies:
+
+\begin{equation}
+    \theta_A' \sim \mathcal{U}([\min(\theta_A; \theta_B), \max(\theta_A; \theta_B)] 
+\end{equation}
+\begin{equation}
+    \theta_B' \sim \mathcal{U}([\min(\theta_A; \theta_B), \max(\theta_A; \theta_B)] 
+\end{equation}
+
+In other words, the resulting strategies from the crossover of $A$ and $B$ are uniformly drawn in the space of strategies bounded by the strategies of $A$ and $B$. If $A$ and $B$ had strategies $2$ and $4$, the possible integer strategies resulting from crossover would be $2, 3$ and $4$. For instance, $5$ would not be possible, as it lays outside of the space of strategies covered by the pair ($A,B$).\\
+
+Finally, marginal exploration behavior is allowed by the \textit{mutation} operator. With probability $\mu$, 
+
+% need a table to summarise the operators, their effects and parameters involved
+% add pseudocode?
+
+
+\subsection{Extending to multiple strategy types \& assets}
+% with value investors and noise traders
+% and mutliple assets
 
 \section{Numerical experiment: identifying the impact of evolution in market dynamics}
 % comparison between evolution and non evolution
