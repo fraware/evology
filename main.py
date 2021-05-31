@@ -127,10 +127,14 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         ''' G) Actions are now set. Update trading signals '''
         market.update_trading_signal(pop, price_history)
         
-        ''' H) Deduce excess demand ''' 
+        ''' H) Deduce excess demand and create an order book of ED functions of price''' 
+
         market.update_excess_demand(pop)
-        
-        ''' I) Clear the market ''' 
+        list_excess_demand_func = market.order_excess_demand(pop)
+        ''' list_excess_demand_func is now the list of ED functions '''
+        aggregate_ed = market.compute_aggregate_excess_demand(pop)
+
+        ''' I) Clear the market with the aggregate ED aggregate_ed ''' 
         # In progress with Maarten
         # Outputs new_price
         
@@ -162,4 +166,4 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         #         ind[1] -= 1
 
     
-    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history
+    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed

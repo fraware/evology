@@ -8,7 +8,7 @@ CROSSOVER_RATE = parameters.CROSSOVER_RATE
 MUTATION_RATE = parameters.MUTATION_RATE 
 
 
-initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history = main.main(1, CROSSOVER_RATE, MUTATION_RATE)
+initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed = main.main(1, CROSSOVER_RATE, MUTATION_RATE)
 
 # Plot population histograms at the start and at the end
 print("--------------------------")

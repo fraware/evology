@@ -104,8 +104,35 @@ def update_trading_signal(pop, price_history):
     return ind
 
 def update_excess_demand(pop):
+    # global list_excess_demand_func
+    
     for ind in pop:
         ind[6] = ind[1] * LAMBDA_TF * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind[5]) + 0.5)  - ind[3]
-    ''' This will need to add the division by the price '''
-    ''' This will probably have to be translated into a function '''
+    # ''' This will need to add the division by the price '''
+    # ''' This will probably have to be translated into a function '''
+
     return ind
+
+def order_excess_demand(pop):
+    list_excess_demand_func = []
+    for ind in pop:
+        def ed(price):
+            return ind[6] / price
+        list_excess_demand_func.append(ed)
+    return list_excess_demand_func
+
+def compute_aggregate_excess_demand(pop):
+    # def aggregate_ed(price):
+    #     return 0
+    # for i in range(len(list_excess_demand_func)):
+    #     def aggregate_ed(price):
+    #         return aggregate_ed(price) + list_excess_demand_func[i](price)
+    cum_sum = 0
+    for ind in pop:
+        cum_sum += ind[6]
+    def aggregate_ed(price):
+        return cum_sum / price
+    return aggregate_ed
+
+
+

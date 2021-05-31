@@ -2,7 +2,7 @@
 # !pip3 install --index-url https://test.pypi.org/simple/ eslpy --force --user
 import esl
 print(esl.version())
-!pip3 show eslpy
+# !pip3 show eslpy
 print(f"We are running version {esl.version()}")
 
 '''
