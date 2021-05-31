@@ -4,6 +4,7 @@ sns.set_theme(style="darkgrid")
 import numpy as np
 import genetic_algorithm_functions as ga
 import market as market
+import market_clearing as mc
 import parameters
 
 RANDOM_SEED = parameters.RANDOM_SEED
@@ -135,13 +136,11 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         aggregate_ed = market.compute_aggregate_excess_demand(pop)
 
         ''' I) Clear the market with the aggregate ED aggregate_ed ''' 
-        # In progress with Maarten
         # Outputs new_price
+         
+        price = mc.market_clearing_algorithm(price, aggregate_ed)
         
-        #temp
-        new_price = generationCounter
-        
-        price_history.append(new_price)
+        price_history.append(price)
         
         ''' J) Update inventories ''' 
         
