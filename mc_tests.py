@@ -2,8 +2,8 @@ current_price = 100
 def aggregated_ed(price):
     return 10 / price
 
-# !pip install eslpy
-# !pip3 install --index-url https://test.pypi.org/simple/ eslpy --force --user
+!pip install eslpy
+!pip3 install --index-url https://test.pypi.org/simple/ eslpy --force --user
 
 import esl
 # print(esl.version())
