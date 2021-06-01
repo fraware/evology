@@ -26,8 +26,10 @@
 #             You may obtain instructions to fulfill the attribution
 #             requirements in CITATION.cff
 #
+!pip install eslpy
+!pip3 install --index-url https://test.pypi.org/simple/ eslpy --force --user
 import esl
-
+!pip3 show eslpy
 print(f"We are running version {esl.version()}")
 
 
