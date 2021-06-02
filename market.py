@@ -60,7 +60,7 @@ def draw_dividend(DIVIDEND_GROWTH_RATE):
     return dividend, random_dividend
 
         
-def wealth_earnings(pop):
+def wealth_earnings(pop, dividend):
     # print(INTEREST_RATE)
     # print(REINVESTMENT_RATE)
     for ind in pop:
@@ -136,5 +136,8 @@ def compute_aggregate_excess_demand(pop):
         return ((cum_sum / price) - cum_own)
     return aggregate_ed
 
-
+def assign_assets (pop, price):
+    for ind in pop:
+        ind[3] += ind[6] / price - ind[3]
+    return ind
 

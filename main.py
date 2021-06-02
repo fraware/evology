@@ -4,7 +4,7 @@ sns.set_theme(style="darkgrid")
 import numpy as np
 import genetic_algorithm_functions as ga
 import market as market
-import market_clearing as mc
+# import market_clearing as mc
 import parameters
 
 RANDOM_SEED = parameters.RANDOM_SEED
@@ -44,7 +44,11 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     dividend = INITIAL_DIVIDEND
     dividend_history.append(INITIAL_DIVIDEND)
     
-    print(pop)
+    print("Initial population")
+    print(('{}\n'*len(pop)).format(*pop))
+    print("Agent representation")
+    print("[Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]")
+    print("[ 0       1     2    3     4         5             6           7            8 ]")
     
     fitnessValues = list(map(ga.toolbox.evaluate, pop))
     for individual, fitnessValue in zip(pop, fitnessValues):
@@ -61,18 +65,19 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     agent0_ema.append(pop[0][8])
     
     while generationCounter < MAX_GENERATIONS:
-        print("--------------------------")
+        print("----------------------------------------------------------------------")
         print("Generation " + str(generationCounter))
-        
+        print(('{}\n'*len(pop)).format(*pop))
         
         ''' A) Draw dividends '''       
         DIVIDEND_GROWTH_RATE = market.determine_dividend_growth(DIVIDEND_GROWTH_RATE_G)
         dividend, random_dividend = market.draw_dividend(DIVIDEND_GROWTH_RATE)
         dividend_history.append(dividend)
+        print("dividend is " + str(dividend))
         random_dividend_history.append(random_dividend)
         
         ''' B) Apply dividends, interest rate and reinvestment, update profit '''
-        market.wealth_earnings(pop)
+        market.wealth_earnings(pop, dividend)
         
         ''' C) Update wealth sum as a function of price '''
         market.update_wealth(pop, price) 
@@ -92,7 +97,9 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
             individual.fitness.values = fitnessValue
         fitnessValues = [individual.fitness.values[0] for individual in pop]
         #turn this into a one-line function?
-        print(pop)
+        
+        print("After fitness, dividends, wealth, hypermuation updates")
+        print(('{}\n'*len(pop)).format(*pop))
         # print(fitnessValues)
         
         '''  F) GA evolution of strategies with last period fitness  '''
@@ -101,8 +108,8 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         if selection_proba == 1:
             offspring = ga.toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
            
-            print("offspring")
-            print(offspring)
+            # print("offspring")
+            # print(offspring)
             ga.fitness_for_invalid(offspring)
             offspring = list(map(ga.toolbox.clone, offspring))
             
@@ -138,12 +145,11 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         ''' I) Clear the market with the aggregate ED aggregate_ed ''' 
         # Outputs new_price
          
-        price = mc.clear(aggregate_ed)
-        
+        ''' price = mc.clear(aggregate_ed) WIP '''
         price_history.append(price)
         
         ''' J) Update inventories ''' 
-        
+        market.assign_assets(pop, price)
         
         ''' K) Record results '''
         maxFitness = max(fitnessValues)
