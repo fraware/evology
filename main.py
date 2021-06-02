@@ -141,6 +141,9 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         list_excess_demand_func = market.order_excess_demand(pop)
         ''' list_excess_demand_func is now the list of ED functions '''
         aggregate_ed = market.compute_aggregate_excess_demand(pop)
+        
+        print("After trading signal, GA, ED update, right before clearing")
+        print(('{}\n'*len(pop)).format(*pop))
 
         ''' I) Clear the market with the aggregate ED aggregate_ed ''' 
         # Outputs new_price
