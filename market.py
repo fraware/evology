@@ -107,7 +107,7 @@ def update_excess_demand(pop):
     # global list_excess_demand_func
     
     for ind in pop:
-        ind[6] = ind[1] * LAMBDA_TF * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind[5]) + 0.5)  - ind[3]
+        ind[6] = ind[1] * LAMBDA_TF * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind[5]) + 0.5)
     # ''' This will need to add the division by the price '''
     # ''' This will probably have to be translated into a function '''
 
@@ -128,10 +128,12 @@ def compute_aggregate_excess_demand(pop):
     #     def aggregate_ed(price):
     #         return aggregate_ed(price) + list_excess_demand_func[i](price)
     cum_sum = 0
+    cum_own = 0
     for ind in pop:
         cum_sum += ind[6]
+        cum_own += ind[3]
     def aggregate_ed(price):
-        return cum_sum / price
+        return ((cum_sum / price) - cum_own)
     return aggregate_ed
 
 

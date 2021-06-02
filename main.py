@@ -138,7 +138,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         ''' I) Clear the market with the aggregate ED aggregate_ed ''' 
         # Outputs new_price
          
-        price = mc.market_clearing_algorithm(price, aggregate_ed)
+        price = mc.clear(aggregate_ed)
         
         price_history.append(price)
         
