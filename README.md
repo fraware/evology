@@ -6,5 +6,5 @@
 
 Todo
 
-- Market clearing 
+- Market clearing (stage I)
 - Short selling needs to be handled in some way (loans, margin)
