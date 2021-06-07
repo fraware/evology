@@ -1,24 +1,15 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jun  7 08:38:08 2021
-
-@author: aymer
-"""
-
 """
     Provides a very high-level convenience function for a very general EA,
     ea_solve().
 """
 from matplotlib import pyplot as plt
-
+import individual
+import representation
 from leap_ec import ops, probe
 from leap_ec.algorithm import generational_ea
-from leap_ec.real_rep.ops import mutate_gaussian
-from leap_ec.representation import Representation
-from leap_ec.individual import Individual
 from leap_ec.problem import FunctionProblem
-from leap_ec.decoder import IdentityDecoder
-from leap_ec.real_rep.initializers import create_real_vector
+import initializers
+from leap_ec.real_rep.ops import mutate_gaussian
 
 
 ##############################
@@ -85,13 +76,13 @@ def ea_solve(function, bounds, generations=100, pop_size=2,
         plot_probe = probe.FitnessPlotProbe(ylim=viz_ylim, ax=plt.gca())
         pipeline.append(plot_probe)
 
-    ea = generational_ea(generations=generations, pop_size=pop_size,
+    ea = generational_ea(max_generations=generations,
+                         pop_size=pop_size,
                          problem=FunctionProblem(function, maximize),
 
-                         representation=Representation(
-                             individual_cls=Individual,
-                             decoder=IdentityDecoder(),
-                             initialize=create_real_vector(bounds=bounds)
+                         representation=representation.Representation(
+                             individual_cls=individual,
+                             initialize=initializers.create_real_vector(bounds=bounds)
                          ),
 
                          pipeline=pipeline)
@@ -107,4 +98,13 @@ def ea_solve(function, bounds, generations=100, pop_size=2,
 
 def f(x):
     return sum(x)**2
-ea_solve(f, bounds=[(4, 5.12) for i in range(1)], maximize=False, hard_bounds = True)
+ea_solve(f, bounds=[(4, 5.12) for i in range(1)], maximize=False, hard_bounds = True, mutation_std = 0)
+
+
+from leap_ec.simple import ea_solve
+
+def f(x):
+    """A real-valued function to optimized."""
+    return sum(x)**2
+
+ea_solve(f, bounds=[(4, 5.12) for _ in range(1)], maximize=False, mutation_std = 0, pop_size = 100)
