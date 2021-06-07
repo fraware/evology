@@ -136,8 +136,15 @@ def compute_aggregate_excess_demand(pop):
         return ((cum_sum / price) - cum_own)
     return aggregate_ed
 
-def assign_assets (pop, price):
+def update_inventory (pop, price):
     for ind in pop:
+        former_asset = ind[3]
+        former_loan = ind[4]
+        
+        # Update new asset shares
         ind[3] = ind[6] / price + ind[3]
+        
+        # Update new cash 
+        ind[2] = ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan
     return ind
 

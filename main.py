@@ -152,7 +152,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         price_history.append(price)
         
         ''' J) Update inventories ''' 
-        market.assign_assets(pop, price)
+        market.update_inventory(pop, price)
         
         ''' K) Record results '''
         maxFitness = max(fitnessValues)
