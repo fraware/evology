@@ -47,7 +47,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     print("Initial population")
     print(('{}\n'*len(pop)).format(*pop))
     print("Agent representation")
-    print("[Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]")
+    print("[Theta Wealth Cash Asset Loan TradingSignal RawExcessDemand     Profit     EMA profit]")
     print("[ 0       1     2    3     4         5             6           7            8 ]")
     
     fitnessValues = list(map(ga.toolbox.evaluate, pop))
@@ -77,7 +77,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         random_dividend_history.append(random_dividend)
         
         ''' B) Apply dividends, interest rate and reinvestment, update profit '''
-        market.wealth_earnings(pop, dividend)
+        # market.wealth_earnings(pop, dividend)
         
         ''' C) Update wealth sum as a function of price '''
         market.update_wealth(pop, price) 

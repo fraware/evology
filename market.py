@@ -117,7 +117,7 @@ def order_excess_demand(pop):
     list_excess_demand_func = []
     for ind in pop:
         def ed(price):
-            return ind[6] / price
+            return ind[6] / price - ind[3]
         list_excess_demand_func.append(ed)
     return list_excess_demand_func
 
@@ -138,6 +138,6 @@ def compute_aggregate_excess_demand(pop):
 
 def assign_assets (pop, price):
     for ind in pop:
-        ind[3] += ind[6] / price - ind[3]
+        ind[3] = ind[6] / price + ind[3]
     return ind
 
