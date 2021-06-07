@@ -9,6 +9,9 @@ style=alphabetic,
 sorting=ynt
 ]{biblatex}
 \addbibresource{bibliography.bib}
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 \title{Evolutionary market ecologies \\ Model \& Numerical experiments}
 \author{Aymeric Vi\'{e}}
@@ -59,11 +62,16 @@ Once the trading signals have been updated, the agents express their excess dema
 
 \begin{equation}
 \label{excess_demand_equation}
-   E_i(t) = \frac{W_i(t) {\lambda_i}}{p(t)} \left( \tanh{({c} \phi_i(t)}) + \frac{1}{2} \right) - S_i(t)
+   E_i(t, p(t)) = \frac{W_i(t) {\lambda_i}}{p(t)} \left( \tanh{({c} \phi_i(t)}) + \frac{1}{2} \right) - S_i(t)
 \end{equation}
 
 The use of $\tanh$ ensures that the function is bounded and differentiable, for the use of the market clearing algorithm. $c$ denotes the aggressiveness of the agent strategic response, i.e. how much its demand is sensitive to the trading signal. $\lambda$ is the agent leverage. The term $\frac{1}{2}$ ensures that when the agent is indifferent to assets (i.e. when $\phi(t) = 0$), then the agent equally splits its wealth into cash and asset shares.
 
+Agent $i$'s wealth $W_i(t)$ evaluated at time $t$ is computed with:
+\begin{equation}
+    W_i(t) = C(t) + S(t)p(t) - L(t)
+\end{equation}
+ 
 \subsection{Market clearing}
 
 Once all agents have formulated their excess demand functions as a function of the unknown current price $p(t)$, we use Walrasian market clearing to identify the clearing price, as described in \cite{scholl2020market}. In short, excess demands of all agents $a$ in the population $ \mathcal{A}$ are submitted to a price maker agent who attempts to find the root of the aggregate demand, i.e. the price such that the aggregate excess demand is equal to 0.
@@ -80,7 +88,32 @@ If such root does not exist, the price maker instead minimises the mismatch betw
 \min_p\left(\sum_{a \in, \mathcal{A}} E_{a}(p)\right)^{2}
 \end{equation}
 
-This process allows to pin down the clearing price $p(t)$. We can thus compute the realised demands of the agents, update their asset shares ownership, wealth and profit. The agents receive dividends $D(t)$ in proportion of their asset shares, receive interest $r$ on their cash. Finally, investment inflows and outflows are modelled by the reinvestment parameter $f$, which is the multiplier of the agent profit, i.e. $W(t+1) - W(t)$. For $f > 1$, profits cause an inflow in capital. When $f < 1$, profits cause investors to withdraw funds from the agent-fund; finally, when $f=1$, no particular reinvestment dynamic occurs. 
+This process allows to pin down the clearing price $p(t)$. We can thus compute the realised demands of the agents, update their asset shares ownership, wealth and profit. The agents receive dividends $D(t)$ in proportion of their asset shares, receive interest $r$ on their cash. Finally, investment inflows and outflows are modelled by the reinvestment parameter $f$, which is the multiplier of the agent profit, i.e. $W(t+1) - W(t)$. For $f > 1$, profits cause an inflow in capital. When $f < 1$, profits cause investors to withdraw funds from the agent-fund; finally, when $f=1$, no particular reinvestment dynamic occurs. \\
+
+Once the clearing price $p^* = \argmin \left(\sum_{a \in, \mathcal{A}} E_{a}(p)\right)^{2} $ has been determined, we update the inventories of the agents.
+First, the number of asset shares the agents own is determined as:
+
+\begin{equation}
+    S_i(t+1) = E_i(t, p^*) + S_i(t)
+\end{equation}
+
+In general, the fixed supply constraint should hold for any $t$:
+
+\begin{equation}
+    \sum_i S_i(t) = Q
+\end{equation}
+
+The new cash is:
+
+\begin{equation}
+    C(t+1) = C(t) - (S(t+1) - S(t))p(t+1) - L(t+1) + L(t)
+\end{equation}
+
+Debt
+
+% Debt is taken on when using leverage > 1 or leverage < -1. For long positions S(t) > 0 and we have L(t) = max(0, -(W(t-1) - S(t)p(t))). For short positions S(t) < 0, we have L(t) = max(0, -(W(t-1) + S(t)p(t))). From this, we should be able to buy W/p units without borrowing, and when short-selling we are restricted to short sell at most W/p units without borrowing. This is restricting the usage of the cash obtained from short-selling for something else (should we for example introduce more assets, we can not use the new cash to buy many other assets without violating leverage constraints).
+
+% Margin M(t)  is something for the balance sheet only, it tracks the current value of the debt min(0, S(t))p(t). When you create the short position at time t, you sell some amount of stock for cash. This increases the pile of cash (see equation for C(t+1)), but it increases L(t) at the same time. Thus it would cancel out in the wealth equation. 
 
 \begin{table}[]
     \centering
