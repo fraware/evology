@@ -1,4 +1,9 @@
-''' from leap_ec.simple import ea_solve '''
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jun  7 08:38:08 2021
+
+@author: aymer
+"""
 
 """
     Provides a very high-level convenience function for a very general EA,
@@ -19,7 +24,7 @@ from leap_ec.real_rep.initializers import create_real_vector
 ##############################
 # Function ea_solve()
 ##############################
-def ea_solve_verbose_false(function, bounds, generations=100, pop_size=2,
+def ea_solve(function, bounds, generations=100, pop_size=2,
              mutation_std=1.0, maximize=False, viz=False, viz_ylim=(0, 1),
              hard_bounds=True):
     """Provides a simple, top-level interfact that optimizes a real-valued
@@ -35,7 +40,30 @@ def ea_solve_verbose_false(function, bounds, generations=100, pop_size=2,
     :param bool viz: whether to display a live best-of-generation plot
     :param bool hard_bounds: if True, bounds are enforced at all times during
         evolution; otherwise they are only used to initialize the population.
-"""
+    :param (float, float) viz_ylim: initial bounds to use of the plots
+        vertical axis
+    The basic call includes instrumentation that prints the best-so-far fitness
+    value of each generation to stdout:
+    >>> from leap_ec.simple import ea_solve
+    >>> ea_solve(sum, bounds=[(0, 1)]*5) # doctest:+ELLIPSIS
+    generation, bsf
+    0, ...
+    1, ...
+    ...
+    100, ...
+    [..., ..., ..., ..., ...]
+    When `viz=True`, a live BSF plot will also display:
+    >>> ea_solve(sum, bounds=[(0, 1)]*5, viz=True) # doctest:+ELLIPSIS
+    generation, bsf
+    0, ...
+    1, ...
+    ...
+    100, ...
+    [..., ..., ..., ..., ...]
+    .. plot::
+        from leap_ec.simple import ea_solve
+        ea_solve(sum, bounds=[(0, 1)]*5, viz=True)
+    """
 
     if hard_bounds:
         mutation_op = mutate_gaussian(std=mutation_std, hard_bounds=bounds,
@@ -53,9 +81,9 @@ def ea_solve_verbose_false(function, bounds, generations=100, pop_size=2,
         ops.pool(size=pop_size)
     ]
 
-    # if viz:
-    #     plot_probe = probe.FitnessPlotProbe(ylim=viz_ylim, ax=plt.gca())
-    #     pipeline.append(plot_probe)
+    if viz:
+        plot_probe = probe.FitnessPlotProbe(ylim=viz_ylim, ax=plt.gca())
+        pipeline.append(plot_probe)
 
     ea = generational_ea(generations=generations, pop_size=pop_size,
                          problem=FunctionProblem(function, maximize),
@@ -69,9 +97,14 @@ def ea_solve_verbose_false(function, bounds, generations=100, pop_size=2,
                          pipeline=pipeline)
 
     best_genome = None
-    # print('generation, bsf')
+    print('generation, bsf')
     for g, ind in ea:
-        # print(f"{g}, {ind.fitness}")
+        print(f"{g}, {ind.fitness}")
         best_genome = ind.genome
 
     return best_genome
+
+
+def f(x):
+    return sum(x)**2
+ea_solve(f, bounds=[(4, 5.12) for i in range(1)], maximize=False, hard_bounds = True)
