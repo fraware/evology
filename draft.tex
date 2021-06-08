@@ -13,6 +13,9 @@ sorting=ynt
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms 
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx 
+\newcommand{\var}[1]{{\ttfamily#1}}% variable 
 
 \title{Evolutionary market ecologies \\ Model \& Numerical experiments}
 \author{Aymeric Vi\'{e}}
@@ -200,28 +203,20 @@ In other words, the resulting strategies from the crossover of $A$ and $B$ are u
 % need a clear plan, not necessarily all finished, but at least for what's unclear (how many repetitions? How many agents?), some ideas to clear this out.
 
 
+% Necessary condition: running GA with complete market structure
+% To implement:
+% \begin{itemize}
+%     \item Observe market dynamics over time (easy): price, returns, assets, volatility, dividends, profits
+%     \item Observe ecology dynamics over time (hard): proportions? heatmap? Add entropy?
+%     Perhaps H (for max time horizon) plots with clear color codes (like jet) over time, and hopefully we see something clear happen.
+%     \item Develop a GUI or something nice/updating itself over time to observe that?
+% \end{itemize}
 
-\section{Preamble: baseline configuration}
+% \section{Trend follower market ecology}
 
-Necessary condition: running GA with complete market structure
-Objective: be as close as possible to Maarten's paper configuration, notably for market environment parameters.
-Add Agent leverage, aggressiveness of response to be closer to Maarten
-\section{Preamble 2: observables}
+% Necessary condition: a running GA with a single asset, market clearing, and adequate starting conditions, and the baseline configuration.
 
-Necessary condition: running GA with complete market structure
-To implement:
-\begin{itemize}
-    \item Observe market dynamics over time (easy): price, returns, assets, volatility, dividends, profits
-    \item Observe ecology dynamics over time (hard): proportions? heatmap? Add entropy?
-    Perhaps H (for max time horizon) plots with clear color codes (like jet) over time, and hopefully we see something clear happen.
-    \item Develop a GUI or something nice/updating itself over time to observe that?
-\end{itemize}
 
-\section{Trend follower market ecology}
-
-Necessary condition: a running GA with a single asset, market clearing, and adequate starting conditions, and the baseline configuration.
-
-\subsection{Influence of learning vs non-learning}
 The non-lerning case (replacement dynamics only) can be illustrated with:
 \begin{itemize}
     \item No selection (selection rate equal to 0)
