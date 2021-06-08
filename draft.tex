@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{url}
 \usepackage{hyperref}
+\usepackage{xcolor}
 \newcommand{\code}{\texttt}
 \usepackage[
 backend=biber,
@@ -29,7 +30,7 @@ sorting=ynt
 
 \subsection{Initialisation}
 
-We first create a population of $n$ trend-following agents, at time $t=0$. Each agent $i$ is described by its strategy $\theta_i(0)$, initial cash $C_i(0)$, initial assets $S_i(0)$. The $\theta$ parameter describes the time horizon on which the trend following strategy is based (Equation \ref{trend_following_equation}). Initial strategies are drawn uniformly in $(1,H]$, where $H$ is the maximum possible time horizon. \par
+We first create a population of $n$ trend-following agents, at time $t=0$. Each agent $i$ is described by its strategy $\theta_i(0)$, initial cash $C_i(0)$, initial assets $S_i(0)$. The $\theta$ parameter describes the time horizon on which the trend following strategy is based (Equation \ref{trend_following_equation}). Initial strategies are drawn uniformly in $[2,H]$, where $H$ is the maximum possible time horizon. \par
 Values for initial endowments of the agents meet the $\$100M$ Securities and Exchange Commission threshold for institutional investment managers, that are equally split in cash and asset shares. 
 
 \subsection{Market structure}
@@ -69,7 +70,7 @@ The use of $\tanh$ ensures that the function is bounded and differentiable, for 
 
 Agent $i$'s wealth $W_i(t)$ evaluated at time $t$ is computed with:
 \begin{equation}
-    W_i(t) = C(t) + S(t)p(t) - L(t)
+    W_i(t) = C_i(t) + S_i(t)p(t) - L_i(t)
 \end{equation}
  
 \subsection{Market clearing}
@@ -88,7 +89,7 @@ If such root does not exist, the price maker instead minimises the mismatch betw
 \min_p\left(\sum_{a \in, \mathcal{A}} E_{a}(p)\right)^{2}
 \end{equation}
 
-This process allows to pin down the clearing price $p(t)$. We can thus compute the realised demands of the agents, update their asset shares ownership, wealth and profit. The agents receive dividends $D(t)$ in proportion of their asset shares, receive interest $r$ on their cash. Finally, investment inflows and outflows are modelled by the reinvestment parameter $f$, which is the multiplier of the agent profit, i.e. $W(t+1) - W(t)$. For $f > 1$, profits cause an inflow in capital. When $f < 1$, profits cause investors to withdraw funds from the agent-fund; finally, when $f=1$, no particular reinvestment dynamic occurs. \\
+This process allows to pin down the clearing price $p^* = p(t+1)$. We can thus compute the realised demands of the agents, update their asset shares ownership, wealth and profit. The agents receive dividends $D(t)$ in proportion of their asset shares, receive interest $r$ on their cash. Finally, investment inflows and outflows are modelled by the reinvestment parameter $f$, which is the multiplier of the agent profit, i.e. $W(t+1) - W(t)$. For $f > 1$, profits cause an inflow in capital. When $f < 1$, profits cause investors to withdraw funds from the agent-fund; finally, when $f=1$, no particular reinvestment dynamic occurs. \\
 
 Once the clearing price $p^* = \argmin \left(\sum_{a \in, \mathcal{A}} E_{a}(p)\right)^{2} $ has been determined, we update the inventories of the agents.
 First, the number of asset shares the agents own is determined as:
@@ -109,7 +110,20 @@ The new cash is:
     C(t+1) = C(t) - (S(t+1) - S(t))p(t+1) - L(t+1) + L(t)
 \end{equation}
 
-Debt
+\textbf{Margin}
+
+When the agent enters into a short position (i.e. $S(t+1) = E(t,p(t+1)) - S(t) < 0$ , it sells asset shares that it does not own. Its cash grows by $p(t+1)S(t+1)$, but the agent enters into debt, as it must buy later $S(t+1)$ assets to return them to the lender.
+
+\textcolor{red}{WFF}
+
+% In order to guarantee that the short-selling fund can
+% return the borrowed securities to the lender at a later time, the fund
+% sets aside a margin amount M equal to the current market value
+% of the borrowings, in the form of cash.
+
+% - Why the current values? Would it make sense for the agent to remember that it must return S securities, regardless of their price?
+% - If the margin amount is set aside in the form of cash, Cash increases by $p(t+1)E(t,p(t+1))$ but decreases by $p(t+1)E(t,p(t+1))$ to fuel the Margin, hence no benefit was done? (unless we automatically return the borrowed assets in the next period at a lower price?)
+% - How is returning borrowed securities handled? Does this happen automatically at the next period after short selling? Related question: as Margin does not appear in the wealth equation, how is it impacting the agent?
 
 % Debt is taken on when using leverage > 1 or leverage < -1. For long positions S(t) > 0 and we have L(t) = max(0, -(W(t-1) - S(t)p(t))). For short positions S(t) < 0, we have L(t) = max(0, -(W(t-1) + S(t)p(t))). From this, we should be able to buy W/p units without borrowing, and when short-selling we are restricted to short sell at most W/p units without borrowing. This is restricting the usage of the cash obtained from short-selling for something else (should we for example introduce more assets, we can not use the new cash to buy many other assets without violating leverage constraints).
 
@@ -145,11 +159,10 @@ Debt
 % some here are not parameters, and will have to be removed
 
 \subsection{Evolution of strategies}
-The main contribution of this model is to emphasise the evolution of strategies. This models funds, managers, who look at the profits and performance of other funds, and tend to imperfectly imitate stronger financial strategies. Each fund can also independently choose to marginally change its strategy, in an exploratory behavior.\\
+The main contribution of this model is to emphasise the evolution of strategies. This models funds, managers, who look at the profits and performance of other funds, and tend to imperfectly imitate stronger financial strategies. Each fund can also independently choose to marginally change its strategy, in an exploratory behavior. First, insolvent funds cannot influence the evolution of others, and are withdrawn from the market with the \textit{hypermutation} operator. Then, during \textit{selection}, funds choose some other funds to compare their profits and strategy with. \textit{Fitness} defines the objective used for this comparison. Combining the strategy of the best observed fund with theirs happens during \textit{crossover}. Finally, \textit{mutation} allows funds to slightly adjust their strategy as small exploratory jumps.\\
 % some refs needed here to support that this behavior exists and is well documented
 
-First, we implement an \textit{hypermutation} operator in which insolvent agents are removed from the populations. Agents with wealth $W \leq 0$ disappear from the market, and are replaced by new individuals with random strategies and usual initial endowments.
-% they may have to be initialised only with cash because otherwise we are creating new asset shares ex nihilo.
+\paragraph{Hypermutation} First, we implement an \textit{hypermutation} operator in which insolvent agents are removed from the populations. Agents with wealth $W \leq 0$ disappear from the market, and are replaced by new individuals with random strategies and usual initial endowments.
 
 The \textit{fitness} variable looked at for imitation is the exponential moving average of profits $\eta(t)$. For an agent $i$ with current profit $\pi_i(t)$:
 
@@ -159,9 +172,9 @@ The \textit{fitness} variable looked at for imitation is the exponential moving 
 
 Where $\nu$ represents the length of the EMA, i.e. the number of day considered. Typical examples of EMAs are 10-day, 50-day or 200-day moving averages. Here, $\nu$ encodes a $\nu$-day EMA for profits. $2$ is chosen as an arbitrary smoothing factor.\\
 
-In this model, this imitation and exploration behavior are modeled using a genetic algorithm. We first operate a modified tournament \textit{selection} with probability $\varsigma$, the step in which each fund selects a few funds it will compare itself to. The number of selected funds in this tournament is equal to the tournament size $\tau$, set by default to 3. The $\tau$ randomly drawn funds are compared, and the one with the highest fitness is selected. The closer $\tau$ is to the population size $n$, the more reliable the tournament selection outputs the best performing strategy. For each agent $i$ in the population, a tournament selection is operated, and this agent $i$ will imitate the strategy $\theta$ of the highest fitness individual in this tournament.\\
+\paragraph{Selection} In this model, this imitation and exploration behavior are modeled using a genetic algorithm. We first operate a modified tournament \textit{selection} with probability $\varsigma$, the step in which each fund selects a few funds it will compare itself to. The number of selected funds in this tournament is equal to the tournament size $\tau$, set by default to 3. The $\tau$ randomly drawn funds are compared, and the one with the highest fitness is selected. The closer $\tau$ is to the population size $n$, the more reliable the tournament selection outputs the best performing strategy. For each agent $i$ in the population, a tournament selection is operated, and this agent $i$ will imitate the strategy $\theta$ of the highest fitness individual in this tournament.\\
 
-Once imitation by tournament selection is operated, we allow strategies to recombine together and explore alternative regions of the strategy space with probability $\rho$. This is the \textit{crossover} operator. In the population, pairs of individuals are gathered, such that each individual is the member of a single pair. For a pair with individuals $A$ and $B$ with respective strategies $^\theta_A$ and $\theta_B$, the resulting individuals $A'$ and $B'$ from the crossover operator are characterised by strategies:
+\paragraph{Crossover} Once imitation by tournament selection is operated, we allow strategies to recombine together and explore alternative regions of the strategy space with probability $\rho$. This is the \textit{crossover} operator. In the population, pairs of individuals are gathered, such that each individual is the member of a single pair. For a pair with individuals $A$ and $B$ with respective strategies $^\theta_A$ and $\theta_B$, the resulting individuals $A'$ and $B'$ from the crossover operator are characterised by strategies:
 
 \begin{equation}
     \theta_A' \sim \mathcal{U}([\min(\theta_A; \theta_B), \max(\theta_A; \theta_B)] 
@@ -172,7 +185,7 @@ Once imitation by tournament selection is operated, we allow strategies to recom
 
 In other words, the resulting strategies from the crossover of $A$ and $B$ are uniformly drawn in the space of strategies bounded by the strategies of $A$ and $B$. If $A$ and $B$ had strategies $2$ and $4$, the possible integer strategies resulting from crossover would be $2, 3$ and $4$. For instance, $5$ would not be possible, as it lays outside of the space of strategies covered by the pair ($A,B$).\\
 
-Finally, marginal exploration behavior is allowed by the \textit{mutation} operator. With probability $\mu$, 
+\paragraph{Mutation} Finally, marginal exploration behavior is allowed by the \textit{mutation} operator. With probability $\mu$, the strategy $\theta$ of the agent changes by $+1$ or $-1$, with equal probabilities. The mutation operator is constrained such that the mutated strategy stays within the feasible strategies $[2, H]$. 
 
 % need a table to summarise the operators, their effects and parameters involved
 % add pseudocode?
