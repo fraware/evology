@@ -56,7 +56,7 @@ def draw_dividend(DIVIDEND_GROWTH_RATE):
     # wiener.append(random_dividend)
     
     dividend = abs(dividend + DIVIDEND_GROWTH_RATE * dividend + DIVIDEND_GROWTH_VOLATILITY * dividend * random_dividend)
-    
+    dividend = truncate(dividend, 3)
     return dividend, random_dividend
 
         

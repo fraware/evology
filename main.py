@@ -36,6 +36,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     dividend_history = []
     random_dividend_history = []
     price_history = []
+    generation_history = []
 
     
     # Temp
@@ -43,7 +44,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     agent0_ema = []
     
     dividend = INITIAL_DIVIDEND
-    dividend_history.append(INITIAL_DIVIDEND)
+    # dividend_history.append(INITIAL_DIVIDEND)
     
     print("Initial population")
     print(('{}\n'*len(pop)).format(*pop))
@@ -60,7 +61,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     meanFitness = sum(fitnessValues) / len(pop)
     maxFitnessValues.append(maxFitness)
     meanFitnessValues.append(meanFitness)
-    replacements.append(0)
+    # replacements.append(0)
     # Temp
     agent0_profit.append(pop[0][7])
     agent0_ema.append(pop[0][8])
@@ -167,6 +168,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         #  Could this print results be automated? We have it twice
         
         print("- Generation {}: Max Fitness = {}, Avg Fitness = {}".format(generationCounter, maxFitness, meanFitness))
+        generation_history.append(generationCounter)
         generationCounter += 1
                 
         # Temporary function to apply some fixed cost
@@ -174,7 +176,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         #     for ind in pop:
         #         ind[1] -= 1
 
-        # XYZ = data.generate_df()
+        df = data.generate_df(generation_history, price_history, dividend_history, replacements)
     # return 
     
-    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed
+    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
