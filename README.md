@@ -8,7 +8,8 @@
 
 - [WFF] Market clearing (stage I)
 - [WFF] Short selling needs to be handled in some way (loans, margin)
-- Main output must be a workable dataframe
+
+- [WIP] Main output must be a workable dataframe // continue adding columns until we can work with df only as output
 
 ## Notes
 
