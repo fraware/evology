@@ -4,10 +4,11 @@
 - Trading signal, excess demand work well (02.06.21)
 - For positive ED, reassignment to assets works well (02.06.21)
 
-## Todo
+## Todo-ongoing
 
 - [WFF] Market clearing (stage I)
 - [WFF] Short selling needs to be handled in some way (loans, margin)
+- Main output must be a workable dataframe
 
 ## Notes
 
