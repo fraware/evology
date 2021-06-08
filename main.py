@@ -6,6 +6,7 @@ import genetic_algorithm_functions as ga
 import market as market
 # import market_clearing as mc
 import parameters
+import data
 
 RANDOM_SEED = parameters.RANDOM_SEED
 POPULATION_SIZE = parameters.POPULATION_SIZE
@@ -173,5 +174,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         #     for ind in pop:
         #         ind[1] -= 1
 
+        # XYZ = data.generate_df()
+    # return 
     
     return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed
