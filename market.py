@@ -50,7 +50,7 @@ def draw_dividend(DIVIDEND_GROWTH_RATE):
     global dividend
     global random_dividend
     
-    random_dividend = random.normalvariate(0, 1)
+    random_dividend = truncate(random.normalvariate(0, 1),3)
     if len(random_dividend_history) > DIVIDEND_ATC_TAU:
         random_dividend = (1 - DIVIDEND_AUTOCORRELATION ** 2) * random_dividend + DIVIDEND_AUTOCORRELATION * random_dividend_history[len(random_dividend_history) - 1 - DIVIDEND_ATC_TAU]
     # wiener.append(random_dividend)

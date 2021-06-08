@@ -176,7 +176,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         #     for ind in pop:
         #         ind[1] -= 1
 
-        df = data.generate_df(generation_history, price_history, dividend_history, replacements)
+        df = data.generate_df(generation_history, price_history, dividend_history, random_dividend_history, replacements)
     # return 
     
     return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
