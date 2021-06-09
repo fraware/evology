@@ -135,7 +135,7 @@ def hypermutate(pop):
     pop_temp = list(map(toolbox.clone, pop))
     
     for i in range(0, len(pop_temp)):
-        if pop_temp[i][1] <= 0:
+        if pop_temp[i][1] + pop_temp[i][9] <= 0:
             pop_temp[i] = toolbox.generate_individual()
             del pop_temp[i].fitness.values
             global round_replacements

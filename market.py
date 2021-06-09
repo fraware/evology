@@ -140,11 +140,21 @@ def update_inventory (pop, price):
     for ind in pop:
         former_asset = ind[3]
         former_loan = ind[4]
+        realised_ed = ind[6] / price + ind[3]
         
         # Update new asset shares
-        ind[3] = ind[6] / price + ind[3]
+        ind[3] = realised_ed
+        
+        # If short selling, set some margin aside
+        if ind[3] < 0:
+            ind[9] += ind[3] * price
         
         # Update new cash 
-        ind[2] = ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan
+        ind[2] = ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan - ind[9]
+        
+        #	 Clear the margin if we are out of the short position
+        if ind[3] >= 0:
+            ind[2] += ind[9]
+            ind[9] = 0
     return ind
 
