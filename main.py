@@ -49,8 +49,8 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     print("Initial population")
     print(('{}\n'*len(pop)).format(*pop))
     print("Agent representation")
-    print("[Theta Wealth Cash Asset Loan TradingSignal RawExcessDemand     Profit     EMA profit]")
-    print("[ 0       1     2    3     4         5             6           7            8 ]")
+    print("[Theta Wealth Cash Asset Loan TradingSignal RawExcessDemand     Profit     EMA profit   Margin]")
+    print("[ 0       1     2    3     4         5             6           7            8              9]")
     
     fitnessValues = list(map(ga.toolbox.evaluate, pop))
     for individual, fitnessValue in zip(pop, fitnessValues):

@@ -47,11 +47,12 @@ toolbox.register("generate_trading_signal", random.randint, 0, 0)
 toolbox.register("generate_excess_demand", random.randint, 0, 0)
 toolbox.register("generate_profit", random.randint, 0, 0)
 toolbox.register("generate_ema", random.randint, 0, 0)
+toolbox.register("generate_margin", random.randint, 0, 0)
 
 toolbox.register("generate_individual", tools.initCycle, creator.individual, 
                  (toolbox.generate_strategy, toolbox.generate_wealth, toolbox.generate_cash, 
                   toolbox.generate_asset, toolbox.generate_loan, toolbox.generate_trading_signal, 
-                  toolbox.generate_excess_demand,toolbox.generate_profit,toolbox.generate_ema), n=1)
+                  toolbox.generate_excess_demand,toolbox.generate_profit,toolbox.generate_ema, toolbox.generate_margin), n=1)
 toolbox.register("population_creation", tools.initRepeat, list, toolbox.generate_individual)
 
 '''
@@ -121,7 +122,7 @@ def selTournament(individuals, k, tournsize, fit_attr="fitness"):
         aspirants = selRandom(individuals, tournsize-1) 
         aspirants.append(individuals[i])
         chosen_i = max(aspirants, key=attrgetter(fit_attr))
-        chosen_i[1:9] = individuals[i][1:9]
+        chosen_i[1:10] = individuals[i][1:10]
         chosen.append(chosen_i)
     return chosen
 
