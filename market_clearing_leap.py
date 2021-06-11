@@ -1,10 +1,5 @@
 import market
-
-# def aggregate_ed(values):
-#     # return (3 * x - 10) for x in values
-
-#     return sum([3 * x - 10 for x in values])
-# price = 1
+import numpy as np
 
 '''
 Here is a simple optimisation solver for the market clearing algorithm. 
@@ -12,8 +7,6 @@ We minimise the squared of aggregate excess demand, under the constraint of
 a Limit-Up-Limit-Down (LU-LD) circuit breaker, which limits prices to 
 [LD*p(t-1), LU*p(t-1)], with LD=1/2 and LU = 2
 '''
-
-# from matplotlib import pyplot as plt
 
 from leap_ec import ops
 from leap_ec.context import context
@@ -70,3 +63,11 @@ def leap_solver(aggregate_ed, price):
     ''' TODO: replace this clearing by the better ESL solver '''
     return(market.truncate(best_genome[0],3))
 
+def solver_linear_shortcut(pop):
+    cum_sum = 0
+    cum_own = 0
+    for ind in pop:
+        cum_sum += ind[6]
+        cum_own += ind[3]
+        
+    return (cum_sum / cum_own)

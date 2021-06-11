@@ -139,8 +139,13 @@ def update_inventory (pop, price):
         if ind[3] < 0:
             ind[9] += ind[3] * price
         
-        # Update new cash 
-        ind[2] = truncate(ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan - ind[9],3)
+        # Update new cash if result is positive
+        new_cash = truncate(ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan - ind[9],3)
+        if new_cash >= 0:
+            ind[2] = new_cash 
+        else: 
+            print("Error negative cash" + str(ind))
+            print(realised_ed)
         
         #	 Clear the margin if we are out of the short position
         if ind[3] >= 0:

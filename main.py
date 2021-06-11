@@ -38,14 +38,11 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     price_history = []
     generation_history = []
     mismatch_history = []
-
     
     # Temp
     agent0_profit = []
     agent0_ema = []
-    
     dividend = INITIAL_DIVIDEND
-    # dividend_history.append(INITIAL_DIVIDEND)
     
     print("Initial population")
     print(('{}\n'*len(pop)).format(*pop))
@@ -62,8 +59,6 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     meanFitness = sum(fitnessValues) / len(pop)
     maxFitnessValues.append(maxFitness)
     meanFitnessValues.append(meanFitness)
-    # replacements.append(0)
-    # Temp
     agent0_profit.append(pop[0][7])
     agent0_ema.append(pop[0][8])
     
@@ -84,7 +79,6 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         
         ''' C) Update wealth sum as a function of price '''
         market.update_wealth(pop, price) 
-        # print(pop)
         
         ''' D) Hypermutation operator '''
         global round_replacements
@@ -103,16 +97,12 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         
         print("After fitness, dividends, wealth, hypermuation updates")
         print(('{}\n'*len(pop)).format(*pop))
-        # print(fitnessValues)
         
         '''  F) GA evolution of strategies with last period fitness  '''
 
         # Selection
         if selection_proba == 1:
             offspring = ga.toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
-           
-            # print("offspring")
-            # print(offspring)
             ga.fitness_for_invalid(offspring)
             offspring = list(map(ga.toolbox.clone, offspring))
             
@@ -148,13 +138,14 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         print("After trading signal, GA, ED update, right before clearing")
         print(('{}\n'*len(pop)).format(*pop))
 
-        ''' I) Clear the market with the aggregate ED aggregate_ed ''' 
-        # Outputs new_price
-        price = mc_leap.leap_solver(aggregate_ed, price)
+        ''' I) Clear the market with the aggregate ED, obtain the new price ''' 
+        # price = mc_leap.leap_solver(aggregate_ed, price)
+        # print(price)
+        # print(aggregate_ed(price))
+        price = mc_leap.solver_linear_shortcut(pop)
         print(price)
-        
+        print(aggregate_ed(price))
          
-        ''' price = mc.clear(aggregate_ed) WIP '''
         price_history.append(price)
         
         ''' J) Update inventories ''' 
