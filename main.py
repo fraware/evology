@@ -4,7 +4,7 @@ sns.set_theme(style="darkgrid")
 import numpy as np
 import genetic_algorithm_functions as ga
 import market as market
-# import market_clearing as mc
+import market_clearing_leap as mc_leap
 import parameters
 import data
 
@@ -149,6 +149,8 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
 
         ''' I) Clear the market with the aggregate ED aggregate_ed ''' 
         # Outputs new_price
+        price = mc_leap.leap_solver(aggregate_ed, price)
+        print(price)
          
         ''' price = mc.clear(aggregate_ed) WIP '''
         price_history.append(price)
