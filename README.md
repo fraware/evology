@@ -6,10 +6,8 @@
 
 ## Todo-ongoing
 
-- [WFF] Market clearing (stage I)
 - [WFF] Short selling needs to be handled in some way (loans, margin)
-
-- [WIP] Main output must be a workable dataframe // continue adding columns until we can work with df only as output
+- Main output must be a workable dataframe // continue adding columns until we can work with df only as output
 
 ## Notes
 
@@ -21,3 +19,9 @@
 For 5 generations, we get [Theta, 15.0, -12.5, 27.5, 0, 0, 7.5, 0, 0.0]
 The price does not change, wealth does not change as the agent keeps going on loans to acquire new assets. 
 The trading signal and the excess demand do not change either.
+
+- Cash goes in the negatives, need a nonngeativity constraint
+
+## Forthcoming
+
+- Market clearing 2.0 (ESL)
