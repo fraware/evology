@@ -63,11 +63,23 @@ def leap_solver(aggregate_ed, price):
     ''' TODO: replace this clearing by the better ESL solver '''
     return(market.truncate(best_genome[0],3))
 
-def solver_linear_shortcut(pop):
+def solver_linear_shortcut(pop, price):
     cum_sum = 0
     cum_own = 0
     for ind in pop:
         cum_sum += ind[6]
         cum_own += ind[3]
         
-    return (cum_sum / cum_own)
+    candidate = (cum_sum / cum_own)
+    
+    limit_down = price * 0.5
+    limit_up = price * 2.0
+    
+    if candidate < limit_down:
+        candidate = limit_down
+    if candidate > limit_up:
+        candidate = limit_up
+        
+    new_price = candidate
+        
+    return new_price 
