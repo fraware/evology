@@ -17,6 +17,8 @@
 
 ## Known issues
 
+- Price either goes to 0 or to infinity. Very unstable.
+
 ## Forthcoming
 
 - Market clearing 2.0 (ESL)
