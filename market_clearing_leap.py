@@ -63,7 +63,7 @@ def leap_solver(aggregate_ed, price):
     
     ''' Run the solver '''
     best_genome = ea_solve_noverbose(squared_agg_ed,
-          bounds=[(limit_down, limit_up)], generations = 10, pop_size = 1000,
+          bounds=[(limit_down, limit_up)], generations = 50, pop_size = 500,
           mutation_std=0)
     
     ''' Return the clearing price '''

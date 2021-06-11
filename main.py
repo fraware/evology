@@ -3,7 +3,7 @@ import seaborn as sns
 sns.set_theme(style="darkgrid")
 import numpy as np
 import genetic_algorithm_functions as ga
-import market as market
+import market 
 import market_clearing_leap as mc_leap
 import parameters
 import data
@@ -37,6 +37,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     random_dividend_history = []
     price_history = []
     generation_history = []
+    mismatch_history = []
 
     
     # Temp
@@ -151,6 +152,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         # Outputs new_price
         price = mc_leap.leap_solver(aggregate_ed, price)
         print(price)
+        
          
         ''' price = mc.clear(aggregate_ed) WIP '''
         price_history.append(price)
@@ -164,6 +166,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         maxFitnessValues.append(maxFitness)
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
+        mismatch_history.append(abs(market.truncate(aggregate_ed(price),3)))
                 # Temp
         agent0_profit.append(pop[0][7])
         agent0_ema.append(pop[0][8])
@@ -178,7 +181,8 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         #     for ind in pop:
         #         ind[1] -= 1
 
-        df = data.generate_df(generation_history, price_history, dividend_history, random_dividend_history, replacements)
+        df = data.generate_df(generation_history, price_history, mismatch_history, 
+                              dividend_history, random_dividend_history, replacements)
     # return 
     
     return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df

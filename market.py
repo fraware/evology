@@ -95,7 +95,7 @@ def update_trading_signal(pop, price_history):
     for ind in pop:
         if len(price_history) > 1:
             if len(price_history) > ind[0]:
-                ind[5] = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
+                ind[5] = truncate(np.log2(price_history[-1]) - np.log2(price_history[-ind[0]]),3)
             if len(price_history) <= ind[0]:
                 # The trader does not have the information to run her strategy. She waits in indifference.
                 ind[5] = 0
@@ -130,7 +130,7 @@ def update_inventory (pop, price):
     for ind in pop:
         former_asset = ind[3]
         former_loan = ind[4]
-        realised_ed = ind[6] / price + ind[3]
+        realised_ed = truncate(ind[6] / price + ind[3],3)
         
         # Update new asset shares
         ind[3] = realised_ed
@@ -140,7 +140,7 @@ def update_inventory (pop, price):
             ind[9] += ind[3] * price
         
         # Update new cash 
-        ind[2] = ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan - ind[9]
+        ind[2] = truncate(ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan - ind[9],3)
         
         #	 Clear the margin if we are out of the short position
         if ind[3] >= 0:
