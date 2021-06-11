@@ -137,15 +137,15 @@ def update_inventory (pop, price):
         cash = ind[2] + ind[3] * price + former_loan - ind[4]
         ind[3] = 0
         i = 0
+        print("agent wants up to " + str(realised_ed))
         while i < realised_ed:
             if cash - price > 0:
                 ind[3] += 1
                 cash -= price
             i += 1
         ind[2] = cash 
-        
-        # Update new asset shares
-        ind[3] = realised_ed
+        print("agent got " + str(ind[3]))
+
         
         # If short selling, set some margin aside
         if ind[3] < 0:
