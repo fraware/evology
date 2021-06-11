@@ -132,6 +132,18 @@ def update_inventory (pop, price):
         former_loan = ind[4]
         realised_ed = truncate(ind[6] / price + ind[3],3)
         
+        
+        ''' If we want to buy assets: non-negative cash buying procedure '''
+        cash = ind[2] + ind[3] * price + former_loan - ind[4]
+        ind[3] = 0
+        i = 0
+        while i < realised_ed:
+            if cash - price > 0:
+                ind[3] += 1
+                cash -= price
+            i += 1
+        ind[2] = cash 
+        
         # Update new asset shares
         ind[3] = realised_ed
         
@@ -140,12 +152,12 @@ def update_inventory (pop, price):
             ind[9] += ind[3] * price
         
         # Update new cash if result is positive
-        new_cash = truncate(ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan - ind[9],3)
-        if new_cash >= 0:
-            ind[2] = new_cash 
-        else: 
-            print("Error negative cash" + str(ind))
-            print(realised_ed)
+        # new_cash = truncate(ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan - ind[9],3)
+        # if new_cash >= 0:
+        #     ind[2] = new_cash 
+        # else: 
+        #     print("Error negative cash" + str(ind))
+        #     print(realised_ed)
         
         #	 Clear the margin if we are out of the short position
         if ind[3] >= 0:
