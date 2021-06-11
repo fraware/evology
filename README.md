@@ -17,7 +17,8 @@
 
 ## Known issues
 
-- Price either goes to 0 or to infinity. Very unstable.
+- Price (& wealth) either goes to 0 or to infinity. Very unstable.
+- Fixed supply of assets does not seem enforced
 
 ## Forthcoming
 
