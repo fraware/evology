@@ -74,26 +74,7 @@ def leap_solver(pop, current_price):
     ''' TODO: replace this clearing by the better ESL solver '''
     return(market.truncate(best_genome[0],3))
 
-# def aggregate_ed(x):
-#     return 1000 / sum(x) + 5013
 
-# leap_solver(aggregate_ed, 3)
-# limit_down = 0
-# limit_up = 10
-# best_genome = ea_solve_noverbose(aggregate_ed, bounds=[(limit_down, limit_up) for _ in range(1)], 
-#                                  generations = 50, pop_size = 500, mutation_std=0, maximize = False)
-
-
-
-# def f(x):
-#     """A real-valued function to optimized."""
-#     return sum(x)**2
-# def g(x):
-#     """A real-valued function to optimized."""
-#     return x / 2 + 10
-# from leap_ec.simple import ea_solve
-# ea_solve(f, bounds=[(-5.12, 5.12) for _ in range(5)], maximize=True)
-# ea_solve(g, bounds=[(-5.12, 5.12) for _ in range(5)], maximize=True)
 
 def solver_linear_shortcut(pop, price):
     cum_sum = 0
@@ -104,24 +85,16 @@ def solver_linear_shortcut(pop, price):
         
     candidate = (cum_sum / cum_own)
     
-    # limit_down = price * 0.5
-    # limit_up = price * 2.0
+    limit_down = price * 0.5
+    limit_up = price * 2.0
     
-    # if candidate < limit_down:
-    #     candidate = limit_down
-    # if candidate > limit_up:
-    #     candidate = limit_up
+    if candidate < limit_down:
+        candidate = limit_down
+    if candidate > limit_up:
+        candidate = limit_up
         
     new_price = candidate
         
     return new_price 
 
 
-
-# from leap_ec.simple import ea_solve
-
-# def f(x):
-#     """A real-valued function to optimized."""
-#     return sum(x)**2
-
-# ea_solve(f, bounds=[(-5.12, 5.12) for _ in range(5)], maximize=True, hard_bounds = True)
