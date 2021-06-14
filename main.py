@@ -139,12 +139,12 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         print(('{}\n'*len(pop)).format(*pop))
 
         ''' I) Clear the market with the aggregate ED, obtain the new price ''' 
-        price = mc_leap.leap_solver(aggregate_ed, price)
-        print(price)
-        print(aggregate_ed(price))
-        # price = mc_leap.solver_linear_shortcut(pop, price)
+        # price = mc_leap.leap_solver(aggregate_ed, price)
         # print(price)
         # print(aggregate_ed(price))
+        price = mc_leap.solver_linear_shortcut(pop, price)
+        print(price)
+        print(aggregate_ed(price))
          
         price_history.append(price)
         

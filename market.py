@@ -80,7 +80,7 @@ def update_wealth(pop, price):
         
 def compute_ema(pop):
     for ind in pop:
-        ind[8] = (2 / (EMA_HORIZON + 1)) * (ind[7] - ind[8]) + ind[8]
+        ind[8] = truncate((2 / (EMA_HORIZON + 1)) * (ind[7] - ind[8]) + ind[8],4)
     return ind
 
         # Agent representaiton:
@@ -105,7 +105,7 @@ def update_trading_signal(pop, price_history):
 
 def update_excess_demand(pop):
     for ind in pop:
-        ind[6] = ind[1] * LAMBDA_TF * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind[5]) + 0.5)
+        ind[6] = truncate(ind[1] * LAMBDA_TF * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind[5]) + 0.5),4)
     return ind
 
 def order_excess_demand(pop):
