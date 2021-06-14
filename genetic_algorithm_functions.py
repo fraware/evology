@@ -28,8 +28,8 @@ INITIAL_CASH = parameters.INITIAL_CASH
 # =============================================================================
 
 # Agent representaiton:
-#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]
-#     [ 0       1     2    3     4         5             6           7            8 ]
+#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit   Margin]
+#     [ 0       1     2    3     4         5             6           7            8           9]
 
 toolbox = base.Toolbox()
 

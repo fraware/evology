@@ -111,26 +111,39 @@ def update_excess_demand(pop):
 def order_excess_demand(pop):
     list_excess_demand_func = []
     for ind in pop:
-        def ed(price):
-            return ind[6] / price - ind[3]
+        
+        # Testing block
+        
+        
+        def ed(x):
+            
+            return truncate((ind[6] / x) - ind[3],4)
         list_excess_demand_func.append(ed)
+        print(ed(1))
+        del ed
     return list_excess_demand_func
 
-def compute_aggregate_excess_demand(pop):
-    cum_sum = 0
-    cum_own = 0
-    for ind in pop:
-        cum_sum += ind[6]
-        cum_own += ind[3]
-    def aggregate_ed(price):
-        return ((cum_sum / price) - cum_own)
+def compute_aggregate_excess_demand(pop, list_excess_demand_func):
+    def aggregate_ed(x):
+        result = 0
+        for i in range(len(pop)):
+            result += list_excess_demand_func[i](x)
+        return result
     return aggregate_ed
+    # cum_sum = 0
+    # cum_own = 0
+    # for ind in pop:
+    #     cum_sum += ind[6]
+    #     cum_own += ind[3]
+    # def aggregate_ed(price):
+    #     return ((cum_sum / price) - cum_own)
+    # return aggregate_ed
 
 def update_inventory (pop, price):
     for ind in pop:
         former_asset = ind[3]
         former_loan = ind[4]
-        realised_ed = truncate(ind[6] / price + ind[3],3)
+        realised_ed = truncate(ind[6] / price + ind[3],4)
         
         
         ''' If we want to buy assets: non-negative cash buying procedure '''

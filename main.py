@@ -133,19 +133,27 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         market.update_excess_demand(pop)
         list_excess_demand_func = market.order_excess_demand(pop)
         ''' list_excess_demand_func is now the list of ED functions '''
-        aggregate_ed = market.compute_aggregate_excess_demand(pop)
+        # aggregate_ed = market.compute_aggregate_excess_demand(pop)
+        aggregate_ed = market.compute_aggregate_excess_demand(pop, list_excess_demand_func)
         
         print("After trading signal, GA, ED update, right before clearing")
         print(('{}\n'*len(pop)).format(*pop))
 
         ''' I) Clear the market with the aggregate ED, obtain the new price ''' 
-        # price = mc_leap.leap_solver(aggregate_ed, price)
-        # print(price)
-        # print(aggregate_ed(price))
-        price = mc_leap.solver_linear_shortcut(pop, price)
+        
+        price = mc_leap.leap_solver(pop, price)
         print(price)
         print(aggregate_ed(price))
-         
+        # price = mc_leap.solver_linear_shortcut(pop, price)
+        # print(price)
+        # print(aggregate_ed(price))
+        
+        # testing block
+        sum_ag = 0
+        for i in range(POPULATION_SIZE):
+            sum_ag += list_excess_demand_func[i](price)
+            print("Agent " + str(i) + " ED(pt+1) is " + str(list_excess_demand_func[i](price)))
+        print("Sum AG " + str(sum_ag))
         price_history.append(price)
         
         ''' J) Update inventories ''' 
@@ -176,4 +184,4 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
                               dividend_history, random_dividend_history, replacements)
     # return 
     
-    return initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
+    return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
