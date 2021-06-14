@@ -19,6 +19,7 @@
 
 - Price (& wealth) either goes to 0 or to infinity. Very unstable.
 - Fixed supply of assets does not seem enforced
+- Solver (linear shortcut) aggregate_ed does not add up correctly with individual aggregate_demands
 
 ## Forthcoming
 
