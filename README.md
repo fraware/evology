@@ -8,6 +8,7 @@
 
 - [WFF] Short selling needs to be handled in some way (loans, margin)
 - Main output must be a workable dataframe // continue adding columns until we can work with df only as output
+- LEAP_EC 0.6 update should be live soon https://pypi.org/project/leap-ec/
 
 ## To watch
 - non negative cash for asset purchases is now implemented, but say vigilant 
@@ -19,6 +20,7 @@
 
 - Price (& wealth) either goes to 0 or to infinity. Very unstable.
 - Fixed supply of assets does not seem enforced
+- list_ed_func seem to deliver identical functions, while agents with diff trading signals should not have the same
 
 ## Forthcoming
 
