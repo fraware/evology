@@ -38,6 +38,9 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     price_history = []
     generation_history = []
     mismatch_history = []
+    asset_count_history = []
+    
+    assetQ = market.count_assets(pop)
     
     # Temp
     agent0_profit = []
@@ -75,7 +78,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         random_dividend_history.append(random_dividend)
         
         ''' B) Apply dividends, interest rate and reinvestment, update profit '''
-        market.wealth_earnings(pop, dividend)
+        # market.wealth_earnings(pop, dividend)
         
         ''' C) Update wealth sum as a function of price '''
         market.update_wealth(pop, price) 
@@ -159,7 +162,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         price_history.append(price)
         
         ''' J) Update inventories ''' 
-        market.update_inventory(pop, price)
+        market.update_inventory(pop, price, assetQ)
         
         ''' K) Record results '''
         maxFitness = max(fitnessValues)
@@ -167,6 +170,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         maxFitnessValues.append(maxFitness)
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
+        asset_count_history.append(market.count_assets(pop))
         
         print("agg_price before mismatch")
         print(aggregate_ed(price))
@@ -186,7 +190,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         #     for ind in pop:
         #         ind[1] -= 1
 
-        df = data.generate_df(generation_history, price_history, mismatch_history, 
+        df = data.generate_df(generation_history, price_history, mismatch_history, asset_count_history, 
                               dividend_history, random_dividend_history, replacements)
     # return 
     

@@ -15,6 +15,10 @@ print(df)
 # Plot population histograms at the start and at the end
 print("--------------------------")
 
+df.plot(x="Gen", y = ["Price"],
+        kind="line", figsize=(15, 6))
+plt.show()
+
 # print("Initial population was " + str(initial_pop))
 # sns.histplot(data=np.array(initial_pop), legend = False, stat = "density", shrink = 0.85, discrete=True, bins = 11)
 # plt.show()

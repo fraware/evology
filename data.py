@@ -22,7 +22,7 @@ them into a coherent dataframe for later statistical and graphical analysis'''
 
 import pandas as pd
 
-def generate_df(generation_history, price_history, mismatch_history, 
+def generate_df(generation_history, price_history, mismatch_history, asset_count_history,
                 dividend_history, random_dividend_history, replacements):
     df = pd.DataFrame()
     
@@ -33,6 +33,7 @@ def generate_df(generation_history, price_history, mismatch_history,
     # Economic variables 
     df["Price"] = price_history
     df["Mismatch"] = mismatch_history
+    df["Q"] = asset_count_history
     df["Div"] = dividend_history
     df["RDiv"] = random_dividend_history
     
