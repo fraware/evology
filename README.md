@@ -7,6 +7,8 @@
 Idea: if we generate a "balanced" price series before (Brownian motion generator?), we give agents the possibility of having a "balanced market". If the prior time series is balanced enough between increase & decrease, some agents will buy, and others will sell.
 But won't this issue appear as soon as we saturate the Q constraint even once?
 
+Is this issue natural to a trend-following ecology initialised on a specific trend? This is possible. And if that's the case, it is nice because it means we truly have somethign that works.
+
 # Todo-ongoing
 
 - [WFF] Short selling needs to be handled in some way (loans, margin)
