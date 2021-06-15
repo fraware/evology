@@ -1,12 +1,12 @@
 import random
 import numpy as np
 
-RANDOM_SEED = random.random()
+RANDOM_SEED = 9 #random.random()
 
 ''' GA parmeters '''
-POPULATION_SIZE = 10
+POPULATION_SIZE = 3
 MUTATION_RATE = 0
-MAX_GENERATIONS = 10
+MAX_GENERATIONS = 15
 CROSSOVER_RATE = 0
 TOURNAMENT_SIZE = 3
 PROBA_SELECTION = 0

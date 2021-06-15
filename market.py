@@ -134,7 +134,9 @@ def update_inventory (pop, price):
     for ind in pop:
         former_asset = ind[3]
         former_loan = ind[4]
-        realised_ed = truncate(ind[6] / price + ind[3],4)
+        realised_ed = truncate(ind[6] / price - ind[3],4)
+        realised_ed = ind[6] / price - ind[3]
+        print("agent wants up to " + str(realised_ed))
         
         
         ''' If we want to buy assets: non-negative cash buying procedure '''

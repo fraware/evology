@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import main
 import parameters
 MAX_GENERATIONS = parameters.MAX_GENERATIONS
-
+RANDOM_SEED = parameters.RANDOM_SEED
 # Optional because they are arguments to main
 CROSSOVER_RATE = parameters.CROSSOVER_RATE
 MUTATION_RATE = parameters.MUTATION_RATE 

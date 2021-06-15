@@ -143,12 +143,14 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         
         price = mc_leap.leap_solver(pop, price)
         print(price)
+        print("agg_ed(price)")
         print(aggregate_ed(price))
         # price = mc_leap.solver_linear_shortcut(pop, price)
         # print(price)
         # print(aggregate_ed(price))
         
         # testing block
+        
         sum_ag = 0
         for i in range(POPULATION_SIZE):
             sum_ag += list_excess_demand_func[i](price)
@@ -165,6 +167,10 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         maxFitnessValues.append(maxFitness)
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
+        
+        print("agg_price before mismatch")
+        print(aggregate_ed(price))
+        print(abs(market.truncate(aggregate_ed(price),3)))
         mismatch_history.append(abs(market.truncate(aggregate_ed(price),3)))
                 # Temp
         agent0_profit.append(pop[0][7])
