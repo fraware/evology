@@ -1,7 +1,6 @@
 # Known issues
 
 - Price (& wealth) either goes to 0 or to infinity. Very unstable.
-- Fixed supply of assets does not seem enforced
 
 
 # Todo-ongoing
@@ -12,6 +11,7 @@
 # To watch
 - non negative cash for asset purchases is now implemented, but say vigilant 
 - list_ed_func looks fixed now
+- fixed supply of assets is now enforced
 
 # Notes
 
