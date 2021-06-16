@@ -113,6 +113,10 @@ The new cash is:
     C(t+1) = C(t) - (S(t+1) - S(t))p(t+1) - L(t+1) + L(t)
 \end{equation}
 
+We impose a non-negativity constraint on the cash. 
+% In other words, the agents cannot enter into cash debt to buy more assets. 
+This must work with leverage.
+
 \textbf{Margin}
 
 When the agent enters into a short position (i.e. $S(t+1) = E(t,p(t+1)) - S(t) < 0$ , it sells asset shares that it does not own. Its cash grows by $p(t+1)S(t+1)$, but the agent enters into debt, as it must buy later $S(t+1)$ assets to return them to the lender.
