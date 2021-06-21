@@ -1,3 +1,4 @@
+# !pip3 install --index-url https://test.pypi.org/simple/ eslpy --force --user
 # import esl
 # from esl.law import property
 # from esl.simulation import identity
@@ -46,6 +47,9 @@
 # print(prices)
 
 ''' As understood on 09/06: ed1, ed2 would have to be orders, not functions '''
+!pip3 install --index-url https://test.pypi.org/simple/ eslpy --force --user
+
+!pip3 show eslpy
 
 import esl
 from esl.law import property
