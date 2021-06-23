@@ -135,6 +135,17 @@ def count_assets(pop):
         count += ind[3]
     return count
 
+def update_margin(pop, price):
+    for ind in pop:
+        if ind[3] < 0:
+            ind[2] += ind[9]
+            ind[9] = 0
+            ind[9] = abs(ind[3]) * price
+            ind[2] -= ind[9]
+            ''' But what happens if there is not enough cash? 
+            We would trigger replacement'''
+    return ind
+
 
 def update_inventory (pop, price, assetQ):
     for ind in pop:
@@ -146,21 +157,29 @@ def update_inventory (pop, price, assetQ):
         
         ''' If we want to buy assets: non-negative cash buying procedure '''
         cash = ind[2] + ind[3] * price + former_loan - ind[4]
-        i = 0
+
         # print("agent wants up to " + str(realised_ed))
-        while i < realised_ed:
-            if cash - price > 0:
-                if count_assets(pop) < assetQ:
-                    ind[3] += 1
-                    cash -= price
-            i += 1
+        if realised_ed > 0:
+            i = 0
+            while i < realised_ed:
+                if cash - price > 0:
+                    if count_assets(pop) < assetQ:
+                        ind[3] += 1
+                        cash -= price
+                i += 1
+        if realised_ed < 0:
+            i = 0
+            while i < abs(realised_ed):
+                if count_assets(pop) > 1:
+                    ind[3] -= 1
+                    ind[9] += price
+                i += 1
+            
+            # raise SystemExit
         ind[2] = cash 
         print("agent got " + str(ind[3] - former_asset))
 
-        
-        # If short selling, set some margin aside
-        if ind[3] < 0:
-            ind[9] += ind[3] * price
+
         
         # Update new cash if result is positive
         # new_cash = truncate(ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan - ind[9],3)
