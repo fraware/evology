@@ -21,6 +21,10 @@ df.plot(x="Gen", y = ["Price"],
         kind="line", figsize=(15, 6))
 plt.show()
 
+df.plot(x="Gen", y = ["MeanT"],
+        kind="line", figsize=(15, 6))
+plt.show()
+
 plt.plot(extended_price_history)
 plt.show()
 

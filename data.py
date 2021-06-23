@@ -22,7 +22,8 @@ them into a coherent dataframe for later statistical and graphical analysis'''
 
 import pandas as pd
 
-def generate_df(generation_history, price_history, mismatch_history, asset_count_history,
+def generate_df(generation_history, price_history, mismatch_history, mean_theta, 
+                asset_count_history,
                 dividend_history, random_dividend_history, replacements):
     df = pd.DataFrame()
     
@@ -33,6 +34,7 @@ def generate_df(generation_history, price_history, mismatch_history, asset_count
     # Economic variables 
     df["Price"] = price_history
     df["Mismatch"] = mismatch_history
+    df["MeanT"] = mean_theta
     df["Q"] = asset_count_history
     df["Div"] = dividend_history
     df["RDiv"] = random_dividend_history
@@ -41,3 +43,9 @@ def generate_df(generation_history, price_history, mismatch_history, asset_count
     df ["Rep"] = replacements
     
     return df
+
+def theta_stats(pop):
+    sum_theta = 0
+    for ind in pop:
+        sum_theta += ind[0]
+    return sum_theta / len(pop)

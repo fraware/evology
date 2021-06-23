@@ -117,7 +117,7 @@ def order_excess_demand(pop):
             
             return truncate((ind[6] / x) - ind[3],4)
         list_excess_demand_func.append(ed)
-        print(ed(1))
+        # print(ed(1))
         del ed
     return list_excess_demand_func
 
@@ -142,11 +142,10 @@ def update_margin(pop, price):
             ind[9] = 0
             ind[9] = abs(ind[3]) * price
             ind[2] -= ind[9]
-            ''' But what happens if there is not enough cash? 
-            We would trigger replacement'''
             if ind[2] < 0:
-                print("Negative cash after updating margin")
-                raise SystemExit
+                ''' If not enough cash for margin, and since we are in debt, 
+                we are automatically replaced '''
+                ind[1] = -1_000
     return ind
 
 

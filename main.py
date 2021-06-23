@@ -45,6 +45,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     generation_history = []
     mismatch_history = []
     asset_count_history = []
+    mean_theta = []
     
     assetQ = market.count_assets(pop)
     
@@ -74,7 +75,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     while generationCounter < MAX_GENERATIONS:
         print("----------------------------------------------------------------------")
         print("Generation " + str(generationCounter))
-        print(('{}\n'*len(pop)).format(*pop))
+        # print(('{}\n'*len(pop)).format(*pop))
         
         ''' A) Draw dividends '''       
         DIVIDEND_GROWTH_RATE = market.determine_dividend_growth(DIVIDEND_GROWTH_RATE_G)
@@ -105,8 +106,8 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         fitnessValues = [individual.fitness.values[0] for individual in pop]
         #turn this into a one-line function?
         
-        print("After fitness, dividends, wealth, hypermuation updates")
-        print(('{}\n'*len(pop)).format(*pop))
+        # print("After fitness, dividends, wealth, hypermuation updates")
+        # print(('{}\n'*len(pop)).format(*pop))
         
         '''  F) GA evolution of strategies with last period fitness  '''
 
@@ -136,6 +137,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
                 
         
         ''' G) Actions are now set. Update trading signals '''
+        # print(extended_price_history)
         market.update_trading_signal(pop, extended_price_history)
         
         ''' H) Deduce excess demand and create an order book of ED functions of price''' 
@@ -146,8 +148,8 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         # aggregate_ed = market.compute_aggregate_excess_demand(pop)
         aggregate_ed = market.compute_aggregate_excess_demand(pop, list_excess_demand_func)
         
-        print("After trading signal, GA, ED update, right before clearing")
-        print(('{}\n'*len(pop)).format(*pop))
+        # print("After trading signal, GA, ED update, right before clearing")
+        # print(('{}\n'*len(pop)).format(*pop))
 
         ''' I) Clear the market with the aggregate ED, obtain the new price ''' 
         
@@ -175,6 +177,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
         asset_count_history.append(market.count_assets(pop))
+        mean_theta.append(data.theta_stats(pop))
         
         # print("agg_price before mismatch")
         # print(aggregate_ed(price))
@@ -194,7 +197,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         #     for ind in pop:
         #         ind[1] -= 1
 
-        df = data.generate_df(generation_history, price_history, mismatch_history, asset_count_history, 
+        df = data.generate_df(generation_history, price_history, mismatch_history, mean_theta, asset_count_history, 
                               dividend_history, random_dividend_history, replacements)
     # return 
     
