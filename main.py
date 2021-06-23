@@ -209,4 +209,5 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     # return 
     
     # return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
+    print(('{}\n'*len(pop)).format(*pop))
     return df, extended_price_history
