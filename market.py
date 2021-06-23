@@ -132,7 +132,15 @@ def compute_aggregate_excess_demand(pop, list_excess_demand_func):
 def count_assets(pop):
     count = 0
     for ind in pop:
-        count += ind[3]
+        if ind[3] > 0:
+            count += ind[3]
+    return count
+
+def count_size_short(pop):
+    count = 0
+    for ind in pop:
+        if ind[3] <= 0:
+            count += ind[3]
     return count
 
 def update_margin(pop, price):
@@ -149,7 +157,7 @@ def update_margin(pop, price):
     return ind
 
 
-def update_inventory (pop, price, assetQ, share_increment):
+def update_inventory (pop, price, assetQ, share_increment, short_bound):
     for ind in pop:
         former_asset = ind[3]
         former_loan = ind[4]
@@ -177,7 +185,7 @@ def update_inventory (pop, price, assetQ, share_increment):
                 
                 if ind[3] < 1: 
                     ''' short selling '''
-                    if count_assets(pop) > share_increment:
+                    if count_assets(pop) - count_size_short(pop) > share_increment:
                         ind[3] -= share_increment
                         ind[9] += price * share_increment
                 

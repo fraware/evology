@@ -21,10 +21,12 @@ them into a coherent dataframe for later statistical and graphical analysis'''
 # We can also adjust the variables order in the columns
 
 import pandas as pd
+import numpy as np
 
 def generate_df(generation_history, price_history, mismatch_history, mean_theta, 
                 asset_count_history,
-                dividend_history, random_dividend_history, replacements):
+                dividend_history, random_dividend_history, 
+                size_pos_pos, size_neg_pos, replacements):
     df = pd.DataFrame()
     
     # General variables
@@ -34,10 +36,13 @@ def generate_df(generation_history, price_history, mismatch_history, mean_theta,
     # Economic variables 
     df["Price"] = price_history
     df["Mismatch"] = mismatch_history
+    df["LogP"] = np.log10(price_history)
     df["MeanT"] = mean_theta
     df["Q"] = asset_count_history
     df["Div"] = dividend_history
     df["RDiv"] = random_dividend_history
+    df["Pos-Pos"] = size_pos_pos
+    df["Neg-Pos"] = size_neg_pos
     
     # Ecology variables
     df ["Rep"] = replacements

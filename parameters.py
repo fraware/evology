@@ -24,6 +24,7 @@ INITIAL_PRICE = 1 #100
 INITIAL_CASH = 10 #50_000_000
 INITIAL_ASSETS = 5 #00_000
  # = Wealth of 100M; 100M is the threshold for US asset managers
+short_bound = 1
  
 REINVESTMENT_RATE = 1
 INTEREST_RATE = 0.01 / TRADING_DAYS

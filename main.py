@@ -23,6 +23,7 @@ INITIAL_DIVIDEND = parameters.INITIAL_DIVIDEND
 INTEREST_RATE = parameters.INTEREST_RATE
 DIVIDEND_GROWTH_RATE_G = parameters.DIVIDEND_GROWTH_RATE_G
 share_increment = parameters.share_increment
+short_bound = parameters.short_bound
 
 
 def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
@@ -46,6 +47,8 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     mismatch_history = []
     asset_count_history = []
     mean_theta = []
+    size_pos_pos = []
+    size_neg_pos = []
     
     assetQ = market.count_assets(pop)
     
@@ -168,7 +171,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         price_history.append(price)
         
         ''' J) Update inventories ''' 
-        market.update_inventory(pop, price, assetQ,share_increment)
+        market.update_inventory(pop, price, assetQ,share_increment, short_bound)
         
         ''' K) Record results '''
         maxFitness = max(fitnessValues)
@@ -178,6 +181,9 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         replacements.append(round_replacements)
         asset_count_history.append(market.count_assets(pop))
         mean_theta.append(data.theta_stats(pop))
+                
+        size_pos_pos.append(market.count_assets(pop))
+        size_neg_pos.append(market.count_size_short(pop))
         
         # print("agg_price before mismatch")
         # print(aggregate_ed(price))
@@ -198,7 +204,8 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         #         ind[1] -= 1
 
         df = data.generate_df(generation_history, price_history, mismatch_history, mean_theta, asset_count_history, 
-                              dividend_history, random_dividend_history, replacements)
+                              dividend_history, random_dividend_history, replacements,
+                              size_pos_pos, size_neg_pos)
     # return 
     
     # return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
