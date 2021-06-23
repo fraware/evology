@@ -144,6 +144,9 @@ def update_margin(pop, price):
             ind[2] -= ind[9]
             ''' But what happens if there is not enough cash? 
             We would trigger replacement'''
+            if ind[2] < 0:
+                print("Negative cash after updating margin")
+                raise SystemExit
     return ind
 
 

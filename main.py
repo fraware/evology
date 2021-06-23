@@ -85,8 +85,9 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         ''' B) Apply dividends, interest rate and reinvestment, update profit '''
         # market.wealth_earnings(pop, dividend)
         
-        ''' C) Update wealth sum as a function of price '''
+        ''' C) Update wealth and margin as a function of price '''
         market.update_wealth(pop, price) 
+        market.update_margin(pop, price)
         
         ''' D) Hypermutation operator '''
         global round_replacements
