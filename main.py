@@ -1,12 +1,14 @@
 import random
 import seaborn as sns
 # sns.set_theme(style="darkgrid")
+import matplotlib.pyplot as plt
 import numpy as np
 import genetic_algorithm_functions as ga
 import market 
 import market_clearing_leap as mc_leap
 import parameters
 import data
+import brownian_motion as bm
 
 RANDOM_SEED = parameters.RANDOM_SEED
 POPULATION_SIZE = parameters.POPULATION_SIZE
@@ -36,6 +38,9 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     dividend_history = []
     random_dividend_history = []
     price_history = []
+    extended_price_history = bm.generate_bm_series(MAX_TIME_HORIZON)
+    plt.plot(extended_price_history)
+    plt.show()
     generation_history = []
     mismatch_history = []
     asset_count_history = []
@@ -129,7 +134,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
                 
         
         ''' G) Actions are now set. Update trading signals '''
-        market.update_trading_signal(pop, price_history)
+        market.update_trading_signal(pop, extended_price_history)
         
         ''' H) Deduce excess demand and create an order book of ED functions of price''' 
 
@@ -154,6 +159,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
             sum_ag += list_excess_demand_func[i](price)
             print("Agent " + str(i) + " ED(pt+1) is " + str(list_excess_demand_func[i](price)))
         print("Sum AG " + str(sum_ag))
+        extended_price_history = np.append(extended_price_history, price)
         price_history.append(price)
         
         ''' J) Update inventories ''' 
@@ -190,4 +196,4 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     # return 
     
     # return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
-    return df
+    return df, extended_price_history

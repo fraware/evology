@@ -4,7 +4,7 @@ import numpy as np
 RANDOM_SEED = 9 #random.random()
 
 ''' GA parmeters '''
-POPULATION_SIZE = 3
+POPULATION_SIZE = 10
 MUTATION_RATE = 0
 MAX_GENERATIONS = 10
 CROSSOVER_RATE = 0
