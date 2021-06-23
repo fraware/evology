@@ -1,5 +1,7 @@
 # Known issues
 
+- Does hypermutation creates unintended assets? Seems like it uses the same initialisation with 5 assets
+
 - Price (& wealth) goes to infinity
 
 ``` Mechanism: we are now strictly enforcing the fixed asset supply Q. Given we don't have prior price series, all start with trading signals equal to 0, and want to buy assets. This is not possible, as noone is selling. The agents gain cash, dividend, interest at each turn, augmenting their excess demand, augmenting the clearing price. As a result, there is a positive trend in prices, hence trading signals become positive, the agents keep wanting more assets and it is still impossible for them to buy any, as noone is selling and current ownerships saturate the fixed asset supply.```
