@@ -22,6 +22,7 @@ TOURNAMENT_SIZE = parameters.TOURNAMENT_SIZE
 INITIAL_DIVIDEND = parameters.INITIAL_DIVIDEND
 INTEREST_RATE = parameters.INTEREST_RATE
 DIVIDEND_GROWTH_RATE_G = parameters.DIVIDEND_GROWTH_RATE_G
+share_increment = parameters.share_increment
 
 
 def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
@@ -156,16 +157,16 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         
         # testing block
         
-        sum_ag = 0
-        for i in range(POPULATION_SIZE):
-            sum_ag += list_excess_demand_func[i](price)
-            print("Agent " + str(i) + " ED(pt+1) is " + str(list_excess_demand_func[i](price)))
-        print("Sum AG " + str(sum_ag))
+        # sum_ag = 0
+        # for i in range(POPULATION_SIZE):
+        #     sum_ag += list_excess_demand_func[i](price)
+        #     print("Agent " + str(i) + " ED(pt+1) is " + str(list_excess_demand_func[i](price)))
+        # print("Sum AG " + str(sum_ag))
         extended_price_history = np.append(extended_price_history, price)
         price_history.append(price)
         
         ''' J) Update inventories ''' 
-        market.update_inventory(pop, price, assetQ)
+        market.update_inventory(pop, price, assetQ,share_increment)
         
         ''' K) Record results '''
         maxFitness = max(fitnessValues)

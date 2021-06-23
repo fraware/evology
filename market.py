@@ -150,7 +150,7 @@ def update_margin(pop, price):
     return ind
 
 
-def update_inventory (pop, price, assetQ):
+def update_inventory (pop, price, assetQ, share_increment):
     for ind in pop:
         former_asset = ind[3]
         former_loan = ind[4]
@@ -164,30 +164,30 @@ def update_inventory (pop, price, assetQ):
         # print("agent wants up to " + str(realised_ed))
         if realised_ed > 0:
             i = 0
-            while i < realised_ed - 1:
-                if cash - price > 0:
+            while i < realised_ed - share_increment:
+                if cash - price * share_increment > 0:
                     if count_assets(pop) < assetQ:
-                        ind[3] += 1
+                        ind[3] += share_increment
                         # cash -= price
-                        ind[2] -= price
-                i += 1
+                        ind[2] -= price * share_increment
+                i += share_increment
         if realised_ed < 0:            
             
             i = 0
-            while i < abs(realised_ed) - 1:
+            while i < abs(realised_ed) - share_increment:
                 
                 if ind[3] < 1: 
                     ''' short selling '''
-                    if count_assets(pop) > 1:
-                        ind[3] -= 1
-                        ind[9] += price
+                    if count_assets(pop) > share_increment:
+                        ind[3] -= share_increment
+                        ind[9] += price * share_increment
                 
-                if ind[3] >= 1: 
+                if ind[3] >= share_increment: 
                     ''' simple selling '''
-                    ind[3] -= 1
-                    ind[2] += price
+                    ind[3] -= share_increment
+                    ind[2] += price * share_increment
                     
-                i += 1
+                i += share_increment
             
             # raise SystemExit
         # ind[2] = cash 
