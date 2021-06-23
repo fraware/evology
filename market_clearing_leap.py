@@ -8,39 +8,51 @@ a Limit-Up-Limit-Down (LU-LD) circuit breaker, which limits prices to
 [LD*p(t-1), LU*p(t-1)], with LD=1/2 and LU = 2
 '''
 
-from leap_ec import ops
-from leap_ec.context import context
+from leap_ec import Individual, Representation
+from leap_ec import ops, probe
 from leap_ec.algorithm import generational_ea
-from leap_ec.real_rep.ops import mutate_gaussian
-from leap_ec.representation import Representation
-from leap_ec.individual import Individual
 from leap_ec.problem import FunctionProblem
-from leap_ec.decoder import IdentityDecoder
-from leap_ec.real_rep.initializers import create_real_vector
+from leap_ec.real_rep import create_real_vector
+from leap_ec.real_rep.ops import mutate_gaussian
 
 def ea_solve_noverbose(function, bounds, generations=100, pop_size=2,
-             mutation_std=1.0, maximize=False, viz=False, viz_ylim=(0, 1)):
+             mutation_std=1.0, maximize=False, viz=False, viz_ylim=(0, 1),
+             hard_bounds=True):
+    
+
+    if hard_bounds:
+        mutation_op = mutate_gaussian(std=mutation_std, hard_bounds=bounds,
+                        expected_num_mutations='isotropic')
+    else:
+        mutation_op = mutate_gaussian(std=mutation_std,
+                        expected_num_mutations='isotropic')
+
     pipeline = [
         ops.tournament_selection,
         ops.clone,
-        mutate_gaussian(std=mutation_std),
+        mutation_op,
         ops.uniform_crossover(p_swap=0.4),
         ops.evaluate,
         ops.pool(size=pop_size)
     ]
-    ea = generational_ea(generations=generations, pop_size=pop_size,
+
+    ea = generational_ea(max_generations=generations,
+                         pop_size=pop_size,
                          problem=FunctionProblem(function, maximize),
 
                          representation=Representation(
                              individual_cls=Individual,
-                             decoder=IdentityDecoder(),
                              initialize=create_real_vector(bounds=bounds)
                          ),
 
                          pipeline=pipeline)
+
     best_genome = None
+    # print('generation, bsf')
     for g, ind in ea:
+        # print(f"{g}, {ind.fitness}")
         best_genome = ind.genome
+
     return best_genome
 
 
@@ -68,13 +80,12 @@ def leap_solver(pop, current_price):
     ''' Run the solver '''
     best_genome = ea_solve_noverbose(squared_agg_ed,
           bounds=[(limit_down, limit_up)], generations = 50, pop_size = 500,
-          mutation_std=0)
+          mutation_std=0.1, hard_bounds = True)
     
     ''' Return the clearing price '''
-    ''' TODO: replace this clearing by the better ESL solver '''
     return(market.truncate(best_genome[0],3))
 
-
+# unused but saved:
 
 def solver_linear_shortcut(pop, price):
     cum_sum = 0

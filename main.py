@@ -1,6 +1,6 @@
 import random
 import seaborn as sns
-sns.set_theme(style="darkgrid")
+# sns.set_theme(style="darkgrid")
 import numpy as np
 import genetic_algorithm_functions as ga
 import market 
@@ -145,12 +145,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         ''' I) Clear the market with the aggregate ED, obtain the new price ''' 
         
         price = mc_leap.leap_solver(pop, price)
-        print(price)
-        print("agg_ed(price)")
-        print(aggregate_ed(price))
         # price = mc_leap.solver_linear_shortcut(pop, price)
-        # print(price)
-        # print(aggregate_ed(price))
         
         # testing block
         

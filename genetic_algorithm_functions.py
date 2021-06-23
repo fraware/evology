@@ -3,7 +3,7 @@ from deap import creator
 from deap import tools
 import random
 import seaborn as sns
-sns.set_theme(style="darkgrid")
+# sns.set_theme(style="darkgrid")
 from operator import attrgetter
 import parameters
 
