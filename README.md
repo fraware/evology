@@ -12,12 +12,12 @@ Is this issue natural to a trend-following ecology initialised on a specific tre
 # Todo-ongoing
 
 - [WFF] Short selling needs to be handled in some way (loans, margin)
-- LEAP_EC 0.6 update should be live soon https://pypi.org/project/leap-ec/
 
 # To watch
 - non negative cash for asset purchases is now implemented, but say vigilant 
 - list_ed_func looks fixed now
 - fixed supply of assets is now enforced
+- LEAP updated to 0.6.0, no issues to report after corrections
 
 # Notes
 
