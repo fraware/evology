@@ -164,22 +164,33 @@ def update_inventory (pop, price, assetQ):
         # print("agent wants up to " + str(realised_ed))
         if realised_ed > 0:
             i = 0
-            while i < realised_ed:
+            while i < realised_ed - 1:
                 if cash - price > 0:
                     if count_assets(pop) < assetQ:
                         ind[3] += 1
-                        cash -= price
+                        # cash -= price
+                        ind[2] -= price
                 i += 1
-        if realised_ed < 0:
+        if realised_ed < 0:            
+            
             i = 0
-            while i < abs(realised_ed):
-                if count_assets(pop) > 1:
+            while i < abs(realised_ed) - 1:
+                
+                if ind[3] < 1: 
+                    ''' short selling '''
+                    if count_assets(pop) > 1:
+                        ind[3] -= 1
+                        ind[9] += price
+                
+                if ind[3] >= 1: 
+                    ''' simple selling '''
                     ind[3] -= 1
-                    ind[9] += price
+                    ind[2] += price
+                    
                 i += 1
             
             # raise SystemExit
-        ind[2] = cash 
+        # ind[2] = cash 
         print("agent got " + str(ind[3] - former_asset))
 
 

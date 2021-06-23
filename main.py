@@ -152,6 +152,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         
         price = mc_leap.leap_solver(pop, price)
         # price = mc_leap.solver_linear_shortcut(pop, price)
+        print("Price is " + str(price))
         
         # testing block
         
