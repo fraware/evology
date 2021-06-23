@@ -176,9 +176,9 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         replacements.append(round_replacements)
         asset_count_history.append(market.count_assets(pop))
         
-        print("agg_price before mismatch")
-        print(aggregate_ed(price))
-        print(abs(market.truncate(aggregate_ed(price),3)))
+        # print("agg_price before mismatch")
+        # print(aggregate_ed(price))
+        # print(abs(market.truncate(aggregate_ed(price),3)))
         mismatch_history.append(abs(market.truncate(aggregate_ed(price),3)))
                 # Temp
         agent0_profit.append(pop[0][7])

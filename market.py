@@ -155,7 +155,7 @@ def update_inventory (pop, price, assetQ, share_increment):
         former_asset = ind[3]
         former_loan = ind[4]
         realised_ed = truncate(ind[6] / price - ind[3],4)
-        print("agent wants up to " + str(realised_ed)) #this is correct
+        # print("agent wants up to " + str(realised_ed)) #this is correct
         
         
         ''' If we want to buy assets: non-negative cash buying procedure '''
@@ -191,7 +191,7 @@ def update_inventory (pop, price, assetQ, share_increment):
             
             # raise SystemExit
         # ind[2] = cash 
-        print("agent got " + str(ind[3] - former_asset))
+        # print("agent got " + str(ind[3] - former_asset))
 
 
         
