@@ -133,15 +133,16 @@ toolbox.register("select", toolbox.selTournament)
 round_replacements = 0
 def hypermutate(pop):
     pop_temp = list(map(toolbox.clone, pop))
-    
+    round_replacements = 0
     for i in range(0, len(pop_temp)):
-        if pop_temp[i][1] + pop_temp[i][9] <= 0:
+        # if pop_temp[i][1] + pop_temp[i][9] <= 0:
+        if pop_temp[i][1] <= 0:
             pop_temp[i] = toolbox.generate_individual()
             del pop_temp[i].fitness.values
-            global round_replacements
+            # global round_replacements
             round_replacements += 1
     pop[:] = pop_temp
-    return pop
+    return pop, round_replacements
 toolbox.register("hypermutate", hypermutate)
 
 # Function to recompute fitness of invalid individuals

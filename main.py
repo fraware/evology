@@ -98,9 +98,9 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     
         
         ''' D) Hypermutation operator '''
-        global round_replacements
-        round_replacements = 0
-        ga.hypermutate(pop)
+        # global round_replacements
+        # round_replacements = 0
+        pop, round_replacements = ga.hypermutate(pop)
         # Recomputing fitness
         ga.fitness_for_invalid(pop)
         
@@ -204,10 +204,12 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
 
 
         df = data.generate_df(generation_history, price_history, mismatch_history, mean_theta, asset_count_history, 
-                              dividend_history, random_dividend_history, replacements,
-                              size_pos_pos, size_neg_pos)
+                              dividend_history, random_dividend_history, 
+                              size_pos_pos, size_neg_pos, replacements)
+        
     # return 
     
     # return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
     print(('{}\n'*len(pop)).format(*pop))
+    print(replacements)
     return df, extended_price_history
