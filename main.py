@@ -92,7 +92,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         # market.wealth_earnings(pop, dividend)
         
         ''' C) Update wealth and margin as a function of price '''
-        market.consumption(pop, CONSUMPTION_RATE)
+        market.consumption(pop, CONSUMPTION_RATE, price)
         market.update_wealth(pop, price) 
         market.update_margin(pop, price)
     

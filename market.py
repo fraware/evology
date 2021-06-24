@@ -78,9 +78,23 @@ def update_wealth(pop, price):
         ind[1] = truncate(ind[2] + ind[3] * price  - ind[4],3)
     return ind
 
-def consumption(pop, CONSUMPTION_RATE):
+def consumption(pop, CONSUMPTION_RATE, price):
     for ind in pop:
-        ind[2] -= CONSUMPTION_RATE
+        if ind[2] >= CONSUMPTION_RATE:
+            ind[2] -= CONSUMPTION_RATE
+        if ind[2] < CONSUMPTION_RATE:
+            ind[2] = 0
+            consume_amount = CONSUMPTION_RATE - ind[2]
+            if ind[3] <= 0:
+                ind[1] -= 1_000
+            if ind[3] > 0:
+                # agent will try to sell assets to fund consumption
+                if ind[3] * price >= consume_amount:
+                    ind[3] -= consume_amount / price
+                    # sells
+                if ind[3] * price < consume_amount:
+                    ind[1] -= 1_000
+            
         
 def compute_ema(pop):
     for ind in pop:
