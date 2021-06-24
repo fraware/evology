@@ -24,6 +24,7 @@ INTEREST_RATE = parameters.INTEREST_RATE
 DIVIDEND_GROWTH_RATE_G = parameters.DIVIDEND_GROWTH_RATE_G
 share_increment = parameters.share_increment
 short_bound = parameters.short_bound
+CONSUMPTION_RATE = parameters.CONSUMPTION_RATE
 
 
 def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
@@ -91,8 +92,10 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         # market.wealth_earnings(pop, dividend)
         
         ''' C) Update wealth and margin as a function of price '''
+        market.consumption(pop, CONSUMPTION_RATE)
         market.update_wealth(pop, price) 
         market.update_margin(pop, price)
+    
         
         ''' D) Hypermutation operator '''
         global round_replacements
@@ -198,10 +201,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         generation_history.append(generationCounter)
         generationCounter += 1
                 
-        # Temporary function to apply some fixed cost
-        # if generationCounter > 0:
-        #     for ind in pop:
-        #         ind[1] -= 1
+
 
         df = data.generate_df(generation_history, price_history, mismatch_history, mean_theta, asset_count_history, 
                               dividend_history, random_dividend_history, replacements,

@@ -25,8 +25,8 @@ import numpy as np
 
 def generate_df(generation_history, price_history, mismatch_history, mean_theta, 
                 asset_count_history,
-                dividend_history, random_dividend_history, 
-                size_pos_pos, size_neg_pos, replacements):
+                dividend_history, random_dividend_history, replacements,
+                size_pos_pos, size_neg_pos):
     df = pd.DataFrame()
     
     # General variables

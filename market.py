@@ -77,6 +77,10 @@ def update_wealth(pop, price):
     for ind in pop:
         ind[1] = truncate(ind[2] + ind[3] * price  - ind[4],3)
     return ind
+
+def consumption(pop, CONSUMPTION_RATE):
+    for ind in pop:
+        ind[2] -= CONSUMPTION_RATE
         
 def compute_ema(pop):
     for ind in pop:
