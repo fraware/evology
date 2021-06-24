@@ -1,7 +1,5 @@
 # Known issues
 
-- Does hypermutation creates unintended assets? Seems like it uses the same initialisation with 5 assets
-- How can replacements be negative?
 
 - Price (& wealth) goes to infinity
 
