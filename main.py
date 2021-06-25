@@ -1,6 +1,4 @@
 import random
-import seaborn as sns
-# sns.set_theme(style="darkgrid")
 import matplotlib.pyplot as plt
 import numpy as np
 import genetic_algorithm_functions as ga
@@ -32,7 +30,6 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     
     # Create the population and the results accumulators
     pop = ga.toolbox.population_creation(n=POPULATION_SIZE)
-    initial_pop = pop.copy()
     generationCounter = 1
     price = INITIAL_PRICE
     maxFitnessValues = []
@@ -51,12 +48,10 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     mean_wealth = []
     size_pos_pos = []
     size_neg_pos = []
+    """ we can do a,b,c = [],[],[] to be more concise """
     
     assetQ = market.count_assets(pop)
     
-    # Temp
-    agent0_profit = []
-    agent0_ema = []
     dividend = INITIAL_DIVIDEND
     
     print("Initial population")
@@ -74,8 +69,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     meanFitness = sum(fitnessValues) / len(pop)
     maxFitnessValues.append(maxFitness)
     meanFitnessValues.append(meanFitness)
-    agent0_profit.append(pop[0][7])
-    agent0_ema.append(pop[0][8])
+
     
     while generationCounter < MAX_GENERATIONS:
         print("----------------------------------------------------------------------")
@@ -99,10 +93,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     
         
         ''' D) Hypermutation operator '''
-        # global round_replacements
-        # round_replacements = 0
         pop, round_replacements = ga.hypermutate(pop)
-        # Recomputing fitness
         ga.fitness_for_invalid(pop)
         
         ''' E) Deduce fitness as EMA ''' 
@@ -193,9 +184,6 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         # print(aggregate_ed(price))
         # print(abs(market.truncate(aggregate_ed(price),3)))
         mismatch_history.append(abs(market.truncate(aggregate_ed(price),3)))
-                # Temp
-        agent0_profit.append(pop[0][7])
-        agent0_ema.append(pop[0][8])
         #  Could this print results be automated? We have it twice
         
         print("- Generation {}: Max Fitness = {}, Avg Fitness = {}".format(generationCounter, maxFitness, meanFitness))
@@ -205,12 +193,12 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
 
 
         df = data.generate_df(generation_history, price_history, mismatch_history, 
-                              mean_theta, mean_wealth, asset_count_history, 
+                              mean_theta, mean_wealth, meanFitnessValues,
+                              asset_count_history, 
                               dividend_history, random_dividend_history, 
                               size_pos_pos, size_neg_pos, replacements)
         
     # return 
-    
     # return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
     print(('{}\n'*len(pop)).format(*pop))
     return df, extended_price_history
