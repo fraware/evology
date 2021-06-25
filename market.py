@@ -182,7 +182,6 @@ def update_inventory (pop, price, assetQ, share_increment, short_bound):
         realised_ed = truncate(ind[6] / price - ind[3],4)
         # print("agent wants up to " + str(realised_ed)) #this is correct
         
-        
         ''' If we want to buy assets: non-negative cash buying procedure '''
         cash = ind[2] + ind[3] * price + former_loan - ind[4]
 
@@ -214,20 +213,6 @@ def update_inventory (pop, price, assetQ, share_increment, short_bound):
                     
                 i += share_increment
             
-            # raise SystemExit
-        # ind[2] = cash 
-        # print("agent got " + str(ind[3] - former_asset))
-
-
-        
-        # Update new cash if result is positive
-        # new_cash = truncate(ind[2] - (ind[3] - former_asset) * price - ind[4] + former_loan - ind[9],3)
-        # if new_cash >= 0:
-        #     ind[2] = new_cash 
-        # else: 
-        #     print("Error negative cash" + str(ind))
-        #     print(realised_ed)
-        
         #	 Clear the margin if we are out of the short position
         if ind[3] >= 0:
             ind[2] += ind[9]

@@ -50,18 +50,21 @@ toolbox.register("generate_ema", random.randint, 0, 0)
 toolbox.register("generate_margin", random.randint, 0, 0)
 
 toolbox.register("generate_individual", tools.initCycle, creator.individual, 
-                 (toolbox.generate_strategy, toolbox.generate_wealth, toolbox.generate_cash, 
-                  toolbox.generate_asset, toolbox.generate_loan, toolbox.generate_trading_signal, 
-                  toolbox.generate_excess_demand,toolbox.generate_profit,toolbox.generate_ema, toolbox.generate_margin), n=1)
+                 (toolbox.generate_strategy, toolbox.generate_wealth, 
+                  toolbox.generate_cash, toolbox.generate_asset, 
+                  toolbox.generate_loan, toolbox.generate_trading_signal, 
+                  toolbox.generate_excess_demand,toolbox.generate_profit,
+                  toolbox.generate_ema, toolbox.generate_margin), n=1)
 toolbox.register("population_creation", tools.initRepeat, list, toolbox.generate_individual)
 
-'''
-For the initialisation:
-    - Wealth is not determined first, it will depend on cash asset and loan
-    - Cash and Assets are initialiased at 50-50
-    - @Maarten: what price? what initial wealth amount?
-    - I am temporarily setting cash as 5, asset as 5 and initial price as 1
-'''
+toolbox.register("generate_no_asset", random.randint, 0, 0)
+
+toolbox.register("generate_hyper_individual", tools.initCycle, creator.individual, 
+                 (toolbox.generate_strategy, toolbox.generate_wealth, 
+                  toolbox.generate_cash, toolbox.generate_no_asset, 
+                  toolbox.generate_loan, toolbox.generate_trading_signal, 
+                  toolbox.generate_excess_demand,toolbox.generate_profit,
+                  toolbox.generate_ema, toolbox.generate_margin), n=1)
 
 # Fitness definition
 def ema_fitness(individual):
@@ -137,7 +140,7 @@ def hypermutate(pop):
     for i in range(0, len(pop_temp)):
         # if pop_temp[i][1] + pop_temp[i][9] <= 0:
         if pop_temp[i][1] <= 0:
-            pop_temp[i] = toolbox.generate_individual()
+            pop_temp[i] = toolbox.generate_hyper_individual()
             del pop_temp[i].fitness.values
             # global round_replacements
             round_replacements += 1

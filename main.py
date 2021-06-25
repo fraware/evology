@@ -89,7 +89,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         random_dividend_history.append(random_dividend)
         
         ''' B) Apply dividends, interest rate and reinvestment, update profit '''
-        # market.wealth_earnings(pop, dividend)
+        market.wealth_earnings(pop, dividend)
         
         ''' C) Update wealth and margin as a function of price '''
         market.consumption(pop, CONSUMPTION_RATE, price)
@@ -211,5 +211,4 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     
     # return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
     print(('{}\n'*len(pop)).format(*pop))
-    print(replacements)
     return df, extended_price_history
