@@ -13,6 +13,7 @@ Is this issue natural to a trend-following ecology initialised on a specific tre
 # Todo-ongoing
 
 - add value investing
+- switch to ESL market clearing
 
 # To watch
 - non negative cash for asset purchases is now implemented, but say vigilant 
@@ -31,7 +32,3 @@ Is this issue natural to a trend-following ecology initialised on a specific tre
 - For positive ED, reassignment to assets works well (02.06.21)
 
 
-## Forthcoming
-
-- Market clearing 2.0 (ESL)
-- Redo plots for analysis from df
