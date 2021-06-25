@@ -2,6 +2,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import genetic_algorithm_functions as ga
+import genetic_programming_functions as gp
 import market 
 import market_clearing_leap as mc_leap
 import parameters
@@ -24,6 +25,8 @@ DIVIDEND_GROWTH_RATE_G = parameters.DIVIDEND_GROWTH_RATE_G
 share_increment = parameters.share_increment
 short_bound = parameters.short_bound
 CONSUMPTION_RATE = parameters.CONSUMPTION_RATE
+INITIAL_CASH = parameters.INITIAL_CASH
+INITIAL_ASSETS = parameters.INITIAL_ASSETS
 
 
 def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
@@ -47,15 +50,43 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     
     if PROBA_GP == 1:
         pop_ex = []
+        # pop_op = gp.create-population(....)
     elif PROBA_TF == 1:
         pop_ex = ga.toolbox.tf_population_creation(n=POPULATION_SIZE)
+        pop_op = []
     elif PROBA_VI == 1:
         pop_ex = ga.toolbox.vi_population_creation(n=POPULATION_SIZE)
+        pop_op = []
     else:
-        pop_ex = ga.create_mixed_population(POPULATION_SIZE, PROBA_TF, PROBA_VI)
+        if PROBA_GP == 0: 
+            pop_ex = ga.create_mixed_population(POPULATION_SIZE, PROBA_TF, PROBA_VI)
+        else: 
+            # Determine respective population sizes
+            POP_OP_SIZE = 0
+            POP_EX_SIZE = 0
+            for i in range(POPULATION_SIZE):
+                rd = random.random()
+                if rd <= PROBA_GP:
+                    POP_OP_SIZE += 1
+                elif rd > PROBA_GP:
+                    POP_EX_SIZE += 1
+            # Create the two populations
+            pop_ex = ga.create_mixed_population(POP_EX_SIZE, PROBA_TF, PROBA_VI)        
+            # pop_op = gp.create-population(POP_OP_SIZE)
+            
         """ Warning: when adding new strategy, we will need to modify here """
         
     """ TODO add te type vector as well probably """
+    
+    """ TODO: gen BALANCE SHEET because once we add GP we won't really be able 
+    to maintain the same structure """
+    
+
+
+    balance_sheet = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
+    ind_bs = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
+    for i in range(POPULATION_SIZE-1):
+        balance_sheet = np.vstack((balance_sheet, ind_bs))
     
     pop = pop_ex.copy()
     print(('{}\n'*len(pop)).format(*pop))
@@ -65,7 +96,6 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         
     
     # Create the population and the results accumulators
-    # pop = ga.toolbox.population_creation(n=POPULATION_SIZE)
     generationCounter = 1
     price = INITIAL_PRICE
     maxFitnessValues = []
