@@ -1,11 +1,12 @@
 from deap import base
 from deap import creator
 from deap import tools
+from deap import algorithms
+from deap import gp
 import random
-import seaborn as sns
-# sns.set_theme(style="darkgrid")
 from operator import attrgetter
 import parameters
+
 
 # # =============================================================================
 # # Fixed parameters
@@ -22,14 +23,6 @@ INITIAL_PRICE = parameters.INITIAL_PRICE
 TOURNAMENT_SIZE = parameters.TOURNAMENT_SIZE 
 INITIAL_ASSETS = parameters.INITIAL_ASSETS
 INITIAL_CASH = parameters.INITIAL_CASH
-
-# =============================================================================
-# Setup the evolutionary operators
-# =============================================================================
-
-# Agent representaiton:
-#     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit   Margin]
-#     [ 0       1     2    3     4         5             6           7            8           9]
 
 toolbox = base.Toolbox()
 

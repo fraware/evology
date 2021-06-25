@@ -9,6 +9,7 @@ import data
 import brownian_motion as bm
 
 RANDOM_SEED = parameters.RANDOM_SEED
+random.seed(RANDOM_SEED)
 POPULATION_SIZE = parameters.POPULATION_SIZE
 MAX_TIME_HORIZON = parameters.MAX_TIME_HORIZON
 # MUTATION_RATE = parameters.MUTATION_RATE
@@ -25,8 +26,33 @@ short_bound = parameters.short_bound
 CONSUMPTION_RATE = parameters.CONSUMPTION_RATE
 
 
-def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
-    random.seed(RANDOM_SEED)
+def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
+    
+    "we can probably put this as an external function to save space"
+    if mode == "extended":
+        PROBA_TF = parameters.PROBA_TF
+        PROBA_VI = parameters.PROBA_VI
+        PROBA_GP = 0
+    if mode == "open":
+        PROBA_GP = 1
+        PROBA_TF = 0
+        PROBA_VI = 0
+    if mode == "combined":
+        PROBA_GP = parameters.PROBA_GP
+        PROBA_TF = parameters.PROBA_TF
+        PROBA_VI = parameters.PROBA_VI
+        
+### create the populations ###
+    # create the extended-ecology population
+    
+    
+    
+    """ Current piece of code that works """
+    pop = ga.toolbox.population_creation(n=POPULATION_SIZE)
+    
+    # create the open-ecology population
+    """ TODO (GP) """
+        
     
     # Create the population and the results accumulators
     pop = ga.toolbox.population_creation(n=POPULATION_SIZE)
@@ -202,3 +228,5 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     # return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
     print(('{}\n'*len(pop)).format(*pop))
     return df, extended_price_history
+
+
