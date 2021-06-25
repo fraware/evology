@@ -104,3 +104,47 @@ def ed2(x):
 functions = [ed1, ed2]
 
 solve(functions)
+
+
+
+"""
+ def solve(my_excess_demand_functions: list):
+  market_agent = esl.simulation.identity([0])
+  excess_demand_functions = []
+
+  class OrderWrapper(differentiable_order_message):
+      def __init__(self, function, sender, recipient, sent, received):
+          super().__init__(sender, recipient, sent, received)
+          self.sender = sender
+          self.function = function
+
+      def excess_demand(self, quotes) -> dict:
+          ed = {k: self.function(k, float(v[0]) * v[1]) for i,  (k, v) in enumerate(quotes.items())}
+          return ed
+
+  for i, edf in enumerate(my_excess_demand_functions):
+    order = OrderWrapper(edf, esl.simulation.identity([i+1]), market_agent, 0, 0)
+    excess_demand_functions.append(order)
+
+  model.excess_demand_functions = excess_demand_functions
+  multipliers = model.compute_clearing_quotes()
+  prices = []
+
+  for k, v in multipliers.items():
+    prices.append(price(round(float(initial_price) * v * currencies.USD.denominator), currencies.USD))
+  return prices
+
+
+
+def func1(asset_key, price):
+  return 3 - price
+
+
+def func2(asset_key, price):
+  return 5 - price
+
+
+functions = [func1, func2]
+solve(functions)
+
+""" 

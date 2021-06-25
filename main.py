@@ -46,11 +46,10 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         PROBA_VI = parameters.PROBA_VI
         
 ### create the populations ###
-    # create the extended-ecology population
     
     if PROBA_GP == 1:
         pop_ex = []
-        # pop_op = gp.create-population(....)
+        # pop_op = gp.create-population(.POPULATIOn_SIZE...)
     elif PROBA_TF == 1:
         pop_ex = ga.toolbox.tf_population_creation(n=POPULATION_SIZE)
         pop_op = []
@@ -73,27 +72,21 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
             # Create the two populations
             pop_ex = ga.create_mixed_population(POP_EX_SIZE, PROBA_TF, PROBA_VI)        
             # pop_op = gp.create-population(POP_OP_SIZE)
+    pop = pop_ex.copy()
+    print(('{}\n'*len(pop)).format(*pop))
             
+    """ TODO (GP) """
+
         """ Warning: when adding new strategy, we will need to modify here """
         
     """ TODO add te type vector as well probably """
     
-    """ TODO: gen BALANCE SHEET because once we add GP we won't really be able 
-    to maintain the same structure """
-    
-
-
+    # If we need to give different starting conditions to different strategies, we can do it here.
     balance_sheet = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
     ind_bs = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
     for i in range(POPULATION_SIZE-1):
         balance_sheet = np.vstack((balance_sheet, ind_bs))
-    
-    pop = pop_ex.copy()
-    print(('{}\n'*len(pop)).format(*pop))
-    
-    # create the open-ecology population
-    """ TODO (GP) """
-        
+
     
     # Create the population and the results accumulators
     generationCounter = 1
