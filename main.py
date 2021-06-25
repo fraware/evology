@@ -45,17 +45,27 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
 ### create the populations ###
     # create the extended-ecology population
     
+    if PROBA_GP == 1:
+        pop_ex = []
+    elif PROBA_TF == 1:
+        pop_ex = ga.toolbox.tf_population_creation(n=POPULATION_SIZE)
+    elif PROBA_VI == 1:
+        pop_ex = ga.toolbox.vi_population_creation(n=POPULATION_SIZE)
+    else:
+        pop_ex = ga.create_mixed_population(POPULATION_SIZE, PROBA_TF, PROBA_VI)
+        """ Warning: when adding new strategy, we will need to modify here """
+        
+    """ TODO add te type vector as well probably """
     
-    
-    """ Current piece of code that works """
-    pop = ga.toolbox.population_creation(n=POPULATION_SIZE)
+    pop = pop_ex.copy()
+    print(('{}\n'*len(pop)).format(*pop))
     
     # create the open-ecology population
     """ TODO (GP) """
         
     
     # Create the population and the results accumulators
-    pop = ga.toolbox.population_creation(n=POPULATION_SIZE)
+    # pop = ga.toolbox.population_creation(n=POPULATION_SIZE)
     generationCounter = 1
     price = INITIAL_PRICE
     maxFitnessValues = []
@@ -91,10 +101,10 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         individual.fitness.values = fitnessValue
     fitnessValues = [individual.fitness.values[0] for individual in pop]
     
-    maxFitness = max(fitnessValues)
-    meanFitness = sum(fitnessValues) / len(pop)
-    maxFitnessValues.append(maxFitness)
-    meanFitnessValues.append(meanFitness)
+    # maxFitness = max(fitnessValues)
+    # meanFitness = sum(fitnessValues) / len(pop)
+    # maxFitnessValues.append(maxFitness)
+    # meanFitnessValues.append(meanFitness)
 
     
     while generationCounter < MAX_GENERATIONS:
@@ -217,8 +227,7 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         generationCounter += 1
                 
 
-
-        df = data.generate_df(generation_history, price_history, mismatch_history, 
+    df = data.generate_df(generation_history, price_history, mismatch_history, 
                               mean_theta, mean_wealth, meanFitnessValues,
                               asset_count_history, 
                               dividend_history, random_dividend_history, 

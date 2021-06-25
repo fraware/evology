@@ -23,6 +23,9 @@ INITIAL_PRICE = parameters.INITIAL_PRICE
 TOURNAMENT_SIZE = parameters.TOURNAMENT_SIZE 
 INITIAL_ASSETS = parameters.INITIAL_ASSETS
 INITIAL_CASH = parameters.INITIAL_CASH
+MIN_VALUATION = parameters.MIN_VALUATION
+MAX_VALUATION = parameters.MAX_VALUATION
+
 
 toolbox = base.Toolbox()
 
@@ -31,7 +34,7 @@ creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 # Create the individual object
 creator.create("individual", list, typecode = 'd', fitness=creator.fitness_strategy)
 # Create the individual list 
-toolbox.register("generate_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
+toolbox.register("generate_tf_strategy", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
 toolbox.register("generate_wealth", random.randint, 0, 0)
 toolbox.register("generate_cash", random.randint, INITIAL_CASH, INITIAL_CASH)
 toolbox.register("generate_asset", random.randint, INITIAL_ASSETS, INITIAL_ASSETS)
@@ -42,22 +45,51 @@ toolbox.register("generate_profit", random.randint, 0, 0)
 toolbox.register("generate_ema", random.randint, 0, 0)
 toolbox.register("generate_margin", random.randint, 0, 0)
 
-toolbox.register("generate_individual", tools.initCycle, creator.individual, 
-                 (toolbox.generate_strategy, toolbox.generate_wealth, 
+toolbox.register("generate_tf_individual", tools.initCycle, creator.individual, 
+                 (toolbox.generate_tf_strategy, toolbox.generate_wealth, 
                   toolbox.generate_cash, toolbox.generate_asset, 
                   toolbox.generate_loan, toolbox.generate_trading_signal, 
                   toolbox.generate_excess_demand,toolbox.generate_profit,
                   toolbox.generate_ema, toolbox.generate_margin), n=1)
-toolbox.register("population_creation", tools.initRepeat, list, toolbox.generate_individual)
+toolbox.register("tf_population_creation", tools.initRepeat, list, toolbox.generate_tf_individual)
 
 toolbox.register("generate_no_asset", random.randint, 0, 0)
 
 toolbox.register("generate_hyper_individual", tools.initCycle, creator.individual, 
-                 (toolbox.generate_strategy, toolbox.generate_wealth, 
+                 (toolbox.generate_tf_strategy, toolbox.generate_wealth, 
                   toolbox.generate_cash, toolbox.generate_no_asset, 
                   toolbox.generate_loan, toolbox.generate_trading_signal, 
                   toolbox.generate_excess_demand,toolbox.generate_profit,
                   toolbox.generate_ema, toolbox.generate_margin), n=1)
+
+
+toolbox.register("generate_vi_strategy", random.randint, MIN_VALUATION, MAX_VALUATION)
+toolbox.register("generate_vi_individual", tools.initCycle, creator.individual, 
+                 (toolbox.generate_vi_strategy, toolbox.generate_wealth, 
+                  toolbox.generate_cash, toolbox.generate_asset, 
+                  toolbox.generate_loan, toolbox.generate_trading_signal, 
+                  toolbox.generate_excess_demand,toolbox.generate_profit,
+                  toolbox.generate_ema, toolbox.generate_margin), n=1)
+toolbox.register("vi_population_creation", tools.initRepeat, list, toolbox.generate_vi_individual)
+
+def create_mixed_population(POPULATION_SIZE, PROBA_TF, PROBA_VI):
+    def determine_mixed_strategy(PROBA_TF, PROBA_VI):
+        rd = random.random()
+        if rd <= PROBA_TF:
+            return toolbox.generate_tf_strategy()
+        elif rd > PROBA_TF and rd <= PROBA_TF + PROBA_VI:
+            return toolbox.generate_vi_strategy()
+    
+    toolbox.register("generate_mix_strategy", determine_mixed_strategy, PROBA_TF, PROBA_VI)
+    toolbox.register("generate_mix_individual", tools.initCycle, creator.individual, 
+                     (toolbox.generate_mix_strategy, toolbox.generate_wealth, 
+                      toolbox.generate_cash, toolbox.generate_asset, 
+                      toolbox.generate_loan, toolbox.generate_trading_signal, 
+                      toolbox.generate_excess_demand,toolbox.generate_profit,
+                      toolbox.generate_ema, toolbox.generate_margin), n=1)
+    toolbox.register("mix_population_creation", tools.initRepeat, list, toolbox.generate_mix_individual)
+    pop = toolbox.mix_population_creation(n=POPULATION_SIZE)
+    return pop
 
 # Fitness definition
 def ema_fitness(individual):
