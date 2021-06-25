@@ -48,6 +48,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     mismatch_history = []
     asset_count_history = []
     mean_theta = []
+    mean_wealth = []
     size_pos_pos = []
     size_neg_pos = []
     
@@ -184,7 +185,7 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         replacements.append(round_replacements)
         asset_count_history.append(market.count_assets(pop))
         mean_theta.append(data.theta_stats(pop))
-                
+        mean_wealth.append(market.count_wealth(pop))
         size_pos_pos.append(market.count_assets(pop))
         size_neg_pos.append(market.count_size_short(pop))
         
@@ -203,7 +204,8 @@ def main(selection_proba, CROSSOVER_RATE, MUTATION_RATE):
                 
 
 
-        df = data.generate_df(generation_history, price_history, mismatch_history, mean_theta, asset_count_history, 
+        df = data.generate_df(generation_history, price_history, mismatch_history, 
+                              mean_theta, mean_wealth, asset_count_history, 
                               dividend_history, random_dividend_history, 
                               size_pos_pos, size_neg_pos, replacements)
         

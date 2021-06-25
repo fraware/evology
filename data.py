@@ -24,7 +24,7 @@ import pandas as pd
 import numpy as np
 
 def generate_df(generation_history, price_history, mismatch_history, mean_theta, 
-                asset_count_history,
+                mean_wealth, asset_count_history,
                 dividend_history, random_dividend_history, 
                 size_pos_pos, size_neg_pos, replacements):
     df = pd.DataFrame()
@@ -38,6 +38,7 @@ def generate_df(generation_history, price_history, mismatch_history, mean_theta,
     df["Mismatch"] = mismatch_history
     df["LogP"] = np.log10(price_history)
     df["MeanT"] = mean_theta
+    df["MeanW"] = mean_wealth
     df["Q"] = asset_count_history
     df["Div"] = dividend_history
     df["RDiv"] = random_dividend_history

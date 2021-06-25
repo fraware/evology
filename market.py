@@ -174,6 +174,12 @@ def update_margin(pop, price):
                 ind[1] = -1_000
     return ind
 
+def count_wealth(pop):
+    total_wealth = 0
+    for ind in pop:
+        total_wealth += ind[1]
+    return total_wealth / len(pop)
+
 
 def update_inventory (pop, price, assetQ, share_increment, short_bound):
     for ind in pop:
