@@ -4,6 +4,9 @@ import numpy as np
 RANDOM_SEED = 9 #random.random()
 
 ''' STRATEGY DISTRIBUTIONS '''
+PROBA_GP = 0
+PROBA_TF = 1
+PROBA_VI = 0
 
 ''' GA parmeters '''
 POPULATION_SIZE = 4
