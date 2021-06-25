@@ -1,7 +1,5 @@
 # Known issues
 
-- Does hypermutation creates unintended assets? Seems like it uses the same initialisation with 5 assets
-- How can replacements be negative?
 
 - Price (& wealth) goes to infinity
 
@@ -14,13 +12,14 @@ Is this issue natural to a trend-following ecology initialised on a specific tre
 
 # Todo-ongoing
 
-- [WFF] Short selling needs to be handled in some way (loans, margin)
+- add value investing
 
 # To watch
 - non negative cash for asset purchases is now implemented, but say vigilant 
 - list_ed_func looks fixed now
 - fixed supply of assets is now enforced
 - LEAP updated to 0.6.0, no issues to report after corrections
+- Short selling and normal selling are implemented, watch out for bugs
 
 # Notes
 
