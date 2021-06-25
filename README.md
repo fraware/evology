@@ -1,5 +1,7 @@
 # Known issues
 
+- To have modle stability, we will need the value investors, hence we will need structural changes
+
 
 - Price (& wealth) goes to infinity
 
