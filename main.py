@@ -29,8 +29,6 @@ CONSUMPTION_RATE = parameters.CONSUMPTION_RATE
 INITIAL_CASH = parameters.INITIAL_CASH
 INITIAL_ASSETS = parameters.INITIAL_ASSETS
 
-
-
 def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     
     pop_ex, pop_op, balance_sheet, types = popgen.generate_population(mode)
