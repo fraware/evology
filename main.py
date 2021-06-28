@@ -40,27 +40,12 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     # Create the population and the results accumulators
     generationCounter = 1
     price = INITIAL_PRICE
-    maxFitnessValues = []
-    meanFitnessValues = []
-    replacements = []
-    dividend_history = []
-    random_dividend_history = []
-    price_history = []
     extended_price_history = bm.generate_bm_series(MAX_TIME_HORIZON)
-    plt.plot(extended_price_history)
-    plt.show()
-    generation_history = []
-    mismatch_history = []
-    asset_count_history = []
-    mean_theta = []
-    mean_wealth = []
-    size_pos_pos = []
-    size_neg_pos = []
-    """ we can do a,b,c = [],[],[] to be more concise """
-    
     assetQ = market.count_assets(pop)
-    
     dividend = INITIAL_DIVIDEND
+
+    maxFitnessValues, meanFitnessValues, replacements, dividend_history, random_dividend_history, price_history = [],[],[],[],[],[]   
+    generation_history, mismatch_history, asset_count_history, mean_theta, mean_wealth, size_pos_pos, size_neg_pos = [],[],[],[],[],[], []
     
     print("Initial population")
     print(('{}\n'*len(pop)).format(*pop))
@@ -72,13 +57,7 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     for individual, fitnessValue in zip(pop, fitnessValues):
         individual.fitness.values = fitnessValue
     fitnessValues = [individual.fitness.values[0] for individual in pop]
-    
-    # maxFitness = max(fitnessValues)
-    # meanFitness = sum(fitnessValues) / len(pop)
-    # maxFitnessValues.append(maxFitness)
-    # meanFitnessValues.append(meanFitness)
-
-    
+        
     while generationCounter < MAX_GENERATIONS:
         print("----------------------------------------------------------------------")
         print("Generation " + str(generationCounter))
