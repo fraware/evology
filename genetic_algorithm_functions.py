@@ -3,6 +3,7 @@ from deap import creator
 from deap import tools
 from deap import algorithms
 from deap import gp
+import numpy as np
 import random
 from operator import attrgetter
 import parameters
@@ -73,23 +74,31 @@ toolbox.register("generate_vi_individual", tools.initCycle, creator.individual,
 toolbox.register("vi_population_creation", tools.initRepeat, list, toolbox.generate_vi_individual)
 
 def create_mixed_population(POPULATION_SIZE, PROBA_TF, PROBA_VI):
+    global types
+    types = np.array(["NA"])
+    
     def determine_mixed_strategy(PROBA_TF, PROBA_VI):
+        global types
         rd = random.random()
         if rd <= PROBA_TF:
+            types = np.vstack((types, "TF"))
             return toolbox.generate_tf_strategy()
         elif rd > PROBA_TF and rd <= PROBA_TF + PROBA_VI:
+            types = np.vstack((types, "VI"))
             return toolbox.generate_vi_strategy()
     
-    toolbox.register("generate_mix_strategy", determine_mixed_strategy, PROBA_TF, PROBA_VI)
+    toolbox.register("generate_mix_strategy", determine_mixed_strategy, PROBA_TF,
+                     PROBA_VI)
     toolbox.register("generate_mix_individual", tools.initCycle, creator.individual, 
                      (toolbox.generate_mix_strategy, toolbox.generate_wealth, 
                       toolbox.generate_cash, toolbox.generate_asset, 
                       toolbox.generate_loan, toolbox.generate_trading_signal, 
                       toolbox.generate_excess_demand,toolbox.generate_profit,
                       toolbox.generate_ema, toolbox.generate_margin), n=1)
-    toolbox.register("mix_population_creation", tools.initRepeat, list, toolbox.generate_mix_individual)
+    toolbox.register("mix_population_creation", tools.initRepeat, list, 
+                     toolbox.generate_mix_individual)
     pop = toolbox.mix_population_creation(n=POPULATION_SIZE)
-    return pop
+    return pop, types
 
 # Fitness definition
 def ema_fitness(individual):

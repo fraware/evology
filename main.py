@@ -8,6 +8,7 @@ import market_clearing_leap as mc_leap
 import parameters
 import data
 import brownian_motion as bm
+import population_generation as popgen
 
 RANDOM_SEED = parameters.RANDOM_SEED
 random.seed(RANDOM_SEED)
@@ -29,64 +30,12 @@ INITIAL_CASH = parameters.INITIAL_CASH
 INITIAL_ASSETS = parameters.INITIAL_ASSETS
 
 
+
 def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     
-    "we can probably put this as an external function to save space"
-    if mode == "extended":
-        PROBA_TF = parameters.PROBA_TF
-        PROBA_VI = parameters.PROBA_VI
-        PROBA_GP = 0
-    if mode == "open":
-        PROBA_GP = 1
-        PROBA_TF = 0
-        PROBA_VI = 0
-    if mode == "combined":
-        PROBA_GP = parameters.PROBA_GP
-        PROBA_TF = parameters.PROBA_TF
-        PROBA_VI = parameters.PROBA_VI
-        
-### create the populations ###
+    pop_ex, pop_op, balance_sheet, types = popgen.generate_population(mode)
     
-    if PROBA_GP == 1:
-        pop_ex = []
-        # pop_op = gp.create-population(.POPULATIOn_SIZE...)
-    elif PROBA_TF == 1:
-        pop_ex = ga.toolbox.tf_population_creation(n=POPULATION_SIZE)
-        pop_op = []
-    elif PROBA_VI == 1:
-        pop_ex = ga.toolbox.vi_population_creation(n=POPULATION_SIZE)
-        pop_op = []
-    else:
-        if PROBA_GP == 0: 
-            pop_ex = ga.create_mixed_population(POPULATION_SIZE, PROBA_TF, PROBA_VI)
-        else: 
-            # Determine respective population sizes
-            POP_OP_SIZE = 0
-            POP_EX_SIZE = 0
-            for i in range(POPULATION_SIZE):
-                rd = random.random()
-                if rd <= PROBA_GP:
-                    POP_OP_SIZE += 1
-                elif rd > PROBA_GP:
-                    POP_EX_SIZE += 1
-            # Create the two populations
-            pop_ex = ga.create_mixed_population(POP_EX_SIZE, PROBA_TF, PROBA_VI)        
-            # pop_op = gp.create-population(POP_OP_SIZE)
-    pop = pop_ex.copy()
-    print(('{}\n'*len(pop)).format(*pop))
-            
-    """ TODO (GP) """
-
-        """ Warning: when adding new strategy, we will need to modify here """
-        
-    """ TODO add te type vector as well probably """
-    
-    # If we need to give different starting conditions to different strategies, we can do it here.
-    balance_sheet = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
-    ind_bs = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
-    for i in range(POPULATION_SIZE-1):
-        balance_sheet = np.vstack((balance_sheet, ind_bs))
-
+    pop = pop_ex.copy() #temp
     
     # Create the population and the results accumulators
     generationCounter = 1
