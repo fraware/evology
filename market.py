@@ -59,8 +59,8 @@ def draw_dividend(DIVIDEND_GROWTH_RATE):
     dividend = truncate(dividend, 3)
     return dividend, random_dividend
 
-        
-def wealth_earnings(pop, dividend):
+"""TO REMOVE"""
+def wealth_earnings(pop, dividend): 
     # print(INTEREST_RATE)
     # print(REINVESTMENT_RATE)
     for ind in pop:
@@ -72,6 +72,14 @@ def wealth_earnings(pop, dividend):
         ind[2] += REINVESTMENT_RATE * (INTEREST_RATE * ind[2] + dividend * ind[3])
         ind[2] = truncate(ind[2],3)
     return ind
+
+def bs_wealth_earnings(balance_sheet, dividend):
+    for row in balance_sheet:
+        # Update Profit
+        row[6] = truncate(REINVESTMENT_RATE * (INTEREST_RATE * row[1] + dividend * row[2]),3)
+        # Update Cash
+        row[1] += REINVESTMENT_RATE * (INTEREST_RATE * row[1] + dividend * row[2])
+        row[1] = truncate(row[1],3)
 
 def update_wealth(pop, price):
     for ind in pop:

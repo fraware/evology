@@ -32,7 +32,8 @@ INITIAL_ASSETS = parameters.INITIAL_ASSETS
 def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     
     pop_ex, pop_op, balance_sheet, types = popgen.generate_population(mode)
-    
+    print("initialised bs")
+    print(balance_sheet)
     pop = pop_ex.copy() #temp
     
     # Create the population and the results accumulators
@@ -51,10 +52,11 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     print("[Theta Wealth Cash Asset Loan TradingSignal RawExcessDemand     Profit     EMA profit   Margin]")
     print("[ 0       1     2    3     4         5             6           7            8              9]")
     
-    fitnessValues = list(map(ga.toolbox.evaluate, pop))
-    for individual, fitnessValue in zip(pop, fitnessValues):
-        individual.fitness.values = fitnessValue
-    fitnessValues = [individual.fitness.values[0] for individual in pop]
+    # "Put this as a single function"
+    # fitnessValues = list(map(ga.toolbox.evaluate, pop))
+    # for individual, fitnessValue in zip(pop, fitnessValues):
+    #     individual.fitness.values = fitnessValue
+    # fitnessValues = [individual.fitness.values[0] for individual in pop]
         
     while generationCounter < MAX_GENERATIONS:
         print("----------------------------------------------------------------------")
@@ -68,14 +70,20 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         print("dividend is " + str(dividend))
         random_dividend_history.append(random_dividend)
         
+        print("bs before B")
+        print(balance_sheet)
         ''' B) Apply dividends, interest rate and reinvestment, update profit '''
         market.wealth_earnings(pop, dividend)
+        market.bs_wealth_earnings(balance_sheet, dividend)
+        print("bs after B")
+        print(balance_sheet)
+        
+        print(('{}\n'*len(pop)).format(*pop))
         
         ''' C) Update wealth and margin as a function of price '''
         market.consumption(pop, CONSUMPTION_RATE, price)
         market.update_wealth(pop, price) 
         market.update_margin(pop, price)
-    
         
         ''' D) Hypermutation operator '''
         pop, round_replacements = ga.hypermutate(pop)
@@ -83,11 +91,11 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         
         ''' E) Deduce fitness as EMA ''' 
         market.compute_ema(pop)
+        
         fitnessValues = list(map(ga.toolbox.evaluate, pop))
         for individual, fitnessValue in zip(pop, fitnessValues):
             individual.fitness.values = fitnessValue
         fitnessValues = [individual.fitness.values[0] for individual in pop]
-        #turn this into a one-line function?
         
         # print("After fitness, dividends, wealth, hypermuation updates")
         # print(('{}\n'*len(pop)).format(*pop))
