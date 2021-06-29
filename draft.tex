@@ -13,11 +13,13 @@ sorting=ynt
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
-\usepackage{algorithm}% http://ctan.org/pkg/algorithms 
-\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx 
-\newcommand{\var}[1]{{\ttfamily#1}}% variable 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\newcommand{\var}[1]{{\ttfamily#1}}
+\newcommand\boldred[1]{\textcolor{red}{\textbf{#1}}}
 
-\title{Evolutionary market ecologies \\ Model \& Numerical experiments}
+\title{Evolutionary market ecologies and market malfunction\\
+Draft}
 \author{Aymeric Vi\'{e}}
 \date{\today}
 
@@ -29,9 +31,22 @@ sorting=ynt
 
 \clearpage
 
-\section{Trend following Model description}
+\begin{abstract}
+    \boldred{Abstract TBA}
+\end{abstract}
+
+\section{Introduction}
+\boldred{Introduction TBA}
+\boldred{Everything related to GP and multi asset: in footnotes}
+% Maybe paragraphs could be
+% market ecology
+% evolutionary computation
+% evolution in financial markets
+
+\section{Model}
 
 \subsection{Initialisation}
+\boldred{To update with new structure}
 
 We first create a population of $n$ trend-following agents, at time $t=0$. Each agent $i$ is described by its strategy $\theta_i(0)$, initial cash $C_i(0)$, initial assets $S_i(0)$. The $\theta$ parameter describes the time horizon on which the trend following strategy is based (Equation \ref{trend_following_equation}). Initial strategies are drawn uniformly in $[2,H]$, where $H$ is the maximum possible time horizon. \par
 Values for initial endowments of the agents meet the $\$100M$ Securities and Exchange Commission threshold for institutional investment managers, that are equally split in cash and asset shares. 
@@ -50,8 +65,10 @@ In this market, agents are choosing between a bond with a fixed continuously pai
 
 Where $g$ is the dividend growth rate, $\sigma$ its variance, $\omega$ is the autocorrelation parameter of the process, and $Z$ is a standard Wiener process. Based on estimates from Lebaron \cite{lebaron2001empirical} and Scholl et al. \cite{scholl2020market}, we take $g=2\%$ annually and $\sigma = 6\%$ annually. \par
 The market is initialised with an initial price of $100$ that matches the fundamental value of the asset, and initial dividends of $100$. 
+\boldred{Add a note for the multi asset thing. We actually need to think about multiple assets now that we are doing these big changes. Notably, the ED and TS matrix would change to be $n\timesK$ matrices, where n pop size and K number of assets. The agent strategies change as well to be a K-vector of strategies. It would be better to have a very general case, a very general structure, and so that we have the right structure and only need particular settings or specific small fixes to make it work and extend it.}
 
 \subsection{Strategy and market behavior}
+\boldred{Update for the other strategies as well}
 At each time period, trend followers look at past prices to decide the content of their next portfolio, choosing between cash and an asset. The share of their wealth that will be devoted to asset shares is proportional to the agent trading signal $\phi(t)$. Here, the agent compares the logarithm of the prices at last period, and at another period $\theta$. This $\theta$ is the time horizon of this agent's trend following strategy, and is subject to evolution. We consider $\theta \in (1, H]$ with $H$ the maximum allowed time horizon. In \cite{scholl2020market}, trend followers all had $\theta = 2$; this generalisation allows us to look at a larger space of strategies.
 % here we write what the agents do, trading signal (write an example with a time series and a few different agents? that would be very nice. Inspire from David's figure 1?), excess demand, market clearing
 % mention the next strategy extensions
@@ -64,6 +81,8 @@ At each time period, trend followers look at past prices to decide the content o
 
 Once the trading signals have been updated, the agents express their excess demand for the asset, as shown in Equation \ref{excess_demand_equation}. 
 
+\boldred{With multiple assets, how do we formulate the excess demand? Replace E and TS and p and S by the matrix form (generalised ED function)?}
+
 \begin{equation}
 \label{excess_demand_equation}
    E_i(t, p(t)) = \frac{W_i(t) {\lambda_i}}{p(t)} \left( \tanh{({c} \phi_i(t)}) + \frac{1}{2} \right) - S_i(t)
@@ -75,8 +94,10 @@ Agent $i$'s wealth $W_i(t)$ evaluated at time $t$ is computed with:
 \begin{equation}
     W_i(t) = C_i(t) + S_i(t)p(t) - L_i(t)
 \end{equation}
+\boldred{Extends to a vector S p with multiple assets}
  
 \subsection{Market clearing}
+\boldred{Add something to imagine clearing with a multi asset environment, just consists in adding all the assets with each its own price}
 
 Once all agents have formulated their excess demand functions as a function of the unknown current price $p(t)$, we use Walrasian market clearing to identify the clearing price, as described in \cite{scholl2020market}. In short, excess demands of all agents $a$ in the population $ \mathcal{A}$ are submitted to a price maker agent who attempts to find the root of the aggregate demand, i.e. the price such that the aggregate excess demand is equal to 0.
 
@@ -221,7 +242,7 @@ In other words, the resulting strategies from the crossover of $A$ and $B$ are u
 % Necessary condition: a running GA with a single asset, market clearing, and adequate starting conditions, and the baseline configuration.
 
 
-The non-lerning case (replacement dynamics only) can be illustrated with:
+The non-learning case (replacement dynamics only) can be illustrated with:
 \begin{itemize}
     \item No selection (selection rate equal to 0)
     \item No crossover (crossover rate equal to 0)
