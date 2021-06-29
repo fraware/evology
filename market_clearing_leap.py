@@ -108,4 +108,11 @@ def solver_linear_shortcut(pop, price):
         
     return new_price 
 
-
+""" Testing 
+def f(x):
+    return sum(x)**2
+best_genome = ea_solve_noverbose(f,
+          bounds=[(1.1111, 10)], generations = 50, pop_size = 500,
+          mutation_std=0.1, hard_bounds = True) #max = False
+print(best_genome)
+"""
