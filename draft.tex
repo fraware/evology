@@ -65,7 +65,7 @@ In this market, agents are choosing between a bond with a fixed continuously pai
 
 Where $g$ is the dividend growth rate, $\sigma$ its variance, $\omega$ is the autocorrelation parameter of the process, and $Z$ is a standard Wiener process. Based on estimates from Lebaron \cite{lebaron2001empirical} and Scholl et al. \cite{scholl2020market}, we take $g=2\%$ annually and $\sigma = 6\%$ annually. \par
 The market is initialised with an initial price of $100$ that matches the fundamental value of the asset, and initial dividends of $100$. 
-\boldred{Add a note for the multi asset thing. We actually need to think about multiple assets now that we are doing these big changes. Notably, the ED and TS matrix would change to be $n\timesK$ matrices, where n pop size and K number of assets. The agent strategies change as well to be a K-vector of strategies. It would be better to have a very general case, a very general structure, and so that we have the right structure and only need particular settings or specific small fixes to make it work and extend it.}
+\boldred{Add a note for the multi asset thing. We actually need to think about multiple assets now that we are doing these big changes. Notably, the ED and TS matrix would change to be $nx$ matrices, where n pop size and K number of assets. The agent strategies change as well to be a K-vector of strategies. It would be better to have a very general case, a very general structure, and so that we have the right structure and only need particular settings or specific small fixes to make it work and extend it.}
 
 \subsection{Strategy and market behavior}
 \boldred{Update for the other strategies as well}
