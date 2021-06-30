@@ -39,7 +39,7 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     # Create the population and the results accumulators
     generationCounter = 1
     price = INITIAL_PRICE
-    extended_price_history = bm.generate_bm_series(MAX_TIME_HORIZON)
+    extended_price_history = bm.generate_bm_series(MAX_TIME_HORIZON+1)
     assetQ = market.count_assets(pop)
     dividend = INITIAL_DIVIDEND
 
@@ -70,20 +70,17 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         print("dividend is " + str(dividend))
         random_dividend_history.append(random_dividend)
         
-        print("bs before B")
-        print(balance_sheet)
+        # print("bs before B")
+        # print(balance_sheet)
         ''' B) Apply dividends, interest rate and reinvestment, update profit '''
-        market.wealth_earnings(pop, dividend)
+        market.wealth_earnings(pop, dividend) #temp
         market.bs_wealth_earnings(balance_sheet, dividend)
-        print("bs after B")
-        print(balance_sheet)
-        
-        print(('{}\n'*len(pop)).format(*pop))
         
         ''' C) Update wealth and margin as a function of price '''
-        market.consumption(pop, CONSUMPTION_RATE, price)
-        market.update_wealth(pop, price) 
-        market.update_margin(pop, price)
+        market.consumption(pop, CONSUMPTION_RATE, price) #temp
+        market.update_wealth(pop, price)  #temp
+        market.update_margin(pop, price) #temp
+        market.bs_wealth_update(balance_sheet, price, CONSUMPTION_RATE)
         
         ''' D) Hypermutation operator '''
         pop, round_replacements = ga.hypermutate(pop)

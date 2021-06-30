@@ -81,11 +81,14 @@ def bs_wealth_earnings(balance_sheet, dividend):
         row[1] += REINVESTMENT_RATE * (INTEREST_RATE * row[1] + dividend * row[2])
         row[1] = truncate(row[1],3)
 
+
+""" TO REMOVE """
 def update_wealth(pop, price):
     for ind in pop:
         ind[1] = truncate(ind[2] + ind[3] * price  - ind[4],3)
     return ind
 
+""" TO REMOVE """
 def consumption(pop, CONSUMPTION_RATE, price):
     for ind in pop:
         if ind[2] >= CONSUMPTION_RATE:
@@ -102,7 +105,54 @@ def consumption(pop, CONSUMPTION_RATE, price):
                     # sells
                 if ind[3] * price < consume_amount:
                     ind[1] -= 1_000
-            
+
+""" TO REMOVE """
+def update_margin(pop, price):
+    for ind in pop:
+        if ind[3] < 0:
+            ind[2] += ind[9]
+            ind[9] = 0
+            ind[9] = abs(ind[3]) * price
+            ind[2] -= ind[9]
+            if ind[2] < 0:
+                ''' If not enough cash for margin, and since we are in debt, 
+                we are automatically replaced '''
+                ind[1] = -1_000
+    return ind
+
+def bs_wealth_update(balance_sheet, price, CONSUMPTION_RATE):
+    for row in balance_sheet:
+        
+        # Apply consumption
+        if row[1] >= CONSUMPTION_RATE:
+            row[1] -= CONSUMPTION_RATE
+        if row[1] < CONSUMPTION_RATE:
+            row[1] = 0
+            consume_amount = CONSUMPTION_RATE - row[1]
+            if row[2] <= 0:
+                row[1] -= 1_000
+            if row[2] > 0:
+                # agent will try to sell assets to fund consumption
+                if row[2] * price >= consume_amount:
+                    row[2] -= consume_amount / price
+                    # sells
+                if row[2] * price < consume_amount:
+                    row[1] -= 1_000       
+
+        # Update margin
+        if row[2] < 0:
+            row[1] += row[8]
+            row[8] = 0
+            row[8] = abs(row[2]) * price
+            row[1] -= row[8]
+            if row[1] < 0:
+                ''' If not enough cash for margin, and since we are in debt, 
+                we are automatically replaced '''
+                row[1] = -1_000
+                
+        # Update wealth
+        row[0] = truncate(row[1] + row[2] * price  - row[3],3)
+        
         
 def compute_ema(pop):
     for ind in pop:
@@ -169,18 +219,7 @@ def count_size_short(pop):
             count += ind[3]
     return count
 
-def update_margin(pop, price):
-    for ind in pop:
-        if ind[3] < 0:
-            ind[2] += ind[9]
-            ind[9] = 0
-            ind[9] = abs(ind[3]) * price
-            ind[2] -= ind[9]
-            if ind[2] < 0:
-                ''' If not enough cash for margin, and since we are in debt, 
-                we are automatically replaced '''
-                ind[1] = -1_000
-    return ind
+
 
 def count_wealth(pop):
     total_wealth = 0
