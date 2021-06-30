@@ -26,6 +26,8 @@ INITIAL_ASSETS = parameters.INITIAL_ASSETS
 INITIAL_CASH = parameters.INITIAL_CASH
 MIN_VALUATION = parameters.MIN_VALUATION
 MAX_VALUATION = parameters.MAX_VALUATION
+PROBA_TF = parameters.PROBA_TF
+PROBA_VI = parameters.PROBA_VI
 
 
 toolbox = base.Toolbox()
@@ -56,7 +58,7 @@ toolbox.register("tf_population_creation", tools.initRepeat, list, toolbox.gener
 
 toolbox.register("generate_no_asset", random.randint, 0, 0)
 
-toolbox.register("generate_hyper_individual", tools.initCycle, creator.individual, 
+toolbox.register("generate_hyper_tf_individual", tools.initCycle, creator.individual, 
                  (toolbox.generate_tf_strategy, toolbox.generate_wealth, 
                   toolbox.generate_cash, toolbox.generate_no_asset, 
                   toolbox.generate_loan, toolbox.generate_trading_signal, 
@@ -72,6 +74,26 @@ toolbox.register("generate_vi_individual", tools.initCycle, creator.individual,
                   toolbox.generate_excess_demand,toolbox.generate_profit,
                   toolbox.generate_ema, toolbox.generate_margin), n=1)
 toolbox.register("vi_population_creation", tools.initRepeat, list, toolbox.generate_vi_individual)
+
+toolbox.register("generate_hyper_vi_individual", tools.initCycle, creator.individual, 
+                 (toolbox.generate_vi_strategy, toolbox.generate_wealth, 
+                  toolbox.generate_cash, toolbox.generate_no_asset, 
+                  toolbox.generate_loan, toolbox.generate_trading_signal, 
+                  toolbox.generate_excess_demand,toolbox.generate_profit,
+                  toolbox.generate_ema, toolbox.generate_margin), n=1)
+
+def determine_mixed_strategy(PROBA_TF, PROBA_VI):
+    global types
+    rd = random.random()
+    if rd <= PROBA_TF:
+        types = np.vstack((types, "TF"))
+        return toolbox.generate_tf_strategy()
+    elif rd > PROBA_TF and rd <= PROBA_TF + PROBA_VI:
+        types = np.vstack((types, "VI"))
+        return toolbox.generate_vi_strategy()
+
+toolbox.register("generate_mix_strategy", determine_mixed_strategy, PROBA_TF,
+                 PROBA_VI)
 
 def create_mixed_population(POPULATION_SIZE, PROBA_TF, PROBA_VI):
     global types
@@ -99,6 +121,13 @@ def create_mixed_population(POPULATION_SIZE, PROBA_TF, PROBA_VI):
                      toolbox.generate_mix_individual)
     pop = toolbox.mix_population_creation(n=POPULATION_SIZE)
     return pop, types
+
+toolbox.register("generate_hyper_mix_individual", tools.initCycle, creator.individual, 
+                 (toolbox.generate_mix_strategy, toolbox.generate_wealth, 
+                  toolbox.generate_cash, toolbox.generate_no_asset, 
+                  toolbox.generate_loan, toolbox.generate_trading_signal, 
+                  toolbox.generate_excess_demand,toolbox.generate_profit,
+                  toolbox.generate_ema, toolbox.generate_margin), n=1)
 
 # Fitness definition
 def ema_fitness(individual):
@@ -166,6 +195,8 @@ def selTournament(individuals, k, tournsize, fit_attr="fitness"):
 toolbox.register("selTournament", selTournament)
 toolbox.register("select", toolbox.selTournament)
 
+
+""" TO REMOVE """
 # Define the hypermutation (insolvency) parameter
 round_replacements = 0
 def hypermutate(pop):
@@ -174,13 +205,103 @@ def hypermutate(pop):
     for i in range(0, len(pop_temp)):
         # if pop_temp[i][1] + pop_temp[i][9] <= 0:
         if pop_temp[i][1] <= 0:
-            pop_temp[i] = toolbox.generate_hyper_individual()
+            pop_temp[i] = toolbox.generate_hyper_tf_individual()
             del pop_temp[i].fitness.values
             # global round_replacements
             round_replacements += 1
     pop[:] = pop_temp
     return pop, round_replacements
 toolbox.register("hypermutate", hypermutate)
+
+# Define the hypermutation (insolvency) parameter
+# round_replacements = 0
+def hypermutate2(pop_ex, pop_op, types, balance_sheet, mode):
+    
+    if mode == "extended":
+        PROBA_TF = parameters.PROBA_TF
+        PROBA_VI = parameters.PROBA_VI
+        PROBA_GP = 0
+    if mode == "open":
+        PROBA_GP = 1
+        PROBA_TF = 0
+        PROBA_VI = 0
+    if mode == "combined":
+        PROBA_GP = parameters.PROBA_GP
+        PROBA_TF = parameters.PROBA_TF
+        PROBA_VI = parameters.PROBA_VI
+        
+    pop_ex_temp = list(map(toolbox.clone, pop_ex))
+    pop_op_temp = list(map(toolbox.clone, pop_op))
+    types_temp = types.copy()
+    balance_sheet_temp = balance_sheet.copy()
+    
+    """ FFS POP SIZES BTW OP AND EX MAY CHANGE HERE """
+    
+    round_replacements = 0
+    
+    """ Hypermutate pop_ex """
+    for i in range(0, len(pop_ex)):
+        if balance_sheet[i][0] <= 0:
+            
+            """ Agent is insolvent. Delete """
+            del pop_ex[i].fitness.values
+            del pop_ex[i]
+            balance_sheet = np.delete(balance_sheet, (i), axis=0)
+            types = np.delete(types, (i), axis=0)
+            
+            
+            """ Replace """
+            ind_bs = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
+            balance_sheet = np.vstack((balance_sheet, ind_bs))
+            
+            # Draw the type to choose what pop and type to append
+            """ Will deap accept to append something to the pop??"""
+            if PROBA_GP == 1:
+                """ The incoming agent is of type GP """
+                # add = gp.create-population(.POPULATIOn_SIZE...)
+                # pop_op.append(add)
+                types = np.vstack((types, "GP"))
+                
+            elif PROBA_TF == 1:
+                """ The incoming agent is of type TF """
+                pop_ex.append(toolbox.generate_hyper_tf_individual())
+                types = np.vstack((types, "TF"))
+                
+                
+            elif PROBA_VI == 1:
+                """ The incoming agent is of type VI """
+                pop_ex.append(toolbox.generate_hyper_vi_individual())
+                types = np.vstack((types, "VI"))
+                
+            else:
+                if PROBA_GP == 0: 
+                """ The incoming agent is of type VI or TF, to be determined """
+                pop_ex.append(toolbox.generate_hyper_mix_individual())
+                types = np.vstack((types, "VI"))
+                """ ISSUE WITH TYPES, WE HAVE TO DO SOMETHING ELSE """
+                else: 
+                    # Determine respective population sizes
+                    POP_OP_SIZE = 0
+                    POP_EX_SIZE = 0
+                    for i in range(POPULATION_SIZE):
+                        rd = random.random()
+                        if rd <= PROBA_GP:
+                            POP_OP_SIZE += 1
+                        elif rd > PROBA_GP:
+                            POP_EX_SIZE += 1
+            
+            
+    """ Hypermutate pop_op """
+    for i in range(len(pop_ex), len(pop_op) + len(pop_ex)):
+            
+            pop_temp[i] = toolbox.generate_hyper_individual()
+            del pop_temp[i].fitness.values
+            # global round_replacements
+            round_replacements += 1
+    pop[:] = pop_temp
+    return pop_ex, pop_op, types, balance_sheet, round_replacements
+
+
 
 # Function to recompute fitness of invalid individuals
 def fitness_for_invalid(offspring):

@@ -85,6 +85,8 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         ''' D) Hypermutation operator '''
         pop, round_replacements = ga.hypermutate(pop)
         ga.fitness_for_invalid(pop)
+        print(('{}\n'*len(pop_ex)).format(*pop_ex))
+        print(type(pop_ex))
         
         ''' E) Deduce fitness as EMA ''' 
         market.compute_ema(pop)
@@ -190,6 +192,6 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     # return 
     # return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
     print(('{}\n'*len(pop)).format(*pop))
-    return df, extended_price_history
+    return df, extended_price_history, pop_ex
 
 
