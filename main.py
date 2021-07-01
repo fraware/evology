@@ -84,6 +84,9 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         market.bs_wealth_update(balance_sheet, price, CONSUMPTION_RATE)
         
         ''' D) Hypermutation operator '''
+        
+        balance_sheet[0,0] = 0
+        
         pop, round_replacements = ga.hypermutate(pop)
         ga.fitness_for_invalid(pop)
         print("before hyp")

@@ -217,6 +217,11 @@ toolbox.register("hypermutate", hypermutate)
 # Define the hypermutation (insolvency) parameter
 def hypermutate2(pop_ex, pop_op, types, balance_sheet, mode):
     
+    types_temp = np.copy(types)
+    balance_sheet_temp = np.copy(balance_sheet)
+    pop_ex_temp = pop_ex.copy()
+    pop_op_temp = pop_op.copy()
+    
     if mode == "extended":
         PROBA_TF = parameters.PROBA_TF
         PROBA_VI = parameters.PROBA_VI
@@ -233,71 +238,71 @@ def hypermutate2(pop_ex, pop_op, types, balance_sheet, mode):
     round_replacements = 0
     
     """ Hypermutate pop_ex """
-    for i in range(0, len(pop_ex)):
+    for i in range(0, POPULATION_SIZE):
         if balance_sheet[i][0] <= 0:
-            
+            # print("i = " + str(i))
             """ Agent is insolvent. Delete """
             if i < len(pop_ex):
-                del pop_ex[i].fitness.values
-                del pop_ex[i]
-            if i >= len(pop_ex):
-                del pop_op[i - len(pop_ex)].fitness.values
-                del pop_op[i - len(pop_ex)]
-                
-            balance_sheet = np.delete(balance_sheet, (i), axis=0)
-            types = np.delete(types, (i), axis=0)
+                del pop_ex_temp[i].fitness.values
+                del pop_ex_temp[i]
+            elif i >= len(pop_ex):
+                del pop_op_temp[i - len(pop_ex)].fitness.values
+                del pop_op_temp[i - len(pop_ex)]
+
+            balance_sheet_temp = np.delete(balance_sheet_temp, (i), axis=0)
+            types_temp = np.delete(types_temp, (i), axis=0)
+
             
             """ Replace """
             ind_bs = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
-            balance_sheet = np.vstack((balance_sheet, ind_bs))
+            balance_sheet_temp = np.vstack((balance_sheet_temp, ind_bs))
             
             # Draw the type to choose what pop and type to append
             if PROBA_GP == 1:
+
                 """ The incoming agent is of type GP """
                 # add = gp.create-population(.POPULATIOn_SIZE...)
-                # pop_op.append(add)
-                types = np.vstack((types, "GP"))
+                # pop_op_temp.append(add)
+                types_temp = np.vstack((types_temp, "GP"))
                 round_replacements += 1
                 
             elif PROBA_TF == 1:
+
                 """ The incoming agent is of type TF """
-                pop_ex.append(toolbox.generate_hyper_tf_individual())
-                types = np.vstack((types, "TF"))
+                pop_ex_temp.append(toolbox.generate_hyper_tf_individual())
+                types_temp = np.vstack((types_temp, "TF"))
                 round_replacements += 1               
                 
             elif PROBA_VI == 1:
                 """ The incoming agent is of type VI """
-                pop_ex.append(toolbox.generate_hyper_vi_individual())
-                types = np.vstack((types, "VI"))
+
+                pop_ex_temp.append(toolbox.generate_hyper_vi_individual())
+                types_temp = np.vstack((types_temp, "VI"))
                 round_replacements += 1
                 
             else:
-                if PROBA_GP == 0: 
-                    """ The incoming agent is of type VI or TF, to be determined """
-                    rd = random.random(0, PROBA_TF + PROBA_VI)
-                    if rd <= PROBA_TF:
-                        types = np.vstack((types, "TF"))
-                        round_replacements += 1
-                        pop_ex.append(toolbox.generate_hyper_tf_individual())
-                    elif rd > PROBA_TF and rd <= PROBA_TF + PROBA_VI:
-                        types = np.vstack((types, "VI"))
-                        round_replacements += 1
-                        pop_ex.append(toolbox.generate_hyper_vi_individual())
-                else: 
-                    rd = random.random(0, PROBA_TF + PROBA_VI + PROBA_GP)
-                    if rd <= PROBA_TF:
-                        types = np.vstack((types, "TF"))
-                        round_replacements += 1
-                        pop_ex.append(toolbox.generate_hyper_tf_individual())
-                    elif rd > PROBA_TF and rd <= PROBA_TF + PROBA_VI:
-                        types = np.vstack((types, "VI"))
-                        round_replacements += 1
-                        pop_ex.append(toolbox.generate_hyper_vi_individual())
-                    elif rd > PROBA_TF + PROBA_VI:
-                        # add = gp.create-population(.POPULATIOn_SIZE...)
-                        # pop_op.append(add)
-                        types = np.vstack((types, "GP"))
-                        round_replacements += 1
+                rd = random.uniform(0, PROBA_TF + PROBA_VI + PROBA_GP)
+                if rd <= PROBA_TF:
+
+                    types_temp = np.vstack((types_temp, "TF"))
+                    round_replacements += 1
+                    pop_ex_temp.append(toolbox.generate_hyper_tf_individual())
+                elif rd > PROBA_TF and rd <= PROBA_TF + PROBA_VI:
+
+                    types_temp = np.vstack((types_temp, "VI"))
+                    round_replacements += 1
+                    pop_ex_temp.append(toolbox.generate_hyper_vi_individual())
+                elif rd > PROBA_TF + PROBA_VI:
+
+                    # add = gp.create-population(.POPULATIOn_SIZE...)
+                    # pop_op_temp.append(add)
+                    types_temp = np.vstack((types_temp, "GP"))
+                    round_replacements += 1
+
+    pop_op = pop_op_temp.copy()
+    pop_ex = pop_ex_temp.copy()
+    balance_sheet = np.copy(balance_sheet_temp)
+    types = np.copy(types_temp)
                                                 
     return pop_ex, pop_op, types, balance_sheet, round_replacements
 
