@@ -71,6 +71,9 @@ toolbox.register("generate_hyper_tf_individual", tools.initCycle, creator.indivi
                   toolbox.generate_excess_demand,toolbox.generate_profit,
                   toolbox.generate_ema, toolbox.generate_margin), n=1)
 
+toolbox.register("generate_hyper_tf_individual2", tools.initRepeat, creator.individual, 
+                 toolbox.generate_tf_strategy, n=1)
+
 
 toolbox.register("generate_vi_strategy", random.randint, MIN_VALUATION, MAX_VALUATION)
 toolbox.register("generate_vi_individual", tools.initCycle, creator.individual, 
@@ -92,6 +95,9 @@ toolbox.register("generate_hyper_vi_individual", tools.initCycle, creator.indivi
                   toolbox.generate_loan, toolbox.generate_trading_signal, 
                   toolbox.generate_excess_demand,toolbox.generate_profit,
                   toolbox.generate_ema, toolbox.generate_margin), n=1)
+
+toolbox.register("generate_hyper_vi_individual2", tools.initRepeat, creator.individual, 
+                 toolbox.generate_vi_strategy, n=1)
 
 def determine_mixed_strategy(PROBA_TF, PROBA_VI):
     global types
@@ -153,8 +159,13 @@ toolbox.register("evaluate", ema_fitness)
 
 
 # Fitness definition
-def ema_fitness2(individual):
-    return individual[8],
+def ema_fitness2(balance_sheet, index_list):
+    fit_vec = []
+    for i in index_list:
+        fit_vec.append(balance_sheet[i,7])
+    # return balance_sheet[index_list,7]
+    return fit_vec,
+
 
 toolbox.register("evaluate2", ema_fitness2)
 
@@ -166,23 +177,23 @@ def fitness_for_invalid(offspring):
     freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
     print(freshIndividuals)
     print(type(freshIndividuals))
-    print(freshIndividuals[0])
     freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
     print(freshFitnessValues)
     for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
         individual.fitness.values = fitnessValue
         
 # Function to recompute fitness of invalid individuals using balance sheet
-def fitness_for_invalid2(population):
+def fitness_for_invalid2(population, balance_sheet):
     invalid_index_list = []
     for i in range(len(population)):
         if not population[i].fitness.valid:
             invalid_index_list.append(i)
     print("invalid index list")
-    print(invalid_index_list)
+    print(invalid_index_list) #this works
     
     freshIndividuals = [ind for ind in population if not ind.fitness.valid]
-    freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
+    # freshFitnessValues = list(map(toolbox.evaluate2, balance_sheet, invalid_index_list))
+    freshFitnessValues = ema_fitness2(balance_sheet, invalid_index_list)
     print(freshFitnessValues)
     for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
         individual.fitness.values = fitnessValue
@@ -323,14 +334,14 @@ def hypermutate2(pop_ex, pop_op, types, balance_sheet, mode):
             elif PROBA_TF == 1:
 
                 """ The incoming agent is of type TF """
-                pop_ex_temp.append(toolbox.generate_hyper_tf_individual())
+                pop_ex_temp.append(toolbox.generate_hyper_tf_individual2())
                 types_temp = np.vstack((types_temp, "TF"))
                 round_replacements += 1               
                 
             elif PROBA_VI == 1:
                 """ The incoming agent is of type VI """
 
-                pop_ex_temp.append(toolbox.generate_hyper_vi_individual())
+                pop_ex_temp.append(toolbox.generate_hyper_vi_individual2())
                 types_temp = np.vstack((types_temp, "VI"))
                 round_replacements += 1
                 
@@ -340,12 +351,12 @@ def hypermutate2(pop_ex, pop_op, types, balance_sheet, mode):
 
                     types_temp = np.vstack((types_temp, "TF"))
                     round_replacements += 1
-                    pop_ex_temp.append(toolbox.generate_hyper_tf_individual())
+                    pop_ex_temp.append(toolbox.generate_hyper_tf_individual2())
                 elif rd > PROBA_TF and rd <= PROBA_TF + PROBA_VI:
 
                     types_temp = np.vstack((types_temp, "VI"))
                     round_replacements += 1
-                    pop_ex_temp.append(toolbox.generate_hyper_vi_individual())
+                    pop_ex_temp.append(toolbox.generate_hyper_vi_individual2())
                 elif rd > PROBA_TF + PROBA_VI:
 
                     # add = gp.create-population(.POPULATIOn_SIZE...)

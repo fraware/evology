@@ -35,6 +35,7 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     pop_ex, pop_op, balance_sheet, types = popgen.generate_population(mode)
     print("initialised bs")
     print(balance_sheet)
+    print(balance_sheet[0,0])
     # pop = pop_ex.copy() #temp
     
     # Create the population and the results accumulators
@@ -87,19 +88,22 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         
         ''' D) Hypermutation operator '''
         
-        balance_sheet[0,0] = 0
+        balance_sheet[0,0] = 0 #temp
         
         pop, round_replacements = ga.hypermutate(pop) #temp
         
-        print("here")
         ga.fitness_for_invalid(pop) #temp
 
         pop_ex, pop_op, types, balance_sheet, round_replacements = ga.hypermutate2(pop_ex, pop_op, types, balance_sheet, mode)
         # fitness_for_invalid seems to work here, but we need a different evaluate
         print("there")
-        print(('{}\n'*len(pop_ex)).format(*pop_ex))
-        ga.fitness_for_invalid2(pop_ex)
-        ga.fitness_for_invalid2(pop_op)
+        print(pop_ex)
+        print(types)
+        ga.fitness_for_invalid2(pop_ex, balance_sheet)
+        #ga.fitness_for_invalid2(pop_op, balance_sheet) TODO
+        """ Maybe this does not 
+        work well because of i and the fact that here pop_op should be i + 
+        len)pop_ex) or sometng like this """
         
         ''' E) Deduce fitness as EMA ''' 
         market.compute_ema(pop)
