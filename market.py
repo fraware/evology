@@ -171,6 +171,9 @@ def update_trading_signal(pop, extended_price_history):
     for ind in pop:
         if len(extended_price_history) > 1:
             if len(extended_price_history) > ind[0]:
+                print("Extended Price History")
+                print(extended_price_history)
+                print(np.log(extended_price_history))
                 ind[5] = truncate(np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]]),3)
             if len(extended_price_history) <= ind[0]:
                 # The trader does not have the information to run her strategy. She waits in indifference.

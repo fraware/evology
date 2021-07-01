@@ -40,6 +40,7 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     generationCounter = 1
     price = INITIAL_PRICE
     extended_price_history = bm.generate_bm_series(MAX_TIME_HORIZON+1)
+    extended_price_history = [abs(x) for x in extended_price_history]
     assetQ = market.count_assets(pop)
     dividend = INITIAL_DIVIDEND
 
@@ -85,8 +86,14 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         ''' D) Hypermutation operator '''
         pop, round_replacements = ga.hypermutate(pop)
         ga.fitness_for_invalid(pop)
+        print("before hyp")
         print(('{}\n'*len(pop_ex)).format(*pop_ex))
         print(type(pop_ex))
+        pop_ex, pop_op, types, balance_sheet, round_replacements = ga.hypermutate2(pop_ex, pop_op, types, balance_sheet, mode)
+        print("after hyp")
+        print(('{}\n'*len(pop_ex)).format(*pop_ex))
+        print(types)
+        print(balance_sheet)
         
         ''' E) Deduce fitness as EMA ''' 
         market.compute_ema(pop)
