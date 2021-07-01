@@ -30,18 +30,20 @@ INITIAL_CASH = parameters.INITIAL_CASH
 INITIAL_ASSETS = parameters.INITIAL_ASSETS
 
 def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
+    pop = ga.toolbox.tf_population_creation(n=POPULATION_SIZE)
     
     pop_ex, pop_op, balance_sheet, types = popgen.generate_population(mode)
     print("initialised bs")
     print(balance_sheet)
-    pop = pop_ex.copy() #temp
+    # pop = pop_ex.copy() #temp
     
     # Create the population and the results accumulators
     generationCounter = 1
     price = INITIAL_PRICE
     extended_price_history = bm.generate_bm_series(MAX_TIME_HORIZON+1)
     extended_price_history = [abs(x) for x in extended_price_history]
-    assetQ = market.count_assets(pop)
+    # assetQ = market.count_assets(pop)
+    assetQ = market.count_assets2(balance_sheet)
     dividend = INITIAL_DIVIDEND
 
     maxFitnessValues, meanFitnessValues, replacements, dividend_history, random_dividend_history, price_history = [],[],[],[],[],[]   
@@ -58,7 +60,7 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     # for individual, fitnessValue in zip(pop, fitnessValues):
     #     individual.fitness.values = fitnessValue
     # fitnessValues = [individual.fitness.values[0] for individual in pop]
-        
+    print(('{}\n'*len(pop_ex)).format(*pop_ex))
     while generationCounter < MAX_GENERATIONS:
         print("----------------------------------------------------------------------")
         print("Generation " + str(generationCounter))
@@ -87,16 +89,17 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         
         balance_sheet[0,0] = 0
         
-        pop, round_replacements = ga.hypermutate(pop)
-        ga.fitness_for_invalid(pop)
-        print("before hyp")
-        print(('{}\n'*len(pop_ex)).format(*pop_ex))
-        print(type(pop_ex))
+        pop, round_replacements = ga.hypermutate(pop) #temp
+        
+        print("here")
+        ga.fitness_for_invalid(pop) #temp
+
         pop_ex, pop_op, types, balance_sheet, round_replacements = ga.hypermutate2(pop_ex, pop_op, types, balance_sheet, mode)
-        print("after hyp")
+        # fitness_for_invalid seems to work here, but we need a different evaluate
+        print("there")
         print(('{}\n'*len(pop_ex)).format(*pop_ex))
-        print(types)
-        print(balance_sheet)
+        ga.fitness_for_invalid2(pop_ex)
+        ga.fitness_for_invalid2(pop_op)
         
         ''' E) Deduce fitness as EMA ''' 
         market.compute_ema(pop)

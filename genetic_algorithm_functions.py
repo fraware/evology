@@ -57,6 +57,11 @@ toolbox.register("generate_tf_individual", tools.initCycle, creator.individual,
                   toolbox.generate_ema, toolbox.generate_margin), n=1)
 toolbox.register("tf_population_creation", tools.initRepeat, list, toolbox.generate_tf_individual)
 
+toolbox.register("generate_tf_individual2", tools.initCycle, creator.individual, 
+                 (toolbox.generate_tf_strategy), n=1)
+toolbox.register("tf_population_creation2", tools.initRepeat, list, toolbox.generate_tf_individual2)
+
+
 toolbox.register("generate_no_asset", random.randint, 0, 0)
 
 toolbox.register("generate_hyper_tf_individual", tools.initCycle, creator.individual, 
@@ -75,6 +80,11 @@ toolbox.register("generate_vi_individual", tools.initCycle, creator.individual,
                   toolbox.generate_excess_demand,toolbox.generate_profit,
                   toolbox.generate_ema, toolbox.generate_margin), n=1)
 toolbox.register("vi_population_creation", tools.initRepeat, list, toolbox.generate_vi_individual)
+
+toolbox.register("generate_vi_individual2", tools.initCycle, creator.individual, 
+                 (toolbox.generate_vi_strategy), n=1)
+toolbox.register("vi_population_creation2", tools.initRepeat, list, toolbox.generate_vi_individual2)
+
 
 toolbox.register("generate_hyper_vi_individual", tools.initCycle, creator.individual, 
                  (toolbox.generate_vi_strategy, toolbox.generate_wealth, 
@@ -112,12 +122,14 @@ def create_mixed_population(POPULATION_SIZE, PROBA_TF, PROBA_VI):
     
     toolbox.register("generate_mix_strategy", determine_mixed_strategy, PROBA_TF,
                      PROBA_VI)
-    toolbox.register("generate_mix_individual", tools.initCycle, creator.individual, 
-                     (toolbox.generate_mix_strategy, toolbox.generate_wealth, 
-                      toolbox.generate_cash, toolbox.generate_asset, 
-                      toolbox.generate_loan, toolbox.generate_trading_signal, 
-                      toolbox.generate_excess_demand,toolbox.generate_profit,
-                      toolbox.generate_ema, toolbox.generate_margin), n=1)
+    # toolbox.register("generate_mix_individual", tools.initCycle, creator.individual, 
+    #                  (toolbox.generate_mix_strategy, toolbox.generate_wealth, 
+    #                   toolbox.generate_cash, toolbox.generate_asset, 
+    #                   toolbox.generate_loan, toolbox.generate_trading_signal, 
+    #                   toolbox.generate_excess_demand,toolbox.generate_profit,
+    #                   toolbox.generate_ema, toolbox.generate_margin), n=1)
+    toolbox.register("generate_mix_individual", tools.initRepeat, creator.individual, 
+                      toolbox.generate_mix_strategy, n=1)
     toolbox.register("mix_population_creation", tools.initRepeat, list, 
                      toolbox.generate_mix_individual)
     pop = toolbox.mix_population_creation(n=POPULATION_SIZE)
@@ -130,11 +142,53 @@ toolbox.register("generate_hyper_mix_individual", tools.initCycle, creator.indiv
                   toolbox.generate_excess_demand,toolbox.generate_profit,
                   toolbox.generate_ema, toolbox.generate_margin), n=1)
 
+
+""" TO REMOVE """
 # Fitness definition
 def ema_fitness(individual):
     return individual[8],
-
 toolbox.register("evaluate", ema_fitness)
+
+
+
+
+# Fitness definition
+def ema_fitness2(individual):
+    return individual[8],
+
+toolbox.register("evaluate2", ema_fitness2)
+
+
+
+
+# Function to recompute fitness of invalid individuals
+def fitness_for_invalid(offspring):
+    freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
+    print(freshIndividuals)
+    print(type(freshIndividuals))
+    print(freshIndividuals[0])
+    freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
+    print(freshFitnessValues)
+    for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
+        individual.fitness.values = fitnessValue
+        
+# Function to recompute fitness of invalid individuals using balance sheet
+def fitness_for_invalid2(population):
+    invalid_index_list = []
+    for i in range(len(population)):
+        if not population[i].fitness.valid:
+            invalid_index_list.append(i)
+    print("invalid index list")
+    print(invalid_index_list)
+    
+    freshIndividuals = [ind for ind in population if not ind.fitness.valid]
+    freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
+    print(freshFitnessValues)
+    for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
+        individual.fitness.values = fitnessValue
+        
+        
+        
 
 # Creating our own crossover operator:
 def feasible_crossover(ind1,ind2,CROSSOVER_RATE):
@@ -306,9 +360,4 @@ def hypermutate2(pop_ex, pop_op, types, balance_sheet, mode):
                                                 
     return pop_ex, pop_op, types, balance_sheet, round_replacements
 
-# Function to recompute fitness of invalid individuals
-def fitness_for_invalid(offspring):
-    freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
-    freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-    for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
-        individual.fitness.values = fitnessValue
+

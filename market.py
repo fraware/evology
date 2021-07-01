@@ -208,11 +208,19 @@ def compute_aggregate_excess_demand(pop, list_excess_demand_func):
         return result
     return aggregate_ed
 
+""" TO REMOVE """
 def count_assets(pop):
     count = 0
     for ind in pop:
         if ind[3] > 0:
             count += ind[3]
+    return count
+
+def count_assets2(balance_sheet):
+    count = 0
+    for row in balance_sheet:
+        if row[2] > 0:
+            count += row[2]
     return count
 
 def count_size_short(pop):

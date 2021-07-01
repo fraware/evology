@@ -37,12 +37,12 @@ def generate_population(mode):
             types = np.vstack((types, "GP"))
         
     elif PROBA_TF == 1:
-        pop_ex = ga.toolbox.tf_population_creation(n=POPULATION_SIZE)
+        pop_ex = ga.toolbox.tf_population_creation2(n=POPULATION_SIZE)
         pop_op = []
         for i in range(POPULATION_SIZE):
             types = np.vstack((types, "TF"))
     elif PROBA_VI == 1:
-        pop_ex = ga.toolbox.vi_population_creation(n=POPULATION_SIZE)
+        pop_ex = ga.toolbox.vi_population_creation2(n=POPULATION_SIZE)
         pop_op = []
         for i in range(POPULATION_SIZE):
             types = np.vstack((types, "VI"))
