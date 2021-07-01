@@ -160,9 +160,11 @@ toolbox.register("evaluate", ema_fitness)
 
 # Fitness definition
 def ema_fitness2(balance_sheet, index_list):
+    print("ema_fitnss2")
     fit_vec = []
     for i in index_list:
         fit_vec.append(balance_sheet[i,7])
+        print(fit_vec)
     # return balance_sheet[index_list,7]
     return fit_vec,
 

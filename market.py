@@ -2,6 +2,8 @@ import math
 import random
 import parameters
 import numpy as np
+np.set_printoptions(precision=4)
+np.set_printoptions(suppress=True)
 
 REINVESTMENT_RATE = parameters.REINVESTMENT_RATE
 INTEREST_RATE = parameters.INTEREST_RATE
@@ -153,11 +155,17 @@ def bs_wealth_update(balance_sheet, price, CONSUMPTION_RATE):
         # Update wealth
         row[0] = truncate(row[1] + row[2] * price  - row[3],3)
         
+
         
 def compute_ema(pop):
     for ind in pop:
         ind[8] = truncate((2 / (EMA_HORIZON + 1)) * (ind[7] - ind[8]) + ind[8],4)
     return ind
+
+def compute_ema2(balance_sheet):
+    for i in range(len(balance_sheet)):
+        balance_sheet[i,7] = truncate((2 / (EMA_HORIZON + 1)) * (balance_sheet[i,6] - balance_sheet[i,7]) + balance_sheet[i,7],4)
+
 
         # Agent representaiton:
 #     [Theta Wealth Cash Asset Loan TradingSignal ExcessDemand     Profit     EMA profit]

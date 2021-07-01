@@ -1,6 +1,8 @@
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+np.set_printoptions(precision=4)
+np.set_printoptions(suppress=True)
 import genetic_algorithm_functions as ga
 import genetic_programming_functions as gp
 import market 
@@ -78,7 +80,11 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         # print(balance_sheet)
         ''' B) Apply dividends, interest rate and reinvestment, update profit '''
         market.wealth_earnings(pop, dividend) #temp
+        
+        print("before/after bs narket wealth earnings")
+        print(balance_sheet)
         market.bs_wealth_earnings(balance_sheet, dividend)
+        print(balance_sheet)
         
         ''' C) Update wealth and margin as a function of price '''
         market.consumption(pop, CONSUMPTION_RATE, price) #temp
@@ -106,7 +112,13 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         len)pop_ex) or sometng like this """
         
         ''' E) Deduce fitness as EMA ''' 
-        market.compute_ema(pop)
+        market.compute_ema(pop) #temp
+        
+        print("fitness as ema before/after")
+        print(balance_sheet)
+        market.compute_ema2(balance_sheet)
+        print(balance_sheet)
+
         
         fitnessValues = list(map(ga.toolbox.evaluate, pop))
         for individual, fitnessValue in zip(pop, fitnessValues):
@@ -209,6 +221,6 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     # return 
     # return price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df
     print(('{}\n'*len(pop)).format(*pop))
-    return df, extended_price_history, pop_ex
+    return df, extended_price_history, pop_ex, balance_sheet
 
 

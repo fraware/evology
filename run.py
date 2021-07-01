@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import main
+import numpy as np
+np.set_printoptions(precision=4)
 import parameters
 
 
@@ -12,7 +14,7 @@ MUTATION_RATE = parameters.MUTATION_RATE
 PROBA_SELECTION = parameters.PROBA_SELECTION
 
 # price, initial_pop, pop, maxFitnessValues, meanFitnessValues, replacements, agent0_profit, agent0_ema, dividend_history, price_history, random_dividend_history, list_excess_demand_func, aggregate_ed, df = main.main(PROBA_SELECTION, CROSSOVER_RATE, MUTATION_RATE)
-df, extended_price_history, pop_ex = main.main("extended", PROBA_SELECTION, CROSSOVER_RATE, MUTATION_RATE)
+df, extended_price_history, pop_ex, balance_sheet = main.main("extended", PROBA_SELECTION, CROSSOVER_RATE, MUTATION_RATE)
 
 print(df)
 print("--------------------------")
@@ -35,4 +37,13 @@ plt.show()
 
 print("-----------------------")
 
-
+print(balance_sheet)
+print(balance_sheet[0,0])
+print(type(balance_sheet[0,0]))
+# balance_sheet[0,0] = 3.5
+# print(balance_sheet)
+# balance_sheet = balance_sheet.astype('float64')
+# print(balance_sheet[0,0])
+# print(type(balance_sheet[0,0]))
+# balance_sheet[0,0] = 3.5
+# print(balance_sheet)

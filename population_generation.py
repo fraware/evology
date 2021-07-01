@@ -79,6 +79,8 @@ def generate_population(mode):
         balance_sheet = np.vstack((balance_sheet, ind_bs))
     
     types = np.delete(types, (0), axis=0)
+    
+    balance_sheet = balance_sheet.astype('float64')
 
     return pop_ex, pop_op, balance_sheet, types
 
