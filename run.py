@@ -37,13 +37,3 @@ plt.show()
 
 print("-----------------------")
 
-print(balance_sheet)
-print(balance_sheet[0,0])
-print(type(balance_sheet[0,0]))
-# balance_sheet[0,0] = 3.5
-# print(balance_sheet)
-# balance_sheet = balance_sheet.astype('float64')
-# print(balance_sheet[0,0])
-# print(type(balance_sheet[0,0]))
-# balance_sheet[0,0] = 3.5
-# print(balance_sheet)

@@ -102,9 +102,7 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
 
         pop_ex, pop_op, types, balance_sheet, round_replacements = ga.hypermutate2(pop_ex, pop_op, types, balance_sheet, mode)
         # fitness_for_invalid seems to work here, but we need a different evaluate
-        print("there")
-        print(pop_ex)
-        print(types)
+
         ga.fitness_for_invalid2(pop_ex, balance_sheet)
         #ga.fitness_for_invalid2(pop_op, balance_sheet) TODO
         """ Maybe this does not 
@@ -115,11 +113,10 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         market.compute_ema(pop) #temp
         
         print("fitness as ema before/after")
-        print(balance_sheet)
-        market.compute_ema2(balance_sheet)
-        print(balance_sheet)
 
-        
+        market.compute_ema2(balance_sheet)
+
+        """ This here needs redo (same instruction as before, for all ind """
         fitnessValues = list(map(ga.toolbox.evaluate, pop))
         for individual, fitnessValue in zip(pop, fitnessValues):
             individual.fitness.values = fitnessValue
