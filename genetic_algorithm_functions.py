@@ -160,27 +160,51 @@ toolbox.register("evaluate", ema_fitness)
 
 # Fitness definition
 def ema_fitness2(balance_sheet, index_list):
-    print("ema_fitnss2")
+    # print("ema_fitnss2")
     fit_vec = []
     for i in index_list:
         fit_vec.append(balance_sheet[i,7])
-        print(fit_vec)
+        # print(fit_vec)
     # return balance_sheet[index_list,7]
     return fit_vec,
 
 
 toolbox.register("evaluate2", ema_fitness2)
 
+def set_fitness(population, balance_sheet):
+    for i in range(len(population)):
+        print("i " + str(i) )
+        population[i].fitness = balance_sheet[i,7]
 
 
+def fitness_for_all(population, balance_sheet):
+    index_list = []
+    for i in range(len(population)):
+            index_list.append(i)
+    # print(invalid_index_list)
+    # freshIndividuals = [ind for ind in population]
+    freshFitnessValues = ema_fitness2(balance_sheet, index_list)
+    # print("fresh fitness values ")
+    # print(freshFitnessValues)
+    
+    for individual, fitnessValue in zip(population, freshFitnessValues):
+        individual.fitness.values = fitnessValue
+        
+    # for i in range(len(population)):
+    #     population[i].fitness.values = fitnessValue[i]
+    print("Fitness value")
+    print(fitnessValue)    
+        
+    fitnessValues = fitnessValue.copy()
+    return fitnessValues
 
 # Function to recompute fitness of invalid individuals
 def fitness_for_invalid(offspring):
     freshIndividuals = [ind for ind in offspring if not ind.fitness.valid]
-    print(freshIndividuals)
-    print(type(freshIndividuals))
+    # print(freshIndividuals)
+    # print(type(freshIndividuals))
     freshFitnessValues = list(map(toolbox.evaluate, freshIndividuals))
-    print(freshFitnessValues)
+    # print(freshFitnessValues)
     for individual, fitnessValue in zip(freshIndividuals, freshFitnessValues):
         individual.fitness.values = fitnessValue
         
@@ -190,8 +214,8 @@ def fitness_for_invalid2(population, balance_sheet):
     for i in range(len(population)):
         if not population[i].fitness.valid:
             invalid_index_list.append(i)
-    print("invalid index list")
-    print(invalid_index_list) #this works
+    # print("invalid index list")
+    # print(invalid_index_list) #this works
     
     freshIndividuals = [ind for ind in population if not ind.fitness.valid]
     # freshFitnessValues = list(map(toolbox.evaluate2, balance_sheet, invalid_index_list))
@@ -310,7 +334,8 @@ def hypermutate2(pop_ex, pop_op, types, balance_sheet, mode):
             # print("i = " + str(i))
             """ Agent is insolvent. Delete """
             if i < len(pop_ex):
-                del pop_ex_temp[i].fitness.values
+                # del pop_ex_temp[i].fitness.values
+                del pop_ex_temp[i].fitness
                 del pop_ex_temp[i]
             elif i >= len(pop_ex):
                 del pop_op_temp[i - len(pop_ex)].fitness.values

@@ -81,10 +81,10 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         ''' B) Apply dividends, interest rate and reinvestment, update profit '''
         market.wealth_earnings(pop, dividend) #temp
         
-        print("before/after bs narket wealth earnings")
-        print(balance_sheet)
+        # print("before/after bs narket wealth earnings")
+        # print(balance_sheet)
         market.bs_wealth_earnings(balance_sheet, dividend)
-        print(balance_sheet)
+        # print(balance_sheet)
         
         ''' C) Update wealth and margin as a function of price '''
         market.consumption(pop, CONSUMPTION_RATE, price) #temp
@@ -112,15 +112,39 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
         ''' E) Deduce fitness as EMA ''' 
         market.compute_ema(pop) #temp
         
-        print("fitness as ema before/after")
-
+        # print("compute ema before/after")
+        # print(balance_sheet)
         market.compute_ema2(balance_sheet)
+        # print(balance_sheet)
+        # print("fitness for all before/after")
+        # print(pop_ex)
+        fitnessValues = ga.fitness_for_all(pop_ex, balance_sheet)
+        # print(individual.fitness.values for individual in pop_ex)
+        # print("fit values and pop_ex")
+        # print(fitnessValues)
+        # print(pop_ex)
+        
+        
+        # print("Fitness check: ind and fitness value of ind")
+        # print(balance_sheet)
+        # for ind in pop_ex:
+        #     print(ind)
+        #     print(ind.fitness.values)
+            
+            
+        ga.set_fitness(pop_ex, balance_sheet)
+        
+        print("Fitness check2: ind and fitness value of ind")
+        for ind in pop_ex:
+            print(ind)
+            print(ind.fitness)
 
-        """ This here needs redo (same instruction as before, for all ind """
-        fitnessValues = list(map(ga.toolbox.evaluate, pop))
-        for individual, fitnessValue in zip(pop, fitnessValues):
-            individual.fitness.values = fitnessValue
-        fitnessValues = [individual.fitness.values[0] for individual in pop]
+        # """ This here needs redo (same instruction as before, for all ind """
+        
+        # fitnessValues = list(map(ga.toolbox.evaluate, pop))
+        # for individual, fitnessValue in zip(pop, fitnessValues):
+        #     individual.fitness.values = fitnessValue
+        # fitnessValues = [individual.fitness.values[0] for individual in pop]
         
         # print("After fitness, dividends, wealth, hypermuation updates")
         # print(('{}\n'*len(pop)).format(*pop))

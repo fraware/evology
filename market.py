@@ -156,7 +156,7 @@ def bs_wealth_update(balance_sheet, price, CONSUMPTION_RATE):
         row[0] = truncate(row[1] + row[2] * price  - row[3],3)
         
 
-        
+""" TO REMOVE """
 def compute_ema(pop):
     for ind in pop:
         ind[8] = truncate((2 / (EMA_HORIZON + 1)) * (ind[7] - ind[8]) + ind[8],4)
