@@ -64,8 +64,15 @@ toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max
 
 def main():
     random.seed(318)
+    
 
-    pop = toolbox.population(n=300)
+    verbose = True
+    ngen =40
+    cxpb = 0.1
+    mutpb = 0.5
+    pop_size = 300  
+
+    population = toolbox.population(n=pop_size)
     hof = tools.HallOfFame(1)
     
     stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
@@ -75,14 +82,84 @@ def main():
     mstats.register("std", numpy.std)
     mstats.register("min", numpy.min)
     mstats.register("max", numpy.max)
+    
+    stats=mstats                            
+    halloffame=hof
 
-    pop, log = algorithms.eaSimple(pop, toolbox, 0.5, 0.1, 40, stats=mstats,
-                                   halloffame=hof, verbose=True)
-    # print log
-    return pop, log, hof
+    #pop, log = algorithms.eaSimple(pop, toolbox, 0.5, 0.1, 40, stats=mstats,
+                                   #halloffame=hof, verbose=True)
+
+    
+    """The pseudocode goes as follow ::
+        evaluate(population)
+        for g in range(ngen):
+            population = select(population, len(population))
+            offspring = varAnd(population, toolbox, cxpb, mutpb)
+            evaluate(offspring)
+            population = offspring    """
+    logbook = tools.Logbook()
+    logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
+
+    # Evaluate the individuals with an invalid fitness
+    invalid_ind = [ind for ind in population if not ind.fitness.valid]
+    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+    for ind, fit in zip(invalid_ind, fitnesses):
+        ind.fitness.values = fit
+
+    if halloffame is not None:
+        halloffame.update(population)
+
+    record = stats.compile(population) if stats else {}
+    logbook.record(gen=0, nevals=len(invalid_ind), **record)
+    if verbose:
+        print(logbook.stream)
+
+    # Begin the generational process
+    for gen in range(1, ngen + 1):
+        # Select the next generation individuals
+        offspring = toolbox.select(population, len(population))
+
+        # Vary the pool of individuals
+        ##offspring = varAnd(offspring, toolbox, cxpb, mutpb)
+        
+        
+    offspring = [toolbox.clone(ind) for ind in population]
+
+    # Apply crossover and mutation on the offspring
+    for i in range(1, len(offspring), 2):
+        if random.random() < cxpb:
+            offspring[i - 1], offspring[i] = toolbox.mate(offspring[i - 1],
+                                                          offspring[i])
+            del offspring[i - 1].fitness.values, offspring[i].fitness.values
+
+    for i in range(len(offspring)):
+        if random.random() < mutpb:
+            offspring[i], = toolbox.mutate(offspring[i])
+            del offspring[i].fitness.values
+
+        # Evaluate the individuals with an invalid fitness
+        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+        for ind, fit in zip(invalid_ind, fitnesses):
+            ind.fitness.values = fit
+
+        # Update the hall of fame with the generated individuals
+        if halloffame is not None:
+            halloffame.update(offspring)
+
+        # Replace the current population by the offspring
+        population[:] = offspring
+
+        # Append the current generation statistics to the logbook
+        record = stats.compile(population) if stats else {}
+        logbook.record(gen=gen, nevals=len(invalid_ind), **record)
+        if verbose:
+            print(logbook.stream)
+
+    return population, logbook, hof
 
 pop, log, hof = main()
-bests = tools.selBest(pop, k=1)
+bests = tools.selBest(pop, k=3)
 
 nodes, edges, labels = gp.graph(bests[0])
 graph = nx.Graph()
@@ -96,4 +173,26 @@ nx.draw_networkx_labels(graph, pos, labels)
 plt.axis("off")
 plt.show()
 
+def plot_graph(tree):
+    nodes, edges, labels = gp.graph(tree)
+    graph = nx.Graph()
+    graph.add_nodes_from(nodes)
+    graph.add_edges_from(edges)
+    pos = graphviz_layout(graph, prog = 'dot') #run dot -c in conda prompt
+    plt.figure(figsize=(7,7))
+    nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="w")
+    nx.draw_networkx_edges(graph, pos)
+    nx.draw_networkx_labels(graph, pos, labels)
+    plt.axis("off")
+    plt.show()
+
+
+# print("Pop")
+# for i in range(len(pop)):
+#     print(pop[i])
+#     plot_graph(pop[i])
+
+print("Best ")
 print(bests[0])
+for i in range(len(bests)):
+    print(bests[i])
