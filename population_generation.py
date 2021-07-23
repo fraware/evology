@@ -74,8 +74,8 @@ def generate_population(mode):
     
         # If we need to give different starting conditions to different strategies, we can do it here.
     balance_sheet = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
-    ind_bs = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
     for i in range(POPULATION_SIZE-1):
+        ind_bs = np.array([0, INITIAL_CASH, INITIAL_ASSETS, 0, 0, 0, 0, 0, 0])
         balance_sheet = np.vstack((balance_sheet, ind_bs))
     
     types = np.delete(types, (0), axis=0)

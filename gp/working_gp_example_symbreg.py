@@ -53,6 +53,24 @@ def evalSymbReg(individual, points):
     sqerrors = ((func(x) - x**4 - x**3 - x**2 - x)**2 for x in points)
     return math.fsum(sqerrors) / len(points),
 
+# def evalSymbReg(individual, points):
+#     # Transform the tree expression in a callable function
+#     func = toolbox.compile(expr=individual)
+#     # Evaluate the mean squared error between the expression
+#     # and the real function : x**4 + x**3 + x**2 + x
+#     sqerrors = ((func(x) - x**4 - x**3 - x**2 - x)**2 for x in points)
+#     return 0,
+
+def true_evalSymbReg(individual, points):
+    # Transform the tree expression in a callable function
+    func = toolbox.compile(expr=individual)
+    # Evaluate the mean squared error between the expression
+    # and the real function : x**4 + x**3 + x**2 + x
+    sqerrors = ((func(x) - x**4 - x**3 - x**2 - x)**2 for x in points)
+    return math.fsum(sqerrors) / len(points),
+
+toolbox.register("true_evaluate", true_evalSymbReg, points=[x/10. for x in range(-10,10)])
+
 toolbox.register("evaluate", evalSymbReg, points=[x/10. for x in range(-10,10)])
 toolbox.register("select", tools.selTournament, tournsize=3)
 toolbox.register("mate", gp.cxOnePoint)
@@ -66,11 +84,11 @@ def main():
     random.seed(318)
 
     hof = tools.HallOfFame(1)
-    
+    pop_size = 50
     halloffame = hof
-    population = toolbox.population(n=300)
+    population = toolbox.population(n=pop_size)
     cxpb = 0.5
-    ngen =40
+    ngen =100
     mutpb = 0.1
     
     verbose=True
@@ -89,8 +107,11 @@ def main():
     # Evaluate the individuals with an invalid fitness
     invalid_ind = [ind for ind in population if not ind.fitness.valid]
     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+    # print("fitnesses")
+    # print(list(fitnesses))
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
+        
 
     if halloffame is not None:
         halloffame.update(population)
@@ -107,7 +128,7 @@ def main():
         offspring = toolbox.select(population, len(population))
 
         # Vary the pool of individuals
-        offspring = [toolbox.clone(ind) for ind in population]
+        offspring = [toolbox.clone(ind) for ind in offspring]
 
         for i in range(1, len(offspring), 2):
             if random.random() < cxpb:
@@ -132,6 +153,11 @@ def main():
 
         # Replace the current population by the offspring
         population[:] = offspring
+        
+        if gen >= ngen:
+            fitnesses = toolbox.map(toolbox.true_evaluate, population)
+            for ind, fit in zip(population, fitnesses):
+                ind.fitness.values = fit  
 
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}
@@ -139,7 +165,7 @@ def main():
         if verbose:
             print(logbook.stream)
 
-
+        
     # print log
     return population, logbook, hof
 
@@ -179,3 +205,4 @@ def plot_graph(tree):
 
 print("Best ")
 print(bests[0])
+

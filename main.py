@@ -245,3 +245,24 @@ def main(mode, selection_proba, CROSSOVER_RATE, MUTATION_RATE):
     return df, extended_price_history, pop_ex, balance_sheet
 
 
+""" main 2 """
+from parameters import * #to import all functions and variables
+
+"""
+0) Initialisation of market, initialisation of population.  """
+types, strategy, balance_sheet, order_func, order_values, perf = initialisation()
+    
+## Requires a first wealth comput.
+"""
+1) Compute TS
+2) Compute ED
+3) Market clearing
+4) Apply ED
+5) Apply dividends, interest rate, reinvestment
+6) compute wealth, profits
+## 7) hypermutate (initialise fitness as 0 to not impact evolution) LOC TBC ##
+8) Evolution block
+    a. Fitness
+    b. Adaptation
+
+"""

@@ -44,7 +44,7 @@ toolbox.register("expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=2)
 toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.expr)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 toolbox.register("compile", gp.compile, pset=pset)
-
+import numpy as np
 def evalSymbReg(individual, points):
     # Transform the tree expression in a callable function
     func = toolbox.compile(expr=individual)
@@ -52,6 +52,8 @@ def evalSymbReg(individual, points):
     # and the real function : x**4 + x**3 + x**2 + x
     sqerrors = ((func(x) - x**4 - x**3 - x**2 - x)**2 for x in points)
     return math.fsum(sqerrors) / len(points),
+
+
 
 toolbox.register("evaluate", evalSymbReg, points=[x/10. for x in range(-10,10)])
 toolbox.register("select", tools.selTournament, tournsize=3)
@@ -62,15 +64,15 @@ toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
 toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=17))
 toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=17))
 
-def main():
+def main(mode):
     random.seed(318)
 
     hof = tools.HallOfFame(1)
-    
+    pop_size = 50
     halloffame = hof
-    population = toolbox.population(n=300)
+    population = toolbox.population(n=pop_size)
     cxpb = 0.5
-    ngen =40
+    ngen =100
     mutpb = 0.1
     
     verbose=True
@@ -87,16 +89,66 @@ def main():
     logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
     # Evaluate the individuals with an invalid fitness
-    invalid_ind = [ind for ind in population if not ind.fitness.valid]
-    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-    for ind, fit in zip(invalid_ind, fitnesses):
-        ind.fitness.values = fit
+
+        
+    print("new fitness")
+        
+
+
+    
+    balance_sheet = np.array([0, 10, 5, 2, 0, 0, 0, 0, 0])
+    for i in range(pop_size):
+        ind_bs = np.array([0, 10, 5, 2, 0, 0, 0, 0, 0])
+        balance_sheet = np.vstack((balance_sheet, ind_bs))
+    balance_sheet = balance_sheet.astype('float64')
+    balance_sheet[0,3] = 0
+
+    
+    
+    def profitn(idx, val, balance_sheet):
+        return balance_sheet[idx,3],
+    
+    scores = []
+    for idx, val in enumerate(population):
+        scores.append(profitn(idx, val, balance_sheet))
+    print(scores)
+    
+    print("First fitness computaiton")
+    
+    if mode == "ecology":
+        print("ecology")
+        for ind, fit in zip(population, scores):
+                ind.fitness.values = fit
+                # print(ind)
+                # print(fit)
+    
+    if mode == "deap":
+        print("deap")
+        
+        invalid_ind = [ind for ind in population if not ind.fitness.valid]
+        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+        for ind, fit in zip(invalid_ind, fitnesses):
+            ind.fitness.values = fit
+            # print(ind)
+            # print(fit)
+
+
+    # for ind in population:
+    #     print(ind)
+    #     print(ind.fitness)
+        
+    print("--------------------------------")
+    
+    # for ind in population:
+    #     print(ind)
+    #     print(ind.fitness.values)
 
     if halloffame is not None:
         halloffame.update(population)
 
     record = stats.compile(population) if stats else {}
-    logbook.record(gen=0, nevals=len(invalid_ind), **record)
+
+    logbook.record(gen=0, nevals=len(population), **record)
     if verbose:
         print(logbook.stream)
 
@@ -104,10 +156,15 @@ def main():
     for gen in range(1, ngen + 1):
         # Select the next generation individuals
         
+        # print("-----------------------")
+        # print(population)
         offspring = toolbox.select(population, len(population))
+        # print("-----------------------")
+        # print(offspring)
+        # print("-----------------------")
 
         # Vary the pool of individuals
-        offspring = [toolbox.clone(ind) for ind in population]
+        offspring = [toolbox.clone(ind) for ind in offspring]
 
         for i in range(1, len(offspring), 2):
             if random.random() < cxpb:
@@ -119,12 +176,26 @@ def main():
             if random.random() < mutpb:
                 offspring[i], = toolbox.mutate(offspring[i])
                 del offspring[i].fitness.values
+                
+        # print("Next fitness computaitons")
 
-        # Evaluate the individuals with an invalid fitness
-        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-        for ind, fit in zip(invalid_ind, fitnesses):
-            ind.fitness.values = fit
+        if mode == "ecology":
+            # print("ecology")
+            for ind, fit in zip(offspring, scores):
+                    ind.fitness.values = fit
+                    # print(ind)
+                    # print(fit)
+        
+        if mode == "deap":
+            # print("deap")
+            invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+            # print(invalid_ind)
+            fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+            for ind, fit in zip(invalid_ind, fitnesses):
+                ind.fitness.values = fit
+                # print(ind)
+                # print(fit)
+
 
         # Update the hall of fame with the generated individuals
         if halloffame is not None:
@@ -132,18 +203,30 @@ def main():
 
         # Replace the current population by the offspring
         population[:] = offspring
-
         # Append the current generation statistics to the logbook
+        # for ind in population:
+        #     print(ind)
+        #     print(ind.fitness)
+        
+        if gen >= ngen:
+            fitnesses = toolbox.map(toolbox.evaluate, population)
+            for ind, fit in zip(population, fitnesses):
+                ind.fitness.values = fit
         record = stats.compile(population) if stats else {}
-        logbook.record(gen=gen, nevals=len(invalid_ind), **record)
+        if mode == "ecology":
+            logbook.record(gen=gen, nevals=len(population), **record)
+        if mode == "deap":
+            logbook.record(gen=gen, nevals=len(invalid_ind), **record)
         if verbose:
             print(logbook.stream)
 
-
+        
+        # bests = tools.selBest(population, k=1)
+        # print(bests[0])
     # print log
     return population, logbook, hof
 
-pop, log, hof = main()
+pop, log, hof = main("deap")
 bests = tools.selBest(pop, k=1)
 
 nodes, edges, labels = gp.graph(bests[0])
@@ -172,10 +255,31 @@ def plot_graph(tree):
     plt.show()
 
 
-# print("Pop")
-# for i in range(len(pop)):
-#     print(pop[i])
-#     plot_graph(pop[i])
 
 print("Best ")
 print(bests[0])
+
+
+# def bestf(x):
+#     return toolbox.compile(expr=bests[0])(x)
+
+# def func(x):
+#     return x*x*x*x - x*x*x - x*x - x
+
+# print(bestf(1))
+# XXX = np.linspace(-10,10,100)
+# y = []
+# for ix in XXX:
+#     y.append(bestf(ix))
+# z = []
+# for ix in XXX:
+#     z.append(func(ix))
+
+# print("figure")
+# plt.plot(y, label="best fit")
+# plt.plot(z, label = "actual func")
+# plt.xlim(-10,10)
+# plt.legend()
+# plt.show()
+
+

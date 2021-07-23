@@ -63,3 +63,33 @@ then have a structure as generalised as possible.
     b. Adaptation
 
 """
+
+def no_trailing_comma(x):
+  return x + [10]
+
+def trailing_comma(x):
+  return x + [10],
+
+
+""" Without trailin comma """
+no = no_trailing_comma([1,2,3])
+print(no)
+print(type(no))
+print(no[1])
+print(type(no[1]))
+
+""" With trailin comma """
+yes = trailing_comma([1,2,3])
+print(yes)
+print(type(yes))
+# print(yes[2])
+print(yes[0])
+print(type(yes[0]))
+print(yes[0][0])
+print(type(yes[0][0]))
+
+
+ints = ["alpha", 2, "trois"]
+
+for idx, val in enumerate(ints):
+    print(idx, val)
