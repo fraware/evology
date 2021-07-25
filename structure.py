@@ -148,4 +148,41 @@ For hypermutation and reinitialisation:
 2- As a function of initial probabilities
     We consider that traders in our market are sampled from a larger population with this distr.
 
+
+
+
+
+
+
+
+A) Determine phenotype
+    1) Compute TS
+    2) Compute ED
+    
+    ind.tsf = toolbox.compile(expr=ind) #for gp
+    ind.(tsf,tsv,edf) = compute_ts(pop)
+
+B) Market process
+    3) Market clearing
+    4) Apply ED
+    5) Apply dividends, interest rate, reinvestment
+    6) compute wealth, profits
+
+    price, ind(edv, wealth, cash, asset, profit) = market(pop)
+
+C) Evolution of genotype
+    7) hypermutate (initialise fitness as 0 to not impact evolution) LOC TBC ##
+    pop = hypermutate(pop)
+    8) Evolution block
+        a. Fitness
+        b. Adaptation
+    ind, ind.(types, fitness) = evolution(pop)
+    
+
+
+
+
+
+
+
 """

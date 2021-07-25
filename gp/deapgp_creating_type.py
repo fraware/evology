@@ -215,8 +215,8 @@ for ind in pop:
 def func(x):
     return x**2
 for ind in pop:
-    ind.tsf = func 
+    ind.tsf = toolbox.compile(expr=ind) 
 for ind in pop:
     print(ind.tsf)
-    print(ind.tsf(2) + ind.types)
+    print(ind.tsf(2))
 
