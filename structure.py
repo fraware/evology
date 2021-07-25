@@ -49,47 +49,41 @@ then have a structure as generalised as possible.
 
 """
 
+Objects
+- orders [TSF, EDF, TSV, EDV]
+- types [1*n]
+- strategy [?]
+- balance_sheet [W C S L M]
+- performance [Profit Ema(profit)]
+- price (1*T)
+
+Strategy object
+for GP: 1*n of functions (TSF will be complete copy)
+for GA: one-parametric? Two-parametric?
+
 0) Initialisation of market, initialisation of population. 
-## Requires a first wealth comput.
-1) Compute TS
-2) Compute ED
-3) Market clearing
-4) Apply ED
-5) Apply dividends, interest rate, reinvestment
-6) compute wealth, profits
-## 7) hypermutate (initialise fitness as 0 to not impact evolution) LOC TBC ##
-8) Evolution block
-    a. Fitness
-    b. Adaptation
+    ## Requires a first wealth comput.
+
+A) Determine phenotype
+    1) Compute TS
+    2) Compute ED
+
+    orders = compute_ts(types, strategy, balance_sheet)
+
+B) Market process
+    3) Market clearing
+    4) Apply ED
+    5) Apply dividends, interest rate, reinvestment
+    6) compute wealth, profits
+
+    price, orders, balance_sheet = market(orders, balance_sheet)
+
+C) Evolution of genotype
+    7) hypermutate (initialise fitness as 0 to not impact evolution) LOC TBC ##
+    8) Evolution block
+        a. Fitness
+        b. Adaptation
+    
+    strategy, balance_sheet, types, performance = evolution(strategy, balance_sheet, types, performance)
 
 """
-
-def no_trailing_comma(x):
-  return x + [10]
-
-def trailing_comma(x):
-  return x + [10],
-
-
-""" Without trailin comma """
-no = no_trailing_comma([1,2,3])
-print(no)
-print(type(no))
-print(no[1])
-print(type(no[1]))
-
-""" With trailin comma """
-yes = trailing_comma([1,2,3])
-print(yes)
-print(type(yes))
-# print(yes[2])
-print(yes[0])
-print(type(yes[0]))
-print(yes[0][0])
-print(type(yes[0][0]))
-
-
-ints = ["alpha", 2, "trois"]
-
-for idx, val in enumerate(ints):
-    print(idx, val)
