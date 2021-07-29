@@ -250,11 +250,13 @@ from parameters import * #to import all functions and variables
 
 """
 0) Initialisation of market, initialisation of population.  """
-types, strategy, balance_sheet, order_func, order_values, perf = initialisation()
+pop = population_creation(n=POPULATION_SIZE)
     
 ## Requires a first wealth comput.
 """
-1) Compute TS
+1) Compute TS """
+compute_ts function
+"""
 2) Compute ED
 3) Market clearing
 4) Apply ED
