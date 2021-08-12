@@ -250,12 +250,12 @@ from parameters import * #to import all functions and variables
 
 """
 0) Initialisation of market, initialisation of population.  """
-pop = population_creation(n=POPULATION_SIZE)
+# pop = population_creation(n=POPULATION_SIZE)
     
 ## Requires a first wealth comput.
 """
 1) Compute TS """
-compute_ts function
+# compute_ts function
 """
 2) Compute ED
 3) Market clearing
