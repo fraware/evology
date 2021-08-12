@@ -107,11 +107,21 @@ def solver_linear_shortcut(pop, price):
         
     return new_price 
 
-""" Testing 
+
 def f(x):
     return sum(x)**2
 best_genome = ea_solve_noverbose(f,
           bounds=[(1.1111, 10)], generations = 50, pop_size = 500,
           mutation_std=0.1, hard_bounds = True) #max = False
 print(best_genome)
-"""
+
+
+
+from leap_ec.simple import ea_solve
+
+def f(x):
+    """A real-valued function to optimized."""
+    return sum(x)**2
+
+best = ea_solve(f, bounds=[(-5.12, 5.12) for _ in range(1)], maximize=True)
+print(best)
