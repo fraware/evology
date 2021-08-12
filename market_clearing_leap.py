@@ -1,6 +1,7 @@
 import market
 import numpy as np
-
+import deap
+from deap import leap_ec
 '''
 Here is a simple optimisation solver for the market clearing algorithm. 
 We minimise the squared of aggregate excess demand, under the constraint of
