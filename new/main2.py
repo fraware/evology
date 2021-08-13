@@ -11,6 +11,7 @@ extended_price_history = [abs(x) for x in extended_price_history]
 0) Initialisation of market, initialisation of population.  """
 pop = toolbox.tf_population_creation(n=10)
 calculate_wealth(pop, price)
+# TODO: extend to multiple strategies as a function of distribution probabilites. ind.type should reflect this.
 
 """
 1) Compute TS """
@@ -28,19 +29,21 @@ calculate_edf(pop)
 """
 3) Market clearing """
 price = leap_solver(pop, price)
-print(price)
+# print(price)
 
 """ 4) Apply ED """
 calculate_edv(pop, price)
 
+# TODO: apply the edv request, towards ind.asset and ind.cash
+
 # temp
-sum_edv = 0
-for ind in pop:
-    print("-------tsv, edv----------")
-    print(ind.tsv)
-    print(ind.edv)
-    sum_edv += ind.edv
-print(sum_edv)
+# sum_edv = 0
+# for ind in pop:
+#     print("-------tsv, edv----------")
+#     print(ind.tsv)
+#     print(ind.edv)
+#     sum_edv += ind.edv
+# print(sum_edv)
 # end temp
 
 """ 5) Apply dividends, interest rate, reinvestment
@@ -49,13 +52,4 @@ print(sum_edv)
 8) Evolution block
     a. Fitness
     b. Adaptation
-
-
-
-
-def update_excess_demand(pop):
-    for ind in pop:
-        ind[6] = truncate(ind[1] * LAMBDA_TF * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind[5]) + 0.5),4)
-    return ind
-market.update_excess_demand(pop)
 """
