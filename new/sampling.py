@@ -33,4 +33,3 @@ toolbox.register("tf", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
 toolbox.register("generate_tf_individual", tools.initCycle, creator.individual_ga, 
                  (toolbox.tf,), n=1)
 toolbox.register("tf_population_creation", tools.initRepeat, list, toolbox.generate_tf_individual)
-

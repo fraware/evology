@@ -1,4 +1,4 @@
-import market
+# import market
 import numpy as np
 '''
 Here is a simple optimisation solver for the market clearing algorithm. 
@@ -55,26 +55,28 @@ def ea_solve_noverbose(function, bounds, generations=100, pop_size=2,
 
 def leap_solver(pop, price):
     
-    ''' Define our workable aggregate demands '''
-    cum_sum = 0
-    cum_own = 0
-    for ind in pop:
-        cum_sum += ind[6]
-        cum_own += ind[3]
-    def agg_ed_solver(x):
-        return cum_sum / sum(x) - cum_own
+    ''' Define squared aggregate ED function '''
+    # cum_sum = 0
+    # cum_own = 0
+    # for ind in pop:
+    #     cum_sum += ind[6]
+    #     cum_own += ind[3]
+    # def agg_ed_solver(x):
+    #     return cum_sum / sum(x) - cum_own
     
-    
-    ''' define squared aggregate demand '''
+
     def squared_agg_ed(x):
-        result = agg_ed_solver(x) ** 2
+        result = 0
+        for ind in pop:
+            result += ind.edf(x)
+        result = result ** 2
         return result
     
-    ''' Then define the circuit breaker bounds '''
+    ''' Define the circuit breaker bounds '''
     limit_down = price * 0.5
     limit_up = price * 2.0
     
-    ''' Run the solver '''
+    ''' Run the solver on the squared agg ED function'''
     best_genome = ea_solve_noverbose(squared_agg_ed,
           bounds=[(limit_down, limit_up)], generations = 50, pop_size = 500,
           mutation_std=0.1, hard_bounds = True)
