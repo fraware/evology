@@ -30,6 +30,7 @@ MAX_VALUATION = 20
 TRADING_DAYS = 252
 share_increment = 1
 INITIAL_PRICE = 1 #100
+price = INITIAL_PRICE
 INITIAL_CASH = 10 #50_000_000
 INITIAL_ASSETS = 5 #00_000
  # = Wealth of 100M; 100M is the threshold for US asset managers

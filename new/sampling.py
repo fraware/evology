@@ -17,12 +17,12 @@ creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 # Create the individual object
 """ Agent attributes
 - type 
-- wealth, cash, asset
+- wealth, cash, asset, loan
 - tsf, tsv
 - edf, edv
 """
 creator.create("individual_ga", list, typecode = 'd', fitness=creator.fitness_strategy, wealth=0, type = None, 
-    cash = INITIAL_CASH, asset = INITIAL_ASSETS, tsf = None, tsv = 0, edf = None, edv = 0)
+    cash = INITIAL_CASH, asset = INITIAL_ASSETS, loan = 0, tsf = None, tsv = 0, edf = None, edv = 0)
 # individual_ga is a list, individual_gp will be a gp.primitiveTree.
 
 # Create the individual list 
@@ -34,5 +34,3 @@ toolbox.register("generate_tf_individual", tools.initCycle, creator.individual_g
                  (toolbox.tf,), n=1)
 toolbox.register("tf_population_creation", tools.initRepeat, list, toolbox.generate_tf_individual)
 
-pop = toolbox.tf_population_creation(n=10)
-print(pop)

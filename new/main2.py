@@ -1,11 +1,13 @@
 """ main 2 """
 from parameters import * #to import all functions and variables
+from sampling import *
+from balance_sheet import *
 
 """
 0) Initialisation of market, initialisation of population.  """
-# pop = population_creation(n=POPULATION_SIZE)
-    
-## Requires a first wealth comput.
+pop = toolbox.tf_population_creation(n=10)
+calculate_wealth(pop, price)
+
 """
 1) Compute TS """
 # compute_ts function
