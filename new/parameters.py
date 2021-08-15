@@ -5,9 +5,9 @@ RANDOM_SEED = 9 #random.random()
 
 ''' STRATEGY DISTRIBUTIONS '''
 PROBA_GP = 0
-PROBA_TF = 0.5
-PROBA_VI = 0.4
-PROBA_NT = 0.1
+PROBA_TF = 0.4
+PROBA_VI = 0.3
+PROBA_NT = 0.3
 
 ''' GA parmeters '''
 POPULATION_SIZE = 4

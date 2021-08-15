@@ -1,6 +1,6 @@
 import numpy as np
-
 from parameters import *
+np.seterr(divide = 'ignore') 
 
 
 def calculate_wealth(pop, price):
@@ -21,13 +21,6 @@ def calculate_ts_edf(pop, extended_price_history):
             ind.edf = func
         elif ind.type == "nt":
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
-            print(ind.type)
-            print(ind[0])
-            print(ind.process)
-            print((np.log2(ind[0] * ind.process)))
-            print("--------------------")
-            print(ind.wealth * LAMBDA_NT)
-            print(np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process))))
             def func(p):
                 return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process)) -  np.log2(p)) + 0.5) - ind.asset 
             ind.edf = func            

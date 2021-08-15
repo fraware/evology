@@ -1,2 +1,2 @@
 for ind in pop:
-    print (ind.type)
+    print(ind.edv)

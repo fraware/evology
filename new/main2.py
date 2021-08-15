@@ -14,7 +14,7 @@ extended_price_history = [abs(x) for x in extended_price_history]
 """
 0) Initialisation of market, initialisation of population.  """
 pop = sampling.toolbox.gen_rd_pop(n=10)
-# print(pop)
+print(pop)
 for ind in pop:
     print (ind.type)
 
@@ -31,6 +31,9 @@ print("Price is " + str(price))
 
 """ 4) Apply ED """
 calculate_edv(pop, price)
+
+for ind in pop:
+    print(ind.edv)
 
 # TODO: apply the edv request, towards ind.asset and ind.cash
 
