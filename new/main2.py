@@ -9,8 +9,6 @@ from ga import *
 price = INITIAL_PRICE
 extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
 extended_price_history = [abs(x) for x in extended_price_history]
-# print(extended_price_history)
-
 
 pop = sampling.toolbox.gen_rd_pop(n=10) # Initialise market, population
 calculate_wealth(pop, price)
@@ -24,13 +22,16 @@ calculate_edv(pop, price) # Compute EDV
 
 
 """ 5) Apply dividends, interest rate, reinvestment
-6) compute wealth, profits
+
+6) compute wealth, profits (ready for fitness at 8a)
+
 ## 7) hypermutate (initialise fitness as 0 to not impact evolution) LOC TBC ## """
 
 pop, round_replacements = hypermutate(pop) # Replace insolvent agents
+# TODO: do we need to set del ind.wealth too? Or is it fully replaced?
 print(str(round_replacements) + " replacements done")
 
 """ 8) Evolution block
-    a. Fitness
+    a. Fitness computation
     b. Adaptation
 """
