@@ -11,47 +11,23 @@ extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
 extended_price_history = [abs(x) for x in extended_price_history]
 # print(extended_price_history)
 
-"""
-0) Initialisation of market, initialisation of population.  """
-pop = sampling.toolbox.gen_rd_pop(n=10)
-print(pop)
-for ind in pop:
-    print (ind.type)
 
+pop = sampling.toolbox.gen_rd_pop(n=10) # Initialise market, population
 calculate_wealth(pop, price)
-
-"""
-1) 2) Compute TS and ED """
-
-calculate_ts_edf(pop, extended_price_history)
-
-""" 3) Market clearing """
-price = leap_solver(pop, price)
+calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
+price = leap_solver(pop, price) # Clear the market
 print("Price is " + str(price))
+calculate_edv(pop, price) # Compute EDV
 
-""" 4) Apply ED """
-calculate_edv(pop, price)
-
-for ind in pop:
-    print(ind.edv)
 
 # TODO: apply the edv request, towards ind.asset and ind.cash
 
-# temp
-# sum_edv = 0
-# for ind in pop:
-#     print("-------tsv, edv----------")
-#     print(ind.tsv)
-#     print(ind.edv)
-#     sum_edv += ind.edv
-# print(sum_edv)
-# end temp
 
 """ 5) Apply dividends, interest rate, reinvestment
 6) compute wealth, profits
 ## 7) hypermutate (initialise fitness as 0 to not impact evolution) LOC TBC ## """
 
-pop, round_replacements = hypermutate(pop)
+pop, round_replacements = hypermutate(pop) # Replace insolvent agents
 print(str(round_replacements) + " replacements done")
 
 """ 8) Evolution block
