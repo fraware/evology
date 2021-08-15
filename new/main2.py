@@ -1,5 +1,6 @@
 from parameters import *
 from sampling import *
+import sampling
 from balance_sheet import *
 from brownian_motion import *
 from market_clearing import *
@@ -9,29 +10,24 @@ price = INITIAL_PRICE
 extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
 extended_price_history = [abs(x) for x in extended_price_history]
 # print(extended_price_history)
+
 """
 0) Initialisation of market, initialisation of population.  """
-pop = toolbox.tf_population_creation(n=10)
-calculate_wealth(pop, price)
-# TODO: extend to multiple strategies as a function of distribution probabilites. ind.type should reflect this.
-
-"""
-1) Compute TS """
-
-# temp
+pop = sampling.toolbox.gen_rd_pop(n=10)
+# print(pop)
 for ind in pop:
-    ind.type = "tf"
-# end temp  
+    print (ind.type)
 
-calculate_ts(pop, extended_price_history)
+calculate_wealth(pop, price)
 
 """
-2) Compute ED """
-calculate_edf(pop)
-"""
-3) Market clearing """
+1) 2) Compute TS and ED """
+
+calculate_ts_edf(pop, extended_price_history)
+
+""" 3) Market clearing """
 price = leap_solver(pop, price)
-# print(price)
+print("Price is " + str(price))
 
 """ 4) Apply ED """
 calculate_edv(pop, price)
@@ -53,6 +49,7 @@ calculate_edv(pop, price)
 ## 7) hypermutate (initialise fitness as 0 to not impact evolution) LOC TBC ## """
 
 pop, round_replacements = hypermutate(pop)
+print(str(round_replacements) + " replacements done")
 
 """ 8) Evolution block
     a. Fitness

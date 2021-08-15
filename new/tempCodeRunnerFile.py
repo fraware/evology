@@ -1,1 +1,2 @@
-from parameters import *
+for ind in pop:
+    print (ind.type)
