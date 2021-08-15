@@ -3,6 +3,8 @@ from sampling import *
 from balance_sheet import *
 from brownian_motion import *
 from market_clearing import *
+from ga import *
+
 price = INITIAL_PRICE
 extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
 extended_price_history = [abs(x) for x in extended_price_history]
@@ -48,8 +50,11 @@ calculate_edv(pop, price)
 
 """ 5) Apply dividends, interest rate, reinvestment
 6) compute wealth, profits
-## 7) hypermutate (initialise fitness as 0 to not impact evolution) LOC TBC ##
-8) Evolution block
+## 7) hypermutate (initialise fitness as 0 to not impact evolution) LOC TBC ## """
+
+pop, round_replacements = hypermutate(pop)
+
+""" 8) Evolution block
     a. Fitness
     b. Adaptation
 """
