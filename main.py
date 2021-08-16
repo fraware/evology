@@ -7,7 +7,7 @@ import genetic_algorithm_functions as ga
 import genetic_programming_functions as gp
 import market 
 import market_clearing_leap as mc_leap
-import parameters
+from parameters import *
 import data
 import brownian_motion as bm
 import population_generation as popgen
