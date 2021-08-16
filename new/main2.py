@@ -15,6 +15,9 @@ extended_price_history = [abs(x) for x in extended_price_history]
 dividend = INITIAL_DIVIDEND
 
 pop = sampling.toolbox.gen_rd_pop(n=POPULATION_SIZE) # Initialise market, population
+print(pop)
+for ind in pop:
+    print(ind.type)
 asset_supply = count_assets(pop)
 
 calculate_wealth(pop, price)
@@ -33,8 +36,6 @@ print("Dividend is " + str(dividend))
 dividend_history.append(dividend)
 random_dividend_history.append(random_dividend)
 
-print("profit enumeration") #TEMP
-
 pop, round_replacements = hypermutate(pop) # Replace insolvent agents
 # TODO: do we need to set del ind.wealth too? Or is it fully replaced?
 print(str(round_replacements) + " replacements done")
@@ -47,7 +48,8 @@ compute_fitness(pop)
 """
     b. Adaptation
 """
-print("Adaptation")
 pop = strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
 
 # TODO: control that EDV, TS, Wealth, Profits, EMA are what they should be.
+
+print("----------------------------------------------")

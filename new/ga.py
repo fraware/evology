@@ -27,19 +27,19 @@ def compute_fitness(pop):
 
 # Creating our own crossover operator:
 def feasible_crossover(ind1,ind2,CROSSOVER_RATE):
-    print("--------------")
-    print(ind1, ind2)
-    print(ind1.type, ind2.type)
+    # print("--------------")
+    # print(ind1, ind2)
+    # print(ind1.type, ind2.type)
     if ind1.type == ind2.type:
         if random.random() < CROSSOVER_RATE:
             upperb = max(ind1,ind2)[0]
             lowerb = min (ind1,ind2)[0]
             ind1[0] = random.randint(lowerb,upperb)
             ind2[0] = random.randint(lowerb,upperb)
-        print("Crossover operated")
-        print(ind1, ind2)
-    else:
-        print("Crossover failed - Unequal type")
+    #     print("Crossover operated")
+    #     print(ind1, ind2)
+    # else:
+    #     # print("Crossover failed - Unequal type")
     return ind1[0], ind2[0]
 
 toolbox.register("feasible_crossover", feasible_crossover)
