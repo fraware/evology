@@ -21,9 +21,9 @@ class Brownian():
         Returns:
             A NumPy array with `n_steps` points
         """
-        # Warning about the small number of steps
-        if n_step < 30:
-            print("WARNING! The number of steps is small. It may not generate a good stochastic process sequence!")
+        # # Warning about the small number of steps
+        # if n_step < 30:
+        #     print("WARNING! The number of steps is small. It may not generate a good stochastic process sequence!")
         
         w = np.ones(n_step)*self.x0
         

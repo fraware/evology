@@ -1,5 +1,7 @@
 import numpy as np
 from parameters import *
+from new_market import *
+
 np.seterr(divide = 'ignore') 
 
 
@@ -36,3 +38,71 @@ def calculate_ts_edf(pop, extended_price_history):
 def calculate_edv(pop, price):
     for ind in pop:
         ind.edv = ind.edf(price)
+    return ind
+
+def count_assets(pop):
+    count = 0
+    for ind in pop:
+        count += ind.asset
+    return count
+
+def apply_edv(pop, asset_supply, price):
+    num_sell, num_buy = 0, 0
+    for ind in pop:
+        if ind.edv > 0:  # the agent wants to buy
+            i = 0
+            while i < ind.edv:
+                if count_assets(pop) < asset_supply: # there are assets to buy
+                    if ind.cash >= price: # the agent can afford to buy
+                        ind.asset += 1
+                        num_buy += 1
+                        ind.cash -= price
+                i += 1
+        if ind.edv < 0:  # the agent wants to sell
+            i = 0
+            while i < abs(ind.edv):
+                if ind.asset >= 1: # the agent can sell from inventory
+                    ind.asset -= 1
+                    num_sell += 1
+                    ind.cash += price
+                else: # the agent wants to short sell instead
+                    if count_assets(pop) > 0: # there are assets to borrow
+                        ind.asset -= 1
+                        num_sell += 1
+                        ind.margin += price
+                i += 1
+
+        # Clear margin if out of short position
+        if ind.asset > 0:
+            ind.cash += ind.margin
+            ind.margin = 0
+    return pop, num_buy, num_sell
+
+def update_margin(pop, price):
+    for ind in pop:
+        if ind.asset < 0:
+            ind.cash += ind.margin
+            ind.margin = abs(ind.asset) * price
+            ind.cash -= ind.margin
+            if ind.cash < 0:
+                # The agent is insolvent and will try to buy back as much as possible
+                ind.edv = abs(ind.asset)
+                ind.cash += ind.margin
+                ind.margin = 0
+                ind.loan += float('inf')
+    return ind
+
+
+def wealth_earnings(pop, dividend, price):
+
+    dividend, random_dividend = draw_dividend(dividend)
+
+    for ind in pop:
+        former_wealth = ind.wealth
+        div_asset = ind.asset * dividend # Determine gain from dividends
+        interest_cash = ind.cash * INTEREST_RATE # Determine gain from interest
+        ind.cash += REINVESTMENT_RATE * (div_asset + interest_cash) # Apply reinvestment
+        ind.wealth = ind.cash + ind.asset * price - ind.loan # Compute new wealth
+        ind.profit = former_wealth - ind.wealth # Compute profit as difference of wealth
+        
+    return pop, dividend, random_dividend
