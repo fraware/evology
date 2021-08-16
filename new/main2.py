@@ -14,7 +14,7 @@ extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
 extended_price_history = [abs(x) for x in extended_price_history]
 dividend = INITIAL_DIVIDEND
 
-pop = sampling.toolbox.gen_rd_pop(n=10) # Initialise market, population
+pop = sampling.toolbox.gen_rd_pop(n=POPULATION_SIZE) # Initialise market, population
 asset_supply = count_assets(pop)
 
 calculate_wealth(pop, price)
@@ -47,5 +47,7 @@ compute_fitness(pop)
 """
     b. Adaptation
 """
+print("Adaptation")
+pop = strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
 
 # TODO: control that EDV, TS, Wealth, Profits, EMA are what they should be.
