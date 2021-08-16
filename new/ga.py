@@ -4,7 +4,6 @@ from deap import tools
 from deap import algorithms
 from deap import gp
 from sampling import *
-toolbox = base.Toolbox()
 
 def hypermutate(pop):
     round_replacements = 0
@@ -18,3 +17,10 @@ def hypermutate(pop):
             round_replacements += 1
     pop[:] = pop_temp
     return pop, round_replacements
+
+def compute_fitness(pop):
+    for ind in pop:
+        ema = (2 / (EMA_HORIZON + 1)) * (ind.profit - ind.ema) + ind.ema
+        ind.ema = ema
+        ind.fitness.values = ema,
+    return ind

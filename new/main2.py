@@ -40,8 +40,12 @@ pop, round_replacements = hypermutate(pop) # Replace insolvent agents
 print(str(round_replacements) + " replacements done")
 
 """ 8) Evolution block
-    a. Fitness computation
+    a. Fitness computation """
+
+compute_fitness(pop)
+
+"""
     b. Adaptation
 """
 
-# TODO: control that EDV, TS, Wealth, Profits are what they should be.
+# TODO: control that EDV, TS, Wealth, Profits, EMA are what they should be.
