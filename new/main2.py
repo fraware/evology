@@ -6,6 +6,7 @@ from brownian_motion import *
 from market_clearing import *
 from ga import *
 
+# Let's review the code.
 
 def main(MAX_GENERATIONS):
     
