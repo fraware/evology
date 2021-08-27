@@ -114,17 +114,19 @@ def strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MU
         offspring = toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
         # fitness_for_invalid(offspring)
         offspring = list(map(toolbox.clone, offspring))
+    if PROBA_SELECTION == 0:
+        offspring = pop.copy()
                                         
     # Crossover
     for child1, child2 in zip(offspring[::2], offspring[1::2]):
         toolbox.mate(child1,child2,CROSSOVER_RATE)
-        del child1.fitness.values
-        del child2.fitness.values
+        # del child1.fitness.values
+        # del child2.fitness.values
 
     # Mutation
     for mutant in offspring:
         toolbox.mutate(mutant, MUTATION_RATE)
-        del mutant.fitness.values
+        # del mutant.fitness.values
 
     # Recomputing fitness
     # fitness_for_invalid(offspring)

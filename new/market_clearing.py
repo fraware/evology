@@ -78,7 +78,7 @@ def leap_solver(pop, price):
     
     ''' Run the solver on the squared agg ED function'''
     best_genome = ea_solve_noverbose(squared_agg_ed,
-          bounds=[(limit_down, limit_up)], generations = 50, pop_size = 500,
+          bounds=[(limit_down, limit_up)], generations = 50, pop_size = 50,
           mutation_std=0.1, hard_bounds = True)
     
     ''' Return the clearing price '''

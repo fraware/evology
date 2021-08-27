@@ -1,19 +1,26 @@
 from parameters import *
 from sampling import *
 import sampling
+import pandas
 from balance_sheet import *
 from brownian_motion import *
 from market_clearing import *
 from ga import *
+from data import *
+import random
 
-# Let's review the code.
+random.seed(9)
 
-def main(MAX_GENERATIONS):
+
+def main(MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
     
     # maxFitnessValues, meanFitnessValues, replacements, , price_history = [],[],[],[],[],[]   
     # , mismatch_history, asset_count_history, mean_theta, mean_wealth, size_pos_pos, size_neg_pos = [],[],[],[],[],[], []
 
     dividend_history, random_dividend_history, generation_history = [], [], []
+    price_history, mismatch_history, meanFitnessValues = [], [], []
+    replacements, mean_wealth = [], []
+
     price = INITIAL_PRICE
     extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
     extended_price_history = [abs(x) for x in extended_price_history]
@@ -33,8 +40,10 @@ def main(MAX_GENERATIONS):
 
         calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
         price = leap_solver(pop, price) # Clear the market
+        price_history.append(price)
         print("Price is " + str(price))
         calculate_edv(pop, price) # Compute EDV
+        mismatch_history.append(calculate_total_edv(pop))
 
         update_margin(pop, price)
         pop, num_buy, num_sell = apply_edv(pop, asset_supply, price) # Apply EDV orders
@@ -59,10 +68,91 @@ def main(MAX_GENERATIONS):
             b. Adaptation
         """
         pop = strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
-
+        compute_fitness(pop)
         # TODO: control that EDV, TS, Wealth, Profits, EMA are what they should be.
+
+        # for ind in pop:
+        #     print(ind.profit)
+        #     print(ind.fitness.values)
+        sumfit = 0
+        for ind in pop:
+            # print(ind.fitness.values)
+            # print(ind.fitness.values[0])
+
+            sumfit += ind.fitness.values[0]
+        meanFitness = sumfit / len(pop)
+        meanFitnessValues.append(meanFitness)
+        replacements.append(round_replacements)
+
+        mean_vi = 0
+        mean_nt = 0
+        mean_tf = 0
+        num_tf = 0
+        num_vi = 0
+        num_nt = 0
+        wealth_tf = 0
+        wealth_vi = 0
+        wealth_nt = 0
+
+        for ind in pop:
+            print(ind.type)
+
+        for ind in pop:
+            if ind.type == "tf":
+                mean_tf += ind[0]
+                num_tf += 1
+                wealth_tf += ind.wealth
+            elif ind.type == "vi":
+                mean_vi += ind[0]
+                num_vi += 1
+                wealth_vi += ind.wealth
+            elif ind.type == "nt":
+                mean_nt += ind[0]
+                num_nt += 1
+                wealth_nt += ind.wealth
+        
+        if num_tf != 0: 
+            wealth_tf = wealth_tf / num_tf
+            mean_tf = mean_tf / num_tf
+        elif num_tf == 0: 
+            wealth_tf = 0
+            mean_tf = 0
+
+        if num_vi != 0:
+            wealth_vi = wealth_vi / num_vi
+            mean_vi = mean_vi / num_vi
+        elif num_vi == 0: 
+            wealth_vi = 0
+            mean_vi = 0
+
+        if num_nt != 0:
+            wealth_nt = wealth_nt / num_nt
+            mean_nt = mean_nt / num_nt
+        elif num_nt == 0:
+            wealth_nt = 0
+            mean_nt = 0
+
+        sum_wealth = 0
+        for ind in pop:
+            sum_wealth += ind.wealth
+        mean_wealth.append(sum_wealth/len(pop))
+
+
 
         generation_history.append(generation)
         generation += 1
+    
+    df = generate_df(generation_history, price_history, mismatch_history, 
+                              num_tf, num_vi, num_nt, mean_tf, mean_vi, mean_nt, 
+                              mean_wealth,  wealth_tf, wealth_vi, wealth_nt,
+                              meanFitnessValues,
+                              dividend_history, random_dividend_history, 
+                              replacements)
 
-main(10)
+
+
+
+    return df
+df = main(10, 0, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
+print(df)
+df.to_csv("run_data.csv")

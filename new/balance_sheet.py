@@ -40,6 +40,12 @@ def calculate_edv(pop, price):
         ind.edv = ind.edf(price)
     return ind
 
+def calculate_total_edv(pop):
+    total = 0
+    for ind in pop:
+        total += ind.edv
+    return total
+
 def count_assets(pop):
     count = 0
     for ind in pop:
