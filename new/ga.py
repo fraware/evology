@@ -11,8 +11,21 @@ def hypermutate(pop):
     for i in range(0, len(pop_temp)):
         # if pop_temp[i][1] + pop_temp[i][9] <= 0:
         if pop_temp[i].wealth <= 0:
+            # print("replacement of")
+            # print(pop_temp[i][0])
+            # print(pop_temp[i].type)
+            # print(pop_temp[i].wealth)
+            # print(pop_temp[i].cash)
+            # print(pop_temp[i].asset)
             pop_temp[i] = toolbox.gen_rd_ind()
             del pop_temp[i].fitness.values
+            pop_temp[i].asset = 0
+            # print("replaced by")
+            # print(pop_temp[i][0])
+            # print(pop_temp[i].type)
+            # print(pop_temp[i].wealth)
+            # print(pop_temp[i].cash)
+            # print(pop_temp[i].asset)
             # global round_replacements
             round_replacements += 1
     pop[:] = pop_temp
