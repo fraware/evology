@@ -180,6 +180,6 @@ def main(MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTA
 
 
     return df
-df = main(100, 0, 100, CROSSOVER_RATE, MUTATION_RATE)
-print(df)
-df.to_csv("run_data.csv")
+# df = main(10, 0, 10, 0, 0)
+# print(df)
+# df.to_csv("new/data/run_data_no_learning.csv")
