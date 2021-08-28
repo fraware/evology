@@ -3,7 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # Import the data
-df_nl = pd.read_csv("run_data_no_learning.csv")
+df_nl = pd.read_csv("new/data/run_data_no_learning.csv")
 print(df_nl)
 
 # Basic plots
@@ -21,7 +21,7 @@ df_nl.plot(x="Gen", y = ["Wealth_TF", "Wealth_VI", "Wealth_NT"],
 plt.show()
 
 # Import the data
-df_l = pd.read_csv("run_data_learning.csv")
+df_l = pd.read_csv("new/data/run_data_learning.csv")
 print(df_l)
 
 # Basic plots
