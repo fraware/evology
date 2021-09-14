@@ -98,11 +98,8 @@ def update_margin(pop, price):
                 ind.loan += float('inf')
     return ind
 
-
 def wealth_earnings(pop, dividend, price):
-
     dividend, random_dividend = draw_dividend(dividend)
-
     for ind in pop:
         former_wealth = ind.wealth
         div_asset = ind.asset * dividend # Determine gain from dividends
@@ -110,5 +107,4 @@ def wealth_earnings(pop, dividend, price):
         ind.cash += REINVESTMENT_RATE * (div_asset + interest_cash) # Apply reinvestment
         ind.wealth = ind.cash + ind.asset * price - ind.loan # Compute new wealth
         ind.profit = former_wealth - ind.wealth # Compute profit as difference of wealth
-        
     return pop, dividend, random_dividend
