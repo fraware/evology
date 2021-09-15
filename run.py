@@ -1,5 +1,7 @@
 from main import *
 import pandas as pd
+import random
+RANDOM_SEED = 9 #random.random()
 
 # def main(MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 

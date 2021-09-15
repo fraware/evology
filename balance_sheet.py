@@ -46,10 +46,18 @@ def calculate_total_edv(pop):
         total += ind.edv
     return total
 
-def count_assets(pop):
+def count_positive_assets(pop):
     count = 0
     for ind in pop:
-        count += ind.asset
+        if ind.asset > 0:
+            count += ind.asset
+    return count
+
+def count_negative_assets(pop):
+    count = 0
+    for ind in pop:
+        if ind.asset < 0:
+            count += - ind.asset
     return count
 
 def apply_edv(pop, asset_supply, price):
@@ -60,7 +68,7 @@ def apply_edv(pop, asset_supply, price):
         if ind.edv > 0:  # the agent wants to buy
             i = 0
             while i < ind.edv:
-                if count_assets(pop) < asset_supply: # there are assets to buy
+                if count_positive_assets(pop) < asset_supply: # there are assets to buy
                     if ind.cash >= price: # the agent can afford to buy
                         ind.asset += 1
                         num_buy += 1
@@ -86,16 +94,17 @@ def apply_edv(pop, asset_supply, price):
                         num_sell_nt += 1
                     ind.cash += price
                 else: # the agent wants to short sell instead
-                    if count_assets(pop) > 0: # there are assets to borrow
-                        ind.asset -= 1
-                        num_sell += 1
-                        if ind.type == "tf":
-                            num_sell_tf += 1
-                        if ind.type == "vi":
-                            num_sell_vi += 1
-                        if ind.type == "nt":
-                            num_sell_nt += 1
-                        ind.margin += price
+                    if count_positive_assets(pop) > 0: # there are assets to borrow
+                        if count_negative_assets(pop) < 10 * asset_supply: # we don't reach the cap on short position size
+                            ind.asset -= 1
+                            num_sell += 1
+                            if ind.type == "tf":
+                                num_sell_tf += 1
+                            if ind.type == "vi":
+                                num_sell_vi += 1
+                            if ind.type == "nt":
+                                num_sell_nt += 1
+                            ind.margin += price
                 i += 1
 
         # Clear margin if out of short position
