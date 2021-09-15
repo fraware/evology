@@ -12,7 +12,7 @@ import random
 # random.seed(9)
 
 
-def main(MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
+def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
     
     # maxFitnessValues, meanFitnessValues, replacements, , price_history = [],[],[],[],[],[]   
     # , mismatch_history, asset_count_history, mean_theta, mean_wealth, size_pos_pos, size_neg_pos = [],[],[],[],[],[], []
@@ -35,6 +35,9 @@ def main(MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTA
         pop = sampling.toolbox.gen_rd_pop(n=POPULATION_SIZE) # Initialise market, population
     elif POPULATION_SIZE == 3:
         pop = sampling.toolbox.gen_ref_pop() # Initialise market, population from Scholl et al. 2020
+
+    pop = sampling.adjust_mode(pop, mode)
+
     print(pop)
 
     for ind in pop:
@@ -55,9 +58,9 @@ def main(MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTA
         mismatch_history.append(calculate_total_edv(pop))
 
         update_margin(pop, price)
-        pop, num_buy, num_sell = apply_edv(pop, asset_supply, price) # Apply EDV orders
-        print("Buy orders: " + str(num_buy))
-        print("Sell orders: " + str(num_sell))
+        pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = apply_edv(pop, asset_supply, price) # Apply EDV orders
+        print("Buy orders: " + str(num_buy) + " (TF=" + str(num_buy_tf) + " ;VI=" + str(num_buy_vi) + " ;NT=" + str(num_buy_nt) +")") 
+        print("Sell orders: " + str(num_sell) + " (TF=" + str(num_sell_tf) + " ;VI=" + str(num_sell_vi) + " ;NT=" + str(num_sell_nt) +")") 
 
         pop, dividend, random_dividend = wealth_earnings(pop, dividend, price) # Apply invest., IR, Div and compute profit
         print("Dividend is " + str(dividend))
@@ -165,6 +168,9 @@ def main(MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTA
 
 
         generation_history.append(generation)
+        if mode == "between" and round_replacements > 0:
+            print("Simulation interrupted for insolvency.")
+            break
         generation += 1
     
     df = generate_df(generation_history, price_history, mismatch_history, 

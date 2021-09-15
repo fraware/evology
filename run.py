@@ -4,7 +4,7 @@ import pandas as pd
 # def main(MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 
 """ Replication Maarten's results """
-df = main(10, 0, 3, 0, 0)
+df = main("between", 10, 0, 3, 0, 0)
 print(df)
 df.to_csv("data/test_data.csv")
 

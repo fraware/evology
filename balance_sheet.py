@@ -54,6 +54,8 @@ def count_assets(pop):
 
 def apply_edv(pop, asset_supply, price):
     num_sell, num_buy = 0, 0
+    num_sell_tf, num_sell_vi, num_sell_nt = 0, 0, 0
+    num_buy_tf, num_buy_vi, num_buy_nt = 0, 0, 0
     for ind in pop:
         if ind.edv > 0:  # the agent wants to buy
             i = 0
@@ -62,6 +64,12 @@ def apply_edv(pop, asset_supply, price):
                     if ind.cash >= price: # the agent can afford to buy
                         ind.asset += 1
                         num_buy += 1
+                        if ind.type == "tf":
+                            num_buy_tf += 1
+                        if ind.type == "vi":
+                            num_buy_vi += 1
+                        if ind.type == "nt":
+                            num_buy_nt += 1
                         ind.cash -= price
                 i += 1
         if ind.edv < 0:  # the agent wants to sell
@@ -70,11 +78,23 @@ def apply_edv(pop, asset_supply, price):
                 if ind.asset >= 1: # the agent can sell from inventory
                     ind.asset -= 1
                     num_sell += 1
+                    if ind.type == "tf":
+                        num_sell_tf += 1
+                    if ind.type == "vi":
+                        num_sell_vi += 1
+                    if ind.type == "nt":
+                        num_sell_nt += 1
                     ind.cash += price
                 else: # the agent wants to short sell instead
                     if count_assets(pop) > 0: # there are assets to borrow
                         ind.asset -= 1
                         num_sell += 1
+                        if ind.type == "tf":
+                            num_sell_tf += 1
+                        if ind.type == "vi":
+                            num_sell_vi += 1
+                        if ind.type == "nt":
+                            num_sell_nt += 1
                         ind.margin += price
                 i += 1
 
@@ -82,7 +102,7 @@ def apply_edv(pop, asset_supply, price):
         if ind.asset > 0:
             ind.cash += ind.margin
             ind.margin = 0
-    return pop, num_buy, num_sell
+    return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
 def update_margin(pop, price):
     for ind in pop:

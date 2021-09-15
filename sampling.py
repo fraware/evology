@@ -72,3 +72,14 @@ print(pop)
 for ind in pop:
     print(ind[0])
     print(ind.type)
+
+def adjust_mode(pop, mode):
+    if mode == "between":
+        for ind in pop:
+            if ind.type == "tf":
+                ind[0] = 2
+            if ind.type == "vi":
+                ind[0] = fval
+            if ind.type == "nt":
+                ind[0] = fval
+    return pop
