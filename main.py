@@ -43,7 +43,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
     for ind in pop:
         print(ind.type)
-    asset_supply = count_assets(pop)
+    asset_supply = count_positive_assets(pop)
 
     calculate_wealth(pop, price)
 
