@@ -15,9 +15,3 @@ def draw_dividend(dividend):
 
     return dividend, random_dividend
 
-def compute_fval(iteration):
-    fval = 0
-    i = 0
-    for i in range(iteration):
-        fval += (100 * (1.01) ** i) / ((1.02) ** i)
-    return fval
