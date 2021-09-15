@@ -5,11 +5,12 @@ import pandas as pd
 
 df = main(10, 0, 100, 0, 0)
 print(df)
+df.to_csv("data/test_data.csv")
 
 # df = main(100, 0, 100, 0, 0)
 # print(df)
-# df.to_csv("new/data/run_data_no_learning.csv")
+# df.to_csv("data/run_data_no_learning.csv")
 
 # df = main(100, 1, 100, 0.1, 0.01)
 # print(df)
-# df.to_csv("new/data/run_data_learning.csv")
+# df.to_csv("data/run_data_learning.csv")

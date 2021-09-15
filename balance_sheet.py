@@ -1,6 +1,6 @@
 import numpy as np
 from parameters import *
-from new_market import *
+from market import *
 
 np.seterr(divide = 'ignore') 
 
