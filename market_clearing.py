@@ -37,6 +37,7 @@ def ea_solve_noverbose(function, bounds, generations=100, pop_size=2,
     ea = generational_ea(max_generations=generations,
                          pop_size=pop_size,
                          problem=FunctionProblem(function, maximize),
+                         stop=lambda pop: (max(pop).fitness < 1),
 
                          representation=Representation(
                              individual_cls=Individual,
@@ -64,7 +65,6 @@ def leap_solver(pop, price):
     # def agg_ed_solver(x):
     #     return cum_sum / sum(x) - cum_own
     
-
     def squared_agg_ed(x):
         result = 0
         for ind in pop:
@@ -74,11 +74,13 @@ def leap_solver(pop, price):
     
     ''' Define the circuit breaker bounds '''
     limit_down = price * 0.5
+    limit_down = 0
     limit_up = price * 2.0
+    limit_up = price * 10.0
     
     ''' Run the solver on the squared agg ED function'''
     best_genome = ea_solve_noverbose(squared_agg_ed,
-          bounds=[(limit_down, limit_up)], generations = 50, pop_size = 50,
+          bounds=[(limit_down, limit_up)], generations = 200, pop_size = 100,
           mutation_std=0.1, hard_bounds = True)
     
     ''' Return the clearing price '''
@@ -87,7 +89,7 @@ def leap_solver(pop, price):
 # def f(x):
 #     return sum(x)**2
 # best_genome = ea_solve_noverbose(f,
-#           bounds=[(1.1111, 10)], generations = 50, pop_size = 500,
+#           bounds=[(1.1111, 10)], generations = 50, pop_size = 50,
 #           mutation_std=0.1, hard_bounds = True) #max = False
 # print(best_genome)
 

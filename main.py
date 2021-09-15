@@ -28,6 +28,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     price = INITIAL_PRICE
     extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
     extended_price_history = [abs(x) for x in extended_price_history]
+    price_history = extended_price_history.copy()
     dividend = INITIAL_DIVIDEND
     generation = 0
 
@@ -50,12 +51,18 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         print("----------------------------------------------------------------------")
         print("Generation " + str(generation))
 
-        calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
+        calculate_ts_edf(pop, price_history) # Compute TSV and EDF
+
+        # pop_report(pop)
+
         price = leap_solver(pop, price) # Clear the market
         price_history.append(price)
         print("Price is " + str(price))
         calculate_edv(pop, price) # Compute EDV
         mismatch_history.append(calculate_total_edv(pop))
+        print("Mismatch is " + str(calculate_total_edv(pop)))
+
+        pop_report(pop)
 
         update_margin(pop, price)
         pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = apply_edv(pop, asset_supply, price) # Apply EDV orders
@@ -173,7 +180,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
             break
         generation += 1
     
-    df = generate_df(generation_history, price_history, mismatch_history, 
+    df = generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_history, 
                               num_tf_history, num_vi_history, num_nt_history, mean_tf_history, mean_vi_history, mean_nt_history, 
                               mean_wealth_history,  wealth_tf_history, wealth_vi_history, wealth_nt_history,
                               meanFitnessValues,

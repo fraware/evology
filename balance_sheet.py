@@ -128,3 +128,16 @@ def wealth_earnings(pop, dividend, price):
         ind.wealth = ind.cash + ind.asset * price - ind.loan # Compute new wealth
         ind.profit = former_wealth - ind.wealth # Compute profit as difference of wealth
     return pop, dividend, random_dividend
+
+def pop_report(pop):
+    for ind in pop:
+        agent_report (ind)
+
+def agent_report(ind):
+    if ind.type == "tf":
+        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)))
+    if ind.type == "vi":
+        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)))
+    if ind.type == "nt":
+        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)))
+  

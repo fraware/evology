@@ -23,7 +23,7 @@ them into a coherent dataframe for later statistical and graphical analysis'''
 import pandas as pd
 import numpy as np
 
-def generate_df(generation_history, price_history, mismatch_history, 
+def generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_history, 
                 num_tf_history, num_vi_history, num_nt_history, mean_tf_history, mean_vi_history, mean_nt_history, 
                 mean_wealth_history,  wealth_tf_history, wealth_vi_history, wealth_nt_history,
                 meanFitnessValues, 
@@ -36,6 +36,7 @@ def generate_df(generation_history, price_history, mismatch_history,
     df["Gen"] = generation_history
     
     # Economic variables 
+    price_history = price_history[MAX_TIME_HORIZON+1:]
     df["Price"] = price_history
     df["Mismatch"] = mismatch_history
     df["LogP"] = np.log10(price_history)
