@@ -60,7 +60,15 @@ toolbox.register("gen_rd_ind", gen_rd_ind, PROBA_TF, PROBA_VI, PROBA_NT)
 toolbox.register("gen_rd_pop", tools.initRepeat, list, toolbox.gen_rd_ind)
 
 
-# pop = toolbox.gen_rd_pop(n=10)
-# print(pop)
-# for ind in pop:
-#     print (ind.type)
+def gen_ref_pop():
+    pop = []
+    pop.append(toolbox.gen_tf_ind())
+    pop.append(toolbox.gen_vi_ind())
+    pop.append(toolbox.gen_nt_ind())
+    return pop
+toolbox.register("gen_ref_pop", gen_ref_pop) 
+pop = toolbox.gen_ref_pop()
+print(pop)
+for ind in pop:
+    print(ind[0])
+    print(ind.type)
