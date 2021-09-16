@@ -1,4 +1,6 @@
 from parameters import *
+import matplotlib
+import matplotlib.pyplot as plt
 
 def draw_dividend(dividend):
     
@@ -15,3 +17,14 @@ def draw_dividend(dividend):
 
     return dividend, random_dividend
 
+def dividend_series(horizon):
+    history = []
+    dividend = INITIAL_DIVIDEND
+    for i in range(horizon):
+        dividend, rdiv = draw_dividend(dividend)
+        history.append(dividend)
+    plt.plot(history)
+    plt.show()
+    return history
+
+# dividend_series(100*252)

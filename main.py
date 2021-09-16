@@ -26,8 +26,9 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
 
     price = INITIAL_PRICE
-    extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
-    extended_price_history = [abs(x) for x in extended_price_history]
+    # extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
+    # extended_price_history = [abs(x) for x in extended_price_history]
+    extended_price_history = [INITIAL_PRICE] * 100
     price_history = extended_price_history.copy()
     dividend = INITIAL_DIVIDEND
     generation = 0
