@@ -36,7 +36,7 @@ def generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_hi
     df["Gen"] = generation_history
     
     # Economic variables 
-    price_history = price_history[MAX_TIME_HORIZON+1:]
+    price_history = price_history[100:]
     df["Price"] = price_history
     df["Mismatch"] = mismatch_history
     df["LogP"] = np.log10(price_history)

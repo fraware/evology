@@ -27,4 +27,4 @@ def dividend_series(horizon):
     plt.show()
     return history
 
-# dividend_series(100*252)
+dividend_series(100*252)

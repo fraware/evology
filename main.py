@@ -9,7 +9,7 @@ from ga import *
 from data import *
 import random
 
-# random.seed(9)
+random.seed(9)
 
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
