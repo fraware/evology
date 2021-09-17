@@ -1,14 +1,21 @@
+import matplotlib
+import matplotlib.pyplot as plt
+
+
+
+from . import code
+from code import market
+
 
 # Results section
 
 # Market model outputs subsection
 
-from EvoMarketEcology.market import dividend_series
 
 
 
 
-history = dividend_series(1000*252)
+history = market.dividend_series(1000*252)
 # plt.plot(history)
 
 
