@@ -1,8 +1,13 @@
+
 # Results section
 
 # Market model outputs subsection
 
-from market import *
+from EvoMarketEcology.market import dividend_series
+
+
+
+
 history = dividend_series(1000*252)
 # plt.plot(history)
 
