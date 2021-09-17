@@ -23,8 +23,6 @@ def dividend_series(horizon):
     for i in range(horizon):
         dividend, rdiv = draw_dividend(dividend)
         history.append(dividend)
-    plt.plot(history)
-    plt.show()
     return history
 
-dividend_series(100*252)
+
