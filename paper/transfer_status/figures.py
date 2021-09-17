@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 
 
 
-from . import code
-from code import market
+# from . import code.market
+# from code import market
 
-
+from code.market import dividend_series
 # Results section
 
 # Market model outputs subsection
