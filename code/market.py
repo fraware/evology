@@ -2,6 +2,8 @@ from parameters import *
 import matplotlib
 import matplotlib.pyplot as plt
 
+
+
 def draw_dividend(dividend):
     
     # global dividend

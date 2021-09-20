@@ -23,9 +23,13 @@ them into a coherent dataframe for later statistical and graphical analysis'''
 import pandas as pd
 import numpy as np
 
+
+
+
 def generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_history, 
                 num_tf_history, num_vi_history, num_nt_history, mean_tf_history, mean_vi_history, mean_nt_history, 
                 mean_wealth_history,  wealth_tf_history, wealth_vi_history, wealth_nt_history,
+                wealth_share_tf_history, wealth_share_vi_history, wealth_share_nt_history,
                 meanFitnessValues, 
                 dividend_history, random_dividend_history, 
                 replacements):
@@ -36,7 +40,7 @@ def generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_hi
     df["Gen"] = generation_history
     
     # Economic variables 
-    price_history = price_history[100:]
+    # price_history = price_history[100:]
     df["Price"] = price_history
     df["Mismatch"] = mismatch_history
     df["LogP"] = np.log10(price_history)
@@ -50,6 +54,9 @@ def generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_hi
     df["Wealth_TF"] = wealth_tf_history
     df["Wealth_VI"] = wealth_vi_history
     df["Wealth_NT"] = wealth_nt_history
+    df["WShare_TF"] = wealth_share_tf_history
+    df["WShare_VI"] = wealth_share_vi_history
+    df["WShare_NT"] = wealth_share_nt_history
 
     df["MeanF"] = meanFitnessValues
     df["Div"] = dividend_history

@@ -6,31 +6,25 @@ from balance_sheet import *
 from brownian_motion import *
 from market_clearing import *
 from ga import *
-from data import *
+import data
 import random
+from market import *
 
 random.seed(9)
 
-
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
     
-    # maxFitnessValues, meanFitnessValues, replacements, , price_history = [],[],[],[],[],[]   
-    # , mismatch_history, asset_count_history, mean_theta, mean_wealth, size_pos_pos, size_neg_pos = [],[],[],[],[],[], []
-
+    price = INITIAL_PRICE
+    extended_price_history = [INITIAL_PRICE] * 100
+    dividend = INITIAL_DIVIDEND
     dividend_history, random_dividend_history, generation_history = [], [], []
     price_history, mismatch_history, meanFitnessValues = [], [], []
     replacements, mean_wealth = [], []
+    wealth_share_tf_history, wealth_share_vi_history, wealth_share_nt_history = [], [], []
     num_tf_history, num_vi_history, num_nt_history = [], [], []
     mean_wealth_history, wealth_tf_history, wealth_vi_history, wealth_nt_history = [], [], [], []
     mean_tf_history, mean_vi_history, mean_nt_history = [], [], []
 
-
-    price = INITIAL_PRICE
-    # extended_price_history = generate_bm_series(MAX_TIME_HORIZON+1)
-    # extended_price_history = [abs(x) for x in extended_price_history]
-    extended_price_history = [INITIAL_PRICE] * 100
-    price_history = extended_price_history.copy()
-    dividend = INITIAL_DIVIDEND
     generation = 0
 
     if POPULATION_SIZE != 3: 
@@ -40,7 +34,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
     pop = sampling.adjust_mode(pop, mode)
 
-    print(pop)
+    # print(pop)
 
     for ind in pop:
         print(ind.type)
@@ -52,11 +46,12 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         print("----------------------------------------------------------------------")
         print("Generation " + str(generation))
 
-        calculate_ts_edf(pop, price_history) # Compute TSV and EDF
+        calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
 
         # pop_report(pop)
 
         price = leap_solver(pop, price) # Clear the market
+        extended_price_history.append(price)
         price_history.append(price)
         print("Price is " + str(price))
         calculate_edv(pop, price) # Compute EDV
@@ -110,9 +105,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         num_tf = 0
         num_vi = 0
         num_nt = 0
-        # wealth_tf = 0
         wealth_tf_sum = 0
-        # wealth_vi = 0
         wealth_vi_sum = 0
         wealth_nt = 0
         wealth_nt_sum = 0
@@ -161,10 +154,17 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         for ind in pop:
             sum_wealth += ind.wealth
         mean_wealth_history.append(sum_wealth/len(pop))
+        share_wealth_tf = 100 * wealth_tf / sum_wealth
+        share_wealth_vi = 100 * wealth_vi / sum_wealth
+        share_wealth_nt = 100 * wealth_nt / sum_wealth
 
         num_tf_history.append(num_tf)
         num_vi_history.append(num_vi)
         num_nt_history.append(num_nt)
+
+        wealth_share_tf_history.append(share_wealth_tf)
+        wealth_share_vi_history.append(share_wealth_vi)
+        wealth_share_nt_history.append(share_wealth_nt)
 
         wealth_tf_history.append(wealth_tf)
         wealth_vi_history.append(wealth_vi)
@@ -181,9 +181,10 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
             break
         generation += 1
     
-    df = generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_history, 
+    df = data.generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_history, 
                               num_tf_history, num_vi_history, num_nt_history, mean_tf_history, mean_vi_history, mean_nt_history, 
                               mean_wealth_history,  wealth_tf_history, wealth_vi_history, wealth_nt_history,
+                              wealth_share_tf_history, wealth_share_vi_history, wealth_share_nt_history,
                               meanFitnessValues,
                               dividend_history, random_dividend_history, 
                               replacements)
