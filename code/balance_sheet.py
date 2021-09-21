@@ -144,9 +144,9 @@ def pop_report(pop):
 
 def agent_report(ind):
     if ind.type == "tf":
-        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)))
+        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Fitness " + str(ind.fitness))
     if ind.type == "vi":
-        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)))
+        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Fitness " + str(ind.fitness))
     if ind.type == "nt":
-        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)))
+        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Fitness " + str(ind.fitness))
   
