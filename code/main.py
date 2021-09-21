@@ -71,6 +71,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         random_dividend_history.append(random_dividend)
 
         pop, round_replacements = hypermutate(pop) # Replace insolvent agents
+        pop = sampling.adjust_mode(pop, mode)
         # TODO: do we need to set del ind.wealth too? Or is it fully replaced?
         print(str(round_replacements) + " replacements done")
 
