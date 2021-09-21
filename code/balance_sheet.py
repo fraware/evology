@@ -135,7 +135,7 @@ def wealth_earnings(pop, dividend, price):
         interest_cash = ind.cash * INTEREST_RATE # Determine gain from interest
         ind.cash += REINVESTMENT_RATE * (div_asset + interest_cash) # Apply reinvestment
         ind.wealth = ind.cash + ind.asset * price - ind.loan # Compute new wealth
-        ind.profit = former_wealth - ind.wealth # Compute profit as difference of wealth
+        ind.profit = ind.wealth - former_wealth  # Compute profit as difference of wealth
     return pop, dividend, random_dividend
 
 def pop_report(pop):
@@ -144,9 +144,9 @@ def pop_report(pop):
 
 def agent_report(ind):
     if ind.type == "tf":
-        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Fitness " + str(ind.fitness))
+        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
     if ind.type == "vi":
-        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Fitness " + str(ind.fitness))
+        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
     if ind.type == "nt":
-        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Fitness " + str(ind.fitness))
+        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
   
