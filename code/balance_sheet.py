@@ -21,6 +21,8 @@ def calculate_ts_edf(pop, extended_price_history):
             print(ind.wealth)
             print(ind.tsv)
             print(ind.asset)
+            print(LAMBDA_TF)
+            print(STRATEGY_AGGRESSIVENESS_TF)
             print("previous function")
             if ind.edf != None:
                 print(ind.edf(388))

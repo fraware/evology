@@ -180,7 +180,11 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         if mode == "between" and round_replacements > 0:
             print("Simulation interrupted for insolvency.")
             break
-        generation += 1
+
+        # # Desperate attempt to solve an issue with edf (DID NOT WORK)
+        # for ind in pop:
+        #     del ind.edf
+        # generation += 1
     
     df = data.generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_history, 
                               num_tf_history, num_vi_history, num_nt_history, mean_tf_history, mean_vi_history, mean_nt_history, 
