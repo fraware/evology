@@ -13,10 +13,22 @@ def calculate_wealth(pop, price):
 def calculate_ts_edf(pop, extended_price_history):
     for ind in pop:
         if ind.type == "tf":
+            print("tf computes ts")
+            # print(extended_price_history[-1])
+            # print(extended_price_history[-ind[0]])
             ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]])) 
+            # print(ind.tsv)
+            print(ind.wealth)
+            print(ind.tsv)
+            print(ind.asset)
+            print("previous function")
+            if ind.edf != None:
+                print(ind.edf(388))
             def func(p):
                 return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - ind.asset 
             ind.edf = func
+            print("new")
+            print(ind.edf(388))
         elif ind.type == "vi":
             def func(p):
                 return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - ind.asset 
@@ -36,8 +48,19 @@ def calculate_ts_edf(pop, extended_price_history):
 #     return ind
 
 def calculate_edv(pop, price):
+    print("computing edv")
     for ind in pop:
         ind.edv = ind.edf(price)
+        print(ind.edf)
+        print(price)
+        print(ind.type)
+        if ind.type == "tf":
+            print((ind.wealth / price) * (np.tanh(ind.tsv) + 0.5) - ind.asset)
+        print(ind.edv)
+        if ind.type == "vi":
+            ind.tsv = np.log2(ind[0]) - np.log2(price)
+        if ind.type == "nt":
+            ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(price)
     return ind
 
 def calculate_total_edv(pop):
@@ -121,7 +144,7 @@ def update_margin(pop, price):
             ind.cash -= ind.margin
             if ind.cash < 0:
                 # The agent is insolvent and will try to buy back as much as possible
-                ind.edv = abs(ind.asset)
+                # ind.edv = abs(ind.asset)
                 ind.cash += ind.margin
                 ind.margin = 0
                 ind.loan += float('inf')
