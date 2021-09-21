@@ -55,6 +55,10 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         price_history.append(price)
         print("Price is " + str(price))
         calculate_edv(pop, price) # Compute EDV
+
+        for ind in pop:
+            print(ind.edf(388))  
+
         mismatch_history.append(calculate_total_edv(pop))
         print("Mismatch is " + str(calculate_total_edv(pop)))
 
@@ -184,7 +188,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         # # Desperate attempt to solve an issue with edf (DID NOT WORK)
         # for ind in pop:
         #     del ind.edf
-        # generation += 1
+        generation += 1
     
     df = data.generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_history, 
                               num_tf_history, num_vi_history, num_nt_history, mean_tf_history, mean_vi_history, mean_nt_history, 

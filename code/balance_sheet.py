@@ -39,7 +39,9 @@ def calculate_ts_edf(pop, extended_price_history):
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
             def func(p):
                 return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process)) -  np.log2(p)) + 0.5) - ind.asset 
-            ind.edf = func            
+            ind.edf = func     
+    
+     
     return ind
 
 # def calculate_edf(pop):
