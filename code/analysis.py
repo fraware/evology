@@ -12,6 +12,18 @@ df_nl.plot(x="Gen", y = ["Price"],
         kind="line", figsize=(15, 6))
 plt.show()
 
+df_nl.plot(x="Gen", y = ["PlusPos", "NegPos"],
+        kind="line", figsize=(15, 6))
+plt.show()
+
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize = (10, 5), sharex = True)
+fig.suptitle('Price, Positive positions, negative positions')
+ax1.plot(df_nl["Price"])
+ax2.plot(df_nl["PlusPos"])
+ax3.plot(df_nl["NegPos"])
+ax1.set_xlabel('Time (days)')
+plt.show()
+
 df_nl.plot(x="Gen", y = ["Div"],
         kind="line", figsize=(15, 6))
 plt.show()

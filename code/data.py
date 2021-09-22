@@ -32,7 +32,7 @@ def generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_hi
                 wealth_share_tf_history, wealth_share_vi_history, wealth_share_nt_history,
                 meanFitnessValues, 
                 dividend_history, random_dividend_history, 
-                replacements):
+                positive_positions, negative_positions, replacements):
     df = pd.DataFrame()
     
     # General variables
@@ -54,13 +54,17 @@ def generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_hi
     df["Wealth_TF"] = wealth_tf_history
     df["Wealth_VI"] = wealth_vi_history
     df["Wealth_NT"] = wealth_nt_history
-    df["WShare_TF"] = wealth_share_tf_history
-    df["WShare_VI"] = wealth_share_vi_history
-    df["WShare_NT"] = wealth_share_nt_history
+
 
     df["MeanF"] = meanFitnessValues
     df["Div"] = dividend_history
     df["RDiv"] = random_dividend_history
+
+    df["WShare_TF"] = wealth_share_tf_history
+    df["WShare_VI"] = wealth_share_vi_history
+    df["WShare_NT"] = wealth_share_nt_history
+    df["PlusPos"] = positive_positions
+    df["NegPos"] = negative_positions
 
     
     # Ecology variables

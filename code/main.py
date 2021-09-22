@@ -24,6 +24,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     num_tf_history, num_vi_history, num_nt_history = [], [], []
     mean_wealth_history, wealth_tf_history, wealth_vi_history, wealth_nt_history = [], [], [], []
     mean_tf_history, mean_vi_history, mean_nt_history = [], [], []
+    positive_positions, negative_positions = [], []
 
     generation = 0
 
@@ -48,7 +49,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
 
-        # pop_report(pop)
+        print("between ts_edf / edv report")
+        pop_report(pop)
 
         price = leap_solver(pop, price) # Clear the market
         extended_price_history.append(price)
@@ -56,8 +58,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         print("Price is " + str(price))
         calculate_edv(pop, price) # Compute EDV
 
-        for ind in pop:
-            print(ind.edf(388))  
+        # for ind in pop:
+        #     print(ind.edf(388))  
 
         mismatch_history.append(calculate_total_edv(pop))
         print("Mismatch is " + str(calculate_total_edv(pop)))
@@ -103,6 +105,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         meanFitness = sumfit / len(pop)
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
+        positive_positions.append(count_positive_assets(pop))
+        negative_positions.append(count_negative_assets(pop))
 
         mean_vi = 0
         mean_nt = 0
@@ -196,7 +200,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
                               wealth_share_tf_history, wealth_share_vi_history, wealth_share_nt_history,
                               meanFitnessValues,
                               dividend_history, random_dividend_history, 
-                              replacements)
+                              positive_positions, negative_positions, replacements)
 
     # print("checking wealth and type")
     # print(pop)

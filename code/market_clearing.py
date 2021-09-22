@@ -74,13 +74,13 @@ def leap_solver(pop, price):
     
     ''' Define the circuit breaker bounds '''
     limit_down = price * 0.5
-    limit_down = 0
+    # limit_down = 0
     limit_up = price * 2.0
-    limit_up = price * 10.0
+    # limit_up = price * 10.0
     
     ''' Run the solver on the squared agg ED function'''
     best_genome = ea_solve_noverbose(squared_agg_ed,
-          bounds=[(limit_down, limit_up)], generations = 200, pop_size = 100,
+          bounds=[(limit_down, limit_up)], generations = 100, pop_size = 100,
           mutation_std=0.1, hard_bounds = True)
     
     ''' Return the clearing price '''

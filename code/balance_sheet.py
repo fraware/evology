@@ -1,6 +1,8 @@
 import numpy as np
 from parameters import *
 from market import *
+import inspect
+
 
 np.seterr(divide = 'ignore') 
 
@@ -13,24 +15,24 @@ def calculate_wealth(pop, price):
 def calculate_ts_edf(pop, extended_price_history):
     for ind in pop:
         if ind.type == "tf":
-            print("tf computes ts")
+            # print("tf computes ts")
             # print(extended_price_history[-1])
             # print(extended_price_history[-ind[0]])
             ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]])) 
             # print(ind.tsv)
-            print(ind.wealth)
-            print(ind.tsv)
-            print(ind.asset)
-            print(LAMBDA_TF)
-            print(STRATEGY_AGGRESSIVENESS_TF)
-            print("previous function")
-            if ind.edf != None:
-                print(ind.edf(388))
+            # print(ind.wealth)
+            # print(ind.tsv)
+            # print(ind.asset)
+            # print(LAMBDA_TF)
+            # print(STRATEGY_AGGRESSIVENESS_TF)
+            # print("previous function")
+            # if ind.edf != None:
+            #     print(ind.edf(388))
             def func(p):
                 return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - ind.asset 
             ind.edf = func
-            print("new")
-            print(ind.edf(388))
+            # print("new")
+            # print(ind.edf(388))
         elif ind.type == "vi":
             def func(p):
                 return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - ind.asset 
@@ -52,18 +54,58 @@ def calculate_ts_edf(pop, extended_price_history):
 #     return ind
 
 def calculate_edv(pop, price):
-    print("computing edv")
+    # print("computing edv")
+    # print("--------------------------------")
     for ind in pop:
-        ind.edv = ind.edf(price)
-        print(ind.edf)
-        print(price)
-        print(ind.type)
+        # print("previous edv & price")
+        # print(ind.edv)
+        # print(price)
+        # ind.edv = ind.edf(price)
+        # print("edv 1")
+        # print(ind.edv)
+        # print(ind.edf(1))
+        # How to display edf function in code?
+        # print("edf function")
+        # lines = inspect.getsource(ind.edf)
+        # print(lines)
+        # print("contents")
+        # print(ind.wealth)
+        # print(ind.tsv)
+        # print(ind.asset)
+        # former_func = ind.edf
+        
         if ind.type == "tf":
-            print((ind.wealth / price) * (np.tanh(ind.tsv) + 0.5) - ind.asset)
-        print(ind.edv)
+            
+            def func_tf(p):
+                return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - ind.asset 
+            ind.edf = func_tf
+            ind.edv = ind.edf(price)
+        
         if ind.type == "vi":
+            print("--------------------------------")
+            print(ind.wealth)
+            # print(ind[0])
+            print(ind.asset)
+            print(np.log2(ind[0]) - np.log2(price))
+
+            ind.edv = ind.edf(price)
+            print("former way of edv is")
+            print(ind.edv)
+            def func_vi(p):
+                return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - ind.asset 
+            ind.edf = func_vi
+            del func_vi
+            ind.edv = ind.edf(price)
             ind.tsv = np.log2(ind[0]) - np.log2(price)
+            # print("edv agent is " + str(ind.edv))
+            # print("it should be " + str((ind.wealth / price) * (np.tanh(ind.tsv) + 0.5) - ind.asset ))
+            
         if ind.type == "nt":
+            
+            def func_nt(p):
+                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process)) -  np.log2(p)) + 0.5) - ind.asset 
+            ind.edf = func_nt 
+            ind.edv = ind.edf(price)
             ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(price)
     return ind
 
