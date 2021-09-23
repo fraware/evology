@@ -106,8 +106,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         meanFitness = sumfit / len(pop)
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
-        positive_positions.append(count_positive_assets(pop))
-        negative_positions.append(count_negative_assets(pop))
+        positive_positions.append(count_long_assets(pop))
+        negative_positions.append(count_short_assets(pop))
 
         mean_vi = 0
         mean_nt = 0

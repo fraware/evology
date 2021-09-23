@@ -2,8 +2,6 @@ import numpy as np
 from parameters import *
 from market import *
 import inspect
-
-
 np.seterr(divide = 'ignore') 
 
 
@@ -151,7 +149,7 @@ def count_long_assets(pop):
             count += ind.asset_long
     return count
 
-def count_negative_assets(pop):
+def count_short_assets(pop):
     count = 0
     for ind in pop:
         if ind.asset_short > 0:
