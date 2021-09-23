@@ -58,18 +58,18 @@ def calculate_ts_edf(pop, extended_price_history):
             # if ind.edf != None:
             #     print(ind.edf(388))
             def func(p):
-                return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - ind.asset 
+                return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
             ind.edf = func
             # print("new")
             # print(ind.edf(388))
         elif ind.type == "vi":
             def func(p):
-                return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - ind.asset 
+                return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - (ind.asset_long - ind.asset_short) 
             ind.edf = func
         elif ind.type == "nt":
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
             def func(p):
-                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process)) -  np.log2(p)) + 0.5) - ind.asset 
+                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process)) -  np.log2(p)) + 0.5) - (ind.asset_long - ind.asset_short) 
             ind.edf = func     
     
      
@@ -106,22 +106,22 @@ def calculate_edv(pop, price):
         if ind.type == "tf":
             
             def func_tf(p):
-                return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - ind.asset 
+                return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
             ind.edf = func_tf
             ind.edv = ind.edf(price)
         
         if ind.type == "vi":
             print("--------------------------------")
-            print(ind.wealth)
+            # print(ind.wealth)
             # print(ind[0])
-            print(ind.asset)
+            # print(ind.asset)
             print(np.log2(ind[0]) - np.log2(price))
 
             ind.edv = ind.edf(price)
-            print("former way of edv is")
-            print(ind.edv)
+            # print("former way of edv is")
+            # print(ind.edv)
             def func_vi(p):
-                return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - ind.asset 
+                return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - (ind.asset_long - ind.asset_short)  
             ind.edf = func_vi
             del func_vi
             ind.edv = ind.edf(price)
@@ -132,7 +132,7 @@ def calculate_edv(pop, price):
         if ind.type == "nt":
             
             def func_nt(p):
-                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process)) -  np.log2(p)) + 0.5) - ind.asset 
+                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process)) -  np.log2(p)) + 0.5) - (ind.asset_long - ind.asset_short)  
             ind.edf = func_nt 
             ind.edv = ind.edf(price)
             ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(price)
