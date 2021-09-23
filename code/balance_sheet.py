@@ -133,6 +133,19 @@ def apply_edv(pop, asset_supply, price):
     num_sell, num_buy = 0, 0
     num_sell_tf, num_sell_vi, num_sell_nt = 0, 0, 0
     num_buy_tf, num_buy_vi, num_buy_nt = 0, 0, 0
+
+    # determine the bank of exchanges
+    bank_plus = 0
+    bank_minus = 0
+    bank_short = 0
+    for ind in pop:
+        if ind.edv > 0:
+            bank_plus += 1
+        if ind.edv < 0:
+            # If the agent sells from inventory: bank_minus += 1
+            # If the agent short sells: bank_short += 1
+
+
     for ind in pop:
         if ind.edv > 0:  # the agent wants to buy
             i = 0
