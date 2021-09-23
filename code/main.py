@@ -39,7 +39,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
     for ind in pop:
         print(ind.type)
-    asset_supply = count_positive_assets(pop)
+    asset_supply = count_long_assets(pop)
 
     calculate_wealth(pop, price)
 
@@ -47,6 +47,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         print("----------------------------------------------------------------------")
         print("Generation " + str(generation))
 
+        calculate_wealth(pop, price) #Compute wealth, update margin
         calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
 
         print("between ts_edf / edv report")

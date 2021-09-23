@@ -9,7 +9,36 @@ np.seterr(divide = 'ignore')
 
 def calculate_wealth(pop, price):
     for ind in pop:
-        ind.wealth = ind.cash + ind.asset * price - ind.loan
+
+        # Attempt to clear debt
+        if ind.loan > 0: # If the agent has outstanding debt:
+            if ind.cash >= ind.loan: # If the agent has enough cash:
+                ind.loan = 0
+                ind.cash -= ind.loan
+            if ind.cash < ind.loan: # If the agent does not have enough cash:
+                ind.loan -= ind.cash
+                ind.cash = 0
+
+        # Update margins
+        margin_objective = ind.asset_short * price # Margin amount to cover short position at current price.
+        if margin_objective > ind.margin: # If our current margin is not enough:
+            if ind.cash >= margin_objective - ind.margin: # If we have the cash to adjust:
+                # We spend cash to refuel the margin.
+                ind.margin += margin_objective - ind.margin
+                ind.cash -= margin_objective - ind.margin
+            if ind.cash < margin_objective - ind.margin: # If we don't have enough cash to adjust:
+                # All available cash goes to the margin, and we have some loan.
+                # Loan is a penalty on wealth notably for evaluating solvency.
+                ind.margin += ind.cash
+                ind.cash = 0
+                ind.loan += margin_objective - ind.margin - ind.cash
+        if margin_objective < ind.margin: # If our current margin is too high:
+            # We get some of the margin back in the form of cash.
+            ind.cash += ind.margin - margin_objective
+            ind.margin -= ind.margin - margin_objective
+
+        # Update wealth
+        ind.wealth = ind.cash + ind.asset_long * price - ind.loan
     return ind
 
 def calculate_ts_edf(pop, extended_price_history):
@@ -115,18 +144,18 @@ def calculate_total_edv(pop):
         total += ind.edv
     return total
 
-def count_positive_assets(pop):
+def count_long_assets(pop):
     count = 0
     for ind in pop:
-        if ind.asset > 0:
-            count += ind.asset
+        if ind.asset_long > 0:
+            count += ind.asset_long
     return count
 
 def count_negative_assets(pop):
     count = 0
     for ind in pop:
-        if ind.asset < 0:
-            count += - ind.asset
+        if ind.asset_short > 0:
+            count += - ind.asset_short
     return count
 
 def apply_edv(pop, asset_supply, price):
@@ -134,6 +163,7 @@ def apply_edv(pop, asset_supply, price):
     num_sell_tf, num_sell_vi, num_sell_nt = 0, 0, 0
     num_buy_tf, num_buy_vi, num_buy_nt = 0, 0, 0
 
+    """
     # determine the bank of exchanges
     bank_plus = 0
     bank_minus = 0
@@ -144,6 +174,7 @@ def apply_edv(pop, asset_supply, price):
         if ind.edv < 0:
             # If the agent sells from inventory: bank_minus += 1
             # If the agent short sells: bank_short += 1
+            """
 
 
     for ind in pop:

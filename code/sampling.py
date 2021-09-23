@@ -14,7 +14,7 @@ creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 # Create the individual object
 """ Agent attributes
 - type 
-- wealth, cash, asset, loan
+- wealth, cash, asset_long, asset_short, loan
 - tsf, tsv
 - edf, edv
 """
