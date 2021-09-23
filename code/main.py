@@ -67,7 +67,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         pop_report(pop)
 
-        update_margin(pop, price)
+        # update_margin(pop, price)
         pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = apply_edv(pop, asset_supply, price) # Apply EDV orders
         print("Buy orders: " + str(num_buy) + " (TF=" + str(num_buy_tf) + " ;VI=" + str(num_buy_vi) + " ;NT=" + str(num_buy_nt) +")") 
         print("Sell orders: " + str(num_sell) + " (TF=" + str(num_sell_tf) + " ;VI=" + str(num_sell_vi) + " ;NT=" + str(num_sell_nt) +")") 

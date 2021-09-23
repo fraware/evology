@@ -226,19 +226,19 @@ def apply_edv(pop, asset_supply, price):
             ind.margin = 0
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
-def update_margin(pop, price):
-    for ind in pop:
-        if ind.asset < 0:
-            ind.cash += ind.margin
-            ind.margin = abs(ind.asset) * price
-            ind.cash -= ind.margin
-            if ind.cash < 0:
-                # The agent is insolvent and will try to buy back as much as possible
-                # ind.edv = abs(ind.asset)
-                ind.cash += ind.margin
-                ind.margin = 0
-                ind.loan += float('inf')
-    return ind
+# def update_margin(pop, price):
+#     for ind in pop:
+#         if ind.asset < 0:
+#             ind.cash += ind.margin
+#             ind.margin = abs(ind.asset) * price
+#             ind.cash -= ind.margin
+#             if ind.cash < 0:
+#                 # The agent is insolvent and will try to buy back as much as possible
+#                 # ind.edv = abs(ind.asset)
+#                 ind.cash += ind.margin
+#                 ind.margin = 0
+#                 ind.loan += float('inf')
+#     return ind
 
 def wealth_earnings(pop, dividend, price):
     dividend, random_dividend = draw_dividend(dividend)
@@ -257,9 +257,9 @@ def pop_report(pop):
 
 def agent_report(ind):
     if ind.type == "tf":
-        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
+        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(ind.asset_long) + ", Asset_Short " + str(ind.asset_short) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
     if ind.type == "vi":
-        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
+        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(ind.asset_long) + ", Asset_Short " + str(ind.asset_short) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
     if ind.type == "nt":
-        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset " + str(ind.asset) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
+        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(ind.asset_long) + ", Asset_Short " + str(ind.asset_short) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
   
