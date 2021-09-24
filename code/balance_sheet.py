@@ -180,8 +180,8 @@ def apply_edv(pop, asset_supply, price):
     # Now we know how much the population wants to buy, sell or short sell.
 
 
-    """ BUT buying back short positions is unconstrained (only by margin) 
-    It is also equivalent. Pay the price, gain one asset (or lose one asset-liability)
+    """ 
+    Not sure we need this #determine the amount of desired exchange anymore.
     """
 
     # STEP 1 
@@ -204,6 +204,30 @@ def apply_edv(pop, asset_supply, price):
                 if ind.asset_short == 0: # If we have no short positions, clear the margin back into cash
                     ind.cash += ind.margin
                     ind.margin = 0
+
+    # STEP 2 
+    # BUY / Buy long positions (constrained by cash and selling volume)
+    # We are constrained by cash, and availability of shares (= some agents selling)
+    # However, selling is only constrained to buying. 
+    # Thus, we constrained-buy now and sell accordingly later, by saving how much was actually bought.
+    # We will then sell the same number of assets that were bought.
+
+    TBD
+
+
+
+
+    # STEP 3
+    # SELL / Sell long positions (constrained by purchase volume)
+
+    TBD
+
+    # STEP 4
+    # SELL / Execute short selling (capacity constrained)
+
+    TBD
+
+    """ everything below this line is not meant to be in the final code"""
 
     # determine the amount of effective exchanges. This is captured by the buy/sell _factors
     if bank_plus > bank_minus: # We have more buy orders than sell orders
