@@ -11,6 +11,8 @@ def hypermutate(pop):
     for i in range(0, len(pop_temp)):
         # if pop_temp[i][1] + pop_temp[i][9] <= 0:
         if pop_temp[i].wealth <= 0:
+            print("Info on replacement")
+            print("C: " + str(pop_temp[i].cash) + ", S+: " + str(pop_temp[i].asset_long) + ", S-: " + str(pop_temp[i].asset_short) + ", L: " + str(pop_temp[i].loan) + ", M: " + str(pop_temp[i].margin) + ", W: " + str(pop_temp[i].wealth))
             # print("replacement of")
             # print(pop_temp[i][0])
             # print(pop_temp[i].type)
