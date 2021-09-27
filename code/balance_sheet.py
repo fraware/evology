@@ -212,7 +212,7 @@ def apply_edv(pop, asset_supply, price):
     total_sell = 0
     for ind in pop:
         if ind.edv_var < 0: # If we want to sell assets
-            sell = min(ind.edv_var, ind.asset_long) 
+            sell = min(abs(ind.edv_var), ind.asset_long) 
             total_sell += sell
 
     # C - We have net buy and sell orders. Compute the ratio.
@@ -220,6 +220,9 @@ def apply_edv(pop, asset_supply, price):
         order_ratio = total_buy / total_sell 
     elif total_sell == 0:
         order_ratio = 0
+
+    if order_ratio < 0:
+        raise ValueError('Negative order ratio')
 
     
     # D - The order ratio determines how orders are impacted.
@@ -245,8 +248,12 @@ def apply_edv(pop, asset_supply, price):
 
     if multiplier_buy == None:
         raise ValueError('Multiplier Buy is not defined')
+    if multiplier_buy < 0:
+        raise ValueError('Multiplier Buy is negative')
     if multiplier_sell == None:
         raise ValueError('Multiplier Sell is not defined')
+    if multiplier_sell < 0:
+        raise ValueError('Multiplier Sell is negative')
 
     # E - Implement asset allocation under multipliers
 
@@ -255,19 +262,28 @@ def apply_edv(pop, asset_supply, price):
         if ind.edv_var > 0:
             # We determine effective bought amount, lose cash, gain shares, adjust demand
             quantity_bought = math.floor(min(ind.edv_var, ind.cash / price) * multiplier_buy)
+            # print(ind.edv)
+            # print(multiplier_buy)
+            # print(quantity_bought)
+            # print(ind.cash)
             ind.cash -= quantity_bought * price
+            # print(ind.cash)
 
             if ind.cash < 0:
                 raise ValueError('Cash became negative at asset allocations under multiplier')
             ind.asset_long += quantity_bought
+            print("bought" + str(quantity_bought))
             ind.edv_var -= quantity_bought
         
         # ii) Sell orders
-        if ind.edv_var <  0:
+        if ind.edv_var < 0:
             # We determine the effective sell amount, gain cash, lose shares, adjust our rolling demand
             quantity_sold = math.floor(abs(ind.edv_var) * multiplier_sell)
+            if quantity_sold < 0:
+                raise ValueError('Negative quantity sold')
             ind.cash += quantity_sold * price
             ind.asset_long -= quantity_sold
+            print("sold" + str(quantity_sold))
             if ind.asset_long < 0:
                 raise ValueError('Agent long position became negative at asset allocations under multiplier')
             ind.edv_var += quantity_sold
@@ -310,6 +326,9 @@ def apply_edv(pop, asset_supply, price):
             ind.asset_short += quantity_short_sold
             ind.edv_var -= quantity_short_sold
             ind.margin += quantity_short_sold * price
+
+    if count_long_assets(pop) > asset_supply:
+        raise ValueError('Asset supply exceeded with value ' + str(count_long_assets(pop)))
 
     # TBD
 
