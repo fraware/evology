@@ -64,9 +64,9 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         #     print(ind.edf(388))  
 
         mismatch_history.append(calculate_total_edv(pop))
-        print("Mismatch is " + str(int(calculate_total_edv(pop))))
+        # print("Mismatch is " + str(int(calculate_total_edv(pop))))
 
-        pop_report(pop)
+        
 
         # update_margin(pop, price)
         pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = apply_edv(pop, asset_supply, price) # Apply EDV orders
@@ -78,6 +78,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         dividend_history.append(dividend)
         random_dividend_history.append(random_dividend)
 
+        pop_report(pop)
         pop, round_replacements = hypermutate(pop) # Replace insolvent agents
         pop = sampling.adjust_mode(pop, mode)
         # TODO: do we need to set del ind.wealth too? Or is it fully replaced?
@@ -108,7 +109,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
         positive_positions.append(count_long_assets(pop))
-        negative_positions.append(count_short_assets(pop))
+        negative_positions.append(int(count_short_assets(pop)))
 
         mean_vi = 0
         mean_nt = 0

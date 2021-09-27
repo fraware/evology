@@ -111,7 +111,7 @@ def calculate_edv(pop, price):
             ind.edv = ind.edf(price)
         
         if ind.type == "vi":
-            print("--------------------------------")
+            # print("--------------------------------")
             # print(ind.wealth)
             # print(ind[0])
             # print(ind.asset)
@@ -180,6 +180,7 @@ def apply_edv(pop, asset_supply, price):
                 buy_back = min(min(ind.edv_var, ind.asset_short), (ind.cash + ind.margin) / price) # Decide how much
                 # print(buy_back)
                 ind.asset_short -= buy_back # Apply the closing of the short position
+                print(str(ind.type) + " closed " + str(round(buy_back,2)) + " shorts")
                 # print(ind.asset_short)
                 ind.edv_var -= buy_back # Adjust our excess demand after closing short positions
                 # Apply the cost of closing the position
@@ -283,7 +284,8 @@ def apply_edv(pop, asset_supply, price):
             if ind.cash < 0:
                 raise ValueError(str(ind.type) + 'Cash became negative at asset allocations under multiplier for agent with ' + str(ind.edv) + str(ind.edv_var) + str(multiplier_buy))
             ind.asset_long += quantity_bought
-            print(str(ind.type) + " bought " + str(quantity_bought))
+            if quantity_bought != 0:
+                print(str(ind.type) + " bought " + str(round(quantity_bought,2)))
             ind.edv_var -= quantity_bought
         
         # ii) Sell orders
@@ -294,7 +296,8 @@ def apply_edv(pop, asset_supply, price):
                 raise ValueError('Negative quantity sold')
             ind.cash += quantity_sold * price
             ind.asset_long -= quantity_sold
-            print(str(ind.type) + " sold " + str(quantity_sold))
+            if quantity_sold != 0 :
+                print(str(ind.type) + " sold " + str(round(quantity_sold, 2)))
             if ind.asset_long < 0:
                 raise ValueError('Agent long position became negative at asset allocations under multiplier')
             ind.edv_var += quantity_sold
@@ -337,6 +340,7 @@ def apply_edv(pop, asset_supply, price):
             ind.asset_short += quantity_short_sold
             ind.edv_var -= quantity_short_sold
             ind.margin += quantity_short_sold * price
+            print(str(ind.type) + " short selled " + str(round(quantity_short_sold, 2)) + " shares")
 
     if count_long_assets(pop) > asset_supply:
         raise ValueError('Asset supply exceeded with value ' + str(count_long_assets(pop)))
