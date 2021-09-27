@@ -9,13 +9,13 @@ def clear_debt(pop):
     for ind in pop:
         # Attempt to clear debt
         if ind.loan > 0: # If the agent has outstanding debt:
-            if ind.cash >= ind.loan: # If the agent has enough cash:
+            if ind.cash >= ind.loan + 100_000: # If the agent has enough cash:
                 ind.loan = 0
                 ind.cash -= ind.loan
                 print("Debt clear succesful for " + str(ind.type))
-            if ind.cash < ind.loan: # If the agent does not have enough cash:
-                ind.loan -= ind.cash
-                ind.cash = 0
+            if ind.cash < ind.loan + 100_000 : # If the agent does not have enough cash:
+                ind.loan -= ind.cash - 100_000
+                ind.cash = 100_000
                 print("Debt clear unsuccesful for " + str(ind.type))
     return ind
 
@@ -72,18 +72,20 @@ def calculate_ts_edf(pop, extended_price_history):
             # if ind.edf != None:
             #     print(ind.edf(388))
             def func(p):
-                return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
+                return ((ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
             ind.edf = func
             # print("new")
             # print(ind.edf(388))
         elif ind.type == "vi":
+            ind.tsv = (np.log2(ind[0]) - np.log2(np.log2(extended_price_history[-1])))
             def func(p):
-                return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * (np.log2(ind[0]) - np.log2(np.log2(extended_price_history[-1])))) + 0.5) - (ind.asset_long - ind.asset_short) 
+                return ((ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
             ind.edf = func
         elif ind.type == "nt":
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
+            ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(np.log2(extended_price_history[-1]))
             def func(p):
-                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process)) -  np.log2(np.log2(extended_price_history[-1]))) + 0.5) - (ind.asset_long - ind.asset_short) 
+                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
             ind.edf = func     
     
      
@@ -135,21 +137,21 @@ def calculate_edv(pop, price):
             # print("former way of edv is")
             # print(ind.edv)
             def func_vi(p):
-                return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - (ind.asset_long - ind.asset_short)  
+                return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)  
             ind.edf = func_vi
             del func_vi
             ind.edv = ind.edf(price)
-            ind.tsv = np.log2(ind[0]) - np.log2(price)
+            # ind.tsv = np.log2(ind[0]) - np.log2(price)
             # print("edv agent is " + str(ind.edv))
             # print("it should be " + str((ind.wealth / price) * (np.tanh(ind.tsv) + 0.5) - ind.asset ))
             
         if ind.type == "nt":
             
             def func_nt(p):
-                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * (np.log2(ind[0] * ind.process)) -  np.log2(p)) + 0.5) - (ind.asset_long - ind.asset_short)  
+                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)  
             ind.edf = func_nt 
             ind.edv = ind.edf(price)
-            ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(price)
+            # ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(price)
     return ind
 
 def calculate_total_edv(pop):
