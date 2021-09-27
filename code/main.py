@@ -52,7 +52,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
 
         # print("between ts_edf / edv report")
-        pop_report(pop)
+        # pop_report(pop)
 
         price = leap_solver(pop, price) # Clear the market
         extended_price_history.append(price)

@@ -272,7 +272,7 @@ def apply_edv(pop, asset_supply, price):
         # i) Buying orders
         if ind.edv_var > 0:
             # We determine effective bought amount, lose cash, gain shares, adjust demand
-            quantity_bought = (min(ind.edv_var, ind.cash / price) * multiplier_buy)
+            quantity_bought = min(ind.edv_var, ind.cash / price) * multiplier_buy
             # print(ind.edv)
             # print(multiplier_buy)
             # print(quantity_bought)
@@ -281,7 +281,7 @@ def apply_edv(pop, asset_supply, price):
             # print(ind.cash)
 
             if ind.cash < 0:
-                raise ValueError('Cash became negative at asset allocations under multiplier')
+                raise ValueError(str(ind.type) + 'Cash became negative at asset allocations under multiplier for agent with ' + str(ind.edv) + str(ind.edv_var) + str(multiplier_buy))
             ind.asset_long += quantity_bought
             print(str(ind.type) + " bought " + str(quantity_bought))
             ind.edv_var -= quantity_bought
