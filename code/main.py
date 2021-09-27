@@ -73,10 +73,17 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         # print("Buy orders: " + str(num_buy) + " (TF=" + str(num_buy_tf) + " ;VI=" + str(num_buy_vi) + " ;NT=" + str(num_buy_nt) +")") 
         # print("Sell orders: " + str(num_sell) + " (TF=" + str(num_sell_tf) + " ;VI=" + str(num_sell_vi) + " ;NT=" + str(num_sell_nt) +")") 
 
-        pop, dividend, random_dividend = wealth_earnings(pop, dividend, price) # Apply invest., IR, Div and compute profit
+        pop, dividend, random_dividend = wealth_earnings(pop, dividend, price) 
+        # Apply invest., IR, Div and compute wealth & profit
         # print("Dividend is " + str(dividend))
         dividend_history.append(dividend)
         random_dividend_history.append(random_dividend)
+
+        calculate_wealth(pop, price) #Compute wealth, update margin
+        update_margin(pop, price)
+        clear_debt(pop)
+
+
 
         pop_report(pop)
         pop, round_replacements = hypermutate(pop) # Replace insolvent agents

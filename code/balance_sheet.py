@@ -5,19 +5,22 @@ import inspect
 import math
 np.seterr(divide = 'ignore') 
 
-
-def calculate_wealth(pop, price):
+def clear_debt(pop):
     for ind in pop:
-
         # Attempt to clear debt
         if ind.loan > 0: # If the agent has outstanding debt:
             if ind.cash >= ind.loan: # If the agent has enough cash:
                 ind.loan = 0
                 ind.cash -= ind.loan
+                print("Debt clear succesful")
             if ind.cash < ind.loan: # If the agent does not have enough cash:
                 ind.loan -= ind.cash
                 ind.cash = 0
+                print("Debt clear unsuccesful")
+    return ind
 
+def update_margin(pop, price):
+    for ind in pop:
         # Update margins
         margin_objective = ind.asset_short * price # Margin amount to cover short position at current price.
         if margin_objective > ind.margin: # If our current margin is not enough:
@@ -31,10 +34,16 @@ def calculate_wealth(pop, price):
                 ind.margin += ind.cash
                 ind.cash = 0
                 ind.loan += margin_objective - ind.margin - ind.cash
+                print("Margin update unsuccesful")
         if margin_objective < ind.margin: # If our current margin is too high:
             # We get some of the margin back in the form of cash.
             ind.cash += ind.margin - margin_objective
             ind.margin -= ind.margin - margin_objective
+    return ind
+
+def calculate_wealth(pop, price):
+    for ind in pop:
+
 
         # Update wealth
         ind.wealth = ind.cash + ind.asset_long * price - ind.loan
