@@ -222,7 +222,7 @@ def apply_edv(pop, asset_supply, price):
     total_buy = 0
     for ind in pop:
         if ind.edv_var > 0: # If we have assets to buy after cloing short positions
-            buy = min(ind.edv_var, (ind.cash + ind.margin) / price) # define how much we can buy
+            buy = min(ind.edv_var, ind.cash / price) # define how much we can buy
             total_buy += buy # Add to the total of buy-long orders
 
     # B - Know how much long positions agents want to sell
@@ -271,8 +271,15 @@ def apply_edv(pop, asset_supply, price):
         # i) Buying orders
         if ind.edv_var > 0:
             # We determine effective bought amount, lose cash, gain shares, adjust demand
-            quantity_bought = math.floor(ind.edv_var * multiplier_buy)
+            quantity_bought = math.floor(min(ind.edv_var, ind.cash / price) * multiplier_buy)
             ind.cash -= quantity_bought * price
+
+            # Debugging
+            print(ind.edv)
+            print(ind.edv_var)
+            print(quantity_bought)
+            print(ind.cash)
+
             if ind.cash < 0:
                 raise ValueError('Cash became negative at asset allocations under multiplier')
             ind.asset_long += quantity_bought
