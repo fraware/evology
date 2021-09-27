@@ -257,6 +257,17 @@ def apply_edv(pop, asset_supply, price):
 
     # E - Implement asset allocation under multipliers
 
+    # # First verify that quantities will match after using math.floor
+    # quantities_bought = 0
+    # quantities_sold = 0
+    # for ind in pop:
+    #     if ind.edv_var > 0:
+    #         quantities_bought += math.floor(min(ind.edv_var, ind.cash / price) * multiplier_buy)
+    #     if ind.edv_var < 0:
+    #         quantities_sold += math.floor(abs(ind.edv_var) * multiplier_sell)
+    # if quantities_bought != quantities_sold:
+
+
     for ind in pop:
         # i) Buying orders
         if ind.edv_var > 0:
@@ -272,7 +283,7 @@ def apply_edv(pop, asset_supply, price):
             if ind.cash < 0:
                 raise ValueError('Cash became negative at asset allocations under multiplier')
             ind.asset_long += quantity_bought
-            print("bought" + str(quantity_bought))
+            print("bought " + str(quantity_bought))
             ind.edv_var -= quantity_bought
         
         # ii) Sell orders
@@ -283,7 +294,7 @@ def apply_edv(pop, asset_supply, price):
                 raise ValueError('Negative quantity sold')
             ind.cash += quantity_sold * price
             ind.asset_long -= quantity_sold
-            print("sold" + str(quantity_sold))
+            print("sold " + str(quantity_sold))
             if ind.asset_long < 0:
                 raise ValueError('Agent long position became negative at asset allocations under multiplier')
             ind.edv_var += quantity_sold
