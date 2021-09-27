@@ -51,12 +51,17 @@ def calculate_wealth(pop, price):
     return ind
 
 def calculate_ts_edf(pop, extended_price_history):
+    print("extended price history")
+    print(extended_price_history)
+    print(extended_price_history[-1])
+    print(extended_price_history[0])
+    print(extended_price_history[-2])
     for ind in pop:
         if ind.type == "tf":
             # print("tf computes ts")
             # print(extended_price_history[-1])
             # print(extended_price_history[-ind[0]])
-            ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]])) 
+            ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[-2]])) 
             # print(ind.tsv)
             # print(ind.wealth)
             # print(ind.tsv)
@@ -218,6 +223,8 @@ def apply_edv(pop, asset_supply, price):
             buy = min(ind.edv_var, ind.cash / price) # define how much we can buy
             if buy > 0 and buy < 1: # security to avoid negative infinitesimal orders
                 buy = 0
+            if buy < 0 and buy > -1:
+                buy = 0
             total_buy += buy # Add to the total of buy-long orders
 
     # B - Know how much long positions agents want to sell
@@ -226,7 +233,9 @@ def apply_edv(pop, asset_supply, price):
         if ind.edv_var < 0: # If we want to sell assets
             sell = min(abs(ind.edv_var), ind.asset_long) 
             if sell > 0 and sell < 1:  # security to avoid negative infinitesimal orders
-                buy = 0
+                sell = 0
+            if sell < 0 and sell > -1:
+                sell = 0
             total_sell += sell
 
     # C - We have net buy and sell orders. Compute the ratio.
@@ -237,7 +246,9 @@ def apply_edv(pop, asset_supply, price):
 
     if order_ratio < 0:
         for ind in pop:
-            print("--- ind type, edv, edv_var, and feasible buy.sell order")
+            print("--- total buy, total sell, ind type, edv, edv_var, and feasible buy.sell order")
+            print(total_buy)
+            print(total_sell)
             print(ind.type)
             print(ind.edv)
             print(ind.edv_var)
@@ -290,6 +301,12 @@ def apply_edv(pop, asset_supply, price):
     #         quantities_sold += math.floor(abs(ind.edv_var) * multiplier_sell)
     # if quantities_bought != quantities_sold:
 
+    for ind in pop:
+        # Exclude infinitesimal orders
+        if ind.edv_var > 0 and ind.edv_var < 1:
+            ind.edv_var = 0
+        if ind.edv_var < 0 and ind.edv_var > -1:
+            ind.edv_var = 0
 
     for ind in pop:
         # i) Buying orders
@@ -304,6 +321,11 @@ def apply_edv(pop, asset_supply, price):
             # print(ind.cash)
 
             if ind.cash < 0:
+                print(ind.type)
+                print(ind.cash)
+                print(multiplier_buy)
+                print(quantity_bought)
+                print(quantity_bought * price - ind.cash)
                 raise ValueError(str(ind.type) + 'Cash became negative at asset allocations under multiplier for agent with ' + str(ind.edv) + str(ind.edv_var) + str(multiplier_buy))
             ind.asset_long += quantity_bought
             if quantity_bought != 0:
