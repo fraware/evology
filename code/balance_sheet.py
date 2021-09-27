@@ -317,82 +317,87 @@ def apply_edv(pop, asset_supply, price):
     # if multiplier_short = None:
     #     raise ValueError('Multiplier short is not defined')
 
-    # STEP 4
-    # 
-
-    TBD
-
-    """ everything below this line is not meant to be in the final code"""
-
-    # determine the amount of effective exchanges. This is captured by the buy/sell _factors
-    if bank_plus > bank_minus: # We have more buy orders than sell orders
-        # Priority 1: exchange long positions
-        # We will exchange bank_minus shares: everyone who wants to sell can sell, not everyone who wants can buy
-        buy_factor = bank_minus / bank_plus
-        sell_factor = 1
-    if bank_plus == bank_minus: # We live in a wonderful world
-        buy_factor = 1
-        sell_factor = 1
-    if bank_plus < bank_minus: # We have more sell orders than buy orders.
-        # Exchange bank_plus shares, everyone who wants so can buy, not everyone who wants to sell can sell
-        buy_factor = 1
-        sell_factor = bank_plus / bank_minus
-
-    # Execute buying as it is the most constrained (cash) activity
-    assets_bought = 0
-    while assets_bought < bank_plus * buy_factor: # While we have not executed all feasible buy orders:
-        for ind in pop:
-            if ind.edv > 1
-
-    print(str(assets_bought) + " shares bought today.")
-
+    # Now we execute the short selling orders 
     for ind in pop:
-        if ind.edv > 0:  # the agent wants to buy
-            i = 0
-            while i < ind.edv:
-                if count_positive_assets(pop) < asset_supply: # there are assets to buy
-                    if ind.cash >= price: # the agent can afford to buy
-                        ind.asset += 1
-                        num_buy += 1
-                        if ind.type == "tf":
-                            num_buy_tf += 1
-                        if ind.type == "vi":
-                            num_buy_vi += 1
-                        if ind.type == "nt":
-                            num_buy_nt += 1
-                        ind.cash -= price
-                i += 1
-        if ind.edv < 0:  # the agent wants to sell
-            i = 0
-            while i < abs(ind.edv):
-                if ind.asset >= 1: # the agent can sell from inventory
-                    ind.asset -= 1
-                    num_sell += 1
-                    if ind.type == "tf":
-                        num_sell_tf += 1
-                    if ind.type == "vi":
-                        num_sell_vi += 1
-                    if ind.type == "nt":
-                        num_sell_nt += 1
-                    ind.cash += price
-                else: # the agent wants to short sell instead
-                    if count_positive_assets(pop) > 0: # there are assets to borrow
-                        if count_negative_assets(pop) < 10 * asset_supply: # we don't reach the cap on short position size
-                            ind.asset -= 1
-                            num_sell += 1
-                            if ind.type == "tf":
-                                num_sell_tf += 1
-                            if ind.type == "vi":
-                                num_sell_vi += 1
-                            if ind.type == "nt":
-                                num_sell_nt += 1
-                            ind.margin += price
-                i += 1
+        if ind.edv_var < 0:
+            quantity_short_sold = math.floor(multiplier_short * ind.edv_var)
+            ind.asset_short += quantity_short_sold
+            ind.edv_var -= quantity_short_sold
+            ind.margin += quantity_short_sold * price
 
-        # Clear margin if out of short position
-        if ind.asset > 0:
-            ind.cash += ind.margin
-            ind.margin = 0
+    # TBD
+
+    # """ everything below this line is not meant to be in the final code"""
+
+    # # determine the amount of effective exchanges. This is captured by the buy/sell _factors
+    # if bank_plus > bank_minus: # We have more buy orders than sell orders
+    #     # Priority 1: exchange long positions
+    #     # We will exchange bank_minus shares: everyone who wants to sell can sell, not everyone who wants can buy
+    #     buy_factor = bank_minus / bank_plus
+    #     sell_factor = 1
+    # if bank_plus == bank_minus: # We live in a wonderful world
+    #     buy_factor = 1
+    #     sell_factor = 1
+    # if bank_plus < bank_minus: # We have more sell orders than buy orders.
+    #     # Exchange bank_plus shares, everyone who wants so can buy, not everyone who wants to sell can sell
+    #     buy_factor = 1
+    #     sell_factor = bank_plus / bank_minus
+
+    # # Execute buying as it is the most constrained (cash) activity
+    # assets_bought = 0
+    # while assets_bought < bank_plus * buy_factor: # While we have not executed all feasible buy orders:
+    #     for ind in pop:
+    #         if ind.edv > 1
+
+    # print(str(assets_bought) + " shares bought today.")
+
+    # for ind in pop:
+    #     if ind.edv > 0:  # the agent wants to buy
+    #         i = 0
+    #         while i < ind.edv:
+    #             if count_positive_assets(pop) < asset_supply: # there are assets to buy
+    #                 if ind.cash >= price: # the agent can afford to buy
+    #                     ind.asset += 1
+    #                     num_buy += 1
+    #                     if ind.type == "tf":
+    #                         num_buy_tf += 1
+    #                     if ind.type == "vi":
+    #                         num_buy_vi += 1
+    #                     if ind.type == "nt":
+    #                         num_buy_nt += 1
+    #                     ind.cash -= price
+    #             i += 1
+    #     if ind.edv < 0:  # the agent wants to sell
+    #         i = 0
+    #         while i < abs(ind.edv):
+    #             if ind.asset >= 1: # the agent can sell from inventory
+    #                 ind.asset -= 1
+    #                 num_sell += 1
+    #                 if ind.type == "tf":
+    #                     num_sell_tf += 1
+    #                 if ind.type == "vi":
+    #                     num_sell_vi += 1
+    #                 if ind.type == "nt":
+    #                     num_sell_nt += 1
+    #                 ind.cash += price
+    #             else: # the agent wants to short sell instead
+    #                 if count_positive_assets(pop) > 0: # there are assets to borrow
+    #                     if count_negative_assets(pop) < 10 * asset_supply: # we don't reach the cap on short position size
+    #                         ind.asset -= 1
+    #                         num_sell += 1
+    #                         if ind.type == "tf":
+    #                             num_sell_tf += 1
+    #                         if ind.type == "vi":
+    #                             num_sell_vi += 1
+    #                         if ind.type == "nt":
+    #                             num_sell_nt += 1
+    #                         ind.margin += price
+    #             i += 1
+
+    #     # Clear margin if out of short position
+    #     if ind.asset > 0:
+    #         ind.cash += ind.margin
+    #         ind.margin = 0
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
 # def update_margin(pop, price):
