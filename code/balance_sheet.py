@@ -155,7 +155,7 @@ def count_short_assets(pop):
     count = 0
     for ind in pop:
         if ind.asset_short > 0:
-            count += - ind.asset_short
+            count += ind.asset_short
     return count
 
 def apply_edv(pop, asset_supply, price):
