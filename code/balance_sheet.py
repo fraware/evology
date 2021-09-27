@@ -272,7 +272,7 @@ def apply_edv(pop, asset_supply, price):
         # i) Buying orders
         if ind.edv_var > 0:
             # We determine effective bought amount, lose cash, gain shares, adjust demand
-            quantity_bought = math.floor(min(ind.edv_var, ind.cash / price) * multiplier_buy)
+            quantity_bought = (min(ind.edv_var, ind.cash / price) * multiplier_buy)
             # print(ind.edv)
             # print(multiplier_buy)
             # print(quantity_bought)
@@ -289,7 +289,7 @@ def apply_edv(pop, asset_supply, price):
         # ii) Sell orders
         if ind.edv_var < 0:
             # We determine the effective sell amount, gain cash, lose shares, adjust our rolling demand
-            quantity_sold = math.floor(abs(ind.edv_var) * multiplier_sell)
+            quantity_sold = (abs(ind.edv_var) * multiplier_sell)
             if quantity_sold < 0:
                 raise ValueError('Negative quantity sold')
             ind.cash += quantity_sold * price
@@ -333,7 +333,7 @@ def apply_edv(pop, asset_supply, price):
     # Now we execute the short selling orders 
     for ind in pop:
         if ind.edv_var < 0:
-            quantity_short_sold = math.floor(multiplier_short * abs(ind.edv_var))
+            quantity_short_sold = (multiplier_short * abs(ind.edv_var))
             ind.asset_short += quantity_short_sold
             ind.edv_var -= quantity_short_sold
             ind.margin += quantity_short_sold * price
