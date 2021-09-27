@@ -12,11 +12,11 @@ def clear_debt(pop):
             if ind.cash >= ind.loan: # If the agent has enough cash:
                 ind.loan = 0
                 ind.cash -= ind.loan
-                print("Debt clear succesful")
+                print("Debt clear succesful for " + str(ind.type))
             if ind.cash < ind.loan: # If the agent does not have enough cash:
                 ind.loan -= ind.cash
                 ind.cash = 0
-                print("Debt clear unsuccesful")
+                print("Debt clear unsuccesful for " + str(ind.type))
     return ind
 
 def update_margin(pop, price):
@@ -34,7 +34,7 @@ def update_margin(pop, price):
                 ind.margin += ind.cash
                 ind.cash = 0
                 ind.loan += margin_objective - ind.margin - ind.cash
-                print("Margin update unsuccesful")
+                print("Margin update unsuccesful for " + str(ind.type))
         if margin_objective < ind.margin: # If our current margin is too high:
             # We get some of the margin back in the form of cash.
             ind.cash += ind.margin - margin_objective
