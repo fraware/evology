@@ -418,10 +418,10 @@ def wealth_earnings(pop, dividend, price):
     dividend, random_dividend = draw_dividend(dividend)
     for ind in pop:
         former_wealth = ind.wealth
-        div_asset = ind.asset * dividend # Determine gain from dividends
+        div_asset = ind.asset_long * dividend # Determine gain from dividends
         interest_cash = ind.cash * INTEREST_RATE # Determine gain from interest
         ind.cash += REINVESTMENT_RATE * (div_asset + interest_cash) # Apply reinvestment
-        ind.wealth = ind.cash + ind.asset * price - ind.loan # Compute new wealth
+        ind.wealth = ind.cash + ind.asset_long * price - ind.loan # Compute new wealth
         ind.profit = ind.wealth - former_wealth  # Compute profit as difference of wealth
     return pop, dividend, random_dividend
 
