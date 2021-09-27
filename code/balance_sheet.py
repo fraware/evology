@@ -2,6 +2,7 @@ import numpy as np
 from parameters import *
 from market import *
 import inspect
+import math
 np.seterr(divide = 'ignore') 
 
 
@@ -162,27 +163,31 @@ def apply_edv(pop, asset_supply, price):
     num_sell_tf, num_sell_vi, num_sell_nt = 0, 0, 0
     num_buy_tf, num_buy_vi, num_buy_nt = 0, 0, 0
 
-    
-    # determine the amount of desired exchanges
-    bank_plus = 0
-    bank_minus = 0
-    bank_short = 0
+    # Initialise variable edv
     for ind in pop:
-        if ind.edv > 0:
-            bank_plus += ind.edv
-        if ind.edv < 0:
-            # If the agent sells from inventory: bank_minus += 1
-            if ind.edv <= ind.asset_long: # If the agent has enough assets to execute the order
-                bank_minus += ind.edv
-            if ind.edv > ind.asset_long: # If the agent does not have enough assets to execute the order:
-                bank_minus += ind.asset_long
-                bank_short += (ind.edv - ind.asset_long) 
-    # Now we know how much the population wants to buy, sell or short sell.
+        ind.edv_var = ind.edv
+
+    
+    # # determine the amount of desired exchanges
+    # bank_plus = 0
+    # bank_minus = 0
+    # bank_short = 0
+    # for ind in pop:
+    #     if ind.edv > 0:
+    #         bank_plus += ind.edv
+    #     if ind.edv < 0:
+    #         # If the agent sells from inventory: bank_minus += 1
+    #         if ind.edv <= ind.asset_long: # If the agent has enough assets to execute the order
+    #             bank_minus += ind.edv
+    #         if ind.edv > ind.asset_long: # If the agent does not have enough assets to execute the order:
+    #             bank_minus += ind.asset_long
+    #             bank_short += (ind.edv - ind.asset_long) 
+    # # Now we know how much the population wants to buy, sell or short sell.
 
 
-    """ 
-    Not sure we need this #determine the amount of desired exchange anymore.
-    """
+    # """ 
+    # Not sure we need this #determine the amount of desired exchange anymore.
+    # """
 
     # STEP 1 
     # BUY / Close short positions (unconstrained)
@@ -191,10 +196,11 @@ def apply_edv(pop, asset_supply, price):
     # emphasize long positions.
 
     for ind in pop:
-        if ind.edv > 0: # If we want to buy:
+        if ind.edv_var > 0: # If we want to buy:
             if ind.asset_short > 0: # if we have short positions to clear:
-                buy_back = min(min(ind.edv, ind.asset_short), (ind.cash + ind.margin) / price) # Decide how much
+                buy_back = min(min(ind.edv_var, ind.asset_short), (ind.cash + ind.margin) / price) # Decide how much
                 ind.asset_short -= buy_back # Apply the closing of the short position
+                ind.edv_var -= buy_back # Adjust our excess demand after closing short positions
                 # Apply the cost of closing the position
                 if buy_back * price <= ind.margin: # if we have enough in the margin
                     ind.margin -= buy_back * price
@@ -206,24 +212,113 @@ def apply_edv(pop, asset_supply, price):
                     ind.margin = 0
 
     # STEP 2 
-    # BUY / Buy long positions (constrained by cash and selling volume)
+    # BUY / SELL long positions (constrained by cash and selling volume)
     # We are constrained by cash, and availability of shares (= some agents selling)
     # However, selling is only constrained to buying. 
     # Thus, we constrained-buy now and sell accordingly later, by saving how much was actually bought.
     # We will then sell the same number of assets that were bought.
 
-    TBD
+    # A - Know how much long positions agents want to buy
+    total_buy = 0
+    for ind in pop:
+        if ind.edv_var > 0: # If we have assets to buy after cloing short positions
+            buy = min(ind.edv_var, (ind.cash + ind.margin) / price) # define how much we can buy
+            total_buy += buy # Add to the total of buy-long orders
 
+    # B - Know how much long positions agents want to sell
+    total_sell = 0
+    for ind in pop:
+        if ind.edv_var < 0: # If we want to sell assets
+            sell = min(ind.edv_var, ind.asset_long) 
+            total_sell += sell
 
+    # C - We have net buy and sell orders. Compute the ratio.
+    if total_sell != 0:
+        order_ratio = total_buy / total_sell 
+    elif total_sell == 0:
+        order_ratio = 0
 
+    
+    # D - The order ratio determines how orders are impacted.
+    # Each agent can execute the same fraction of orders, to not penalise agents with large orders.
+    # We implement one single asset allocation proecedure with multipliers adjusted wrt the order ratio.
+    
+    if order_ratio == 0: #either noone buys, or no one sells
+        multiplier_buy = 0
+        multiplier_sell = 0
+        # No orders will be executed (no supply or no demand)
+    elif order_ratio < 1:
+        multiplier_buy = 1
+        multiplier_sell = order_ratio
+        # Selling will be restricted according to demand
+    elif order_ratio == 1 :
+        multiplier_buy = 1
+        multiplier_sell = 1
+        # All orders will be executed (supply =  demand)
+    elif order_ratio > 1:
+        multiplier_buy = 1 / order_ratio
+        multiplier_sell = 1
+        # Buying will be restricted according to supply
+
+    if multiplier_buy == None:
+        raise ValueError('Multiplier Buy is not defined')
+    if multiplier_sell == None:
+        raise ValueError('Multiplier Sell is not defined')
+
+    # E - Implement asset allocation under multipliers
+
+    for ind in pop:
+        # i) Buying orders
+        if ind.edv_var > 0:
+            # We determine effective bought amount, lose cash, gain shares, adjust demand
+            quantity_bought = math.floor(ind.edv_var * multiplier_buy)
+            ind.cash -= quantity_bought * price
+            if ind.cash < 0:
+                raise ValueError('Cash became negative at asset allocations under multiplier')
+            ind.asset_long += quantity_bought
+            ind.edv_var -= quantity_bought
+        
+        # ii) Sell orders
+        if ind.edv_var <  0:
+            # We determine the effective sell amount, gain cash, lose shares, adjust our rolling demand
+            quantity_sold = math.floor(ind.edv_var * multiplier_sell)
+            ind.cash += quantity_sold * price
+            ind.asset_long -= quantity_sold
+            if ind.asset_long < 0:
+                raise ValueError('Agent long position became negative at asset allocations under multiplier')
+            ind.edv_var += quantity_sold
 
     # STEP 3
-    # SELL / Sell long positions (constrained by purchase volume)
+    # SELL / Execute short selling (capacity constrained)
+    # For selling agents, after the exchanges of long positions, some may still want to sell
+    # No more exchange of long positions is available now. So they will consider short selling.
 
-    TBD
+    total_short = 0
+    for ind in pop:
+        if ind.edv_var < 0: # If the agents still want to sell
+            # Let's first determine how much they want to sell, 
+            # # and see if it does not exceed the limit on short positions size.
+            # If it exceeds, we make sure that the same fraction of orders is executed for all agents.
+           short = ind.edv_var
+           total_short += short
+    
+    if count_short_assets(pop) == asset_supply * LIMIT_SHORT_POS_SIZE:
+        # We have no room for more short positions.
+        multiplier_short = 0
+    elif count_short_assets(pop) + total_short <= asset_supply * LIMIT_SHORT_POS_SIZE:
+        # Then the orders are all feasible.
+        multiplier_short = 1
+    elif count_short_assets(pop) + total_short > asset_supply * LIMIT_SHORT_POS_SIZE:
+        # Then the orders exceed our capacity and we apply our multiplier.
+        multiplier_short = (asset_supply * LIMIT_SHORT_POS_SIZE - count_short_assets(pop) ) / total_short
+    
+    if multiplier_short > 1:
+        raise ValueError('Multiplier short is above 1')
+    # if multiplier_short = None:
+    #     raise ValueError('Multiplier short is not defined')
 
     # STEP 4
-    # SELL / Execute short selling (capacity constrained)
+    # 
 
     TBD
 

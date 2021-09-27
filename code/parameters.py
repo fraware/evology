@@ -56,6 +56,7 @@ INITIAL_ASSETS = 500_000
  # = Wealth of 100M; 100M is the threshold for US asset managers
 short_bound = 1
 CONSUMPTION_RATE = 0
+LIMIT_SHORT_POS_SIZE = 10
  
 REINVESTMENT_RATE = 1
 INTEREST_RATE = 0.01 / TRADING_DAYS
