@@ -51,7 +51,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         calculate_wealth(pop, price) #Compute wealth, update margin
         calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
 
-        print("between ts_edf / edv report")
+        # print("between ts_edf / edv report")
         pop_report(pop)
 
         price = leap_solver(pop, price) # Clear the market
@@ -64,24 +64,24 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         #     print(ind.edf(388))  
 
         mismatch_history.append(calculate_total_edv(pop))
-        print("Mismatch is " + str(calculate_total_edv(pop)))
+        print("Mismatch is " + str(int(calculate_total_edv(pop))))
 
         pop_report(pop)
 
         # update_margin(pop, price)
         pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = apply_edv(pop, asset_supply, price) # Apply EDV orders
-        print("Buy orders: " + str(num_buy) + " (TF=" + str(num_buy_tf) + " ;VI=" + str(num_buy_vi) + " ;NT=" + str(num_buy_nt) +")") 
-        print("Sell orders: " + str(num_sell) + " (TF=" + str(num_sell_tf) + " ;VI=" + str(num_sell_vi) + " ;NT=" + str(num_sell_nt) +")") 
+        # print("Buy orders: " + str(num_buy) + " (TF=" + str(num_buy_tf) + " ;VI=" + str(num_buy_vi) + " ;NT=" + str(num_buy_nt) +")") 
+        # print("Sell orders: " + str(num_sell) + " (TF=" + str(num_sell_tf) + " ;VI=" + str(num_sell_vi) + " ;NT=" + str(num_sell_nt) +")") 
 
         pop, dividend, random_dividend = wealth_earnings(pop, dividend, price) # Apply invest., IR, Div and compute profit
-        print("Dividend is " + str(dividend))
+        # print("Dividend is " + str(dividend))
         dividend_history.append(dividend)
         random_dividend_history.append(random_dividend)
 
         pop, round_replacements = hypermutate(pop) # Replace insolvent agents
         pop = sampling.adjust_mode(pop, mode)
         # TODO: do we need to set del ind.wealth too? Or is it fully replaced?
-        print(str(round_replacements) + " replacements done")
+        print(str(round_replacements) + " replacement(s) done")
 
         """ 8) Evolution block
             a. Fitness computation """

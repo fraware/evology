@@ -115,7 +115,7 @@ def calculate_edv(pop, price):
             # print(ind.wealth)
             # print(ind[0])
             # print(ind.asset)
-            print(np.log2(ind[0]) - np.log2(price))
+            # print(np.log2(ind[0]) - np.log2(price))
 
             ind.edv = ind.edf(price)
             # print("former way of edv is")
@@ -283,7 +283,7 @@ def apply_edv(pop, asset_supply, price):
             if ind.cash < 0:
                 raise ValueError('Cash became negative at asset allocations under multiplier')
             ind.asset_long += quantity_bought
-            print("bought " + str(quantity_bought))
+            print(str(ind.type) + " bought " + str(quantity_bought))
             ind.edv_var -= quantity_bought
         
         # ii) Sell orders
@@ -294,7 +294,7 @@ def apply_edv(pop, asset_supply, price):
                 raise ValueError('Negative quantity sold')
             ind.cash += quantity_sold * price
             ind.asset_long -= quantity_sold
-            print("sold " + str(quantity_sold))
+            print(str(ind.type) + " sold " + str(quantity_sold))
             if ind.asset_long < 0:
                 raise ValueError('Agent long position became negative at asset allocations under multiplier')
             ind.edv_var += quantity_sold
@@ -447,9 +447,9 @@ def pop_report(pop):
 
 def agent_report(ind):
     if ind.type == "tf":
-        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(ind.asset_long) + ", Asset_Short " + str(ind.asset_short) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
+        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(int(ind.tsv)) + ", EV " + str(int(ind.edv)) + ", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
     if ind.type == "vi":
-        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(ind.asset_long) + ", Asset_Short " + str(ind.asset_short) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
+        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(int(ind.tsv)) + ", EV " + str(int(ind.edv)) + ", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
     if ind.type == "nt":
-        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(ind.asset_long) + ", Asset_Short " + str(ind.asset_short) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(ind.tsv) + ", EV " + str(int(ind.edv)) + ", Profit " + str(ind.profit) + ", Fitness " + str(ind.fitness))
+        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(int(ind.tsv)) + ", EV " + str(int(ind.edv)) + ", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
   
