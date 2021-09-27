@@ -167,28 +167,6 @@ def apply_edv(pop, asset_supply, price):
     for ind in pop:
         ind.edv_var = ind.edv
 
-    
-    # # determine the amount of desired exchanges
-    # bank_plus = 0
-    # bank_minus = 0
-    # bank_short = 0
-    # for ind in pop:
-    #     if ind.edv > 0:
-    #         bank_plus += ind.edv
-    #     if ind.edv < 0:
-    #         # If the agent sells from inventory: bank_minus += 1
-    #         if ind.edv <= ind.asset_long: # If the agent has enough assets to execute the order
-    #             bank_minus += ind.edv
-    #         if ind.edv > ind.asset_long: # If the agent does not have enough assets to execute the order:
-    #             bank_minus += ind.asset_long
-    #             bank_short += (ind.edv - ind.asset_long) 
-    # # Now we know how much the population wants to buy, sell or short sell.
-
-
-    # """ 
-    # Not sure we need this #determine the amount of desired exchange anymore.
-    # """
-
     # STEP 1 
     # BUY / Close short positions (unconstrained)
     # Closing first makes sense to allow possible short sellings later (limit of short position size)
@@ -198,8 +176,11 @@ def apply_edv(pop, asset_supply, price):
     for ind in pop:
         if ind.edv_var > 0: # If we want to buy:
             if ind.asset_short > 0: # if we have short positions to clear:
+                # print(ind.asset_short)
                 buy_back = min(min(ind.edv_var, ind.asset_short), (ind.cash + ind.margin) / price) # Decide how much
+                # print(buy_back)
                 ind.asset_short -= buy_back # Apply the closing of the short position
+                # print(ind.asset_short)
                 ind.edv_var -= buy_back # Adjust our excess demand after closing short positions
                 # Apply the cost of closing the position
                 if buy_back * price <= ind.margin: # if we have enough in the margin
@@ -207,9 +188,11 @@ def apply_edv(pop, asset_supply, price):
                 elif buy_back * price > ind.margin: # if we don't have enough in the margin
                     ind.cash -= (buy_back * price - ind.margin)
                     ind.margin = 0
-                if ind.asset_short == 0: # If we have no short positions, clear the margin back into cash
-                    ind.cash += ind.margin
-                    ind.margin = 0
+            if ind.asset_short == 0: # If we have no short positions, clear the margin back into cash
+                ind.cash += ind.margin
+                ind.margin = 0
+            if ind.asset_short < 0:
+                raise ValueError('Negative short position')
 
     # STEP 2 
     # BUY / SELL long positions (constrained by cash and selling volume)
@@ -274,12 +257,6 @@ def apply_edv(pop, asset_supply, price):
             quantity_bought = math.floor(min(ind.edv_var, ind.cash / price) * multiplier_buy)
             ind.cash -= quantity_bought * price
 
-            # Debugging
-            print(ind.edv)
-            print(ind.edv_var)
-            print(quantity_bought)
-            print(ind.cash)
-
             if ind.cash < 0:
                 raise ValueError('Cash became negative at asset allocations under multiplier')
             ind.asset_long += quantity_bought
@@ -288,7 +265,7 @@ def apply_edv(pop, asset_supply, price):
         # ii) Sell orders
         if ind.edv_var <  0:
             # We determine the effective sell amount, gain cash, lose shares, adjust our rolling demand
-            quantity_sold = math.floor(ind.edv_var * multiplier_sell)
+            quantity_sold = math.floor(abs(ind.edv_var) * multiplier_sell)
             ind.cash += quantity_sold * price
             ind.asset_long -= quantity_sold
             if ind.asset_long < 0:
@@ -321,13 +298,15 @@ def apply_edv(pop, asset_supply, price):
     
     if multiplier_short > 1:
         raise ValueError('Multiplier short is above 1')
+    if multiplier_short < 1:
+        raise ValueError('Multiplier short is negative')
     # if multiplier_short = None:
     #     raise ValueError('Multiplier short is not defined')
 
     # Now we execute the short selling orders 
     for ind in pop:
         if ind.edv_var < 0:
-            quantity_short_sold = math.floor(multiplier_short * ind.edv_var)
+            quantity_short_sold = math.floor(multiplier_short * abs(ind.edv_var))
             ind.asset_short += quantity_short_sold
             ind.edv_var -= quantity_short_sold
             ind.margin += quantity_short_sold * price
