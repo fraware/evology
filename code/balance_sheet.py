@@ -51,17 +51,17 @@ def calculate_wealth(pop, price):
     return ind
 
 def calculate_ts_edf(pop, extended_price_history):
-    print("extended price history")
-    print(extended_price_history)
-    print(extended_price_history[-1])
-    print(extended_price_history[0])
-    print(extended_price_history[-2])
+    # print("extended price history")
+    # print(extended_price_history)
+    # print(extended_price_history[-1])
+    # print(extended_price_history[0])
+    # print(extended_price_history[-2])
     for ind in pop:
         if ind.type == "tf":
             # print("tf computes ts")
             # print(extended_price_history[-1])
             # print(extended_price_history[-ind[0]])
-            ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[-2]])) 
+            ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]])) 
             # print(ind.tsv)
             # print(ind.wealth)
             # print(ind.tsv)
