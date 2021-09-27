@@ -216,6 +216,8 @@ def apply_edv(pop, asset_supply, price):
     for ind in pop:
         if ind.edv_var > 0: # If we have assets to buy after cloing short positions
             buy = min(ind.edv_var, ind.cash / price) # define how much we can buy
+            if buy > 0 and buy < 1: # security to avoid negative infinitesimal orders
+                buy = 0
             total_buy += buy # Add to the total of buy-long orders
 
     # B - Know how much long positions agents want to sell
@@ -223,6 +225,8 @@ def apply_edv(pop, asset_supply, price):
     for ind in pop:
         if ind.edv_var < 0: # If we want to sell assets
             sell = min(abs(ind.edv_var), ind.asset_long) 
+            if sell > 0 and sell < 1:  # security to avoid negative infinitesimal orders
+                buy = 0
             total_sell += sell
 
     # C - We have net buy and sell orders. Compute the ratio.
@@ -232,7 +236,16 @@ def apply_edv(pop, asset_supply, price):
         order_ratio = 0
 
     if order_ratio < 0:
-        raise ValueError('Negative order ratio')
+        for ind in pop:
+            print("--- ind type, edv, edv_var, and feasible buy.sell order")
+            print(ind.type)
+            print(ind.edv)
+            print(ind.edv_var)
+            if ind.edv_var > 0:
+                print(min(ind.edv_var, ind.cash / price))
+            if ind.edv_var < 0:
+                print(min(abs(ind.edv_var), ind.asset_long))
+        raise ValueError('Negative order ratio (total sell/buy): ' + str(total_sell) + str(total_buy))
 
     
     # D - The order ratio determines how orders are impacted.
@@ -344,12 +357,15 @@ def apply_edv(pop, asset_supply, price):
 
     # Now we execute the short selling orders 
     for ind in pop:
-        if ind.edv_var < 0:
-            quantity_short_sold = (multiplier_short * abs(ind.edv_var))
-            ind.asset_short += quantity_short_sold
-            ind.edv_var -= quantity_short_sold
-            ind.margin += quantity_short_sold * price
-            print(str(ind.type) + " short selled " + str(round(quantity_short_sold, 2)) + " shares")
+        if ind.edv_var < 0: # if they still want to sell
+            if ind.loan <= 0: # if the agents are not in debt (considered as risky)
+                quantity_short_sold = (multiplier_short * abs(ind.edv_var))
+                ind.asset_short += quantity_short_sold
+                ind.edv_var -= quantity_short_sold
+                ind.margin += quantity_short_sold * price
+                print(str(ind.type) + " short selled " + str(round(quantity_short_sold, 2)) + " shares")
+            elif ind.loan > 0:
+                print(str(ind.type) + " prevented from short selling because of loan")
 
     if count_long_assets(pop) > asset_supply:
         raise ValueError('Asset supply exceeded with value ' + str(count_long_assets(pop)))
@@ -460,9 +476,9 @@ def pop_report(pop):
 
 def agent_report(ind):
     if ind.type == "tf":
-        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(int(ind.tsv)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) )# + ", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
+        print("TF agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(round(ind.tsv,2)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) )# + ", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
     if ind.type == "vi":
-        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(int(ind.tsv)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) )# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
+        print("VI agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(round(ind.tsv,2)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) )# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
     if ind.type == "nt":
-        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(int(ind.tsv)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) )# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
+        print("NT agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(round(ind.tsv,2)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) )# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
   
