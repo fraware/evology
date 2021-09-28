@@ -12,7 +12,7 @@ def hypermutate(pop):
         # if pop_temp[i][1] + pop_temp[i][9] <= 0:
         if pop_temp[i].wealth <= 0:
             print("Info on replacement")
-            print("Type: " + str(pop_temp[i].type) + ", C: " + str(pop_temp[i].cash) + ", S+: " + str(pop_temp[i].asset_long) + ", S-: " + str(pop_temp[i].asset_short) + ", L: " + str(pop_temp[i].loan) + ", M: " + str(pop_temp[i].margin) + ", W: " + str(pop_temp[i].wealth))
+            print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset_long)) + ", S-: " + str(int(pop_temp[i].asset_short)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
             # print("replacement of")
             # print(pop_temp[i][0])
             # print(pop_temp[i].type)
