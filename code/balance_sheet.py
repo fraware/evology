@@ -77,13 +77,13 @@ def calculate_ts_edf(pop, extended_price_history):
             # print("new")
             # print(ind.edf(388))
         elif ind.type == "vi":
-            ind.tsv = (np.log2(ind[0]) - np.log2(np.log2(extended_price_history[-1])))
+            ind.tsv = (np.log2(ind[0]) - np.log2(extended_price_history[-1]))
             def func(p):
                 return ((ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
             ind.edf = func
         elif ind.type == "nt":
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
-            ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(np.log2(extended_price_history[-1]))
+            ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(extended_price_history[-1])
             def func(p):
                 return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
             ind.edf = func     
