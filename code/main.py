@@ -15,7 +15,9 @@ random.seed(9)
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
     
     price = INITIAL_PRICE
-    extended_price_history = [INITIAL_PRICE] * 100
+    # extended_price_history = [INITIAL_PRICE] * 100
+    extended_price_history = []
+    extended_price_history.append(price)
     dividend = INITIAL_DIVIDEND
     dividend_history, random_dividend_history, generation_history = [], [], []
     price_history, mismatch_history, meanFitnessValues = [], [], []

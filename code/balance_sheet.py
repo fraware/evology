@@ -61,19 +61,24 @@ def calculate_ts_edf(pop, extended_price_history):
             # print("tf computes ts")
             # print(extended_price_history[-1])
             # print(extended_price_history[-ind[0]])
-            ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]])) 
-            # print(ind.tsv)
-            # print(ind.wealth)
-            # print(ind.tsv)
-            # print(ind.asset)
-            # print(LAMBDA_TF)
-            # print(STRATEGY_AGGRESSIVENESS_TF)
-            # print("previous function")
-            # if ind.edf != None:
-            #     print(ind.edf(388))
-            def func(p):
-                return ((ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
-            ind.edf = func
+            if len(extended_price_history) >= max(1, ind[0]):
+                ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]])) 
+                # print(ind.tsv)
+                # print(ind.wealth)
+                # print(ind.tsv)
+                # print(ind.asset)
+                # print(LAMBDA_TF)
+                # print(STRATEGY_AGGRESSIVENESS_TF)
+                # print("previous function")
+                # if ind.edf != None:
+                #     print(ind.edf(388))
+                def func(p):
+                    return ((ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
+                ind.edf = func
+            elif len(extended_price_history) < max(1, ind[0]):
+                def func(p):
+                    return 0
+                ind.edf = func
             # print("new")
             # print(ind.edf(388))
         elif ind.type == "vi":
