@@ -53,13 +53,19 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         calculate_wealth(pop, price) #Compute wealth, update margin
         calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
 
-        # print("between ts_edf / edv report")
-        # pop_report(pop)
+        print("Right before market clearing")
+        pop_report(pop)
+        print("---/---/---")
 
-        price = leap_solver(pop, price) # Clear the market
+        # price = leap_solver(pop, price) # Clear the market
+        price = linear_solver(pop, price)
         extended_price_history.append(price)
         price_history.append(price)
         print("Price is " + str(price))
+
+        # price2 = linear_solver(pop, price)
+        # print("Price (linear) is " + str(price2))
+
         calculate_edv(pop, price, extended_price_history) # Compute EDV
 
         # for ind in pop:

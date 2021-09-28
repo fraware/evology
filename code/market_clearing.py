@@ -1,4 +1,5 @@
 # import market
+from parameters import *
 import numpy as np
 '''
 Here is a simple optimisation solver for the market clearing algorithm. 
@@ -13,9 +14,9 @@ from leap_ec.problem import FunctionProblem
 from leap_ec.real_rep import create_real_vector
 from leap_ec.real_rep.ops import mutate_gaussian
 
-def ea_solve_noverbose(function, bounds, generations=100, pop_size=2,
-             mutation_std=1.0, maximize=False, viz=False, viz_ylim=(0, 1),
-             hard_bounds=True):
+def ea_solve_noverbose(function, bounds, generations, pop_size,
+             mutation_std, maximize=False,
+             hard_bounds = True):
     
 
     if hard_bounds:
@@ -68,8 +69,8 @@ def leap_solver(pop, price):
     def squared_agg_ed(x):
         result = 0
         for ind in pop:
-            result += ind.edf(x)
-        result = result ** 2
+            result += (ind.edf(x)) ** 2
+        # result = result ** 2
         return result
     
     ''' Define the circuit breaker bounds '''
@@ -77,10 +78,11 @@ def leap_solver(pop, price):
     # limit_down = 0
     limit_up = price * 2.0
     # limit_up = price * 10.0
+    # limit_up = 100_000
     
     ''' Run the solver on the squared agg ED function'''
     best_genome = ea_solve_noverbose(squared_agg_ed,
-          bounds=[(limit_down, limit_up)], generations = 100, pop_size = 100,
+          bounds=[(limit_down, limit_up)], generations = 200, pop_size = 100,
           mutation_std=0.1, hard_bounds = True)
     
     ''' Return the clearing price '''
@@ -93,3 +95,32 @@ def leap_solver(pop, price):
 #           mutation_std=0.1, hard_bounds = True) #max = False
 # print(best_genome)
 
+def linear_solver(pop, price):
+
+    limit_down = price * 0.5
+    limit_up = price * 2.0
+
+    # ED functions are of the type a/x - b = 0
+    # With a = W * (tanh(c.Phi) + 0.5) and b = S_long - S_short
+    # Hence, we solve A/x - B = 0 with A = sum a and B = sum b in all the population
+
+    # Careful, it excludes leverage
+    A, B = 0, 0
+    for ind in pop:
+        if ind.type == "tf":
+            A += ind.wealth * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5)
+            B += ind.asset_long - ind.asset_short
+        if ind.type == "vi":
+            A += ind.wealth * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5)
+            B += ind.asset_long - ind.asset_short
+        if ind.type == "nt":
+            A += ind.wealth * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5)
+            B += ind.asset_long - ind.asset_short
+
+    price = A / B
+
+    if price > limit_up:
+        price = limit_up
+    if price < limit_down:
+        price = limit_down
+    return price

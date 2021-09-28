@@ -305,12 +305,13 @@ def apply_edv(pop, asset_supply, price):
             # print(ind.cash)
 
             if ind.cash < 0:
+                print("ind type, cash, multiplier buy, qtty bought, value bought")
                 print(ind.type)
                 print(ind.cash)
                 print(multiplier_buy)
                 print(quantity_bought)
                 print(quantity_bought * price - ind.cash)
-                raise ValueError(str(ind.type) + 'Cash became negative at asset allocations under multiplier for agent with ' + str(ind.edv) + str(ind.edv_var) + str(multiplier_buy))
+                raise ValueError(str(ind.type) + ' Cash became negative at asset allocations under multiplier for agent with edv/edv_var/miltip' + str(ind.edv) + " " + str(ind.edv_var) + " " + str(multiplier_buy))
             ind.asset_long += quantity_bought
             if quantity_bought != 0:
                 print(str(ind.type) + " bought " + str(round(quantity_bought,2)))
