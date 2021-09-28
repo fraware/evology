@@ -391,7 +391,7 @@ def apply_edv(pop, asset_supply, price):
             elif ind.loan > 0:
                 print(str(ind.type) + " prevented from short selling because of loan")
 
-    if count_long_assets(pop) > asset_supply:
+    if count_long_assets(pop) > asset_supply + 1:
         raise ValueError('Asset supply exceeded with value ' + str(count_long_assets(pop)))
 
     # TBD
