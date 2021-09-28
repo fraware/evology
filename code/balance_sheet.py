@@ -522,3 +522,12 @@ def agent_report(ind):
     if ind.type == "nt":
         print("NT agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(round(ind.tsv,2)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) )# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
   
+def nt_report(pop):
+    fval = 0
+    num = 0
+    for ind in pop:
+        if ind.type == "nt":
+            fval += ind.process * ind[0]
+            num += 1
+    fval_round = fval/num
+    return fval_round

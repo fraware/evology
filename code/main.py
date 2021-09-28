@@ -27,6 +27,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     mean_wealth_history, wealth_tf_history, wealth_vi_history, wealth_nt_history = [], [], [], []
     mean_tf_history, mean_vi_history, mean_nt_history = [], [], []
     positive_positions, negative_positions = [], []
+    fval_nt_history = []
 
     generation = 0
 
@@ -52,6 +53,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         calculate_wealth(pop, price) #Compute wealth, update margin
         calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
+        fval_nt_history.append(round(nt_report(pop),0))
 
         print("Right before market clearing")
         pop_report(pop)
@@ -71,7 +73,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         # for ind in pop:
         #     print(ind.edf(388))  
 
-        mismatch_history.append(calculate_total_edv(pop))
+        mismatch_history.append(round(calculate_total_edv(pop), 3))
         # print("Mismatch is " + str(int(calculate_total_edv(pop))))
 
         
@@ -216,7 +218,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
                               num_tf_history, num_vi_history, num_nt_history, mean_tf_history, mean_vi_history, mean_nt_history, 
                               mean_wealth_history,  wealth_tf_history, wealth_vi_history, wealth_nt_history,
                               wealth_share_tf_history, wealth_share_vi_history, wealth_share_nt_history,
-                              meanFitnessValues,
+                              meanFitnessValues, fval_nt_history,
                               dividend_history, random_dividend_history, 
                               positive_positions, negative_positions, replacements)
 
