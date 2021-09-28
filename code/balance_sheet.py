@@ -183,35 +183,9 @@ def apply_edv(pop, asset_supply, price):
     for ind in pop:
         ind.edv_var = ind.edv
 
+
+
     # STEP 1 
-    # BUY / Close short positions (unconstrained)
-    # Closing first makes sense to allow possible short sellings later (limit of short position size)
-    # Buying a long / closing a short is here equivalent. We close first to simply the balance_sheets and
-    # emphasize long positions.
-
-    for ind in pop:
-        if ind.edv_var > 0: # If we want to buy:
-            if ind.asset_short > 0: # if we have short positions to clear:
-                # print(ind.asset_short)
-                buy_back = min(min(ind.edv_var, ind.asset_short), (ind.cash + ind.margin) / price) # Decide how much
-                # print(buy_back)
-                ind.asset_short -= buy_back # Apply the closing of the short position
-                print(str(ind.type) + " closed " + str(round(buy_back,2)) + " shorts")
-                # print(ind.asset_short)
-                ind.edv_var -= buy_back # Adjust our excess demand after closing short positions
-                # Apply the cost of closing the position
-                if buy_back * price <= ind.margin: # if we have enough in the margin
-                    ind.margin -= buy_back * price
-                elif buy_back * price > ind.margin: # if we don't have enough in the margin
-                    ind.cash -= (buy_back * price - ind.margin)
-                    ind.margin = 0
-            if ind.asset_short == 0: # If we have no short positions, clear the margin back into cash
-                ind.cash += ind.margin
-                ind.margin = 0
-            if ind.asset_short < 0:
-                raise ValueError('Negative short position')
-
-    # STEP 2 
     # BUY / SELL long positions (constrained by cash and selling volume)
     # We are constrained by cash, and availability of shares (= some agents selling)
     # However, selling is only constrained to buying. 
@@ -221,7 +195,7 @@ def apply_edv(pop, asset_supply, price):
     # A - Know how much long positions agents want to buy
     total_buy = 0
     for ind in pop:
-        if ind.edv_var > 0: # If we have assets to buy after cloing short positions
+        if ind.edv_var > 0: # If we have assets to buy
             buy = min(ind.edv_var, ind.cash / price) # define how much we can buy
             if buy > 0 and buy < 1: # security to avoid negative infinitesimal orders
                 buy = 0
@@ -347,6 +321,34 @@ def apply_edv(pop, asset_supply, price):
             if ind.asset_long < 0:
                 raise ValueError('Agent long position became negative at asset allocations under multiplier')
             ind.edv_var += quantity_sold
+
+    # STEP 2 
+    # BUY / Close short positions (unconstrained)
+    # Closing first makes sense to allow possible short sellings later (limit of short position size)
+    # Buying a long / closing a short is here equivalent. We close first to simply the balance_sheets and
+    # emphasize long positions.
+
+    for ind in pop:
+        if ind.edv_var > 0: # If we want to buy:
+            if ind.asset_short > 0: # if we have short positions to clear:
+                # print(ind.asset_short)
+                buy_back = min(min(ind.edv_var, ind.asset_short), (ind.cash + ind.margin) / price) # Decide how much
+                # print(buy_back)
+                ind.asset_short -= buy_back # Apply the closing of the short position
+                print(str(ind.type) + " closed " + str(round(buy_back,2)) + " shorts")
+                # print(ind.asset_short)
+                ind.edv_var -= buy_back # Adjust our excess demand after closing short positions
+                # Apply the cost of closing the position
+                if buy_back * price <= ind.margin: # if we have enough in the margin
+                    ind.margin -= buy_back * price
+                elif buy_back * price > ind.margin: # if we don't have enough in the margin
+                    ind.cash -= (buy_back * price - ind.margin)
+                    ind.margin = 0
+            if ind.asset_short == 0: # If we have no short positions, clear the margin back into cash
+                ind.cash += ind.margin
+                ind.margin = 0
+            if ind.asset_short < 0:
+                raise ValueError('Negative short position')
 
     # STEP 3
     # SELL / Execute short selling (capacity constrained)
