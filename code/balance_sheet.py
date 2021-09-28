@@ -5,17 +5,17 @@ import inspect
 import math
 np.seterr(divide = 'ignore') 
 
-def clear_debt(pop):
+def clear_debt(pop, price):
     for ind in pop:
         # Attempt to clear debt
         if ind.loan > 0: # If the agent has outstanding debt:
-            if ind.cash >= ind.loan + 100_000: # If the agent has enough cash:
+            if ind.cash >= ind.loan + 10 * price: # If the agent has enough cash:
                 ind.loan = 0
                 ind.cash -= ind.loan
                 print("Debt clear succesful for " + str(ind.type))
-            if ind.cash < ind.loan + 100_000 : # If the agent does not have enough cash:
-                ind.loan -= ind.cash - 100_000
-                ind.cash = 100_000
+            if ind.cash < ind.loan + 10 * price : # If the agent does not have enough cash:
+                ind.loan -= ind.cash - 10 * price
+                ind.cash = 10 * price
                 print("Debt clear unsuccesful for " + str(ind.type))
     return ind
 

@@ -81,7 +81,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         calculate_wealth(pop, price) #Compute wealth, update margin
         update_margin(pop, price)
-        clear_debt(pop)
+        clear_debt(pop, price)
 
 
 
