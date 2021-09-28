@@ -61,7 +61,7 @@ def calculate_ts_edf(pop, extended_price_history):
             # print("tf computes ts")
             # print(extended_price_history[-1])
             # print(extended_price_history[-ind[0]])
-            if len(extended_price_history) >= max(1, ind[0]):
+            if len(extended_price_history) > max(1, ind[0]):
                 ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]])) 
                 # print(ind.tsv)
                 # print(ind.wealth)
@@ -75,9 +75,9 @@ def calculate_ts_edf(pop, extended_price_history):
                 def func(p):
                     return ((ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
                 ind.edf = func
-            elif len(extended_price_history) < max(1, ind[0]):
+            elif len(extended_price_history) <= max(1, ind[0]):
                 def func(p):
-                    return 0
+                    return 0 * p
                 ind.edf = func
             # print("new")
             # print(ind.edf(388))
@@ -103,7 +103,7 @@ def calculate_ts_edf(pop, extended_price_history):
 #         ind.edf = func
 #     return ind
 
-def calculate_edv(pop, price):
+def calculate_edv(pop, price, extended_price_history):
     # print("computing edv")
     # print("--------------------------------")
     for ind in pop:
@@ -125,11 +125,14 @@ def calculate_edv(pop, price):
         # former_func = ind.edf
         
         if ind.type == "tf":
-            
-            def func_tf(p):
-                return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
-            ind.edf = func_tf
-            ind.edv = ind.edf(price)
+            if len(extended_price_history) > max(1, ind[0]):
+                def func_tf(p):
+                    return (ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
+                ind.edf = func_tf
+                ind.edv = ind.edf(price)
+            else:
+                ind.edf = 0
+                ind.edv = 0
         
         if ind.type == "vi":
             # print("--------------------------------")

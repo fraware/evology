@@ -60,7 +60,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         extended_price_history.append(price)
         price_history.append(price)
         print("Price is " + str(price))
-        calculate_edv(pop, price) # Compute EDV
+        calculate_edv(pop, price, extended_price_history) # Compute EDV
 
         # for ind in pop:
         #     print(ind.edf(388))  
