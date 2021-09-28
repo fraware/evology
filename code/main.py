@@ -10,7 +10,7 @@ import data
 import random
 from market import *
 
-random.seed(9)
+random.seed(random.random())
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
     
