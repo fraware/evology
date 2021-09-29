@@ -59,12 +59,12 @@ def calculate_ts(pop, extended_price_history):
             elif len(extended_price_history) <= max(1, ind[0]):
                 ind.tsv = 0
 
-        elif ind.type == "vi":
-            ind.tsv = (np.log2(ind[0]) - np.log2(extended_price_history[-1]))
+        # elif ind.type == "vi":
+            # ind.tsv = (np.log2(ind[0]) - np.log2(extended_price_history[-1]))
 
         elif ind.type == "nt":
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
-            ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(extended_price_history[-1])   
+            # ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(extended_price_history[-1])   
     return ind
 
 # def calculate_edf(pop):
@@ -87,6 +87,7 @@ def calculate_edv(pop, price, extended_price_history):
                 ind.edv = 0
         
         if ind.type == "vi":
+            ind.tsv = np.log2(ind[0]) - np.log2(price)
             def func_vi(p):
                 return (ind.wealth * LAMBDA_VI / p) * (np.tanh(SCALE_VI * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)  
             ind.edf = func_vi
@@ -94,6 +95,7 @@ def calculate_edv(pop, price, extended_price_history):
             ind.edv = ind.edf(price)
 
         if ind.type == "nt":
+            ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(price)  
             def func_nt(p):
                 return (ind.wealth * LAMBDA_NT / p) * (np.tanh(SCALE_NT * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)  
             ind.edf = func_nt 

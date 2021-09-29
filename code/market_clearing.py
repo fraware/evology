@@ -73,9 +73,9 @@ def leap_solver(pop, price):
                 if ind.type == "tf":
                     result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)
                 if ind.type == "vi":
-                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_VI * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
+                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - (ind.asset_long - ind.asset_short) 
                 if ind.type == "nt":
-                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_NT * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)
+                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * ind.process) -  np.log2(p))) + 0.5) - (ind.asset_long - ind.asset_short)
 
         # result = result ** 2
         return result
