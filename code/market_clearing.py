@@ -66,10 +66,12 @@ def leap_solver(pop, price):
     # def agg_ed_solver(x):
     #     return cum_sum / sum(x) - cum_own
     
-    def squared_agg_ed(x):
+    def squared_agg_ed(p):
         result = 0
         for ind in pop:
-            result += (ind.edf(x)) ** 2
+            # result += (ind.edf(x)) ** 2
+                if ind.type = "tf":
+                    result += ((W) / p) * (np.tanh(SCALE_TF * )) 
         # result = result ** 2
         return result
     
@@ -108,19 +110,26 @@ def linear_solver(pop, price):
     A, B = 0, 0
     for ind in pop:
         if ind.type == "tf":
-            A += (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) * (ind.cash - ind.loan)
-            B += ind.asset_short
+            A += (np.tanh(SCALE_TF * ind.tsv) + 0.5) * (ind.cash - ind.loan)
+            B += (np.tanh(SCALE_TF * ind.tsv) - 0.5) * ind.asset_long + ind.asset_short
         if ind.type == "vi":
-            A += (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5) * (ind.cash - ind.loan)
-            B += ind.asset_short
+            A += (np.tanh(SCALE_VI * ind.tsv) + 0.5) * (ind.cash - ind.loan)
+            B += (np.tanh(SCALE_VI * ind.tsv) - 0.5) * ind.asset_long + ind.asset_short
         if ind.type == "nt":
-            A += (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5) * (ind.cash - ind.loan)
-            B += ind.asset_short
+            A += (np.tanh(SCALE_NT * ind.tsv) + 0.5) * (ind.cash - ind.loan)
+            B += (np.tanh(SCALE_NT * ind.tsv) - 0.5) * ind.asset_long + ind.asset_short
 
     price = - A / B
+    print("price, A/P +B, A, B")
+    print(price)
+    print(A / price + B)
+    print(A)
+    print(B)
 
     if price > limit_up:
         price = limit_up
-    if price < limit_down:
+        print("limit_up applied " + str(limit_up))
+    elif price < limit_down:
         price = limit_down
+        print("limit_down applied " + str(limit_down))
     return price
