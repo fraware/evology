@@ -351,23 +351,46 @@ def apply_edv(pop, asset_supply, price):
             # Let's first determine how much they want to sell, 
             # # and see if it does not exceed the limit on short positions size.
             # If it exceeds, we make sure that the same fraction of orders is executed for all agents.
-           short = ind.edv_var
+           short = abs(ind.edv_var)
            total_short += short
+           if total_short < 0:
+               raise ValueError('Total short below 0')
+
+    short_limit = asset_supply * LIMIT_SHORT_POS_SIZE
+
+    if short_limit < count_short_assets(pop):
+        raise ValueError('Short position size limit not respected')
     
-    if count_short_assets(pop) == asset_supply * LIMIT_SHORT_POS_SIZE:
-        # We have no room for more short positions.
-        multiplier_short = 0
-    elif count_short_assets(pop) + total_short <= asset_supply * LIMIT_SHORT_POS_SIZE:
-        # Then the orders are all feasible.
-        multiplier_short = 1
-    elif count_short_assets(pop) + total_short > asset_supply * LIMIT_SHORT_POS_SIZE:
-        # Then the orders exceed our capacity and we apply our multiplier.
-        multiplier_short = (asset_supply * LIMIT_SHORT_POS_SIZE - count_short_assets(pop) ) / total_short
-    
-    if multiplier_short > 1:
-        raise ValueError('Multiplier short is above 1')
-    if multiplier_short < 1:
-        raise ValueError('Multiplier short is negative')
+    if total_short != 0:
+        if count_short_assets(pop) >= short_limit:
+            # We have no room for more short positions.
+            multiplier_short = 0
+
+        elif count_short_assets(pop) < short_limit:
+            # We have some room for more short positions.
+            max_short = min(short_limit - count_short_assets(pop), total_short)
+            multiplier_short = max_short / total_short
+
+    # if count_short_assets(pop) + total_short <= short_limit:
+    #     # Then the orders are all feasible.
+    #     multiplier_short = 1
+
+    # if count_short_assets(pop) + total_short > short_limit and count_short_assets(pop) < short_limit:
+    #     if count_short_assets(pop) > short_limit:
+    #         raise ValueError('Count short assets is above short limit')
+    #     # Then the orders exceed our capacity and we apply our multiplier.
+    #     # multiplier_short = (asset_supply * LIMIT_SHORT_POS_SIZE - count_short_assets(pop) ) / total_short
+    #     multiplier_short = min((short_limit - count_short_assets(pop) / total_short),1)
+
+
+        if multiplier_short > 1:
+            raise ValueError('Multiplier short is above 1')
+        if multiplier_short < 0:
+            print(short_limit)
+            print(count_short_assets(pop))
+            print(total_short)
+            print(multiplier_short)
+            raise ValueError('Multiplier short is negative')
     # if multiplier_short = None:
     #     raise ValueError('Multiplier short is not defined')
 
