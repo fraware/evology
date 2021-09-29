@@ -100,24 +100,24 @@ def linear_solver(pop, price):
     limit_down = price * 0.5
     limit_up = price * 2.0
 
-    # ED functions are of the type a/x - b = 0
-    # With a = W * (tanh(c.Phi) + 0.5) and b = S_long - S_short
-    # Hence, we solve A/x - B = 0 with A = sum a and B = sum b in all the population
-
+    # ED function is (W(p) * Lambda / p)*(tanh(c.phi) +0.5) - S_net
+    # We reformulate it to allow for linear solution
+    # Assuming no leverage and that phi(t) is constant wrt p(t). 
+ 
     # Careful, it excludes leverage
     A, B = 0, 0
     for ind in pop:
         if ind.type == "tf":
-            A += ind.wealth * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5)
-            B += ind.asset_long - ind.asset_short
+            A += (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) * (ind.cash - ind.loan)
+            B += ind.asset_short
         if ind.type == "vi":
-            A += ind.wealth * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5)
-            B += ind.asset_long - ind.asset_short
+            A += (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5) * (ind.cash - ind.loan)
+            B += ind.asset_short
         if ind.type == "nt":
-            A += ind.wealth * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5)
-            B += ind.asset_long - ind.asset_short
+            A += (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5) * (ind.cash - ind.loan)
+            B += ind.asset_short
 
-    price = A / B
+    price = - A / B
 
     if price > limit_up:
         price = limit_up
