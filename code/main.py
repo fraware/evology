@@ -61,6 +61,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         extended_price_history.append(price)
         price_history.append(price)
         print("Price is " + str(price))
+        print("Unconstrained optimisation price " + str(absolute_solver(pop)))
 
         calculate_wealth(pop, price) # Recalculate wealth from the new price
         calculate_edv(pop, price, extended_price_history) # Compute EDV from new wealth and new price
@@ -75,7 +76,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = apply_edv(pop, asset_supply, price) # Apply EDV orders
         # print("Buy orders: " + str(num_buy) + " (TF=" + str(num_buy_tf) + " ;VI=" + str(num_buy_vi) + " ;NT=" + str(num_buy_nt) +")") 
         # print("Sell orders: " + str(num_sell) + " (TF=" + str(num_sell_tf) + " ;VI=" + str(num_sell_vi) + " ;NT=" + str(num_sell_nt) +")") 
-
+        print("------After apply_edv-----------")
+        pop_report(pop)
         pop, dividend, random_dividend = wealth_earnings(pop, dividend, price) 
         # Apply invest., IR, Div and compute wealth & profit
         # print("Dividend is " + str(dividend))

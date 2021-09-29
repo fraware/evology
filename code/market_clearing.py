@@ -86,11 +86,13 @@ def leap_solver(pop, price):
     limit_up = price * 2.0
     # limit_up = price * 10.0
     # limit_up = 100_000
+
+    mutation_rate = 100
     
     ''' Run the solver on the squared agg ED function'''
     best_genome = ea_solve_noverbose(squared_agg_ed,
           bounds=[(limit_down, limit_up)], generations = 200, pop_size = 100,
-          mutation_std=0.1, hard_bounds = True)
+          mutation_std=mutation_rate, hard_bounds = True)
     
     ''' Return the clearing price '''
     return best_genome[0]
@@ -138,3 +140,65 @@ def linear_solver(pop, price):
         price = limit_down
         print("limit_down applied " + str(limit_down))
     return price
+
+def absolute_solver(pop):
+    def squared_agg_ed(p): # CAREFUL NO LEVERAGE
+        result = 0
+        for ind in pop:
+            # result += (ind.edf(x)) ** 2
+                if ind.type == "tf":
+                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)
+                if ind.type == "vi":
+                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - (ind.asset_long - ind.asset_short) 
+                if ind.type == "nt":
+                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * ind.process) -  np.log2(p))) + 0.5) - (ind.asset_long - ind.asset_short)
+
+        # result = result ** 2
+        return result
+    
+        ''' Run the solver on the squared agg ED function'''
+    best_genome = ea_solve_noverbose(squared_agg_ed,
+          bounds = [(0, 50000)],
+          generations = 200, pop_size = 100,
+          mutation_std=100, hard_bounds = True)
+    
+    ''' Return the clearing price '''
+    return best_genome[0]
+
+
+
+
+
+
+
+# def f(x):
+#     """A real-valued function to optimized."""
+#     return sum(x)**2
+
+
+# best_genome = ea_solve_noverbose(f,
+#         bounds = [(0, 20000)],
+#         generations = 200, pop_size = 100,
+#         mutation_std=0.1, hard_bounds = True)
+
+# ''' Return the clearing price '''
+# print("STD 0.1")
+# print(best_genome[0])
+
+# best_genome = ea_solve_noverbose(f,
+#         bounds = [(0, 20000)],
+#         generations = 200, pop_size = 100,
+#         mutation_std=1, hard_bounds = True)
+
+# ''' Return the clearing price '''
+# print("STD 1")
+# print(best_genome[0])
+
+# best_genome = ea_solve_noverbose(f,
+#         bounds = [(0, 20000)],
+#         generations = 200, pop_size = 100,
+#         mutation_std=100, hard_bounds = True)
+
+# ''' Return the clearing price '''
+# print("STD 100")
+# print(best_genome[0])

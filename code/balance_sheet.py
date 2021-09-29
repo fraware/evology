@@ -54,9 +54,9 @@ def calculate_ts(pop, extended_price_history):
     for ind in pop:
 
         if ind.type == "tf":
-            if len(extended_price_history) > max(1, ind[0]):
+            if len(extended_price_history) >= max(1, ind[0]):
                 ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]])) 
-            elif len(extended_price_history) <= max(1, ind[0]):
+            elif len(extended_price_history) < max(1, ind[0]):
                 ind.tsv = 0
 
         # elif ind.type == "vi":
