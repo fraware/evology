@@ -117,30 +117,18 @@ def calculate_edv(pop, price, extended_price_history):
                 ind.edv = 0
         
         if ind.type == "vi":
-            # print("--------------------------------")
-            # print(ind.wealth)
-            # print(ind[0])
-            # print(ind.asset)
-            # print(np.log2(ind[0]) - np.log2(price))
-
-            ind.edv = ind.edf(price)
-            # print("former way of edv is")
-            # print(ind.edv)
             def func_vi(p):
                 return (ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)  
             ind.edf = func_vi
             del func_vi
             ind.edv = ind.edf(price)
-            # ind.tsv = np.log2(ind[0]) - np.log2(price)
-            # print("edv agent is " + str(ind.edv))
-            # print("it should be " + str((ind.wealth / price) * (np.tanh(ind.tsv) + 0.5) - ind.asset ))
-            
+
         if ind.type == "nt":
-            
             def func_nt(p):
                 return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)  
             ind.edf = func_nt 
             ind.edv = ind.edf(price)
+
             # ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(price)
     return ind
 
@@ -209,6 +197,7 @@ def apply_edv(pop, asset_supply, price):
         order_ratio = total_buy / total_sell 
     elif total_sell == 0:
         order_ratio = 0
+        print("No exchange today (everyone selling or everyone buying)")
 
     if order_ratio < 0:
         for ind in pop:
@@ -307,7 +296,7 @@ def apply_edv(pop, asset_supply, price):
         # ii) Sell orders
         if ind.edv_var < 0:
             # We determine the effective sell amount, gain cash, lose shares, adjust our rolling demand
-            quantity_sold = (abs(ind.edv_var) * multiplier_sell)
+            quantity_sold = min(abs(ind.edv_var) * multiplier_sell, ind.asset_long)
             if quantity_sold < 0:
                 raise ValueError('Negative quantity sold')
             ind.cash += quantity_sold * price
@@ -315,6 +304,11 @@ def apply_edv(pop, asset_supply, price):
             if quantity_sold != 0 :
                 print(str(ind.type) + " sold " + str(round(quantity_sold, 2)))
             if ind.asset_long < 0:
+                print(ind.asset_long)
+                print(ind.edv)
+                print(ind.edv_var)
+                print(quantity_sold)
+                print(multiplier_sell)
                 raise ValueError('Agent long position became negative at asset allocations under multiplier')
             ind.edv_var += quantity_sold
 

@@ -55,9 +55,6 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         calculate_ts(pop, extended_price_history) # Compute TSV and EDF
         fval_nt_history.append(round(nt_report(pop),0))
 
-        print("Right before market clearing")
-        pop_report(pop)
-        print("---/---/---")
 
         # price = leap_solver(pop, price) # Clear the market
         price = linear_solver(pop, price)
@@ -67,6 +64,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         calculate_wealth(pop, price) # Recalculate wealth from the new price
         calculate_edv(pop, price, extended_price_history) # Compute EDV from new wealth and new price
+        pop_report(pop)
 
         mismatch_history.append(round(calculate_total_edv(pop), 3))
         # print("Mismatch is " + str(int(calculate_total_edv(pop))))
@@ -89,8 +87,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         clear_debt(pop, price)
 
 
-
-        pop_report(pop)
+        
+        # pop_report(pop)
         pop, round_replacements = hypermutate(pop) # Replace insolvent agents
         pop = sampling.adjust_mode(pop, mode)
         # TODO: do we need to set del ind.wealth too? Or is it fully replaced?
