@@ -52,7 +52,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         print("Generation " + str(generation))
 
         calculate_wealth(pop, price) #Compute wealth, update margin
-        calculate_ts_edf(pop, extended_price_history) # Compute TSV and EDF
+        calculate_ts(pop, extended_price_history) # Compute TSV and EDF
         fval_nt_history.append(round(nt_report(pop),0))
 
         print("Right before market clearing")
@@ -65,13 +65,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         price_history.append(price)
         print("Price is " + str(price))
 
-        # price2 = linear_solver(pop, price)
-        # print("Price (linear) is " + str(price2))
-
-        calculate_edv(pop, price, extended_price_history) # Compute EDV
-
-        # for ind in pop:
-        #     print(ind.edf(388))  
+        calculate_wealth(pop, price) # Recalculate wealth from the new price
+        calculate_edv(pop, price, extended_price_history) # Compute EDV from new wealth and new price
 
         mismatch_history.append(round(calculate_total_edv(pop), 3))
         # print("Mismatch is " + str(int(calculate_total_edv(pop))))

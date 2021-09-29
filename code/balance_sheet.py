@@ -50,7 +50,7 @@ def calculate_wealth(pop, price):
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
 
-def calculate_ts_edf(pop, extended_price_history):
+def calculate_ts(pop, extended_price_history):
     # print("extended price history")
     # print(extended_price_history)
     # print(extended_price_history[-1])
@@ -71,27 +71,28 @@ def calculate_ts_edf(pop, extended_price_history):
                 # print(STRATEGY_AGGRESSIVENESS_TF)
                 # print("previous function")
                 # if ind.edf != None:
-                #     print(ind.edf(388))
-                def func(p):
-                    return ((ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
-                ind.edf = func
+                # #     print(ind.edf(388))
+                # def func(p):
+                #     return ((ind.wealth * LAMBDA_TF / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
+                # ind.edf = func
             elif len(extended_price_history) <= max(1, ind[0]):
-                def func(p):
-                    return 0 * p
-                ind.edf = func
+                ind.tsv = 0
+                # def func(p):
+                #     return 0 * p
+                # ind.edf = func
             # print("new")
             # print(ind.edf(388))
         elif ind.type == "vi":
             ind.tsv = (np.log2(ind[0]) - np.log2(extended_price_history[-1]))
-            def func(p):
-                return ((ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
-            ind.edf = func
+            # def func(p):
+            #     return ((ind.wealth * LAMBDA_VI / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_VI * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)) 
+            # ind.edf = func
         elif ind.type == "nt":
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
             ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(extended_price_history[-1])
-            def func(p):
-                return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
-            ind.edf = func     
+            # def func(p):
+            #     return (ind.wealth * LAMBDA_NT / p) * (np.tanh(STRATEGY_AGGRESSIVENESS_NT * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
+            # ind.edf = func     
     
      
     return ind
@@ -104,26 +105,7 @@ def calculate_ts_edf(pop, extended_price_history):
 #     return ind
 
 def calculate_edv(pop, price, extended_price_history):
-    # print("computing edv")
-    # print("--------------------------------")
     for ind in pop:
-        # print("previous edv & price")
-        # print(ind.edv)
-        # print(price)
-        # ind.edv = ind.edf(price)
-        # print("edv 1")
-        # print(ind.edv)
-        # print(ind.edf(1))
-        # How to display edf function in code?
-        # print("edf function")
-        # lines = inspect.getsource(ind.edf)
-        # print(lines)
-        # print("contents")
-        # print(ind.wealth)
-        # print(ind.tsv)
-        # print(ind.asset)
-        # former_func = ind.edf
-        
         if ind.type == "tf":
             if len(extended_price_history) > max(1, ind[0]):
                 def func_tf(p):
