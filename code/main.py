@@ -56,8 +56,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         fval_nt_history.append(round(nt_report(pop),0))
 
 
-        # price = leap_solver(pop, price) # Clear the market
-        price = linear_solver(pop, price)
+        price = leap_solver(pop, price) # Clear the market
+        # price = linear_solver(pop, price)
         extended_price_history.append(price)
         price_history.append(price)
         print("Price is " + str(price))

@@ -66,12 +66,17 @@ def leap_solver(pop, price):
     # def agg_ed_solver(x):
     #     return cum_sum / sum(x) - cum_own
     
-    def squared_agg_ed(p):
+    def squared_agg_ed(p): # CAREFUL NO LEVERAGE
         result = 0
         for ind in pop:
             # result += (ind.edf(x)) ** 2
-                if ind.type = "tf":
-                    result += ((W) / p) * (np.tanh(SCALE_TF * )) 
+                if ind.type == "tf":
+                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)
+                if ind.type == "vi":
+                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_VI * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short) 
+                if ind.type == "nt":
+                    result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_NT * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)
+
         # result = result ** 2
         return result
     
