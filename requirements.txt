@@ -16,6 +16,7 @@ debugpy==1.4.3
 decorator==4.4.2
 distributed==2021.7.2
 entrypoints==0.3
+eslpy==0.0.134
 fsspec==2021.7.0
 HeapDict==1.0.1
 idna==3.2
