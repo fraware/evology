@@ -16,15 +16,8 @@ them into a coherent dataframe for later statistical and graphical analysis'''
 - Replacements 
 
 '''
-
-#  One large dataframe with all, or separate? TBD
-# We can also adjust the variables order in the columns
-
 import pandas as pd
 import numpy as np
-
-
-
 
 def generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_history, 
                 num_tf_history, num_vi_history, num_nt_history, mean_tf_history, mean_vi_history, mean_nt_history, 

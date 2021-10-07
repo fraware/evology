@@ -2,11 +2,7 @@ from parameters import *
 import matplotlib
 import matplotlib.pyplot as plt
 
-
-
 def draw_dividend(dividend):
-    
-    # global dividend
     global random_dividend
 
     DIVIDEND_GROWTH_RATE = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1

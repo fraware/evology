@@ -5,7 +5,7 @@ from deap import algorithms
 from operator import attrgetter
 from sampling import *
 
-def hypermutate(pop):
+def hypermutate(pop, mode):
     round_replacements = 0
     pop_temp = list(map(toolbox.clone, pop))
     for i in range(0, len(pop_temp)):
@@ -31,6 +31,8 @@ def hypermutate(pop):
             # global round_replacements
             round_replacements += 1
     pop[:] = pop_temp
+    if mode == "between":
+        pop = adjust_mode(pop, mode)
     return pop, round_replacements
 
 def compute_fitness(pop):

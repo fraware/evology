@@ -19,10 +19,10 @@ def clear_debt(pop, price):
                 # print("Debt clear unsuccesful for " + str(ind.type))
     return ind
 
-def update_margin(pop, price):
+def update_margin(pop, current_price):
     for ind in pop:
         # Update margins
-        margin_objective = ind.asset_short * price # Margin amount to cover short position at current price.
+        margin_objective = ind.asset_short * current_price # Margin amount to cover short position at current price.
         if margin_objective > ind.margin: # If our current margin is not enough:
             if ind.cash >= margin_objective - ind.margin: # If we have the cash to adjust:
                 # We spend cash to refuel the margin.
@@ -453,30 +453,17 @@ def apply_edv(pop, asset_supply, price):
     #         ind.margin = 0
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
-# def update_margin(pop, price):
-#     for ind in pop:
-#         if ind.asset < 0:
-#             ind.cash += ind.margin
-#             ind.margin = abs(ind.asset) * price
-#             ind.cash -= ind.margin
-#             if ind.cash < 0:
-#                 # The agent is insolvent and will try to buy back as much as possible
-#                 # ind.edv = abs(ind.asset)
-#                 ind.cash += ind.margin
-#                 ind.margin = 0
-#                 ind.loan += float('inf')
-#     return ind
-
-def wealth_earnings(pop, dividend, price):
-    dividend, random_dividend = draw_dividend(dividend)
+def wealth_earnings_profit(pop, prev_dividend, current_price):
+    dividend, random_dividend = draw_dividend(prev_dividend)
     for ind in pop:
         former_wealth = ind.wealth
         div_asset = ind.asset_long * dividend # Determine gain from dividends
         interest_cash = ind.cash * INTEREST_RATE # Determine gain from interest
         ind.cash += REINVESTMENT_RATE * (div_asset + interest_cash) # Apply reinvestment
-        ind.wealth = ind.cash + ind.asset_long * price - ind.loan # Compute new wealth
+        ind.wealth = ind.cash + ind.asset_long * current_price - ind.loan # Compute new wealth
         ind.profit = ind.wealth - former_wealth  # Compute profit as difference of wealth
     return pop, dividend, random_dividend
+
 
 def pop_report(pop):
     for ind in pop:

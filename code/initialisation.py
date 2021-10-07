@@ -1,7 +1,7 @@
 # from parameters import 
 
 # price = INITIAL_PRICE
-extended_price_history = []
+# extended_price_history = []
 # extended_price_history.append(price)
 # dividend = INITIAL_DIVIDEND
 dividend_history, random_dividend_history, generation_history = [], [], []
