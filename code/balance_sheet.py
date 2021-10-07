@@ -41,12 +41,12 @@ def update_margin(pop, price):
             ind.margin -= ind.margin - margin_objective
     return ind
 
-def calculate_wealth(pop, price):
+def calculate_wealth(pop, current_price):
     for ind in pop:
 
 
         # Update wealth
-        ind.wealth = ind.cash + ind.asset_long * price - ind.loan
+        ind.wealth = ind.cash + ind.asset_long * current_price - ind.loan
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
 
@@ -500,5 +500,8 @@ def nt_report(pop):
         if ind.type == "nt":
             fval += ind.process * ind[0]
             num += 1
-    fval_round = fval/num
+    if num != 0:
+        fval_round = fval/num
+    if num == 0:
+        fval_round = 0
     return fval_round

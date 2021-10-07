@@ -55,7 +55,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         calculate_ts(pop, extended_price_history) # Compute TSV and EDF
         fval_nt_history.append(round(nt_report(pop),0))
 
-        print(esl_solver(price, pop))
+        # print(esl_solver(price, pop)) # Removed for now because not working
         price = leap_solver(pop, price) # Clear the market
         # price = linear_solver(pop, price)
         extended_price_history.append(price)
