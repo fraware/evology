@@ -7,7 +7,7 @@ RANDOM_SEED = random.random()
 # def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 
 """ Replication Maarten's results """
-df = main("between", 3, 0, 3, 0, 0)
+df = main("between", 20, 0, 3, 0, 0)
 print(df)
 df.to_csv("data/test_data.csv")
 

@@ -12,11 +12,11 @@ def clear_debt(pop, price):
             if ind.cash >= ind.loan + 100 * price: # If the agent has enough cash:
                 ind.loan = 0
                 ind.cash -= ind.loan
-                print("Debt clear succesful for " + str(ind.type))
+                # print("Debt clear succesful for " + str(ind.type))
             if ind.cash < ind.loan + 100 * price : # If the agent does not have enough cash:
                 ind.loan -= ind.cash - 100 * price
                 ind.cash = 100 * price
-                print("Debt clear unsuccesful for " + str(ind.type))
+                # print("Debt clear unsuccesful for " + str(ind.type))
     return ind
 
 def update_margin(pop, price):
@@ -34,7 +34,7 @@ def update_margin(pop, price):
                 ind.margin += ind.cash
                 ind.cash = 0
                 ind.loan += margin_objective - ind.margin - ind.cash
-                print("Margin update unsuccesful for " + str(ind.type))
+                # print("Margin update unsuccesful for " + str(ind.type))
         if margin_objective < ind.margin: # If our current margin is too high:
             # We get some of the margin back in the form of cash.
             ind.cash += ind.margin - margin_objective
@@ -43,8 +43,6 @@ def update_margin(pop, price):
 
 def calculate_wealth(pop, current_price):
     for ind in pop:
-
-
         # Update wealth
         ind.wealth = ind.cash + ind.asset_long * current_price - ind.loan
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
@@ -169,7 +167,7 @@ def apply_edv(pop, asset_supply, price):
         order_ratio = total_buy / total_sell 
     elif total_sell == 0:
         order_ratio = 0
-        print("No exchange today (everyone selling or everyone buying)")
+        # print("No exchange today (everyone selling or everyone buying)")
 
     if order_ratio < 0:
         for ind in pop:
@@ -261,8 +259,8 @@ def apply_edv(pop, asset_supply, price):
                 print(quantity_bought * price - ind.cash)
                 raise ValueError(str(ind.type) + ' Cash became negative at asset allocations under multiplier for agent with edv/edv_var/miltip ' + str(ind.edv) + " " + str(ind.edv_var) + " " + str(multiplier_buy))
             ind.asset_long += quantity_bought
-            if quantity_bought != 0:
-                print(str(ind.type) + " bought " + str(round(quantity_bought,2)))
+            # if quantity_bought != 0:
+            #     print(str(ind.type) + " bought " + str(round(quantity_bought,2)))
             ind.edv_var -= quantity_bought
         
         # ii) Sell orders
@@ -273,8 +271,8 @@ def apply_edv(pop, asset_supply, price):
                 raise ValueError('Negative quantity sold')
             ind.cash += quantity_sold * price
             ind.asset_long -= quantity_sold
-            if quantity_sold != 0 :
-                print(str(ind.type) + " sold " + str(round(quantity_sold, 2)))
+            # if quantity_sold != 0 :
+            #     print(str(ind.type) + " sold " + str(round(quantity_sold, 2)))
             if ind.asset_long < 0:
                 print(ind.asset_long)
                 print(ind.edv)
@@ -297,7 +295,7 @@ def apply_edv(pop, asset_supply, price):
                 buy_back = min(min(ind.edv_var, ind.asset_short), (ind.cash + ind.margin) / price) # Decide how much
                 # print(buy_back)
                 ind.asset_short -= buy_back # Apply the closing of the short position
-                print(str(ind.type) + " closed " + str(round(buy_back,2)) + " shorts")
+                # print(str(ind.type) + " closed " + str(round(buy_back,2)) + " shorts")
                 # print(ind.asset_short)
                 ind.edv_var -= buy_back # Adjust our excess demand after closing short positions
                 # Apply the cost of closing the position
@@ -374,9 +372,9 @@ def apply_edv(pop, asset_supply, price):
                 ind.asset_short += quantity_short_sold
                 ind.edv_var -= quantity_short_sold
                 ind.margin += quantity_short_sold * price
-                print(str(ind.type) + " short selled " + str(round(quantity_short_sold, 2)) + " shares")
-            elif ind.loan > 0:
-                print(str(ind.type) + " prevented from short selling because of loan")
+            #     print(str(ind.type) + " short selled " + str(round(quantity_short_sold, 2)) + " shares")
+            # elif ind.loan > 0:
+            #     print(str(ind.type) + " prevented from short selling because of loan")
 
     if count_long_assets(pop) > asset_supply + 1:
         raise ValueError('Asset supply exceeded with value ' + str(count_long_assets(pop)))

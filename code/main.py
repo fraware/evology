@@ -10,6 +10,7 @@ import data
 import random
 from market import *
 from initialisation import *
+from tqdm import tqdm
 
 random.seed(random.random())
 
@@ -21,11 +22,11 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     pop = sampling.create_pop(mode, POPULATION_SIZE)
 
 
-    calculate_wealth(pop, price)
+    # calculate_wealth(pop, price)
 
-    while generation < MAX_GENERATIONS:
-        print("----------------------------------------------------------------------")
-        print("Generation " + str(generation))
+    # while generation < MAX_GENERATIONS:
+    for generation in tqdm(range(MAX_GENERATIONS)):
+        # print("Generation " + str(generation))
 
         calculate_wealth(pop, price) #Compute wealth, update margin
         calculate_ts(pop, extended_price_history) # Compute TSV and EDF
@@ -36,12 +37,12 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         # price = linear_solver(pop, price)
         extended_price_history.append(price)
         price_history.append(price)
-        print("Price is " + str(price))
-        print("Unconstrained optimisation price " + str(absolute_solver(pop)))
+        # print("Price is " + str(price))
+        # print("Unconstrained optimisation price " + str(absolute_solver(pop)))
 
         calculate_wealth(pop, price) # Recalculate wealth from the new price
         calculate_edv(pop, price, extended_price_history) # Compute EDV from new wealth and new price
-        pop_report(pop)
+        # pop_report(pop)
 
         mismatch_history.append(round(calculate_total_edv(pop), 3))
         # print("Mismatch is " + str(int(calculate_total_edv(pop))))
@@ -52,8 +53,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = apply_edv(pop, asset_supply, price) # Apply EDV orders
         # print("Buy orders: " + str(num_buy) + " (TF=" + str(num_buy_tf) + " ;VI=" + str(num_buy_vi) + " ;NT=" + str(num_buy_nt) +")") 
         # print("Sell orders: " + str(num_sell) + " (TF=" + str(num_sell_tf) + " ;VI=" + str(num_sell_vi) + " ;NT=" + str(num_sell_nt) +")") 
-        print("------After apply_edv-----------")
-        pop_report(pop)
+        # print("------After apply_edv-----------")
+        # pop_report(pop)
         pop, dividend, random_dividend = wealth_earnings(pop, dividend, price) 
         # Apply invest., IR, Div and compute wealth & profit
         # print("Dividend is " + str(dividend))
@@ -70,7 +71,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         pop, round_replacements = hypermutate(pop) # Replace insolvent agents
         pop = sampling.adjust_mode(pop, mode)
         # TODO: do we need to set del ind.wealth too? Or is it fully replaced?
-        print(str(round_replacements) + " replacement(s) done")
+        # print(str(round_replacements) + " replacement(s) done")
 
         """ 8) Evolution block
             a. Fitness computation """
@@ -110,8 +111,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         wealth_nt = 0
         wealth_nt_sum = 0
 
-        for ind in pop:
-            print(ind.type)
+        # for ind in pop:
+        #     print(ind.type)
 
         for ind in pop:
             if ind.type == "tf":

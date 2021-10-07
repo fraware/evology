@@ -53,8 +53,6 @@ def gen_rd_ind(PROBA_TF, PROBA_VI, PROBA_NT):
             return toolbox.gen_vi_ind()
         elif rd > PROBA_TF + PROBA_VI and rd <= PROBA_TF + PROBA_VI + PROBA_NT:
             return toolbox.gen_nt_ind()
-    
-# toolbox.register("rd", rd_strategy, PROBA_TF, PROBA_VI)
 
 toolbox.register("gen_rd_ind", gen_rd_ind, PROBA_TF, PROBA_VI, PROBA_NT)
 toolbox.register("gen_rd_pop", tools.initRepeat, list, toolbox.gen_rd_ind)
@@ -67,11 +65,6 @@ def gen_ref_pop():
     pop.append(toolbox.gen_nt_ind())
     return pop
 toolbox.register("gen_ref_pop", gen_ref_pop) 
-# pop = toolbox.gen_ref_pop()
-# print(pop)
-# for ind in pop:
-#     print(ind[0])
-#     print(ind.type)
 
 def adjust_mode(pop, mode):
     if mode == "between":
