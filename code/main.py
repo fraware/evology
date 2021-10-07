@@ -10,7 +10,6 @@ import data
 import random
 from market import *
 from tqdm import tqdm
-from results import *
 
 random.seed(random.random())
 
@@ -24,7 +23,6 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     pop = sampling.create_pop(mode, POPULATION_SIZE)
 
     for generation in tqdm(range(MAX_GENERATIONS)):
-
         bs.determine_edf(pop, price_history)
 
         """ TODO: Price clearing will be ESL """
@@ -42,6 +40,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         pop, dividend, random_dividend = bs.wealth_earnings_profit(pop, dividend, current_price) #Earning, wealth, profit comput.
         bs.update_margin(pop, current_price)
         bs.clear_debt(pop, current_price)
+        bs.calculate_wealth(pop, current_price) 
 
         pop, replacements = hypermutate(pop, mode) # Replace insolvent agents
         compute_fitness(pop)
@@ -54,31 +53,6 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         data.update_results(df, generation, current_price, mismatch, pop, dividend, 
             random_dividend, replacements)
-
-        generation += 1
-    
-    
-    
-
-    
-    # df = data.generate_df(MAX_TIME_HORIZON, generation_history, price_history, mismatch_history, 
-    #                           num_tf_history, num_vi_history, num_nt_history, mean_tf_history, mean_vi_history, mean_nt_history, 
-    #                           mean_wealth_history,  wealth_tf_history, wealth_vi_history, wealth_nt_history,
-    #                           wealth_share_tf_history, wealth_share_vi_history, wealth_share_nt_history,
-    #                           meanFitnessValues, fval_nt_history,
-    #                           dividend_history, random_dividend_history, 
-    #                           positive_positions, negative_positions, replacements)
-
-    # print("checking wealth and type")
-    # print(pop)
-    # for ind in pop:
-    #     print("----")
-    #     print(ind.type)
-    #     print(ind.wealth)
-    #     print(ind.cash)
-    #     print(ind.asset)
-
-
     return df
 
 
