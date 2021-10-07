@@ -3,9 +3,8 @@ from sampling import *
 import sampling
 import pandas
 import balance_sheet as bs
-from brownian_motion import *
 from market_clearing import *
-from ga import *
+import ga as ga
 import data
 import random
 from market import *
@@ -37,22 +36,22 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         """ TODO: we probably don't need all those output variables """
         pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = bs.apply_edv(pop, asset_supply, current_price) # Apply EDV orders
 
-        pop, dividend, random_dividend = bs.wealth_earnings_profit(pop, dividend, current_price) #Earning, wealth, profit comput.
+        pop, dividend, random_dividend = bs.wealth_earnings_profit(pop, dividend, current_price) 
         bs.update_margin(pop, current_price)
         bs.clear_debt(pop, current_price)
         bs.calculate_wealth(pop, current_price) 
 
-        pop, replacements = hypermutate(pop, mode) # Replace insolvent agents
-        compute_fitness(pop)
-        pop = strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
+        pop, replacements = ga.hypermutate(pop, mode) # Replace insolvent agents
+        ga.compute_fitness(pop)
+        pop = ga.strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
+
+        data.update_results(df, generation, current_price, mismatch, pop, dividend, 
+            random_dividend, replacements)
 
         # Save and stop in case of insolvency
         if mode == "between" and replacements > 0:
             print("Simulation interrupted for insolvency.")
             break
-
-        data.update_results(df, generation, current_price, mismatch, pop, dividend, 
-            random_dividend, replacements)
     return df
 
 
