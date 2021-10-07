@@ -72,7 +72,7 @@ def calculate_ts(pop, extended_price_history):
 #         ind.edf = func
 #     return ind
 
-def calculate_edf(pop, price_history):
+def determine_edf(pop, price_history):
     for ind in pop:
         if ind.type == "tf":
             # If a TF, we can find the TSV and then compute the EDF.
@@ -93,7 +93,8 @@ def calculate_edf(pop, price_history):
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
             def func(p):
                 return (LAMBDA_NT * (ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(p)) + 0.5) - (ind.asset_long - ind.asset_short)
-    return pop
+            ind.edf = func
+    return ind
 
 def calculate_edv(pop, price, extended_price_history):
     for ind in pop:

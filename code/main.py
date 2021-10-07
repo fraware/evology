@@ -2,7 +2,7 @@ from parameters import *
 from sampling import *
 import sampling
 import pandas
-from balance_sheet import *
+import balance_sheet as bs
 from brownian_motion import *
 from market_clearing import *
 from ga import *
@@ -23,12 +23,9 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
     for generation in tqdm(range(MAX_GENERATIONS)):
 
-        # calculate_wealth(pop, price) #Compute wealth, update margin
-        # calculate_ts(pop, extended_price_history) # Compute TSV and EDF
-        # Problem: sometimes we can't compute TS now without the price.
-
-        calculate_edf(pop, price_history)
-        
+        bs.determine_edf(pop, price_history)
+        for ind in pop:
+            print(ind.edf)
 
         # print(esl_solver(price, pop)) # Removed for now because not working
         price = leap_solver(pop, price) # Clear the market
@@ -205,8 +202,5 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
 
     return df
-# df = main(10, 0, 10, 0, 0)
-# print(df)
-# df.to_csv("new/data/run_data_no_learning.csv")
 
-main("between", 1, 0, 3, 0, 0)
+
