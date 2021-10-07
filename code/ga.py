@@ -9,26 +9,12 @@ def hypermutate(pop, mode):
     round_replacements = 0
     pop_temp = list(map(toolbox.clone, pop))
     for i in range(0, len(pop_temp)):
-        # if pop_temp[i][1] + pop_temp[i][9] <= 0:
         if pop_temp[i].wealth <= 0:
             print("Info on replacement")
             print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset_long)) + ", S-: " + str(int(pop_temp[i].asset_short)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
-            # print("replacement of")
-            # print(pop_temp[i][0])
-            # print(pop_temp[i].type)
-            # print(pop_temp[i].wealth)
-            # print(pop_temp[i].cash)
-            # print(pop_temp[i].asset)
             pop_temp[i] = toolbox.gen_rd_ind()
             del pop_temp[i].fitness.values
             pop_temp[i].asset = 0
-            # print("replaced by")
-            # print(pop_temp[i][0])
-            # print(pop_temp[i].type)
-            # print(pop_temp[i].wealth)
-            # print(pop_temp[i].cash)
-            # print(pop_temp[i].asset)
-            # global round_replacements
             round_replacements += 1
     pop[:] = pop_temp
     if mode == "between":
@@ -44,19 +30,12 @@ def compute_fitness(pop):
 
 # Creating our own crossover operator:
 def feasible_crossover(ind1,ind2,CROSSOVER_RATE):
-    # print("--------------")
-    # print(ind1, ind2)
-    # print(ind1.type, ind2.type)
     if ind1.type == ind2.type:
         if random.random() < CROSSOVER_RATE:
             upperb = max(ind1,ind2)[0]
             lowerb = min (ind1,ind2)[0]
             ind1[0] = random.randint(lowerb,upperb)
             ind2[0] = random.randint(lowerb,upperb)
-    #     print("Crossover operated")
-    #     print(ind1, ind2)
-    # else:
-    #     # print("Crossover failed - Unequal type")
     return ind1[0], ind2[0]
 
 toolbox.register("feasible_crossover", feasible_crossover)
@@ -137,19 +116,11 @@ def strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MU
     # Crossover
     for child1, child2 in zip(offspring[::2], offspring[1::2]):
         toolbox.mate(child1,child2,CROSSOVER_RATE)
-        # del child1.fitness.values
-        # del child2.fitness.values
 
     # Mutation
     for mutant in offspring:
         toolbox.mutate(mutant, MUTATION_RATE)
-        # del mutant.fitness.values
 
-    # Recomputing fitness
-    # fitness_for_invalid(offspring)
-
-    # Replacing
     pop[:] = offspring
-    # fitnessValues = [ind.fitness.values[0] for ind in pop]
 
     return pop

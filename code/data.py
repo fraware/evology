@@ -2,12 +2,6 @@ import pandas as pd
 import numpy as np
 import balance_sheet as bs
 
-# columns = [
-#     "Gen", "Price", "Mismatch", "Val_NT", "Num_TF", "Num_VI", "Num_NT",
-#     "Mean_TF", "Mean_VI", "Mean_NT", "Div", "RDiv", "WShare_TF", "WShare_VI",
-#     "WShare_NT", "Pos+", "Pos-", "Rep"
-# ]
-
 def create_df():
     df = pd.DataFrame(columns = [
     "Gen", "Price", "Mismatch", "Val_NT", "Num_TF", "Num_VI", "Num_NT",

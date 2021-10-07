@@ -74,9 +74,3 @@ dividend = INITIAL_DIVIDEND
 dividend_history = []
 random_dividend_history = []
 
-# def compute_fval(iteration):
-#     fval = 0
-#     i = 0
-#     for i in range(iteration):
-#         fval += (100 * (1.01) ** i) / ((1.02) ** i)
-#     return fval

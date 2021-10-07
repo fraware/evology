@@ -48,30 +48,6 @@ def calculate_wealth(pop, current_price):
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
 
-# def calculate_ts(pop, extended_price_history):
-#     for ind in pop:
-
-#         if ind.type == "tf":
-#             if len(extended_price_history) >= max(1, ind[0]):
-#                 ind.tsv = (np.log2(extended_price_history[-1]) - np.log2(extended_price_history[-ind[0]])) 
-#             elif len(extended_price_history) < max(1, ind[0]):
-#                 ind.tsv = 0
-
-#         # elif ind.type == "vi":
-#             # ind.tsv = (np.log2(ind[0]) - np.log2(extended_price_history[-1]))
-
-#         elif ind.type == "nt":
-#             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
-#             # ind.tsv = np.log2(ind[0] * ind.process) -  np.log2(extended_price_history[-1])   
-#     return ind
-
-# def calculate_edf(pop):
-#     for ind in pop:
-#         def func(x):
-#             return (ind.wealth * LAMBDA_TF / x) * (np.tanh(SCALE_TF * ind.tsv) + 0.5) - ind.asset
-#         ind.edf = func
-#     return ind
-
 def determine_edf(pop, price_history):
     for ind in pop:
         if ind.type == "tf":
@@ -129,8 +105,6 @@ def apply_edv(pop, asset_supply, price):
     # Initialise variable edv
     for ind in pop:
         ind.edv_var = ind.edv
-
-
 
     # STEP 1 
     # BUY / SELL long positions (constrained by cash and selling volume)
@@ -215,16 +189,6 @@ def apply_edv(pop, asset_supply, price):
 
     # E - Implement asset allocation under multipliers
 
-    # # First verify that quantities will match after using math.floor
-    # quantities_bought = 0
-    # quantities_sold = 0
-    # for ind in pop:
-    #     if ind.edv_var > 0:
-    #         quantities_bought += math.floor(min(ind.edv_var, ind.cash / price) * multiplier_buy)
-    #     if ind.edv_var < 0:
-    #         quantities_sold += math.floor(abs(ind.edv_var) * multiplier_sell)
-    # if quantities_bought != quantities_sold:
-
     for ind in pop:
         # Exclude infinitesimal orders
         if ind.edv_var > 0 and ind.edv_var < 1:
@@ -237,12 +201,7 @@ def apply_edv(pop, asset_supply, price):
         if ind.edv_var > 0:
             # We determine effective bought amount, lose cash, gain shares, adjust demand
             quantity_bought = min(ind.edv_var, ind.cash / price) * multiplier_buy
-            # print(ind.edv)
-            # print(multiplier_buy)
-            # print(quantity_bought)
-            # print(ind.cash)
             ind.cash -= quantity_bought * price
-            # print(ind.cash)
 
             if ind.cash < 0 and ind.cash > -0.01:
                 ind.cash = 0
@@ -290,12 +249,8 @@ def apply_edv(pop, asset_supply, price):
     for ind in pop:
         if ind.edv_var > 0: # If we want to buy:
             if ind.asset_short > 0: # if we have short positions to clear:
-                # print(ind.asset_short)
                 buy_back = min(min(ind.edv_var, ind.asset_short), (ind.cash + ind.margin) / price) # Decide how much
-                # print(buy_back)
                 ind.asset_short -= buy_back # Apply the closing of the short position
-                # print(str(ind.type) + " closed " + str(round(buy_back,2)) + " shorts")
-                # print(ind.asset_short)
                 ind.edv_var -= buy_back # Adjust our excess demand after closing short positions
                 # Apply the cost of closing the position
                 if buy_back * price <= ind.margin: # if we have enough in the margin
@@ -340,18 +295,6 @@ def apply_edv(pop, asset_supply, price):
             max_short = min(short_limit - count_short_assets(pop), total_short)
             multiplier_short = max_short / total_short
 
-    # if count_short_assets(pop) + total_short <= short_limit:
-    #     # Then the orders are all feasible.
-    #     multiplier_short = 1
-
-    # if count_short_assets(pop) + total_short > short_limit and count_short_assets(pop) < short_limit:
-    #     if count_short_assets(pop) > short_limit:
-    #         raise ValueError('Count short assets is above short limit')
-    #     # Then the orders exceed our capacity and we apply our multiplier.
-    #     # multiplier_short = (asset_supply * LIMIT_SHORT_POS_SIZE - count_short_assets(pop) ) / total_short
-    #     multiplier_short = min((short_limit - count_short_assets(pop) / total_short),1)
-
-
         if multiplier_short > 1:
             raise ValueError('Multiplier short is above 1')
         if multiplier_short < 0:
@@ -360,8 +303,6 @@ def apply_edv(pop, asset_supply, price):
             print(total_short)
             print(multiplier_short)
             raise ValueError('Multiplier short is negative')
-    # if multiplier_short = None:
-    #     raise ValueError('Multiplier short is not defined')
 
     # Now we execute the short selling orders 
     for ind in pop:
@@ -377,80 +318,7 @@ def apply_edv(pop, asset_supply, price):
 
     if count_long_assets(pop) > asset_supply + 1:
         raise ValueError('Asset supply exceeded with value ' + str(count_long_assets(pop)))
-
-    # TBD
-
-    # """ everything below this line is not meant to be in the final code"""
-
-    # # determine the amount of effective exchanges. This is captured by the buy/sell _factors
-    # if bank_plus > bank_minus: # We have more buy orders than sell orders
-    #     # Priority 1: exchange long positions
-    #     # We will exchange bank_minus shares: everyone who wants to sell can sell, not everyone who wants can buy
-    #     buy_factor = bank_minus / bank_plus
-    #     sell_factor = 1
-    # if bank_plus == bank_minus: # We live in a wonderful world
-    #     buy_factor = 1
-    #     sell_factor = 1
-    # if bank_plus < bank_minus: # We have more sell orders than buy orders.
-    #     # Exchange bank_plus shares, everyone who wants so can buy, not everyone who wants to sell can sell
-    #     buy_factor = 1
-    #     sell_factor = bank_plus / bank_minus
-
-    # # Execute buying as it is the most constrained (cash) activity
-    # assets_bought = 0
-    # while assets_bought < bank_plus * buy_factor: # While we have not executed all feasible buy orders:
-    #     for ind in pop:
-    #         if ind.edv > 1
-
-    # print(str(assets_bought) + " shares bought today.")
-
-    # for ind in pop:
-    #     if ind.edv > 0:  # the agent wants to buy
-    #         i = 0
-    #         while i < ind.edv:
-    #             if count_positive_assets(pop) < asset_supply: # there are assets to buy
-    #                 if ind.cash >= price: # the agent can afford to buy
-    #                     ind.asset += 1
-    #                     num_buy += 1
-    #                     if ind.type == "tf":
-    #                         num_buy_tf += 1
-    #                     if ind.type == "vi":
-    #                         num_buy_vi += 1
-    #                     if ind.type == "nt":
-    #                         num_buy_nt += 1
-    #                     ind.cash -= price
-    #             i += 1
-    #     if ind.edv < 0:  # the agent wants to sell
-    #         i = 0
-    #         while i < abs(ind.edv):
-    #             if ind.asset >= 1: # the agent can sell from inventory
-    #                 ind.asset -= 1
-    #                 num_sell += 1
-    #                 if ind.type == "tf":
-    #                     num_sell_tf += 1
-    #                 if ind.type == "vi":
-    #                     num_sell_vi += 1
-    #                 if ind.type == "nt":
-    #                     num_sell_nt += 1
-    #                 ind.cash += price
-    #             else: # the agent wants to short sell instead
-    #                 if count_positive_assets(pop) > 0: # there are assets to borrow
-    #                     if count_negative_assets(pop) < 10 * asset_supply: # we don't reach the cap on short position size
-    #                         ind.asset -= 1
-    #                         num_sell += 1
-    #                         if ind.type == "tf":
-    #                             num_sell_tf += 1
-    #                         if ind.type == "vi":
-    #                             num_sell_vi += 1
-    #                         if ind.type == "nt":
-    #                             num_sell_nt += 1
-    #                         ind.margin += price
-    #             i += 1
-
-    #     # Clear margin if out of short position
-    #     if ind.asset > 0:
-    #         ind.cash += ind.margin
-    #         ind.margin = 0
+        
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
 def wealth_earnings_profit(pop, prev_dividend, current_price):
