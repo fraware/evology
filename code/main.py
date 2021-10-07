@@ -30,7 +30,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         price_history.append(price)        
 
         bs.calculate_edv(pop, current_price)
-        bs.calculate_wealth(pop, current_price) # Recalculate wealth from the new price
+        bs.calculate_wealth(pop, current_price) 
 
 
         mismatch_history.append(round(calculate_total_edv(pop), 3))
