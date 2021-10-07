@@ -15,21 +15,11 @@ random.seed(random.random())
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
     # Initialise important variables
-    generation, price, dividend = 0, INITIAL_PRICE, INITIAL_DIVIDEND
+    generation, price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
 
-    if POPULATION_SIZE != 3: 
-        pop = sampling.toolbox.gen_rd_pop(n=POPULATION_SIZE) # Initialise market, population
-    elif POPULATION_SIZE == 3:
-        pop = sampling.toolbox.gen_ref_pop() # Initialise market, population from Scholl et al. 2020
+    # Create the population
+    pop = sampling.create_pop(mode, POPULATION_SIZE)
 
-    pop = sampling.adjust_mode(pop, mode)
-
-    # print(pop)
-
-    for ind in pop:
-        print(ind.type)
-
-    asset_supply = count_long_assets(pop)
 
     calculate_wealth(pop, price)
 

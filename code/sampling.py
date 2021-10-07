@@ -67,11 +67,11 @@ def gen_ref_pop():
     pop.append(toolbox.gen_nt_ind())
     return pop
 toolbox.register("gen_ref_pop", gen_ref_pop) 
-pop = toolbox.gen_ref_pop()
-print(pop)
-for ind in pop:
-    print(ind[0])
-    print(ind.type)
+# pop = toolbox.gen_ref_pop()
+# print(pop)
+# for ind in pop:
+#     print(ind[0])
+#     print(ind.type)
 
 def adjust_mode(pop, mode):
     if mode == "between":
@@ -82,4 +82,28 @@ def adjust_mode(pop, mode):
                 ind[0] = fval
             if ind.type == "nt":
                 ind[0] = fval
+    return pop
+
+def create_pop(mode, POPULATION_SIZE):
+    if POPULATION_SIZE == 3 and mode == "between":
+        # Create a Scholl et al. like population
+        pop = adjust_mode(toolbox.gen_ref_pop(), mode)
+        count_tf, count_vi, count_nt = 0, 0, 0
+        for ind in pop:
+            if ind.type == "tf":
+                count_tf += 1
+            if ind.type == "vi":
+                count_vi += 1
+            if ind.type == "nt":
+                count_nt += 1
+        if count_tf == 1 and count_nt == 1 and count_vi == 1:
+            pass
+        else:
+            raise ValueError('Population of 3 from Scholl et al. is not balanced.')
+    if POPULATION_SIZE != 3 and mode == "between":
+        # Create a random population with unique strategy per type
+        pop = adjust_mode(toolbox.gen_rd_pop(n=POPULATION_SIZE), mode)
+    if POPULATION_SIZE != 3 and mode != "between":
+        # Create a random population with diversity within each type
+        pop = toolbox.gen_rd_pop(n=POPULATION_SIZE)
     return pop
