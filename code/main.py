@@ -16,7 +16,7 @@ random.seed(random.random())
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
     # Initialise important variables
-    generation, price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
+    generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
 
     # Create the population
     pop = sampling.create_pop(mode, POPULATION_SIZE)
@@ -24,20 +24,14 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     for generation in tqdm(range(MAX_GENERATIONS)):
 
         bs.determine_edf(pop, price_history)
-        for ind in pop:
-            print(ind.edf)
 
-        # print(esl_solver(price, pop)) # Removed for now because not working
-        price = leap_solver(pop, price) # Clear the market
-        # price = linear_solver(pop, price)
-        
-        price_history.append(price)
-        # print("Price is " + str(price))
-        # print("Unconstrained optimisation price " + str(absolute_solver(pop)))
+        """ Price clearing will be ESL """
+        current_price = leap_solver(pop, current_price) # Clear the market
+        price_history.append(price)        
 
-        calculate_wealth(pop, price) # Recalculate wealth from the new price
-        calculate_edv(pop, price, price_history) # Compute EDV from new wealth and new price
-        # pop_report(pop)
+        bs.calculate_edv(pop, current_price)
+        bs.calculate_wealth(pop, current_price) # Recalculate wealth from the new price
+
 
         mismatch_history.append(round(calculate_total_edv(pop), 3))
         # print("Mismatch is " + str(int(calculate_total_edv(pop))))
