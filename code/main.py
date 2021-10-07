@@ -21,27 +21,25 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     # Create the population
     pop = sampling.create_pop(mode, POPULATION_SIZE)
 
-
-    # calculate_wealth(pop, price)
-
-    # while generation < MAX_GENERATIONS:
     for generation in tqdm(range(MAX_GENERATIONS)):
-        # print("Generation " + str(generation))
 
-        calculate_wealth(pop, price) #Compute wealth, update margin
-        calculate_ts(pop, extended_price_history) # Compute TSV and EDF
-        fval_nt_history.append(round(nt_report(pop),0))
+        # calculate_wealth(pop, price) #Compute wealth, update margin
+        # calculate_ts(pop, extended_price_history) # Compute TSV and EDF
+        # Problem: sometimes we can't compute TS now without the price.
+
+        calculate_edf(pop, price_history)
+        
 
         # print(esl_solver(price, pop)) # Removed for now because not working
         price = leap_solver(pop, price) # Clear the market
         # price = linear_solver(pop, price)
-        extended_price_history.append(price)
+        
         price_history.append(price)
         # print("Price is " + str(price))
         # print("Unconstrained optimisation price " + str(absolute_solver(pop)))
 
         calculate_wealth(pop, price) # Recalculate wealth from the new price
-        calculate_edv(pop, price, extended_price_history) # Compute EDV from new wealth and new price
+        calculate_edv(pop, price, price_history) # Compute EDV from new wealth and new price
         # pop_report(pop)
 
         mismatch_history.append(round(calculate_total_edv(pop), 3))
@@ -94,11 +92,13 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
             # print(ind.fitness.values[0])
 
             sumfit += ind.fitness.values[0]
+
         meanFitness = sumfit / len(pop)
         meanFitnessValues.append(meanFitness)
         replacements.append(round_replacements)
         positive_positions.append(count_long_assets(pop))
         negative_positions.append(int(count_short_assets(pop)))
+        fval_nt_history.append(round(nt_report(pop),0))
 
         mean_vi = 0
         mean_nt = 0
@@ -208,3 +208,5 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 # df = main(10, 0, 10, 0, 0)
 # print(df)
 # df.to_csv("new/data/run_data_no_learning.csv")
+
+main("between", 1, 0, 3, 0, 0)
