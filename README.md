@@ -29,15 +29,16 @@ In more detail:
 1. Initialise important variables (generation, price, dividend)
 2. Create the population
 3. Iteration loop
-    1. Determine excess demand functions
-    2. Clear markets and compute mismatch
-    3. Compute excess demand values
-    4. Compute wealth
-    5. Apply excess demand orders
-    6. Apply earnings
-    7. Update margin, clear debt, recompute wealth
-    8. Replace insolvent traders
-    9. Compute fitness
-    10. Execute stratgy evolution
-    11. Update the results data with the period's numbers
+    1. Compute wealth as a function of last period price
+    2. Determine excess demand functions
+    3. Clear markets and compute mismatch
+    4. Compute excess demand values
+    5. Compute wealth
+    6. Apply excess demand orders
+    7. Apply earnings
+    8. Update margin, clear debt, recompute wealth
+    9. Replace insolvent traders
+    10. Compute fitness
+    11. Execute stratgy evolution
+    12. Update the results data with the period's numbers
 
