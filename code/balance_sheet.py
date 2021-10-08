@@ -57,18 +57,18 @@ def determine_edf(pop, price_history):
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
             def func(p):
-                return (LAMBDA_TF * (ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)
+                return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)
             ind.edf = func
         if ind.type == "vi":
             # Generate the EDF. TSV is a function of the price.
             def func(p):
-                return (LAMBDA_VI * (ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(p)) + 0.5) - (ind.asset_long - ind.asset_short)
+                return (LAMBDA_VI * ind.wealth / p) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(p)) + 0.5) - (ind.asset_long - ind.asset_short)
             ind.edf = func
         if ind.type == "nt":
             # Generate the process and the EDF. TSV is a function of the price.
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
             def func(p):
-                return (LAMBDA_NT * (ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(p)) + 0.5) - (ind.asset_long - ind.asset_short)
+                return (LAMBDA_NT * ind.wealth / p) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(p)) + 0.5) - (ind.asset_long - ind.asset_short)
             ind.edf = func
     return ind
 

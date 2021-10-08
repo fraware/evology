@@ -3,7 +3,7 @@ from sampling import *
 import sampling
 import pandas
 import balance_sheet as bs
-from market_clearing import *
+import leap_market_clearing as leap_mc
 import ga as ga
 import data
 import random
@@ -22,15 +22,17 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     pop = sampling.create_pop(mode, POPULATION_SIZE)
 
     for generation in tqdm(range(MAX_GENERATIONS)):
-        bs.determine_edf(pop, price_history)
+
+        bs.calculate_wealth(pop, current_price) # Compute agents' wealth
+        pop, replacements = ga.hypermutate(pop, mode) # Replace insolvent agents
+        bs.determine_edf(pop, price_history) # Det. ED functions
 
         """ TODO: Price clearing will be ESL """
-        current_price = leap_solver(pop, current_price)
+        current_price = leap_mc.leap_solver(pop, current_price)
         price_history.append(price)       
-        mismatch = bs.calculate_total_edv(pop) 
-
+        
         bs.calculate_edv(pop, current_price)
-        bs.calculate_wealth(pop, current_price) 
+        mismatch = bs.calculate_total_edv(pop) 
 
         """ TODO: rework apply_edv when market clearing is working and gives affordable excess demands"""
         """ TODO: we probably don't need all those output variables """
@@ -39,9 +41,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         pop, dividend, random_dividend = bs.wealth_earnings_profit(pop, dividend, current_price) 
         bs.update_margin(pop, current_price)
         bs.clear_debt(pop, current_price)
-        bs.calculate_wealth(pop, current_price) 
-
-        pop, replacements = ga.hypermutate(pop, mode) # Replace insolvent agents
+        
         ga.compute_fitness(pop)
         pop = ga.strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
 
