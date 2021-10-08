@@ -55,28 +55,13 @@ def ea_solve_noverbose(function, bounds, generations, pop_size,
 
     return best_genome
 
-def leap_solver(pop, price):
+def leap_solver(pop, price):    
     
-    ''' Define squared aggregate ED function '''
-    # cum_sum = 0
-    # cum_own = 0
-    # for ind in pop:
-    #     cum_sum += ind[6]
-    #     cum_own += ind[3]
-    # def agg_ed_solver(x):
-    #     return cum_sum / sum(x) - cum_own
-    
-    def squared_agg_ed(p): # CAREFUL NO LEVERAGE
+    # Define aggregate demand function
+    def squared_agg_ed(p): 
         result = 0
         for ind in pop:
             result += ind.edf(p)
-            # # result += (ind.edf(x)) ** 2
-            #     if ind.type == "tf":
-            #         result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_TF * ind.tsv) + 0.5) - (ind.asset_long - ind.asset_short)
-            #     if ind.type == "vi":
-            #         result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p))) + 0.5) - (ind.asset_long - ind.asset_short) 
-            #     if ind.type == "nt":
-            #         result += ((ind.cash + ind.asset_long * p - ind.loan) / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * ind.process) -  np.log2(p))) + 0.5) - (ind.asset_long - ind.asset_short)
         return result
     
     ''' Define the circuit breaker bounds '''
