@@ -466,17 +466,17 @@ def agg_ed(pop):
     functions = []
     for ind in pop:
         if ind.type == "tf":
-            def func(asset_key, p):
-                return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
+            def func(asset_key, price):
+                return (LAMBDA_TF * ind.wealth / price) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
             functions.append(func)
 
         if ind.type == "vi":
-            def func(asset_key, p):
-                return (LAMBDA_VI * ind.wealth / p) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
+            def func(asset_key, price):
+                return (LAMBDA_VI * ind.wealth / price) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
             functions.append(func)
 
         if ind.type == "nt":
-            def func(p):
-                return (LAMBDA_NT * ind.wealth / p) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
+            def func(asset_key, price):
+                return (LAMBDA_NT * ind.wealth / price) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
             functions.append(func)
     return functions
