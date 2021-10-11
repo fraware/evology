@@ -28,6 +28,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.determine_edf(pop, price_history) # Det. ED functions
 
         """ TODO: Price clearing will be ESL """
+        """ TODO: watch for the price class object instead of float with ESL solver """
         current_price = leap_mc.leap_solver(pop, current_price)
         price_history.append(price)       
         
