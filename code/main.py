@@ -30,7 +30,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         """ TODO: Price clearing will be ESL """
         """ TODO: watch for the price class object instead of float with ESL solver """
         current_price = leap_mc.leap_solver(pop, current_price)
-        price_history.append(price)       
+        price_history.append(current_price)       
         
         bs.calculate_edv(pop, current_price)
         mismatch = bs.calculate_total_edv(pop) 
