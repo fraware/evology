@@ -321,6 +321,28 @@ def apply_edv(pop, asset_supply, price):
         
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
+def execute_demand(pop, current_price):
+    for ind in pop:
+        if ind.edv > 0:
+            ind.cash -= ind.edv * current_price
+            ind.asset_long += ind.edv
+        if ind.edv < 0:
+            ind.cash += abs(ind.edv) * current_price
+            ind.asset_long -= ind.edv
+        if ind.cash < 0:
+            print(ind.type)
+            print(ind.edv)
+            print(ind.cash)
+            print(ind.asset_long)
+            raise ValueError('Negative agent cash ')
+        if ind.asset_long < 0: 
+            print(ind.type)
+            print(ind.edv)
+            print(ind.cash)
+            print(ind.asset_long)
+            raise ValueError('Negative agent long ' )
+    return pop
+
 def wealth_earnings_profit(pop, prev_dividend, current_price):
     dividend, random_dividend = draw_dividend(prev_dividend)
     for ind in pop:
