@@ -327,13 +327,25 @@ def apply_edv(pop, asset_supply, price):
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
 def execute_demand(pop, current_price):
+    # print("executing demand")
     for ind in pop:
+        # print(ind.type)
         if ind.edv > 0:
-            ind.cash -= ind.edv * current_price
-            ind.asset_long += ind.edv
-        if ind.edv < 0:
-            ind.cash += abs(ind.edv) * current_price
-            ind.asset_long -= ind.edv
+            to_buy = ind.edv
+            ind.cash -= to_buy * current_price
+            ind.asset_long += to_buy
+            # print(ind.edv)
+            # print(to_buy)
+        elif ind.edv < 0:
+            # TODO: needs short selling when we don't 
+            to_sell = abs(ind.edv)
+            ind.cash += to_sell * current_price
+            ind.asset_long -= to_sell
+            # print(str(- to_sell))
+            # print(ind.edv)
+
+        # TODO: needs buyback of short positions
+
         if ind.cash < 0:
             print("Current price, type, edv, cash, asset_long, pop edvs")
             print(current_price)
