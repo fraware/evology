@@ -44,6 +44,7 @@ def update_margin(pop, current_price):
 def calculate_wealth(pop, current_price):
     for ind in pop:
         # Update wealth
+        ind.prev_wealth = ind.wealth
         ind.wealth = ind.cash + ind.asset_long * current_price - ind.loan
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
@@ -51,7 +52,7 @@ def calculate_wealth(pop, current_price):
 def determine_edf(pop, price_history):
     for ind in pop:
         if ind.type == "tf":
-            del ind.edf
+            ind.edf = None
             # If a TF, we can find the TSV and then compute the EDF.
             if len(price_history) >= ind[0]:
                 ind.tsv = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
@@ -61,19 +62,20 @@ def determine_edf(pop, price_history):
                 return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
             ind.edf = func
         if ind.type == "vi":
-            del ind.edf
+            ind.edf = None
             # Generate the EDF. TSV is a function of the price.
             def func(p):
                 return (LAMBDA_VI * ind.wealth / p) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
             ind.edf = func
         if ind.type == "nt":
-            del ind.edv
+            ind.edf = None
             # Generate the process and the EDF. TSV is a function of the price.
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
             def func(p):
                 return (LAMBDA_NT * ind.wealth / p) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
             ind.edf = func
-    return pop
+        del func
+    return ind
 
 def calculate_edv(pop, price):
     for ind in pop:
@@ -358,15 +360,16 @@ def execute_demand(pop, current_price):
             raise ValueError('Negative agent long ' )
     return pop
 
-def wealth_earnings_profit(pop, prev_dividend, current_price):
+def earnings(pop, prev_dividend, current_price):
     dividend, random_dividend = draw_dividend(prev_dividend)
     for ind in pop:
-        former_wealth = ind.wealth
+        # former_wealth = ind.wealth
         div_asset = ind.asset_long * dividend # Determine gain from dividends
         interest_cash = ind.cash * INTEREST_RATE # Determine gain from interest
         ind.cash += REINVESTMENT_RATE * (div_asset + interest_cash) # Apply reinvestment
-        ind.wealth = ind.cash + ind.asset_long * current_price - ind.loan # Compute new wealth
-        ind.profit = ind.wealth - former_wealth  # Compute profit as difference of wealth
+        # ind.wealth = ind.cash + ind.asset_long * current_price - ind.loan # Compute new wealth
+        # ind.profit = ind.wealth - former_wealth  # Compute profit as difference of wealth
+        
     return pop, dividend, random_dividend
 
 

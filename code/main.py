@@ -25,6 +25,10 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         bs.calculate_wealth(pop, current_price) # Compute agents' wealth
         pop, replacements = ga.hypermutate(pop, mode) # Replace insolvent agents
+
+        ga.compute_fitness(pop)
+        pop = ga.strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
+
         bs.determine_edf(pop, price_history) # Det. ED functions
 
         """ TODO: Price clearing will be ESL """
@@ -37,14 +41,13 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         """ TODO: rework apply_edv when market clearing is working and gives affordable excess demands"""
         """ TODO: we probably don't need all those output variables """
-        pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = bs.apply_edv(pop, asset_supply, current_price) # Apply EDV orders
+        # pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = bs.apply_edv(pop, asset_supply, current_price) # Apply EDV orders
+        pop = bs.execute_demand(pop, current_price)
 
-        pop, dividend, random_dividend = bs.wealth_earnings_profit(pop, dividend, current_price) 
+        pop, dividend, random_dividend = bs.earnings(pop, dividend, current_price) 
         bs.update_margin(pop, current_price)
         bs.clear_debt(pop, current_price)
         
-        ga.compute_fitness(pop)
-        pop = ga.strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
 
         data.update_results(df, generation, current_price, mismatch, pop, dividend, 
             random_dividend, replacements)

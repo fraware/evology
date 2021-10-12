@@ -14,7 +14,7 @@ def hypermutate(pop, mode):
             print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset_long)) + ", S-: " + str(int(pop_temp[i].asset_short)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
             pop_temp[i] = toolbox.gen_rd_ind()
             del pop_temp[i].fitness.values
-            pop_temp[i].asset = 0
+            pop_temp[i].asset_long = 0
             round_replacements += 1
     pop[:] = pop_temp
     if mode == "between":
@@ -23,6 +23,7 @@ def hypermutate(pop, mode):
 
 def compute_fitness(pop):
     for ind in pop:
+        ind.profit = ind.wealth - ind.prev_wealth
         ema = (2 / (EMA_HORIZON + 1)) * (ind.profit - ind.ema) + ind.ema
         ind.ema = ema
         ind.fitness.values = ema,
