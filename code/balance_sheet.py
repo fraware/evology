@@ -3,6 +3,7 @@ from parameters import *
 from market import *
 import inspect
 import math
+import warnings
 np.seterr(divide = 'ignore') 
 
 def clear_debt(pop, price):
@@ -329,7 +330,7 @@ def execute_demand(pop, current_price):
     total_sell = 0
     for ind in pop:
         if ind.edv > 0:
-            total_buy += ind.edv 
+            total_buy += min(ind.edv)
         elif ind.edv < 0:
             total_sell += abs(ind.edv)
     
@@ -340,8 +341,8 @@ def execute_demand(pop, current_price):
         order_ratio = 0
         # print("No exchange today (everyone selling or everyone buying)")
     
-    print("order_ratio")
-    print(order_ratio)
+    # print("order_ratio")
+    # print(order_ratio)
 
     if order_ratio < 0:
         for ind in pop:
@@ -394,8 +395,15 @@ def execute_demand(pop, current_price):
         # print(ind.type)
         if ind.edv > 0:
             to_buy = ind.edv * multiplier_buy
-            ind.cash -= to_buy * current_price
-            ind.asset_long += to_buy
+            # TODO This could be because of cash but also wealth....
+            if ind.wealth >= to_buy * current_price:
+                ind.cash -= to_buy * current_price
+                ind.asset_long += to_buy
+            elif ind.wealth < to_buy * current_price:
+                warnings.warn("Unaffordable buying order faced cash constraint")
+                ind.asset_long += ind
+                ind.cash = 0
+
         elif ind.edv < 0:
             to_sell = abs(ind.edv) * multiplier_sell
             if ind.asset_long >= to_sell: 
@@ -414,10 +422,6 @@ def execute_demand(pop, current_price):
             print(ind.edv)
             print(ind.cash)
             print(ind.asset_long)
-            for ind in pop:
-                print("pop")
-                print(ind.type)
-                print(ind.edv)
             raise ValueError('Negative agent cash ')
         if ind.asset_long < 0: 
             print("Current price, type, edv, cash, asset_long, pop edvs")
