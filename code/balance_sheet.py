@@ -397,10 +397,14 @@ def execute_demand(pop, current_price):
             ind.cash -= to_buy * current_price
             ind.asset_long += to_buy
         elif ind.edv < 0:
-            # TODO: needs short selling when we don't 
             to_sell = abs(ind.edv) * multiplier_sell
-            ind.cash += to_sell * current_price
-            ind.asset_long -= to_sell
+            if ind.asset_long >= to_sell: 
+                ind.cash += to_sell * current_price
+                ind.asset_long -= to_sell
+            if ind.asset_long < to_sell:
+                ind.cash += ind.asset_long * current_price
+                ind.asset_long = ind.asset_long - to_sell 
+                ind.margin += abs(ind.asset_long - to_sell) * current_price
         # TODO: needs buyback of short positions
 
         if ind.cash < 0:
