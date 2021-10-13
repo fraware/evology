@@ -512,22 +512,34 @@ def wealth_share_nt(pop):
 
 def agg_ed(pop): 
     functions = []
-    for ind in pop:
-        if ind.type == "tf":
-            def func(asset_key, price):
-                return (LAMBDA_TF * ind.wealth / price) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
-            functions.append(func)
-
-        if ind.type == "vi":
-            def func(asset_key, price):
-                return (LAMBDA_VI * ind.wealth / price) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
-            functions.append(func)
-
-        if ind.type == "nt":
-            def func(asset_key, price):
-                return (LAMBDA_NT * ind.wealth / price) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
-            functions.append(func)
+    def big_edf(asset_key, price):
+        result = 0
+        for ind in pop:
+            result += ind.edf(ind, price)
+        return result
+    functions.append(big_edf)
     return functions
+    
+
+    # for ind in pop:
+
+
+    # for ind in pop:
+    #     if ind.type == "tf":
+    #         def func(asset_key, price):
+    #             return (LAMBDA_TF * ind.wealth / price) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
+    #         functions.append(func)
+
+    #     if ind.type == "vi":
+    #         def func(asset_key, price):
+    #             return (LAMBDA_VI * ind.wealth / price) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
+    #         functions.append(func)
+
+    #     if ind.type == "nt":
+    #         def func(asset_key, price):
+    #             return (LAMBDA_NT * ind.wealth / price) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
+    #         functions.append(func)
+    # return functions
 
 def agg_ed2(pop):
     functions = []
@@ -538,6 +550,15 @@ def agg_ed2(pop):
     #         return (LAMBDA_VI * ind.wealth / price) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
     #     elif ind.type == "nt":
     #         return (LAMBDA_NT * ind.wealth / price) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
-    for ind in pop:
-        functions.append(ind.edf)
-    return pop
+    for i in range(len(pop)):
+        if pop[i].type == "tf":
+            def func(asset_key, price):
+                return (LAMBDA_TF * pop[i].wealth / price) * (np.tanh(SCALE_TF * pop[i].tsv + 0.5)) - (pop[i].asset_long - pop[i].asset_short)
+        elif pop[i].type == "vi":
+            def func(asset_key, price):
+                return (LAMBDA_VI * pop[i].wealth / price) * (np.tanh(np.log2(SCALE_VI * pop[i][0]) - np.log2(price) + 0.5)) - (pop[i].asset_long - pop[i].asset_short)
+        elif pop[i].type == "nt":
+            def func(asset_key, price):
+                return (LAMBDA_NT * pop[i].wealth / price) * (np.tanh(np.log2(SCALE_NT * pop[i][0] * pop[i].process) - np.log2(price) + 0.5)) - (pop[i].asset_long - pop[i].asset_short)
+        functions.append(func)
+    return functions
