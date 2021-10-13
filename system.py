@@ -9,4 +9,6 @@ os.system("pip install -i https://test.pypi.org/simple/ eslpy==0.0.145")
 
 os.system("pip freeze > requirements.txt")
 
+# In MacOS / terminal
+# python3 -m pip install numpy
 
