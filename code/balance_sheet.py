@@ -323,23 +323,84 @@ def apply_edv(pop, asset_supply, price):
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
 def execute_demand(pop, current_price):
+# STEP 1 
+    # A - Know how much long positions agents want to buy/sell
+    total_buy = 0
+    total_sell = 0
+    for ind in pop:
+        if ind.edv > 0:
+            total_buy += ind.edv 
+        elif ind.edv < 0:
+            total_sell += abs(ind.edv)
+    
+    # B - Compute the ratio.
+    if total_sell != 0:
+        order_ratio = total_buy / total_sell 
+    elif total_sell == 0:
+        order_ratio = 0
+        # print("No exchange today (everyone selling or everyone buying)")
+    
+    print("order_ratio")
+    print(order_ratio)
+
+    if order_ratio < 0:
+        for ind in pop:
+            print("--- total buy, total sell, ind type, edv, edv_var, and feasible buy.sell order")
+            print(total_buy)
+            print(total_sell)
+            print(ind.type)
+            print(ind.edv)
+            print(ind.edv_var)
+            if ind.edv_var > 0:
+                print(min(ind.edv_var, ind.cash / price))
+            if ind.edv_var < 0:
+                print(min(abs(ind.edv_var), ind.asset_long))
+        raise ValueError('Negative order ratio (total sell/buy): ' + str(total_sell) + str(total_buy))
+
+    
+    # C - The order ratio determines how orders are impacted.
+    # Each agent can execute the same fraction of orders, to not penalise agents with large orders.
+    # We implement one single asset allocation proecedure with multipliers adjusted wrt the order ratio.
+    
+    if order_ratio == 0: #either noone buys, or no one sells
+        multiplier_buy = 0
+        multiplier_sell = 0
+        # No orders will be executed (no supply or no demand)
+    elif order_ratio < 1:
+        multiplier_buy = 1
+        multiplier_sell = order_ratio
+        # Selling will be restricted according to demand
+    elif order_ratio == 1 :
+        multiplier_buy = 1
+        multiplier_sell = 1
+        # All orders will be executed (supply =  demand)
+    elif order_ratio > 1:
+        multiplier_buy = 1 / order_ratio
+        multiplier_sell = 1
+        # Buying will be restricted according to supply
+
+    if multiplier_buy == None:
+        raise ValueError('Multiplier Buy is not defined')
+    if multiplier_buy < 0:
+        raise ValueError('Multiplier Buy is negative')
+    if multiplier_sell == None:
+        raise ValueError('Multiplier Sell is not defined')
+    if multiplier_sell < 0:
+        raise ValueError('Multiplier Sell is negative')
+
+
     # print("executing demand")
     for ind in pop:
         # print(ind.type)
         if ind.edv > 0:
-            to_buy = ind.edv
+            to_buy = ind.edv * multiplier_buy
             ind.cash -= to_buy * current_price
             ind.asset_long += to_buy
-            # print(ind.edv)
-            # print(to_buy)
         elif ind.edv < 0:
             # TODO: needs short selling when we don't 
-            to_sell = abs(ind.edv)
+            to_sell = abs(ind.edv) * multiplier_sell
             ind.cash += to_sell * current_price
             ind.asset_long -= to_sell
-            # print(str(- to_sell))
-            # print(ind.edv)
-
         # TODO: needs buyback of short positions
 
         if ind.cash < 0:
