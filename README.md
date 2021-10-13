@@ -10,7 +10,7 @@ First, to obtain the packages we need, run ```system.py```.
 
 ## Credits
 
-Code developed by Aymeric Vié wth support from Maarten Scholl. This research has been supported by the EPSRC Centre for Doctoral Training in Mathematics of Random Systems: Analysis, Modelling and Simulation (EP/S023925/1)
+Code developed by Aymeric Vié wth support from Maarten Scholl and Louis Vié. This research has been supported by the EPSRC Centre for Doctoral Training in Mathematics of Random Systems: Analysis, Modelling and Simulation (EP/S023925/1)
 
 ## Documentation
 
