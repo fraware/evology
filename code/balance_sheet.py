@@ -49,37 +49,33 @@ def calculate_wealth(pop, current_price):
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
 
-def determine_edf(pop, price_history):
+def determine_tsv_proc(pop, price_history):
+    # For TFs to have a TSV before determining their edf.
     for ind in pop:
         if ind.type == "tf":
-            ind.edf = None
-            # If a TF, we can find the TSV and then compute the EDF.
             if len(price_history) >= ind[0]:
                 ind.tsv = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
-            def func(p):
-                return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
-            ind.edf = func
-        if ind.type == "vi":
-            ind.edf = None
-            # Generate the EDF. TSV is a function of the price.
-            def func(p):
-                return (LAMBDA_VI * ind.wealth / p) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
-            ind.edf = func
         if ind.type == "nt":
-            ind.edf = None
-            # Generate the process and the EDF. TSV is a function of the price.
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
-            def func(p):
-                return (LAMBDA_NT * ind.wealth / p) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
-            ind.edf = func
-        del func
-    return ind
+
+
+def determine_edf(pop):
+    def edf(ind, p):
+        if ind.type == "tf":
+            return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
+        elif ind.type == "vi":
+            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
+        elif ind.type == "nt":
+            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
+    for ind in pop:
+        ind.edf = edf
+    return pop
 
 def calculate_edv(pop, price):
     for ind in pop:
-        ind.edv =  ind.edf(price)
+        ind.edv =  ind.edf(ind, price)
     return ind
 
 def calculate_total_edv(pop):
@@ -532,3 +528,16 @@ def agg_ed(pop):
                 return (LAMBDA_NT * ind.wealth / price) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
             functions.append(func)
     return functions
+
+def agg_ed2(pop):
+    functions = []
+    # def edf(asset_key, ind, price):
+    #     if ind.type == "tf":
+    #         return (LAMBDA_TF * ind.wealth / price) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
+    #     elif ind.type == "vi":
+    #         return (LAMBDA_VI * ind.wealth / price) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
+    #     elif ind.type == "nt":
+    #         return (LAMBDA_NT * ind.wealth / price) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
+    for ind in pop:
+        functions.append(ind.edf)
+    return pop

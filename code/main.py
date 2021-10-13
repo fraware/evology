@@ -29,7 +29,9 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         ga.compute_fitness(pop)
         pop = ga.strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
 
-        bs.determine_edf(pop, price_history) # Det. ED functions
+        bs.determine_tsv(pop, price_history)
+        # bs.determine_edf(pop, price_history) # Det. ED functions
+        bs.determine_edf2(pop)
 
         """ TODO: Price clearing will be ESL """
         """ TODO: watch for the price class object instead of float with ESL solver """
