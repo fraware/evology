@@ -28,3 +28,6 @@ ax3.set_title("100 years")
 ax3.set_xlabel("Time (days)")
 plt.savefig("figures/dividend_series.png", dpi = 300)
 plt.show()
+
+
+

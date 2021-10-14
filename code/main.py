@@ -22,12 +22,13 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     pop = sampling.create_pop(mode, POPULATION_SIZE)
 
     for generation in tqdm(range(MAX_GENERATIONS)):
-        print("-----------------------------------------")
+        # print("-----------------------------------------")
 
         bs.calculate_wealth(pop, current_price) # Compute agents' wealth
 
         """ remove evolution for now """
-        pop, replacements = ga.hypermutate(pop, mode) # Replace insolvent agents
+        pop, replacements, spoils = ga.hypermutate(pop, mode) # Replace insolvent agents
+        bs.share_spoils(pop, spoils)
         ga.compute_fitness(pop)
         pop = ga.strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
 
@@ -51,13 +52,13 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         # pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt = bs.apply_edv(pop, asset_supply, current_price) # Apply EDV orders
         
 
-        print("Running demands")
-        sum = 0
-        for ind in pop:
-          print(ind.type)
-          sum += ind.edv
-          print(ind.edv)
-        print("Sum of edv is " + str(sum))
+        # print("Running demands")
+        # sum = 0
+        # for ind in pop:
+        #   print(ind.type)
+        #   sum += ind.edv
+        #   print(ind.edv)
+        # print("Sum of edv is " + str(sum))
         pop = bs.execute_demand(pop, current_price, asset_supply)
 
 
@@ -73,9 +74,10 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         # Save and stop in case of insolvency
         if mode == "between" and replacements > 0:
             print("Simulation interrupted for insolvency.")
-            break
+            return df
+            raise ValueError('Agent went insolvent')
 
 
 
-        print("----------------------")
+        # print("----------------------")
     return df
