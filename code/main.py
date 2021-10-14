@@ -58,7 +58,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
           sum += ind.edv
           print(ind.edv)
         print("Sum of edv is " + str(sum))
-        pop = bs.execute_demand(pop, current_price)
+        pop = bs.execute_demand(pop, current_price, asset_supply)
 
 
 

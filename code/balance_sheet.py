@@ -323,16 +323,19 @@ def apply_edv(pop, asset_supply, price):
         
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
-def execute_demand(pop, current_price):
+def execute_demand(pop, current_price, asset_supply):
 # STEP 1 
     # A - Know how much long positions agents want to buy/sell
     total_buy = 0
     total_sell = 0
     for ind in pop:
         if ind.edv > 0:
-            total_buy += min(ind.edv)
+            total_buy += ind.edv
         elif ind.edv < 0:
             total_sell += abs(ind.edv)
+
+    print('total buy = ' + str(total_buy))
+    print('total sell = ' + str(total_sell))
     
     # B - Compute the ratio.
     if total_sell != 0:
@@ -391,29 +394,44 @@ def execute_demand(pop, current_price):
 
 
     # print("executing demand")
+    count_sold = 0
     for ind in pop:
-        # print(ind.type)
-        if ind.edv > 0:
-            to_buy = ind.edv * multiplier_buy
-            # TODO This could be because of cash but also wealth....
-            if ind.wealth >= to_buy * current_price:
-                ind.cash -= to_buy * current_price
-                ind.asset_long += to_buy
-            elif ind.wealth < to_buy * current_price:
-                warnings.warn("Unaffordable buying order faced cash constraint")
-                ind.asset_long += ind
-                ind.cash = 0
-
-        elif ind.edv < 0:
+        if ind.edv < 0:
             to_sell = abs(ind.edv) * multiplier_sell
+            before_long = ind.asset_long
             if ind.asset_long >= to_sell: 
                 ind.cash += to_sell * current_price
                 ind.asset_long -= to_sell
+                count_sold += to_sell
             if ind.asset_long < to_sell:
                 ind.cash += ind.asset_long * current_price
-                ind.asset_long = ind.asset_long - to_sell 
-                ind.margin += abs(ind.asset_long - to_sell) * current_price
+                ind.asset_short += to_sell - ind.asset_long
+                count_sold += ind.asset_long
+                ind.asset_long = 0 
+                ind.margin += abs(to_sell - ind.asset_long) * current_price
+            print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
         # TODO: needs buyback of short positions
+        # TODO: careful to one buyer for one seller principle
+
+        if total_sell * multiplier_sell != 0:
+            effective_buy_sell_ratio = count_sold / total_sell * multiplier_sell
+        elif total_sell * multiplier_sell == 0:
+            effective_buy_sell_ratio = 0
+
+        if ind.edv > 0:
+            before_long = ind.asset_long
+            to_buy = ind.edv * multiplier_buy * effective_buy_sell_ratio
+            # if we have enough cash, this is easy
+            if ind.cash >= to_buy * current_price:
+                ind.cash -= to_buy * current_price
+                ind.asset_long += to_buy
+            elif ind.cash < to_buy * current_price:
+                warnings.warn("Unaffordable buying order faced cash constraint")
+                ind.asset_long += to_buy
+                ind.loan += (to_buy * current_price) - ind.cash
+                ind.cash = 0
+            print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
+
 
         if ind.cash < 0:
             print("Current price, type, edv, cash, asset_long, pop edvs")
@@ -435,6 +453,20 @@ def execute_demand(pop, current_price):
                 print(ind.type)
                 print(ind.edv)
             raise ValueError('Negative agent long ' )
+
+    if count_long_assets(pop) >= asset_supply + 1 or count_long_assets(pop) <= asset_supply - 1  :
+        for ind in pop:
+            print(ind.type)
+            print(ind.asset_long)
+            if ind.edv > 0:
+                print(ind.edv * multiplier_buy)
+            if ind.edv < 0:
+                print(ind.edv * multiplier_sell)
+        print('---')
+        print(total_buy * multiplier_buy)
+        print(total_sell * multiplier_sell)
+        print(count_long_assets(pop))
+        raise ValueError('Asset supply constraint violated')
     return pop
 
 def earnings(pop, prev_dividend, current_price):

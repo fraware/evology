@@ -34,7 +34,7 @@ MU_NT = 1
 RHO_NT = 0.00045832561
 
 # For between evolution
-fval = 100/(0.01) # 100 #compute_fval() (Cannot be in market otherwise conflict of definition)
+fval = 100 # 100 #compute_fval() (Cannot be in market otherwise conflict of definition)
 
 # For within evolution
 MIN_TIME_HORIZON = 2
