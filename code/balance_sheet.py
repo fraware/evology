@@ -1,10 +1,12 @@
+from operator import index
 import numpy as np
+from numpy.core.fromnumeric import mean
 from parameters import *
 from market import *
 import inspect
 import math
 import warnings
-np.seterr(divide = 'ignore') 
+# np.seterr(divide = 'ignore') 
 
 def clear_debt(pop, price):
     for ind in pop:
@@ -60,7 +62,34 @@ def determine_tsv_proc(pop, price_history):
                 ind.tsv = 0
         if ind.type == "nt":
             ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
+            if ind.process < 0:
+                ind.process = 1
 
+def update_fval(pop, dividend_history, div_g_estimation):
+    # Update the vector of growth rate estimation
+    # Run a new estimation
+    if len(dividend_history) <= 1:
+        new_estimation = 0.01
+    if len(dividend_history) > 1:
+        new_estimation = (dividend_history[-1] / dividend_history[-2]) - 1
+    div_g_estimation.append(new_estimation)
+    # print(div_g_estimation)
+    # Remove an old estimation
+    if len(div_g_estimation) > LENGTH_DIVIDEND_ESTIMATION:
+        del div_g_estimation[0]
+    # Update agent fundamental values
+    for ind in pop: 
+        if ind.type == 'vi' or ind.type == 'nt':
+            ind[0] = 100 / (EQUITY_COST - mean(div_g_estimation))
+            # print(ind[0])
+    return pop, div_g_estimation
+
+def record_fval(pop):
+    fval = 0
+    for ind in pop:
+        if ind.type == 'nt' or ind.type == 'vi':
+            fval = ind[0]
+    return fval
 
 def determine_edf(pop):
     def edf(ind, p):
@@ -324,6 +353,7 @@ def apply_edv(pop, asset_supply, price):
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
 def execute_demand(pop, current_price, asset_supply):
+    # print(count_long_assets(pop))
 # STEP 1 
     # A - Know how much long positions agents want to buy/sell
     total_buy = 0
@@ -684,7 +714,10 @@ def agg_ed2(pop):
     return functions
 
 def share_spoils(pop, spoils):
-    per_ind_spoil = spoils / len(pop)
-    for ind in pop:
-        ind.asset_long += per_ind_spoil
-    return ind
+    if spoils > 0:
+        print('Allocating ' + str(spoils) + ' spoils')
+        per_ind_spoil = spoils / len(pop)
+        for ind in pop:
+            ind.asset_long += per_ind_spoil
+    return pop
+    

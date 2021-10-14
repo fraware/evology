@@ -20,12 +20,14 @@ def hypermutate(pop, mode):
         if pop_temp[i].wealth <= 0:
             print("Info on replacement")
             print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset_long)) + ", S-: " + str(int(pop_temp[i].asset_short)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
+            spoils += pop_temp[i].asset_long
             pop_temp[i] = toolbox.gen_rd_ind()
             pop_temp[i] = hyper_correct_ind(pop_temp[i])
             del pop_temp[i].fitness.values
-            pop_temp[i].asset_long = 0
+            
+           
             round_replacements += 1
-            spoils += pop_temp[i].asset_long
+            
     pop[:] = pop_temp
     if mode == "between":
         pop = adjust_mode(pop, mode)

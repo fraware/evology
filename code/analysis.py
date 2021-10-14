@@ -12,6 +12,8 @@ df_nl.plot(x="Gen", y = ["Price"],
         kind="line", figsize=(15, 6))
 plt.show()
 
+print(df_nl['Div'])
+
 # df_nl.plot(x="Gen", y = ["Pos+", "Pos-"],
 #         kind="line", figsize=(15, 6))
 # plt.show()

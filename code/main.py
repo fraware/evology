@@ -16,7 +16,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     # Initialise important variables and dataframe to store results
     generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
     df = data.create_df()
-    price_history = []
+    price_history, div_g_estimation = [], []
 
     # Create the population
     pop = sampling.create_pop(mode, POPULATION_SIZE)
@@ -28,11 +28,12 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         """ remove evolution for now """
         pop, replacements, spoils = ga.hypermutate(pop, mode) # Replace insolvent agents
-        bs.share_spoils(pop, spoils)
+        pop = bs.share_spoils(pop, spoils)
         ga.compute_fitness(pop)
         pop = ga.strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
 
         bs.determine_tsv_proc(pop, price_history)
+        bs.update_fval(pop, dividend_history, div_g_estimation)
         bs.determine_edf(pop)
 
 
