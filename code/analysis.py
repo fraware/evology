@@ -12,7 +12,7 @@ df_nl.plot(x="Gen", y = ["Price"],
         kind="line", figsize=(15, 6))
 plt.show()
 
-print(df_nl['Div'])
+
 
 # df_nl.plot(x="Gen", y = ["Pos+", "Pos-"],
 #         kind="line", figsize=(15, 6))
@@ -25,6 +25,13 @@ ax2.plot(df_nl["Pos+"])
 ax3.plot(df_nl["Pos-"])
 ax1.set_xlabel('Time (days)')
 plt.show()
+
+# fig, (ax1, ax2) = plt.subplots(2, 1, figsize = (10, 5), sharex = True)
+# fig.suptitle('Price, Wealth shares')
+# ax1.plot(df_nl["Price"])
+# ax3.plot(df_nl["WShare_TF", "WShare_VI", "WShare_NT"])
+# ax1.set_xlabel('Time (days)')
+# plt.show()
 
 df_nl.plot(x="Gen", y = ["Div"],
         kind="line", figsize=(15, 6))
