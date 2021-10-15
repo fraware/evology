@@ -61,9 +61,9 @@ def determine_tsv_proc(pop, price_history):
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
         if ind.type == "nt":
-            ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
-            if ind.process < 0:
-                ind.process = 1
+            ind.process = abs(ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1))
+            # if ind.process < 0:
+            #     ind.process = 1
 
 def update_fval(pop, dividend_history, div_g_estimation):
     # Update the vector of growth rate estimation
