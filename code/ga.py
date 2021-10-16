@@ -5,21 +5,33 @@ from deap import algorithms
 from operator import attrgetter
 from sampling import *
 
+def hyper_correct_ind(ind):
+    ind.asset_long = 0
+    ind.asset_short = 0
+    ind.loan = 0
+    ind.cash = 100_000_000
+    return ind
+
 def hypermutate(pop, mode):
     round_replacements = 0
+    spoils = 0
     pop_temp = list(map(toolbox.clone, pop))
     for i in range(0, len(pop_temp)):
         if pop_temp[i].wealth <= 0:
             print("Info on replacement")
             print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset_long)) + ", S-: " + str(int(pop_temp[i].asset_short)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
+            spoils += pop_temp[i].asset_long
             pop_temp[i] = toolbox.gen_rd_ind()
+            pop_temp[i] = hyper_correct_ind(pop_temp[i])
             del pop_temp[i].fitness.values
-            pop_temp[i].asset_long = 0
+            
+           
             round_replacements += 1
+            
     pop[:] = pop_temp
     if mode == "between":
         pop = adjust_mode(pop, mode)
-    return pop, round_replacements
+    return pop, round_replacements, spoils
 
 def compute_fitness(pop):
     for ind in pop:

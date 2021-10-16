@@ -1,3 +1,4 @@
+from operator import index
 from deap import base
 from deap import creator
 from deap import tools
@@ -72,9 +73,9 @@ def adjust_mode(pop, mode):
             if ind.type == "tf":
                 ind[0] = 2
             if ind.type == "vi":
-                ind[0] = fval
+                ind[0] = INITIAL_DIVIDEND / EQUITY_COST - DIVIDEND_GROWTH_RATE_G
             if ind.type == "nt":
-                ind[0] = fval
+                ind[0] = INITIAL_DIVIDEND / EQUITY_COST - DIVIDEND_GROWTH_RATE_G
     return pop
 
 def create_pop(mode, POPULATION_SIZE):

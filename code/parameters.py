@@ -34,7 +34,7 @@ MU_NT = 1
 RHO_NT = 0.00045832561
 
 # For between evolution
-fval = 100/(0.01) # 100 #compute_fval() (Cannot be in market otherwise conflict of definition)
+fval = 100 # 100 #compute_fval() (Cannot be in market otherwise conflict of definition)
 
 # For within evolution
 MIN_TIME_HORIZON = 2
@@ -63,6 +63,8 @@ INTEREST_RATE = 0.01 / TRADING_DAYS
 EMA_HORIZON = 2 * TRADING_DAYS
 
 DIVIDEND_GROWTH_RATE_G = 0.01
+LENGTH_DIVIDEND_ESTIMATION = 1000
+EQUITY_COST = 0.02
 DIVIDEND_GROWTH_VOLATILITY = 0.06 / np.sqrt(TRADING_DAYS)
 DIVIDEND_AUTOCORRELATION = 0.1 
 INITIAL_DIVIDEND = 0.00003909

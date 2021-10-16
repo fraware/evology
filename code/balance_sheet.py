@@ -1,10 +1,12 @@
+from operator import index
 import numpy as np
+from numpy.core.fromnumeric import mean
 from parameters import *
 from market import *
 import inspect
 import math
 import warnings
-np.seterr(divide = 'ignore') 
+# np.seterr(divide = 'ignore') 
 
 def clear_debt(pop, price):
     for ind in pop:
@@ -59,8 +61,35 @@ def determine_tsv_proc(pop, price_history):
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
         if ind.type == "nt":
-            ind.process = ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1)
+            ind.process = abs(ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1))
+            # if ind.process < 0:
+            #     ind.process = 1
 
+def update_fval(pop, dividend_history, div_g_estimation):
+    # Update the vector of growth rate estimation
+    # Run a new estimation
+    if len(dividend_history) <= 1:
+        new_estimation = 0.01
+    if len(dividend_history) > 1:
+        new_estimation = (dividend_history[-1] / dividend_history[-2]) - 1
+    div_g_estimation.append(new_estimation)
+    # print(div_g_estimation)
+    # Remove an old estimation
+    if len(div_g_estimation) > LENGTH_DIVIDEND_ESTIMATION:
+        del div_g_estimation[0]
+    # Update agent fundamental values
+    for ind in pop: 
+        if ind.type == 'vi' or ind.type == 'nt':
+            ind[0] = 100 / (EQUITY_COST - mean(div_g_estimation))
+            # print(ind[0])
+    return pop, div_g_estimation
+
+def record_fval(pop):
+    fval = 0
+    for ind in pop:
+        if ind.type == 'nt' or ind.type == 'vi':
+            fval = ind[0]
+    return fval
 
 def determine_edf(pop):
     def edf(ind, p):
@@ -323,16 +352,20 @@ def apply_edv(pop, asset_supply, price):
         
     return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
 
-def execute_demand(pop, current_price):
+def execute_demand(pop, current_price, asset_supply):
+    # print(count_long_assets(pop))
 # STEP 1 
     # A - Know how much long positions agents want to buy/sell
     total_buy = 0
     total_sell = 0
     for ind in pop:
         if ind.edv > 0:
-            total_buy += min(ind.edv)
+            total_buy += ind.edv
         elif ind.edv < 0:
             total_sell += abs(ind.edv)
+
+    # print('total buy = ' + str(total_buy))
+    # print('total sell = ' + str(total_sell))
     
     # B - Compute the ratio.
     if total_sell != 0:
@@ -389,32 +422,96 @@ def execute_demand(pop, current_price):
     if multiplier_sell < 0:
         raise ValueError('Multiplier Sell is negative')
 
+    # print('mul total buy = ' + str(total_buy * multiplier_buy))
+    # print('mul total sell = ' + str(total_sell * multiplier_sell))
 
     # print("executing demand")
+    count_sold = 0
+    short_limit = short_bound * asset_supply
     for ind in pop:
-        # print(ind.type)
-        if ind.edv > 0:
-            to_buy = ind.edv * multiplier_buy
-            # TODO This could be because of cash but also wealth....
-            if ind.wealth >= to_buy * current_price:
-                ind.cash -= to_buy * current_price
-                ind.asset_long += to_buy
-            elif ind.wealth < to_buy * current_price:
-                warnings.warn("Unaffordable buying order faced cash constraint")
-                ind.asset_long += ind
-                ind.cash = 0
-
-        elif ind.edv < 0:
+        if ind.edv < 0:
             to_sell = abs(ind.edv) * multiplier_sell
+            before_long = ind.asset_long
             if ind.asset_long >= to_sell: 
                 ind.cash += to_sell * current_price
                 ind.asset_long -= to_sell
-            if ind.asset_long < to_sell:
+                count_sold += to_sell
+            elif ind.asset_long < to_sell:
+                # print('agent needs short sell')
+                # print(to_sell)
+                # print(ind.asset_long)
                 ind.cash += ind.asset_long * current_price
-                ind.asset_long = ind.asset_long - to_sell 
-                ind.margin += abs(ind.asset_long - to_sell) * current_price
-        # TODO: needs buyback of short positions
+                
+                count_sold += ind.asset_long
+                ind.asset_long = 0 
 
+                to_short_sell = to_sell - ind.asset_long
+                if count_short_assets(pop) + to_sell <= short_limit:
+                    ind.asset_short += to_short_sell
+                    ind.margin += to_short_sell * current_price
+                elif count_short_assets(pop) < short_limit and count_short_assets(pop) + to_sell > short_limit:
+                    feasible_short_sell = min(to_short_sell, short_limit - count_short_assets(pop))
+                    ind.asset_short += feasible_short_sell
+                    ind.margin += feasible_short_sell * current_price
+            # print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
+        # TODO: needs buyback of short positions
+    # print(count_sold)
+    if total_sell * multiplier_sell != 0:
+        effective_buy_sell_ratio = count_sold / (total_sell * multiplier_sell)
+    elif total_sell * multiplier_sell == 0:
+        effective_buy_sell_ratio = 0
+    
+    if effective_buy_sell_ratio > 1.1:
+        raise ValueError('buy sell effective ratio above 1')
+    if count_sold >= total_sell * multiplier_sell + 1:
+        raise ValueError('Count sold higher than total sell multiplied')
+
+    # print('total sold and adjusted total buy')
+    # print(count_sold)
+    # print(effective_buy_sell_ratio)
+    # print(total_buy * multiplier_buy * effective_buy_sell_ratio)
+
+    for ind in pop:
+        ind.edv_var = ind.edv
+        if ind.edv > 0:
+            before_long = ind.asset_long
+            to_buy = ind.edv * multiplier_buy * effective_buy_sell_ratio
+            # if we have enough cash, this is easy
+            if ind.cash >= to_buy * current_price:
+                ind.cash -= to_buy * current_price
+                ind.asset_long += to_buy
+                ind.edv_var -= to_buy
+            elif ind.cash < to_buy * current_price:
+                warnings.warn("Unaffordable buying order faced cash constraint")
+                ind.asset_long += to_buy
+                ind.edv_var -= to_buy
+                ind.loan += (to_buy * current_price) - ind.cash
+                ind.cash = 0
+            # print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
+
+    # Buy back of short positions
+    bought_back = 0
+    for ind in pop:
+        if ind.edv_var > 0:
+            if ind.asset_short > 0:
+                i = 0
+                arr = np.array(ind.asset_short, ind.edv_var)
+                
+                for i in range(math.floor(min(ind.asset_short, ind.edv_var))):
+                    while ind.cash + ind.margin > current_price:
+                        if ind.margin >= current_price:
+                            ind.asset_short -= 1
+                            ind.margin -= current_price
+                            bought_back += 1
+                        elif ind.margin < current_price:
+                            ind.cash -= current_price - ind.margin
+                            ind.asset_short -= 1
+                            ind.margin = 0
+                            bought_back += 1
+    # print(str(bought_back) + ' short positions have been closed.')
+
+
+    for ind in pop:
         if ind.cash < 0:
             print("Current price, type, edv, cash, asset_long, pop edvs")
             print(current_price)
@@ -435,6 +532,20 @@ def execute_demand(pop, current_price):
                 print(ind.type)
                 print(ind.edv)
             raise ValueError('Negative agent long ' )
+
+    if count_long_assets(pop) >= asset_supply + 1 or count_long_assets(pop) <= asset_supply - 1  :
+        for ind in pop:
+            print(ind.type)
+            print(ind.asset_long)
+            if ind.edv > 0:
+                print(ind.edv * multiplier_buy)
+            if ind.edv < 0:
+                print(ind.edv * multiplier_sell)
+        print('---')
+        print(total_buy * multiplier_buy)
+        print(total_sell * multiplier_sell)
+        print(count_long_assets(pop))
+        raise ValueError('Asset supply constraint violated')
     return pop
 
 def earnings(pop, prev_dividend, current_price):
@@ -574,8 +685,6 @@ def wealth_share_nt(pop):
         raise ValueError("Wealth share NT superior to 100" + str(wealth_nt) + " // " + str(total_wealth(pop)))
     if 100 * wealth_nt / total_wealth(pop) < 0:
         raise ValueError("Wealth share NT negative" + str(wealth_nt) + " // " + str(total_wealth(pop)))
-       
-    
     return 100 * wealth_nt / total_wealth(pop)
 
 
@@ -588,37 +697,9 @@ def agg_ed(pop):
         return result
     functions.append(big_edf)
     return functions
-    
-
-    # for ind in pop:
-
-
-    # for ind in pop:
-    #     if ind.type == "tf":
-    #         def func(asset_key, price):
-    #             return (LAMBDA_TF * ind.wealth / price) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
-    #         functions.append(func)
-
-    #     if ind.type == "vi":
-    #         def func(asset_key, price):
-    #             return (LAMBDA_VI * ind.wealth / price) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
-    #         functions.append(func)
-
-    #     if ind.type == "nt":
-    #         def func(asset_key, price):
-    #             return (LAMBDA_NT * ind.wealth / price) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
-    #         functions.append(func)
-    # return functions
 
 def agg_ed2(pop):
     functions = []
-    # def edf(asset_key, ind, price):
-    #     if ind.type == "tf":
-    #         return (LAMBDA_TF * ind.wealth / price) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
-    #     elif ind.type == "vi":
-    #         return (LAMBDA_VI * ind.wealth / price) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
-    #     elif ind.type == "nt":
-    #         return (LAMBDA_NT * ind.wealth / price) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(price) + 0.5)) - (ind.asset_long - ind.asset_short)
     for i in range(len(pop)):
         if pop[i].type == "tf":
             def func(asset_key, price):
@@ -631,3 +712,12 @@ def agg_ed2(pop):
                 return (LAMBDA_NT * pop[i].wealth / price) * (np.tanh(np.log2(SCALE_NT * pop[i][0] * pop[i].process) - np.log2(price) + 0.5)) - (pop[i].asset_long - pop[i].asset_short)
         functions.append(func)
     return functions
+
+def share_spoils(pop, spoils):
+    if spoils > 0:
+        print('Allocating ' + str(spoils) + ' spoils')
+        per_ind_spoil = spoils / len(pop)
+        for ind in pop:
+            ind.asset_long += per_ind_spoil
+    return pop
+    
