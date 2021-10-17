@@ -16,7 +16,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     # Initialise important variables and dataframe to store results
     generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
     df = data.create_df()
-    price_history, div_g_estimation = [], []
+    price_history, div_g_estimation, dividend_history = [], [], []
 
     # Create the population
     pop = sampling.create_pop(mode, POPULATION_SIZE)
@@ -65,6 +65,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
 
         pop, dividend, random_dividend = bs.earnings(pop, dividend, current_price) 
+        dividend_history.append(dividend)
         bs.update_margin(pop, current_price)
         bs.clear_debt(pop, current_price)
         

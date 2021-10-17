@@ -68,20 +68,37 @@ def determine_tsv_proc(pop, price_history):
 def update_fval(pop, dividend_history, div_g_estimation):
     # Update the vector of growth rate estimation
     # Run a new estimation
-    if len(dividend_history) <= 1:
-        new_estimation = 0.01
-    if len(dividend_history) > 1:
-        new_estimation = (dividend_history[-1] / dividend_history[-2]) - 1
-    div_g_estimation.append(new_estimation)
+    # if len(dividend_history) <= 1:
+    #     new_estimation = 0.01
+    # if len(dividend_history) > 1:
+    #     new_estimation = (dividend_history[-1] / dividend_history[-2]) - 1
+    # div_g_estimation.append(new_estimation)
+    # print(len(dividend_history))
+    # if len(dividend_history) > 1:
+    #     div_g_estimation = np.diff(np.log(dividend_history))
+    #     # print(div_g_estimation)
+    # elif len(dividend_history) <= 1:
+    #     div_g_estimation.append(((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1)
+    
+    # # print(div_g_estimation)
+
+    div_g_estimation = math.exp(mean(np.diff(np.log(dividend_history)))) - 1
+
+    print(div_g_estimation)
+
     # print(div_g_estimation)
     # Remove an old estimation
-    if len(div_g_estimation) > LENGTH_DIVIDEND_ESTIMATION:
-        del div_g_estimation[0]
+    # if len(div_g_estimation) > LENGTH_DIVIDEND_ESTIMATION:
+    #     del div_g_estimation[0]
     # Update agent fundamental values
     for ind in pop: 
         if ind.type == 'vi' or ind.type == 'nt':
-            ind[0] = 100 / (EQUITY_COST - mean(div_g_estimation))
+            if len(dividend_history) > 0:
+                ind[0] = ((1 + mean(div_g_estimation)) *  dividend_history[-1]) / (EQUITY_COST - (1 + mean(div_g_estimation)) ** 252 -1)
             # print(ind[0])
+            if len(dividend_history) == 0:
+                ind[0] = ((1 + mean(div_g_estimation)) * (INITIAL_DIVIDEND)) / (EQUITY_COST - ((1 + mean(div_g_estimation)) ** 252 -1))
+
     return pop, div_g_estimation
 
 def record_fval(pop):
