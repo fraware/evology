@@ -527,6 +527,8 @@ def execute_demand(pop, current_price, asset_supply):
                             bought_back += 1
     # print(str(bought_back) + ' short positions have been closed.')
 
+    # TODO: correct that
+    volume = total_buy * multiplier_buy + total_sell * multiplier_sell
 
     for ind in pop:
         if ind.cash < 0:
@@ -563,7 +565,7 @@ def execute_demand(pop, current_price, asset_supply):
         print(total_sell * multiplier_sell)
         print(count_long_assets(pop))
         raise ValueError('Asset supply constraint violated')
-    return pop
+    return pop, volume
 
 def earnings(pop, prev_dividend, current_price):
     dividend, random_dividend = draw_dividend(prev_dividend)

@@ -60,7 +60,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         #   sum += ind.edv
         #   print(ind.edv)
         # print("Sum of edv is " + str(sum))
-        pop = bs.execute_demand(pop, current_price, asset_supply)
+        pop, volume = bs.execute_demand(pop, current_price, asset_supply)
 
 
 
@@ -71,7 +71,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         
 
         data.update_results(df, generation, current_price, mismatch, pop, dividend, 
-            random_dividend, replacements)
+            random_dividend, replacements, volume)
 
         # Save and stop in case of insolvency
         if mode == "between" and replacements > 0:
