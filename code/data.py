@@ -5,8 +5,8 @@ import balance_sheet as bs
 
 def create_df():
     df = pd.DataFrame(columns = [
-    "Gen", "Price", "Mismatch", "Val_NT", 'FVal', "Num_TF", "Num_VI", "Num_NT",
-    "Mean_TF", "Mean_VI", "Mean_NT", "Div", "RDiv", "WShare_TF", "WShare_VI",
+    "Gen", "Price", "Mismatch", "NT_signal", 'FVal', "Num_TF", "Num_VI", "Num_NT",
+    "Mean_TF", "Mean_VI", "Mean_NT", "Dividends", "RDiv", "WShare_TF", "WShare_VI",
     "WShare_NT", "Pos+", "Pos-", "Rep"
 ])
     return df
