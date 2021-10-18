@@ -12,7 +12,9 @@ data['Dividends (Reference)'] = ref['Dividends']
 data['Dividends (Simulation)'] = run['Dividends']
 data['Gen'] = run['Gen']
 data.plot(x="Gen", y = ["Dividends (Reference)", "Dividends (Simulation)"],
-        kind="line", figsize=(15, 6), title='Comparison of dividends', )
+        kind="line", figsize=(15, 6), title='Comparison of dividends', 
+        color = ['black','black'],
+        style = [':','-'])
 plt.xlabel('Generations')
 plt.ylabel('Daily dividend')
 plt.show()
@@ -22,7 +24,9 @@ data['Price (Reference)'] = ref['Price']
 data['Price (Simulation)'] = run['Price']
 data['Gen'] = run['Gen']
 data.plot(x="Gen", y = ["Price (Reference)", "Price (Simulation)"],
-        kind="line", figsize=(15, 6), title='Comparison of price', )
+        kind="line", figsize=(15, 6), title='Comparison of price', 
+        color = ['black','black'],
+        style = [':','-'])
 plt.xlabel('Generations')
 plt.ylabel('Price')
 plt.show()
@@ -32,7 +36,60 @@ data['Volume (Reference)'] = ref['Volume']
 data['Volume (Simulation)'] = run['Volume']
 data['Gen'] = run['Gen']
 data.plot(x="Gen", y = ["Volume (Reference)", "Volume (Simulation)"],
-        kind="line", figsize=(15, 6), title='Comparison of volume', )
+        kind="line", figsize=(15, 6), title='Comparison of volume', 
+        color = ['black','black'],
+        style = [':','-'])
 plt.xlabel('Generations')
 plt.ylabel('Volume')
+plt.show()
+
+''' Cash '''
+data['NT Cash (Reference)'] = ref['NT_cash']
+data['NT Cash (Simulation)'] = run['NT_cash']
+data['VI Cash (Reference)'] = ref['VI_cash']
+data['VI Cash (Simulation)'] = run['VI_cash']
+data['TF Cash (Reference)'] = ref['TF_cash']
+data['TF Cash (Simulation)'] = run['TF_cash']
+data['Gen'] = run['Gen']
+data.plot(x="Gen", y = ["NT Cash (Reference)", "NT Cash (Simulation)","VI Cash (Reference)", 
+    "VI Cash (Simulation)","TF Cash (Reference)", "TF Cash (Simulation)"],
+        kind="line", figsize=(15, 6), title='Comparison of agent cash', 
+        color = ['r', 'r', 'g', 'g', 'b', 'b'],
+        style = [':', '-', ':', '-', ':', '-'])
+plt.xlabel('Generations')
+plt.ylabel('Cash')
+plt.show()
+
+''' Lending (value of short positions) = margin'''
+data['NT Lending (Reference)'] = abs(ref['NT_lending'])
+data['NT Lending (Simulation)'] = run['NT_lending']
+data['VI Lending (Reference)'] = abs(ref['VI_lending'])
+data['VI Lending (Simulation)'] = run['VI_lending']
+data['TF Lending (Reference)'] = abs(ref['TF_lending'])
+data['TF Lending (Simulation)'] = run['TF_lending']
+data['Gen'] = run['Gen']
+data.plot(x="Gen", y = ["NT Lending (Reference)", "NT Lending (Simulation)","VI Lending (Reference)", 
+    "VI Lending (Simulation)","TF Lending (Reference)", "TF Lending (Simulation)"],
+        kind="line", figsize=(15, 6), title='Comparison of agent lending', 
+        color = ['r', 'r', 'g', 'g', 'b', 'b'],
+        style = [':', '-', ':', '-', ':', '-'])
+plt.xlabel('Generations')
+plt.ylabel('Lending')
+plt.show()
+
+''' Loans '''
+data['NT Loans (Reference)'] = ref['NT_loan']
+data['NT Loans (Simulation)'] = run['NT_loans']
+data['VI Loans (Reference)'] = ref['VI_loan']
+data['VI Loans (Simulation)'] = run['VI_loans']
+data['TF Loans (Reference)'] = ref['TF_loan']
+data['TF Loans (Simulation)'] = run['TF_loans']
+data['Gen'] = run['Gen']
+data.plot(x="Gen", y = ["NT Loans (Reference)", "NT Loans (Simulation)","VI Loans (Reference)", 
+    "VI Loans (Simulation)","TF Loans (Reference)", "TF Loans (Simulation)"],
+        kind="line", figsize=(15, 6), title='Comparison of agent loans', 
+        color = ['r', 'r', 'g', 'g', 'b', 'b'],
+        style = [':', '-', ':', '-', ':', '-'])
+plt.xlabel('Generations')
+plt.ylabel('Loans')
 plt.show()

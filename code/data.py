@@ -9,6 +9,9 @@ def create_df():
     "Mean_TF", "Mean_VI", "Mean_NT", "Dividends", "RDiv", "WShare_TF", "WShare_VI",
     "WShare_NT", "Pos+", "Pos-", "Rep",
     'Volume',
+    'NT_cash', 'NT_lending', 'NT_loans',
+    'VI_cash', 'VI_lending', 'VI_loans',
+    'TF_cash', 'TF_lending', 'TF_loans'
 ])
     return df
 
@@ -21,7 +24,10 @@ def update_results(df, generation, current_price, mismatch, pop, dividend,
         dividend, random_dividend, bs.wealth_share_tf(pop), bs.wealth_share_vi(pop),
         bs.wealth_share_nt(pop), bs.count_long_assets(pop), 
         bs.count_short_assets(pop), replacements,
-        volume
+        volume,
+        bs.report_nt_cash(pop), bs.report_nt_lending(pop), bs.report_nt_loan(pop),
+        bs.report_vi_cash(pop), bs.report_vi_lending(pop), bs.report_vi_loan(pop),
+        bs.report_tf_cash(pop), bs.report_tf_lending(pop), bs.report_tf_loan(pop)
         ]
     
     df.set_index('Gen')

@@ -739,4 +739,111 @@ def share_spoils(pop, spoils):
         for ind in pop:
             ind.asset_long += per_ind_spoil
     return pop
+
+def report_nt_cash(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'nt':
+            num += 1
+            total += ind.cash
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_vi_cash(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'vi':
+            num += 1
+            total += ind.cash
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_tf_cash(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'tf':
+            num += 1
+            total += ind.cash
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_nt_lending(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'nt':
+            num += 1
+            total += ind.margin
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_vi_lending(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'vi':
+            num += 1
+            total += ind.margin
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_tf_lending(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'tf':
+            num += 1
+            total += ind.margin
+    if num != 0:
+        cash = total / num
+    return cash
     
+def report_nt_loan(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'nt':
+            num += 1
+            total += ind.loan
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_vi_loan(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'vi':
+            num += 1
+            total += ind.loan
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_tf_loan(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'tf':
+            num += 1
+            total += ind.loan
+    if num != 0:
+        cash = total / num
+    return cash
