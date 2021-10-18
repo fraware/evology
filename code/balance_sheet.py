@@ -939,3 +939,39 @@ def report_tf_pnl(pop):
     if num != 0:
         cash = total / num
     return cash
+
+def report_nt_stocks(pop, price):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'nt':
+            num += 1
+            total += ind.asset_long * price
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_vi_stocks(pop, price):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'vi':
+            num += 1
+            total += ind.asset_long * price
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_tf_stocks(pop, price):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'tf':
+            num += 1
+            total += ind.asset_long * price
+    if num != 0:
+        cash = total / num
+    return cash

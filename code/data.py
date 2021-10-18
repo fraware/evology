@@ -9,9 +9,9 @@ def create_df():
     "Mean_TF", "Mean_VI", "Mean_NT", "Dividends", "RDiv", "WShare_TF", "WShare_VI",
     "WShare_NT", "Pos+", "Pos-", "Rep",
     'Volume',
-    'NT_cash', 'NT_lending', 'NT_loans', 'NT_nav', 'NT_pnl', 'NT_signal',
-    'VI_cash', 'VI_lending', 'VI_loans', 'VI_nav', 'VI_pnl', 'VI_signal',
-    'TF_cash', 'TF_lending', 'TF_loans', 'TF_nav', 'TF_pnl', 'TF_signal'
+    'NT_cash', 'NT_lending', 'NT_loans', 'NT_nav', 'NT_pnl', 'NT_signal', 'NT_stocks',
+    'VI_cash', 'VI_lending', 'VI_loans', 'VI_nav', 'VI_pnl', 'VI_signal', 'VI_stocks',
+    'TF_cash', 'TF_lending', 'TF_loans', 'TF_nav', 'TF_pnl', 'TF_signal', 'TF_stocks'
 ])
     return df
 
@@ -26,11 +26,14 @@ def update_results(df, generation, current_price, mismatch, pop, dividend,
         bs.count_short_assets(pop), replacements,
         volume,
         bs.report_nt_cash(pop), bs.report_nt_lending(pop), bs.report_nt_loan(pop),
-            bs.report_nt_nav(pop, current_price), bs.report_nt_pnl(pop), bs.report_nt_signal(pop),
-        bs.report_vi_cash(pop), bs.report_vi_lending(pop), bs.report_vi_loan(pop),
-            bs.report_vi_nav(pop, current_price), bs.report_vi_pnl(pop), bs.report_vi_signal(pop),
+            bs.report_nt_nav(pop, current_price), bs.report_nt_pnl(pop), 
+            bs.report_nt_signal(pop), bs.report_nt_stocks(pop, current_price),
+        bs.report_vi_cash(pop), bs.report_vi_lending(pop), bs.report_vi_loan(pop), 
+            bs.report_vi_nav(pop, current_price), bs.report_vi_pnl(pop), 
+            bs.report_vi_signal(pop), bs.report_vi_stocks(pop, current_price),
         bs.report_tf_cash(pop), bs.report_tf_lending(pop), bs.report_tf_loan(pop),
-            bs.report_tf_nav(pop, current_price), bs.report_tf_pnl(pop), bs.report_tf_signal(pop)
+            bs.report_tf_nav(pop, current_price), bs.report_tf_pnl(pop), 
+            bs.report_tf_signal(pop), bs.report_tf_stocks(pop, current_price)
         ]
     
     df.set_index('Gen')

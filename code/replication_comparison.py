@@ -145,3 +145,21 @@ data.plot(x="Gen", y = ["NT Signal (Reference)", "NT Signal (Simulation)","VI Si
 plt.xlabel('Generations')
 plt.ylabel('Signal')
 plt.show()
+
+''' Stocks '''
+data['NT Stocks (Reference)'] = ref['NT_stocks']
+data['NT Stocks (Simulation)'] = run['NT_stocks']
+data['VI Stocks (Reference)'] = ref['VI_stocks']
+data['VI Stocks (Simulation)'] = run['VI_stocks']
+data['TF Stocks (Reference)'] = ref['TF_stocks']
+data['TF Stocks (Simulation)'] = run['TF_stocks']
+data['Gen'] = run['Gen']
+data.plot(x="Gen", y = ["NT Stocks (Reference)", "NT Stocks (Simulation)","VI Stocks (Reference)", 
+    "VI Stocks (Simulation)","TF Stocks (Reference)", "TF Stocks (Simulation)"],
+        kind="line", figsize=(15, 6), title='Comparison of agent Stocks', 
+        color = ['r', 'r', 'g', 'g', 'b', 'b'],
+        style = [':', '-', ':', '-', ':', '-'])
+plt.xlabel('Generations')
+plt.ylabel('Stocks')
+plt.show()
+
