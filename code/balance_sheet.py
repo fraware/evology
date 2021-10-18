@@ -883,3 +883,39 @@ def report_tf_nav(pop, price):
     if num != 0:
         cash = total / num
     return cash
+
+def report_nt_pnl(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'nt':
+            num += 1
+            total += ind.profit
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_vi_pnl(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'vi':
+            num += 1
+            total += ind.profit
+    if num != 0:
+        cash = total / num
+    return cash
+
+def report_tf_pnl(pop):
+    total = 0
+    num = 0
+    cash = 0
+    for ind in pop:
+        if ind.type == 'tf':
+            num += 1
+            total += ind.profit
+    if num != 0:
+        cash = total / num
+    return cash

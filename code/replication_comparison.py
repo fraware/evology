@@ -103,10 +103,28 @@ data['TF NAV (Reference)'] = ref['TF_nav']
 data['TF NAV (Simulation)'] = run['TF_nav']
 data['Gen'] = run['Gen']
 data.plot(x="Gen", y = ["NT NAV (Reference)", "NT NAV (Simulation)","VI NAV (Reference)", 
-    "VI NAV (Simulation)","TF NAV (Reference)", "TF Loans (Simulation)"],
+    "VI NAV (Simulation)","TF NAV (Reference)", "TF NAV (Simulation)"],
         kind="line", figsize=(15, 6), title='Comparison of agent net asset values', 
         color = ['r', 'r', 'g', 'g', 'b', 'b'],
         style = [':', '-', ':', '-', ':', '-'])
 plt.xlabel('Generations')
 plt.ylabel('Net asset value')
+plt.show()
+
+
+''' Profit and losses '''
+data['NT PNL (Reference)'] = ref['NT_pnl']
+data['NT PNL (Simulation)'] = run['NT_pnl']
+data['VI PNL (Reference)'] = ref['VI_pnl']
+data['VI PNL (Simulation)'] = run['VI_pnl']
+data['TF PNL (Reference)'] = ref['TF_pnl']
+data['TF PNL (Simulation)'] = run['TF_pnl']
+data['Gen'] = run['Gen']
+data.plot(x="Gen", y = ["NT PNL (Reference)", "NT PNL (Simulation)","VI PNL (Reference)", 
+    "VI PNL (Simulation)","TF PNL (Reference)", "TF PNL (Simulation)"],
+        kind="line", figsize=(15, 6), title='Comparison of agent profit and losses', 
+        color = ['r', 'r', 'g', 'g', 'b', 'b'],
+        style = [':', '-', ':', '-', ':', '-'])
+plt.xlabel('Generations')
+plt.ylabel('Profit and losses')
 plt.show()
