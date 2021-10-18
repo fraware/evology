@@ -113,9 +113,9 @@ def determine_edf(pop):
         if ind.type == "tf":
             return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
         elif ind.type == "vi":
-            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(np.log2(SCALE_VI * ind[0]) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
+            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p)) + 0.5)) - (ind.asset_long - ind.asset_short)
         elif ind.type == "nt":
-            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(np.log2(SCALE_NT * ind[0] * ind.process) - np.log2(p) + 0.5)) - (ind.asset_long - ind.asset_short)
+            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * ind.process) - np.log2(p)) + 0.5)) - (ind.asset_long - ind.asset_short)
     for ind in pop:
         ind.edf = edf
     return pop
@@ -592,18 +592,52 @@ def agent_report(ind):
     if ind.type == "nt":
         print("NT agent - Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset_long)) + ", Asset_Short " + str(int(ind.asset_short)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(round(ind.tsv,2)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) )# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
   
-def nt_report(pop):
+def report_nt_signal(pop):
     fval = 0
     num = 0
+    fval_round = 0
     for ind in pop:
         if ind.type == "nt":
-            fval += ind.process * ind[0]
+            fval += ind.tsv
             num += 1
     if num != 0:
         fval_round = fval/num
-    if num == 0:
-        fval_round = 0
     return fval_round
+
+def report_vi_signal(pop):
+    fval = 0
+    num = 0
+    fval_round = 0
+    for ind in pop:
+        if ind.type == "vi":
+            fval += ind.tsv
+            num += 1
+    if num != 0:
+        fval_round = fval/num
+    return fval_round
+
+def report_tf_signal(pop):
+    fval = 0
+    num = 0
+    fval_round = 0
+    for ind in pop:
+        if ind.type == "tf":
+            fval += ind.tsv
+            num += 1
+    if num != 0:
+        fval_round = fval/num
+    return fval_round
+
+def calculate_tsv(pop, price, price_history):
+    for ind in pop:
+        if ind.type == 'tf':
+            pass # TSV already computed in calcualte_tsv_proc
+        if ind.type == 'vi':
+            ind.tsv = np.log2(ind[0]) - np.log2(price)
+        if ind.type == 'nt':
+            ind.tsv = np.log2(ind[0] * ind.process) - np.log2(price)
+    return ind
+
 
 
 def count_tf(pop):
@@ -717,20 +751,6 @@ def agg_ed(pop):
     functions.append(big_edf)
     return functions
 
-def agg_ed2(pop):
-    functions = []
-    for i in range(len(pop)):
-        if pop[i].type == "tf":
-            def func(asset_key, price):
-                return (LAMBDA_TF * pop[i].wealth / price) * (np.tanh(SCALE_TF * pop[i].tsv + 0.5)) - (pop[i].asset_long - pop[i].asset_short)
-        elif pop[i].type == "vi":
-            def func(asset_key, price):
-                return (LAMBDA_VI * pop[i].wealth / price) * (np.tanh(np.log2(SCALE_VI * pop[i][0]) - np.log2(price) + 0.5)) - (pop[i].asset_long - pop[i].asset_short)
-        elif pop[i].type == "nt":
-            def func(asset_key, price):
-                return (LAMBDA_NT * pop[i].wealth / price) * (np.tanh(np.log2(SCALE_NT * pop[i][0] * pop[i].process) - np.log2(price) + 0.5)) - (pop[i].asset_long - pop[i].asset_short)
-        functions.append(func)
-    return functions
 
 def share_spoils(pop, spoils):
     if spoils > 0:

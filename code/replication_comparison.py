@@ -128,3 +128,20 @@ data.plot(x="Gen", y = ["NT PNL (Reference)", "NT PNL (Simulation)","VI PNL (Ref
 plt.xlabel('Generations')
 plt.ylabel('Profit and losses')
 plt.show()
+
+''' Signal '''
+data['NT Signal (Reference)'] = ref['NT_signal']
+data['NT Signal (Simulation)'] = run['NT_signal']
+data['VI Signal (Reference)'] = ref['VI_signal']
+data['VI Signal (Simulation)'] = run['VI_signal']
+data['TF Signal (Reference, x100)'] = 100 * ref['TF_signal']
+data['TF Signal (Simulation, x100)'] = 100 * run['TF_signal']
+data['Gen'] = run['Gen']
+data.plot(x="Gen", y = ["NT Signal (Reference)", "NT Signal (Simulation)","VI Signal (Reference)", 
+    "VI Signal (Simulation)","TF Signal (Reference, x100)", "TF Signal (Simulation, x100)"],
+        kind="line", figsize=(15, 6), title='Comparison of agent Signal', 
+        color = ['r', 'r', 'g', 'g', 'b', 'b'],
+        style = [':', '-', ':', '-', ':', '-'])
+plt.xlabel('Generations')
+plt.ylabel('Signal')
+plt.show()

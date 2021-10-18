@@ -41,9 +41,11 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         new_price = esl_mc.solve(ed_functions, current_price)
 
         current_price = float(new_price[0])
+        bs.calculate_tsv(pop, current_price, price_history)
         price_history.append(current_price)       
 
         bs.calculate_edv(pop, current_price)
+        
 
 
         mismatch = bs.calculate_total_edv(pop) 
