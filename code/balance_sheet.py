@@ -95,10 +95,11 @@ def update_fval(pop, dividend_history, div_g_estimation):
         if ind.type == 'vi' or ind.type == 'nt':
             if len(dividend_history) > 0:
                 ind[0] = ((1 + mean(div_g_estimation)) *  dividend_history[-1]) / (EQUITY_COST - (1 + mean(div_g_estimation)) ** 252 -1)
+                ind[0] = 100
             # print(ind[0])
             if len(dividend_history) == 0:
                 ind[0] = ((1 + mean(div_g_estimation)) * (INITIAL_DIVIDEND)) / (EQUITY_COST - ((1 + mean(div_g_estimation)) ** 252 -1))
-
+                ind[0] = 100
     return pop, div_g_estimation
 
 def record_fval(pop):
@@ -145,274 +146,37 @@ def count_short_assets(pop):
             count += ind.asset_short
     return count
 
-def apply_edv(pop, asset_supply, price):
-    num_sell, num_buy = 0, 0
-    num_sell_tf, num_sell_vi, num_sell_nt = 0, 0, 0
-    num_buy_tf, num_buy_vi, num_buy_nt = 0, 0, 0
+def determine_multiplier(pop):
 
-    # Initialise variable edv
-    for ind in pop:
-        ind.edv_var = ind.edv
-
-    # STEP 1 
-    # BUY / SELL long positions (constrained by cash and selling volume)
-    # We are constrained by cash, and availability of shares (= some agents selling)
-    # However, selling is only constrained to buying. 
-    # Thus, we constrained-buy now and sell accordingly later, by saving how much was actually bought.
-    # We will then sell the same number of assets that were bought.
-
-    # A - Know how much long positions agents want to buy
-    total_buy = 0
-    for ind in pop:
-        if ind.edv_var > 0: # If we have assets to buy
-            buy = min(ind.edv_var, ind.cash / price) # define how much we can buy
-            if buy > 0 and buy < 1: # security to avoid negative infinitesimal orders
-                buy = 0
-            if buy < 0 and buy > -1:
-                buy = 0
-            total_buy += buy # Add to the total of buy-long orders
-
-    # B - Know how much long positions agents want to sell
-    total_sell = 0
-    for ind in pop:
-        if ind.edv_var < 0: # If we want to sell assets
-            sell = min(abs(ind.edv_var), ind.asset_long) 
-            if sell > 0 and sell < 1:  # security to avoid negative infinitesimal orders
-                sell = 0
-            if sell < 0 and sell > -1:
-                sell = 0
-            total_sell += sell
-
-    # C - We have net buy and sell orders. Compute the ratio.
-    if total_sell != 0:
-        order_ratio = total_buy / total_sell 
-    elif total_sell == 0:
-        order_ratio = 0
-        # print("No exchange today (everyone selling or everyone buying)")
-
-    if order_ratio < 0:
-        for ind in pop:
-            print("--- total buy, total sell, ind type, edv, edv_var, and feasible buy.sell order")
-            print(total_buy)
-            print(total_sell)
-            print(ind.type)
-            print(ind.edv)
-            print(ind.edv_var)
-            if ind.edv_var > 0:
-                print(min(ind.edv_var, ind.cash / price))
-            if ind.edv_var < 0:
-                print(min(abs(ind.edv_var), ind.asset_long))
-        raise ValueError('Negative order ratio (total sell/buy): ' + str(total_sell) + str(total_buy))
-
-    
-    # D - The order ratio determines how orders are impacted.
-    # Each agent can execute the same fraction of orders, to not penalise agents with large orders.
-    # We implement one single asset allocation proecedure with multipliers adjusted wrt the order ratio.
-    
-    if order_ratio == 0: #either noone buys, or no one sells
-        multiplier_buy = 0
-        multiplier_sell = 0
-        # No orders will be executed (no supply or no demand)
-    elif order_ratio < 1:
-        multiplier_buy = 1
-        multiplier_sell = order_ratio
-        # Selling will be restricted according to demand
-    elif order_ratio == 1 :
-        multiplier_buy = 1
-        multiplier_sell = 1
-        # All orders will be executed (supply =  demand)
-    elif order_ratio > 1:
-        multiplier_buy = 1 / order_ratio
-        multiplier_sell = 1
-        # Buying will be restricted according to supply
-
-    if multiplier_buy == None:
-        raise ValueError('Multiplier Buy is not defined')
-    if multiplier_buy < 0:
-        raise ValueError('Multiplier Buy is negative')
-    if multiplier_sell == None:
-        raise ValueError('Multiplier Sell is not defined')
-    if multiplier_sell < 0:
-        raise ValueError('Multiplier Sell is negative')
-
-    # E - Implement asset allocation under multipliers
-
-    for ind in pop:
-        # Exclude infinitesimal orders
-        if ind.edv_var > 0 and ind.edv_var < 1:
-            ind.edv_var = 0
-        if ind.edv_var < 0 and ind.edv_var > -1:
-            ind.edv_var = 0
-
-    for ind in pop:
-        # i) Buying orders
-        if ind.edv_var > 0:
-            # We determine effective bought amount, lose cash, gain shares, adjust demand
-            quantity_bought = min(ind.edv_var, ind.cash / price) * multiplier_buy
-            ind.cash -= quantity_bought * price
-
-            if ind.cash < 0 and ind.cash > -0.01:
-                ind.cash = 0
-            if ind.cash > 0 and ind.cash < 0.01:
-                ind.cash = 0
-
-            if ind.cash < 0:
-                print("ind type, cash, multiplier buy, qtty bought, value bought")
-                print(ind.type)
-                print(ind.cash)
-                print(multiplier_buy)
-                print(quantity_bought)
-                print(quantity_bought * price - ind.cash)
-                raise ValueError(str(ind.type) + ' Cash became negative at asset allocations under multiplier for agent with edv/edv_var/miltip ' + str(ind.edv) + " " + str(ind.edv_var) + " " + str(multiplier_buy))
-            ind.asset_long += quantity_bought
-            # if quantity_bought != 0:
-            #     print(str(ind.type) + " bought " + str(round(quantity_bought,2)))
-            ind.edv_var -= quantity_bought
-        
-        # ii) Sell orders
-        if ind.edv_var < 0:
-            # We determine the effective sell amount, gain cash, lose shares, adjust our rolling demand
-            quantity_sold = min(abs(ind.edv_var) * multiplier_sell, ind.asset_long)
-            if quantity_sold < 0:
-                raise ValueError('Negative quantity sold')
-            ind.cash += quantity_sold * price
-            ind.asset_long -= quantity_sold
-            # if quantity_sold != 0 :
-            #     print(str(ind.type) + " sold " + str(round(quantity_sold, 2)))
-            if ind.asset_long < 0:
-                print(ind.asset_long)
-                print(ind.edv)
-                print(ind.edv_var)
-                print(quantity_sold)
-                print(multiplier_sell)
-                raise ValueError('Agent long position became negative at asset allocations under multiplier')
-            ind.edv_var += quantity_sold
-
-    # STEP 2 
-    # BUY / Close short positions (unconstrained)
-    # Closing first makes sense to allow possible short sellings later (limit of short position size)
-    # Buying a long / closing a short is here equivalent. We close first to simply the balance_sheets and
-    # emphasize long positions.
-
-    for ind in pop:
-        if ind.edv_var > 0: # If we want to buy:
-            if ind.asset_short > 0: # if we have short positions to clear:
-                buy_back = min(min(ind.edv_var, ind.asset_short), (ind.cash + ind.margin) / price) # Decide how much
-                ind.asset_short -= buy_back # Apply the closing of the short position
-                ind.edv_var -= buy_back # Adjust our excess demand after closing short positions
-                # Apply the cost of closing the position
-                if buy_back * price <= ind.margin: # if we have enough in the margin
-                    ind.margin -= buy_back * price
-                elif buy_back * price > ind.margin: # if we don't have enough in the margin
-                    ind.cash -= (buy_back * price - ind.margin)
-                    ind.margin = 0
-            if ind.asset_short == 0: # If we have no short positions, clear the margin back into cash
-                ind.cash += ind.margin
-                ind.margin = 0
-            if ind.asset_short < 0:
-                raise ValueError('Negative short position')
-
-    # STEP 3
-    # SELL / Execute short selling (capacity constrained)
-    # For selling agents, after the exchanges of long positions, some may still want to sell
-    # No more exchange of long positions is available now. So they will consider short selling.
-
-    total_short = 0
-    for ind in pop:
-        if ind.edv_var < 0: # If the agents still want to sell
-            # Let's first determine how much they want to sell, 
-            # # and see if it does not exceed the limit on short positions size.
-            # If it exceeds, we make sure that the same fraction of orders is executed for all agents.
-           short = abs(ind.edv_var)
-           total_short += short
-           if total_short < 0:
-               raise ValueError('Total short below 0')
-
-    short_limit = asset_supply * LIMIT_SHORT_POS_SIZE
-
-    if short_limit < count_short_assets(pop):
-        raise ValueError('Short position size limit not respected')
-    
-    if total_short != 0:
-        if count_short_assets(pop) >= short_limit:
-            # We have no room for more short positions.
-            multiplier_short = 0
-
-        elif count_short_assets(pop) < short_limit:
-            # We have some room for more short positions.
-            max_short = min(short_limit - count_short_assets(pop), total_short)
-            multiplier_short = max_short / total_short
-
-        if multiplier_short > 1:
-            raise ValueError('Multiplier short is above 1')
-        if multiplier_short < 0:
-            print(short_limit)
-            print(count_short_assets(pop))
-            print(total_short)
-            print(multiplier_short)
-            raise ValueError('Multiplier short is negative')
-
-    # Now we execute the short selling orders 
-    for ind in pop:
-        if ind.edv_var < 0: # if they still want to sell
-            if ind.loan <= 0: # if the agents are not in debt (considered as risky)
-                quantity_short_sold = (multiplier_short * abs(ind.edv_var))
-                ind.asset_short += quantity_short_sold
-                ind.edv_var -= quantity_short_sold
-                ind.margin += quantity_short_sold * price
-            #     print(str(ind.type) + " short selled " + str(round(quantity_short_sold, 2)) + " shares")
-            # elif ind.loan > 0:
-            #     print(str(ind.type) + " prevented from short selling because of loan")
-
-    if count_long_assets(pop) > asset_supply + 1:
-        raise ValueError('Asset supply exceeded with value ' + str(count_long_assets(pop)))
-        
-    return pop, num_buy, num_sell, num_buy_tf, num_buy_vi, num_buy_nt, num_sell_tf, num_sell_vi, num_sell_nt
-
-def execute_demand(pop, current_price, asset_supply):
-    # print(count_long_assets(pop))
-# STEP 1 
-    # A - Know how much long positions agents want to buy/sell
     total_buy = 0
     total_sell = 0
+
     for ind in pop:
         if ind.edv > 0:
             total_buy += ind.edv
         elif ind.edv < 0:
             total_sell += abs(ind.edv)
 
-    # print('total buy = ' + str(total_buy))
-    # print('total sell = ' + str(total_sell))
-    
-    # B - Compute the ratio.
     if total_sell != 0:
         order_ratio = total_buy / total_sell 
     elif total_sell == 0:
         order_ratio = 0
-        # print("No exchange today (everyone selling or everyone buying)")
-    
-    # print("order_ratio")
-    # print(order_ratio)
 
     if order_ratio < 0:
-        for ind in pop:
-            print("--- total buy, total sell, ind type, edv, edv_var, and feasible buy.sell order")
-            print(total_buy)
-            print(total_sell)
-            print(ind.type)
-            print(ind.edv)
-            print(ind.edv_var)
-            if ind.edv_var > 0:
-                print(min(ind.edv_var, ind.cash / price))
-            if ind.edv_var < 0:
-                print(min(abs(ind.edv_var), ind.asset_long))
-        raise ValueError('Negative order ratio (total sell/buy): ' + str(total_sell) + str(total_buy))
+            for ind in pop:
+                print("--- total buy, total sell, ind type, edv, edv_var, and feasible buy.sell order")
+                print(total_buy)
+                print(total_sell)
+                print(ind.type)
+                print(ind.edv)
+                print(ind.edv_var)
+                if ind.edv_var > 0:
+                    print(min(ind.edv_var, ind.cash / price))
+                if ind.edv_var < 0:
+                    print(min(abs(ind.edv_var), ind.asset_long))
+            raise ValueError('Negative order ratio (total sell/buy): ' + str(total_sell) + str(total_buy))
 
-    
-    # C - The order ratio determines how orders are impacted.
-    # Each agent can execute the same fraction of orders, to not penalise agents with large orders.
-    # We implement one single asset allocation proecedure with multipliers adjusted wrt the order ratio.
-    
+
     if order_ratio == 0: #either noone buys, or no one sells
         multiplier_buy = 0
         multiplier_sell = 0
@@ -439,12 +203,31 @@ def execute_demand(pop, current_price, asset_supply):
     if multiplier_sell < 0:
         raise ValueError('Multiplier Sell is negative')
 
-    # print('mul total buy = ' + str(total_buy * multiplier_buy))
-    # print('mul total sell = ' + str(total_sell * multiplier_sell))
+    return multiplier_buy, multiplier_sell
 
-    # print("executing demand")
+def execute_demand(pop, current_price, asset_supply):
+
+    # Determine balanced excess demand values 
+    multiplier_buy, multiplier_sell = determine_multiplier(pop)
+
+    for ind in pop:
+        if ind.edv > 0:
+            to_buy = ind.edv * multiplier_buy
+            for j in range(to_buy):
+                if ind.cash - ind.loan > current_price:
+                    if ind.cash >= current_price:
+                        ind.cash -= current_price
+                        ind.asset_long += 1
+                    elif ind.cash < current_price:
+                        if ind.loan + current_price <= ind.leverage * ind.wealth:
+                            ind.loan += current_price
+                            ind.asset_long += 1
+                
+
+
+
     count_sold = 0
-    short_limit = short_bound * asset_supply
+    
     for ind in pop:
         if ind.edv < 0:
             to_sell = abs(ind.edv) * multiplier_sell
@@ -463,6 +246,16 @@ def execute_demand(pop, current_price, asset_supply):
                 ind.asset_long = 0 
 
                 to_short_sell = to_sell - ind.asset_long
+                
+                if ind.type == 'tf':
+                    short_lambda = LAMBDA_TF
+                if ind.type == 'nt':
+                    short_lambda = LAMBDA_NT
+                if ind.type == 'vi':
+                    short_lambda = LAMBDA_VI
+
+                short_limit = asset_supply + short_lambda
+
                 if count_short_assets(pop) + to_sell <= short_limit:
                     ind.asset_short += to_short_sell
                     ind.margin += to_short_sell * current_price
@@ -489,6 +282,14 @@ def execute_demand(pop, current_price, asset_supply):
     # print(total_buy * multiplier_buy * effective_buy_sell_ratio)
 
     for ind in pop:
+
+        if ind.type == 'tf':
+            loan_lambda = LAMBDA_TF
+        if ind.type == 'nt':
+            loan_lambda = LAMBDA_NT
+        if ind.type == 'vi':
+            loan_lambda = LAMBDA_VI
+
         ind.edv_var = ind.edv
         if ind.edv > 0:
             before_long = ind.asset_long
@@ -499,11 +300,11 @@ def execute_demand(pop, current_price, asset_supply):
                 ind.asset_long += to_buy
                 ind.edv_var -= to_buy
             elif ind.cash < to_buy * current_price:
-                warnings.warn("Unaffordable buying order faced cash constraint")
-                ind.asset_long += to_buy
-                ind.edv_var -= to_buy
-                ind.loan += (to_buy * current_price) - ind.cash
-                ind.cash = 0
+                if ind.loan (to_buy * current_price) < loan_lambda * ind.wealth: 
+                    ind.asset_long += to_buy
+                    ind.edv_var -= to_buy
+                    ind.loan += (to_buy * current_price) - ind.cash
+                    ind.cash = 0
             # print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
 
     # Buy back of short positions
