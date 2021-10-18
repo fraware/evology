@@ -83,5 +83,5 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
 
 
-        # print("----------------------")
+        print("----------------------")
     return df

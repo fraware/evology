@@ -66,25 +66,60 @@ def determine_tsv_proc(pop, price_history):
             #     ind.process = 1
 
 def update_fval(pop, dividend_history, div_g_estimation):
-    # Update the vector of growth rate estimation
-    # Run a new estimation
-    # if len(dividend_history) <= 1:
-    #     new_estimation = 0.01
-    # if len(dividend_history) > 1:
-    #     new_estimation = (dividend_history[-1] / dividend_history[-2]) - 1
-    # div_g_estimation.append(new_estimation)
-    # print(len(dividend_history))
-    # if len(dividend_history) > 1:
-    #     div_g_estimation = np.diff(np.log(dividend_history))
-    #     # print(div_g_estimation)
-    # elif len(dividend_history) <= 1:
-    #     div_g_estimation.append(((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1)
-    
-    # # print(div_g_estimation)
+    # div_g_estimation = math.exp(mean(np.diff(np.log(dividend_history)))) - 1
+    # daily_equity_cost = (EQUITY_COST + 1) ** (1/252) - 1
 
-    div_g_estimation = math.exp(mean(np.diff(np.log(dividend_history)))) - 1
+    print(INITIAL_DIVIDEND)
+    if len(dividend_history) > 0:
+        print(dividend_history[-1])
 
-    print(div_g_estimation)
+    div_diff = []
+    for i in range(len(dividend_history) - 1):
+        div_diff.append(dividend_history[-1 + i] / dividend_history[-2 + i])
+
+    if len(dividend_history) >= 2:
+        estimated_daily_div_growth = mean(div_diff) - 1
+    elif len(dividend_history) < 2:
+        estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
+
+    print('estimated daily div growth with div diff')
+    print(estimated_daily_div_growth)
+
+    if len(dividend_history) >= 2:
+        estimated_daily_div_growth = mean(np.true_divide(dividend_history[1:],dividend_history[:-1])) - 1
+    elif len(dividend_history) < 2:
+        estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
+
+    print('estimated daily div growth')
+    print(estimated_daily_div_growth)
+
+    annualised_estimated_daily_div_growth = (1 + estimated_daily_div_growth) ** 252 - 1
+    print('annualised estimated')
+    print(annualised_estimated_daily_div_growth)
+
+    if len(dividend_history) >= 1:
+        numerator = (1 + estimated_daily_div_growth) * dividend_history[-1]
+    if len(dividend_history) < 1:
+        numerator = (1 + estimated_daily_div_growth) * INITIAL_DIVIDEND
+    denuminator = (1 + EQUITY_COST - annualised_estimated_daily_div_growth) ** (1/252) - 1
+
+    fval = numerator / denuminator
+    print('fval ' + str(fval))
+    # print('maarten;s jupyter')
+    # print(0.003983  / (1.01**(1/252)-1))
+
+    # annualised_g = (0.00003948 + 1) ** 252 - 1
+    # print(annualised_g)
+    # print(gr)
+
+    # print('div g estimation')
+    # print(div_g_estimation)
+
+    # print('my implem')
+    # print(0.003983  / (1 + EQUITY_COST - annualised_g)**(1/252)-1)
+
+    # print('fval')
+    # print(fval)
 
     # print(div_g_estimation)
     # Remove an old estimation
@@ -93,13 +128,8 @@ def update_fval(pop, dividend_history, div_g_estimation):
     # Update agent fundamental values
     for ind in pop: 
         if ind.type == 'vi' or ind.type == 'nt':
-            if len(dividend_history) > 0:
-                ind[0] = ((1 + mean(div_g_estimation)) *  dividend_history[-1]) / (EQUITY_COST - (1 + mean(div_g_estimation)) ** 252 -1)
-                ind[0] = 100
-            # print(ind[0])
-            if len(dividend_history) == 0:
-                ind[0] = ((1 + mean(div_g_estimation)) * (INITIAL_DIVIDEND)) / (EQUITY_COST - ((1 + mean(div_g_estimation)) ** 252 -1))
-                ind[0] = 100
+            ind[0] = fval
+            print(ind.type + str(' now at ' + str(ind[0])))
     return pop, div_g_estimation
 
 def record_fval(pop):
@@ -153,9 +183,12 @@ def determine_multiplier(pop):
 
     for ind in pop:
         if ind.edv > 0:
-            total_buy += math.floor(ind.edv)
+            # total_buy += math.floor(ind.edv)
+            total_buy += (ind.edv)
         elif ind.edv < 0:
-            total_sell += math.floor(abs(ind.edv))
+            # total_sell += math.floor(abs(ind.edv))
+            total_sell += abs(ind.edv)
+
 
     if total_sell != 0:
         order_ratio = total_buy / total_sell 
@@ -257,25 +290,15 @@ def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell):
         raise ValueError('Asset supply constraint violated')
 def execute_demand(pop, current_price, asset_supply):
 
-    print('price ' + str(current_price))
-
     # Determine balanced excess demand values 
     multiplier_buy, multiplier_sell = determine_multiplier(pop)
     volume_buy, volume_sell = 0, 0
 
     for ind in pop:
-
         leverage_limit = ind.leverage * ind.wealth
-
         if ind.edv > 0:
             to_buy = ind.edv * multiplier_buy
-            print('to_buy ' + str(to_buy))
-            # print('value of the desired action vs what we dispose of')
-            # print(to_buy * current_price)
-            # print(ind.cash + leverage_limit - ind.loan)
-
-            
-            for j in range(math.floor(to_buy)):
+            for j in range(round(to_buy),0):
                 if ind.asset_short < 1:
                     if ind.cash >= current_price:
                         ind.cash -= current_price
@@ -301,18 +324,10 @@ def execute_demand(pop, current_price, asset_supply):
                                 ind.loan += current_price
                                 ind.asset_short -= 1
                                 volume_buy += 1
-            print('Realised ' + str(volume_buy) + ' bought')
-            # print('new cash and loan and leverage')
-            # print(ind.cash)
-            # print(ind.loan)
-            # print(leverage_limit)
-            # print(ind.leverage)
-
-        
+ 
         if ind.edv < 0:
             to_sell = abs(ind.edv) * multiplier_sell
-            print('to_sell ' + str(to_sell))
-            for s in range(math.floor(to_sell)):
+            for s in range(round(to_sell), 0):
                 if ind.asset_long >= 1:
                     ind.cash += current_price
                     ind.asset_long -= 1
@@ -322,118 +337,9 @@ def execute_demand(pop, current_price, asset_supply):
                         ind.asset_short += 1
                         ind.margin += current_price
                         volume_sell += 1
-            print('Realised ' + str(volume_sell) + ' sold')
                 
     execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell)
-
     volume = volume_buy + volume_sell
-
-
-
-    # count_sold = 0
-    
-    # for ind in pop:
-    #     if ind.edv < 0:
-    #         to_sell = abs(ind.edv) * multiplier_sell
-    #         before_long = ind.asset_long
-    #         if ind.asset_long >= to_sell: 
-    #             ind.cash += to_sell * current_price
-    #             ind.asset_long -= to_sell
-    #             count_sold += to_sell
-    #         elif ind.asset_long < to_sell:
-    #             # print('agent needs short sell')
-    #             # print(to_sell)
-    #             # print(ind.asset_long)
-    #             ind.cash += ind.asset_long * current_price
-                
-    #             count_sold += ind.asset_long
-    #             ind.asset_long = 0 
-
-    #             to_short_sell = to_sell - ind.asset_long
-                
-    #             if ind.type == 'tf':
-    #                 short_lambda = LAMBDA_TF
-    #             if ind.type == 'nt':
-    #                 short_lambda = LAMBDA_NT
-    #             if ind.type == 'vi':
-    #                 short_lambda = LAMBDA_VI
-
-    #             short_limit = asset_supply + short_lambda
-
-    #             if count_short_assets(pop) + to_sell <= short_limit:
-    #                 ind.asset_short += to_short_sell
-    #                 ind.margin += to_short_sell * current_price
-    #             elif count_short_assets(pop) < short_limit and count_short_assets(pop) + to_sell > short_limit:
-    #                 feasible_short_sell = min(to_short_sell, short_limit - count_short_assets(pop))
-    #                 ind.asset_short += feasible_short_sell
-    #                 ind.margin += feasible_short_sell * current_price
-    #         # print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
-    #     # TODO: needs buyback of short positions
-    # # print(count_sold)
-    # if total_sell * multiplier_sell != 0:
-    #     effective_buy_sell_ratio = count_sold / (total_sell * multiplier_sell)
-    # elif total_sell * multiplier_sell == 0:
-    #     effective_buy_sell_ratio = 0
-    
-    # if effective_buy_sell_ratio > 1.1:
-    #     raise ValueError('buy sell effective ratio above 1')
-    # if count_sold >= total_sell * multiplier_sell + 1:
-    #     raise ValueError('Count sold higher than total sell multiplied')
-
-    # # print('total sold and adjusted total buy')
-    # # print(count_sold)
-    # # print(effective_buy_sell_ratio)
-    # # print(total_buy * multiplier_buy * effective_buy_sell_ratio)
-
-    # for ind in pop:
-
-    #     if ind.type == 'tf':
-    #         loan_lambda = LAMBDA_TF
-    #     if ind.type == 'nt':
-    #         loan_lambda = LAMBDA_NT
-    #     if ind.type == 'vi':
-    #         loan_lambda = LAMBDA_VI
-
-    #     ind.edv_var = ind.edv
-    #     if ind.edv > 0:
-    #         before_long = ind.asset_long
-    #         to_buy = ind.edv * multiplier_buy * effective_buy_sell_ratio
-    #         # if we have enough cash, this is easy
-    #         if ind.cash >= to_buy * current_price:
-    #             ind.cash -= to_buy * current_price
-    #             ind.asset_long += to_buy
-    #             ind.edv_var -= to_buy
-    #         elif ind.cash < to_buy * current_price:
-    #             if ind.loan (to_buy * current_price) < loan_lambda * ind.wealth: 
-    #                 ind.asset_long += to_buy
-    #                 ind.edv_var -= to_buy
-    #                 ind.loan += (to_buy * current_price) - ind.cash
-    #                 ind.cash = 0
-    #         # print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
-
-    # # Buy back of short positions
-    # bought_back = 0
-    # for ind in pop:
-    #     if ind.edv_var > 0:
-    #         if ind.asset_short > 0:
-    #             i = 0
-    #             arr = np.array(ind.asset_short, ind.edv_var)
-                
-    #             for i in range(math.floor(min(ind.asset_short, ind.edv_var))):
-    #                 while ind.cash + ind.margin > current_price:
-    #                     if ind.margin >= current_price:
-    #                         ind.asset_short -= 1
-    #                         ind.margin -= current_price
-    #                         bought_back += 1
-    #                     elif ind.margin < current_price:
-    #                         ind.cash -= current_price - ind.margin
-    #                         ind.asset_short -= 1
-    #                         ind.margin = 0
-    #                         bought_back += 1
-    # # print(str(bought_back) + ' short positions have been closed.')
-
-    # # TODO: correct that
-    # volume = total_buy * multiplier_buy + total_sell * multiplier_sell
 
     return pop, volume
 
@@ -468,7 +374,7 @@ def report_nt_signal(pop):
     fval_round = 0
     for ind in pop:
         if ind.type == "nt":
-            fval += ind.tsv
+            fval += ind[0]
             num += 1
     if num != 0:
         fval_round = fval/num
@@ -480,7 +386,7 @@ def report_vi_signal(pop):
     fval_round = 0
     for ind in pop:
         if ind.type == "vi":
-            fval += ind.tsv
+            fval += ind[0]
             num += 1
     if num != 0:
         fval_round = fval/num

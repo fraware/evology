@@ -23,12 +23,3 @@ def dividend_series(horizon):
         history.append(dividend)
     return history
 
-
-
-
-print(INITIAL_DIVIDEND)
-DIVIDEND_GROWTH_RATE = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
-print(DIVIDEND_GROWTH_RATE)
-
-a = (1 + (0 + 0.0000394) * 0.0000391) / (0.02 - (1 + 0.0000394) ** 252 - 1)
-print(a)
