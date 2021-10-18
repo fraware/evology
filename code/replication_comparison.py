@@ -93,3 +93,20 @@ data.plot(x="Gen", y = ["NT Loans (Reference)", "NT Loans (Simulation)","VI Loan
 plt.xlabel('Generations')
 plt.ylabel('Loans')
 plt.show()
+
+''' Net asset value (i.e. asset long * price) '''
+data['NT NAV (Reference)'] = ref['NT_nav']
+data['NT NAV (Simulation)'] = run['NT_nav']
+data['VI NAV (Reference)'] = ref['VI_nav']
+data['VI NAV (Simulation)'] = run['VI_nav']
+data['TF NAV (Reference)'] = ref['TF_nav']
+data['TF NAV (Simulation)'] = run['TF_nav']
+data['Gen'] = run['Gen']
+data.plot(x="Gen", y = ["NT NAV (Reference)", "NT NAV (Simulation)","VI NAV (Reference)", 
+    "VI NAV (Simulation)","TF NAV (Reference)", "TF Loans (Simulation)"],
+        kind="line", figsize=(15, 6), title='Comparison of agent net asset values', 
+        color = ['r', 'r', 'g', 'g', 'b', 'b'],
+        style = [':', '-', ':', '-', ':', '-'])
+plt.xlabel('Generations')
+plt.ylabel('Net asset value')
+plt.show()

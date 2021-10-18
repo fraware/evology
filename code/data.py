@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import balance_sheet as bs
-# from code.balance_sheet import record_fval
+
 
 def create_df():
     df = pd.DataFrame(columns = [
@@ -9,9 +9,9 @@ def create_df():
     "Mean_TF", "Mean_VI", "Mean_NT", "Dividends", "RDiv", "WShare_TF", "WShare_VI",
     "WShare_NT", "Pos+", "Pos-", "Rep",
     'Volume',
-    'NT_cash', 'NT_lending', 'NT_loans',
-    'VI_cash', 'VI_lending', 'VI_loans',
-    'TF_cash', 'TF_lending', 'TF_loans'
+    'NT_cash', 'NT_lending', 'NT_loans', 'NT_nav',
+    'VI_cash', 'VI_lending', 'VI_loans', 'VI_nav',
+    'TF_cash', 'TF_lending', 'TF_loans', 'TF_nav'
 ])
     return df
 
@@ -26,8 +26,12 @@ def update_results(df, generation, current_price, mismatch, pop, dividend,
         bs.count_short_assets(pop), replacements,
         volume,
         bs.report_nt_cash(pop), bs.report_nt_lending(pop), bs.report_nt_loan(pop),
+            bs.report_nt_nav(pop, current_price),
         bs.report_vi_cash(pop), bs.report_vi_lending(pop), bs.report_vi_loan(pop),
-        bs.report_tf_cash(pop), bs.report_tf_lending(pop), bs.report_tf_loan(pop)
+            bs.report_vi_nav(pop, current_price),
+        bs.report_tf_cash(pop), bs.report_tf_lending(pop), bs.report_tf_loan(pop),
+            bs.report_tf_nav(pop, current_price)
+
         ]
     
     df.set_index('Gen')
