@@ -153,9 +153,9 @@ def determine_multiplier(pop):
 
     for ind in pop:
         if ind.edv > 0:
-            total_buy += ind.edv
+            total_buy += math.floor(ind.edv)
         elif ind.edv < 0:
-            total_sell += abs(ind.edv)
+            total_sell += math.floor(abs(ind.edv))
 
     if total_sell != 0:
         order_ratio = total_buy / total_sell 
@@ -205,136 +205,12 @@ def determine_multiplier(pop):
 
     return multiplier_buy, multiplier_sell
 
-def execute_demand(pop, current_price, asset_supply):
+def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell):
 
-    # Determine balanced excess demand values 
-    multiplier_buy, multiplier_sell = determine_multiplier(pop)
-
-    for ind in pop:
-        if ind.edv > 0:
-            to_buy = ind.edv * multiplier_buy
-            for j in range(to_buy):
-                if ind.cash - ind.loan > current_price:
-                    if ind.cash >= current_price:
-                        ind.cash -= current_price
-                        ind.asset_long += 1
-                    elif ind.cash < current_price:
-                        if ind.loan + current_price <= ind.leverage * ind.wealth:
-                            ind.loan += current_price
-                            ind.asset_long += 1
-                
-
-
-
-    count_sold = 0
-    
-    for ind in pop:
-        if ind.edv < 0:
-            to_sell = abs(ind.edv) * multiplier_sell
-            before_long = ind.asset_long
-            if ind.asset_long >= to_sell: 
-                ind.cash += to_sell * current_price
-                ind.asset_long -= to_sell
-                count_sold += to_sell
-            elif ind.asset_long < to_sell:
-                # print('agent needs short sell')
-                # print(to_sell)
-                # print(ind.asset_long)
-                ind.cash += ind.asset_long * current_price
-                
-                count_sold += ind.asset_long
-                ind.asset_long = 0 
-
-                to_short_sell = to_sell - ind.asset_long
-                
-                if ind.type == 'tf':
-                    short_lambda = LAMBDA_TF
-                if ind.type == 'nt':
-                    short_lambda = LAMBDA_NT
-                if ind.type == 'vi':
-                    short_lambda = LAMBDA_VI
-
-                short_limit = asset_supply + short_lambda
-
-                if count_short_assets(pop) + to_sell <= short_limit:
-                    ind.asset_short += to_short_sell
-                    ind.margin += to_short_sell * current_price
-                elif count_short_assets(pop) < short_limit and count_short_assets(pop) + to_sell > short_limit:
-                    feasible_short_sell = min(to_short_sell, short_limit - count_short_assets(pop))
-                    ind.asset_short += feasible_short_sell
-                    ind.margin += feasible_short_sell * current_price
-            # print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
-        # TODO: needs buyback of short positions
-    # print(count_sold)
-    if total_sell * multiplier_sell != 0:
-        effective_buy_sell_ratio = count_sold / (total_sell * multiplier_sell)
-    elif total_sell * multiplier_sell == 0:
-        effective_buy_sell_ratio = 0
-    
-    if effective_buy_sell_ratio > 1.1:
-        raise ValueError('buy sell effective ratio above 1')
-    if count_sold >= total_sell * multiplier_sell + 1:
-        raise ValueError('Count sold higher than total sell multiplied')
-
-    # print('total sold and adjusted total buy')
-    # print(count_sold)
-    # print(effective_buy_sell_ratio)
-    # print(total_buy * multiplier_buy * effective_buy_sell_ratio)
-
-    for ind in pop:
-
-        if ind.type == 'tf':
-            loan_lambda = LAMBDA_TF
-        if ind.type == 'nt':
-            loan_lambda = LAMBDA_NT
-        if ind.type == 'vi':
-            loan_lambda = LAMBDA_VI
-
-        ind.edv_var = ind.edv
-        if ind.edv > 0:
-            before_long = ind.asset_long
-            to_buy = ind.edv * multiplier_buy * effective_buy_sell_ratio
-            # if we have enough cash, this is easy
-            if ind.cash >= to_buy * current_price:
-                ind.cash -= to_buy * current_price
-                ind.asset_long += to_buy
-                ind.edv_var -= to_buy
-            elif ind.cash < to_buy * current_price:
-                if ind.loan (to_buy * current_price) < loan_lambda * ind.wealth: 
-                    ind.asset_long += to_buy
-                    ind.edv_var -= to_buy
-                    ind.loan += (to_buy * current_price) - ind.cash
-                    ind.cash = 0
-            # print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
-
-    # Buy back of short positions
-    bought_back = 0
-    for ind in pop:
-        if ind.edv_var > 0:
-            if ind.asset_short > 0:
-                i = 0
-                arr = np.array(ind.asset_short, ind.edv_var)
-                
-                for i in range(math.floor(min(ind.asset_short, ind.edv_var))):
-                    while ind.cash + ind.margin > current_price:
-                        if ind.margin >= current_price:
-                            ind.asset_short -= 1
-                            ind.margin -= current_price
-                            bought_back += 1
-                        elif ind.margin < current_price:
-                            ind.cash -= current_price - ind.margin
-                            ind.asset_short -= 1
-                            ind.margin = 0
-                            bought_back += 1
-    # print(str(bought_back) + ' short positions have been closed.')
-
-    # TODO: correct that
-    volume = total_buy * multiplier_buy + total_sell * multiplier_sell
 
     for ind in pop:
         if ind.cash < 0:
             print("Current price, type, edv, cash, asset_long, pop edvs")
-            print(current_price)
             print(ind.type)
             print(ind.edv)
             print(ind.cash)
@@ -342,7 +218,6 @@ def execute_demand(pop, current_price, asset_supply):
             raise ValueError('Negative agent cash ')
         if ind.asset_long < 0: 
             print("Current price, type, edv, cash, asset_long, pop edvs")
-            print(current_price)
             print(ind.type)
             print(ind.edv)
             print(ind.cash)
@@ -352,20 +227,214 @@ def execute_demand(pop, current_price, asset_supply):
                 print(ind.type)
                 print(ind.edv)
             raise ValueError('Negative agent long ' )
+        if ind.asset_short < 0:
+            raise ValueError('Negative agent short')
 
-    if count_long_assets(pop) >= asset_supply + 1 or count_long_assets(pop) <= asset_supply - 1  :
+    # if count_long_assets(pop) >= asset_supply + 1 or count_long_assets(pop) <= asset_supply - 1:
+    #     print("volume buy, sell, ind type and asset_long")
+    #     print(volume_buy)
+    #     print(volume_sell)
+    #     for ind in pop:
+    #         print(ind.type)
+    #         print(ind.asset_long)
+    #     print('long, short, +, -')
+    #     print(count_long_assets(pop))
+    #     print(count_long_assets(pop) + count_short_assets(pop))
+    #     print(count_long_assets(pop) - count_short_assets(pop))
+    #     raise ValueError('Asset supply constraint violated')
+
+    if count_long_assets(pop) - count_short_assets(pop) >= asset_supply + 1 or count_long_assets(pop) - count_short_assets(pop) <= asset_supply - 1:
+        print("volume buy, sell, ind type and asset_long")
+        print(volume_buy)
+        print(volume_sell)
         for ind in pop:
             print(ind.type)
             print(ind.asset_long)
-            if ind.edv > 0:
-                print(ind.edv * multiplier_buy)
-            if ind.edv < 0:
-                print(ind.edv * multiplier_sell)
-        print('---')
-        print(total_buy * multiplier_buy)
-        print(total_sell * multiplier_sell)
+        print('long, short, +, -')
         print(count_long_assets(pop))
+        print(count_long_assets(pop) + count_short_assets(pop))
+        print(count_long_assets(pop) - count_short_assets(pop))
         raise ValueError('Asset supply constraint violated')
+def execute_demand(pop, current_price, asset_supply):
+
+    print('price ' + str(current_price))
+
+    # Determine balanced excess demand values 
+    multiplier_buy, multiplier_sell = determine_multiplier(pop)
+    volume_buy, volume_sell = 0, 0
+
+    for ind in pop:
+
+        leverage_limit = ind.leverage * ind.wealth
+
+        if ind.edv > 0:
+            to_buy = ind.edv * multiplier_buy
+            print('to_buy ' + str(to_buy))
+            # print('value of the desired action vs what we dispose of')
+            # print(to_buy * current_price)
+            # print(ind.cash + leverage_limit - ind.loan)
+
+            
+            for j in range(math.floor(to_buy)):
+                if ind.asset_short < 1:
+                    if ind.cash >= current_price:
+                        ind.cash -= current_price
+                        ind.asset_long += 1
+                        volume_buy += 1
+                    elif ind.cash < current_price:
+                        if ind.loan + current_price <= leverage_limit:
+                            ind.loan += current_price
+                            ind.asset_long += 1
+                            volume_buy += 1
+                elif ind.asset_short >= 1:
+                    if ind.margin >= current_price:
+                        ind.asset_short -= 1
+                        ind.margin -= current_price
+                        volume_buy += 1
+                    elif ind.margin < current_price:
+                        if ind.cash >= current_price:
+                            ind.cash -= current_price
+                            ind.asset_short -= 1
+                            volume_buy += 1
+                        elif ind.cash < current_price:
+                            if ind.loan + current_price < leverage_limit:
+                                ind.loan += current_price
+                                ind.asset_short -= 1
+                                volume_buy += 1
+            print('Realised ' + str(volume_buy) + ' bought')
+            # print('new cash and loan and leverage')
+            # print(ind.cash)
+            # print(ind.loan)
+            # print(leverage_limit)
+            # print(ind.leverage)
+
+        
+        if ind.edv < 0:
+            to_sell = abs(ind.edv) * multiplier_sell
+            print('to_sell ' + str(to_sell))
+            for s in range(math.floor(to_sell)):
+                if ind.asset_long >= 1:
+                    ind.cash += current_price
+                    ind.asset_long -= 1
+                    volume_sell += 1
+                elif ind.asset_long < 1:
+                    if ind.asset_short * current_price < leverage_limit:
+                        ind.asset_short += 1
+                        ind.margin += current_price
+                        volume_sell += 1
+            print('Realised ' + str(volume_sell) + ' sold')
+                
+    execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell)
+
+    volume = volume_buy + volume_sell
+
+
+
+    # count_sold = 0
+    
+    # for ind in pop:
+    #     if ind.edv < 0:
+    #         to_sell = abs(ind.edv) * multiplier_sell
+    #         before_long = ind.asset_long
+    #         if ind.asset_long >= to_sell: 
+    #             ind.cash += to_sell * current_price
+    #             ind.asset_long -= to_sell
+    #             count_sold += to_sell
+    #         elif ind.asset_long < to_sell:
+    #             # print('agent needs short sell')
+    #             # print(to_sell)
+    #             # print(ind.asset_long)
+    #             ind.cash += ind.asset_long * current_price
+                
+    #             count_sold += ind.asset_long
+    #             ind.asset_long = 0 
+
+    #             to_short_sell = to_sell - ind.asset_long
+                
+    #             if ind.type == 'tf':
+    #                 short_lambda = LAMBDA_TF
+    #             if ind.type == 'nt':
+    #                 short_lambda = LAMBDA_NT
+    #             if ind.type == 'vi':
+    #                 short_lambda = LAMBDA_VI
+
+    #             short_limit = asset_supply + short_lambda
+
+    #             if count_short_assets(pop) + to_sell <= short_limit:
+    #                 ind.asset_short += to_short_sell
+    #                 ind.margin += to_short_sell * current_price
+    #             elif count_short_assets(pop) < short_limit and count_short_assets(pop) + to_sell > short_limit:
+    #                 feasible_short_sell = min(to_short_sell, short_limit - count_short_assets(pop))
+    #                 ind.asset_short += feasible_short_sell
+    #                 ind.margin += feasible_short_sell * current_price
+    #         # print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
+    #     # TODO: needs buyback of short positions
+    # # print(count_sold)
+    # if total_sell * multiplier_sell != 0:
+    #     effective_buy_sell_ratio = count_sold / (total_sell * multiplier_sell)
+    # elif total_sell * multiplier_sell == 0:
+    #     effective_buy_sell_ratio = 0
+    
+    # if effective_buy_sell_ratio > 1.1:
+    #     raise ValueError('buy sell effective ratio above 1')
+    # if count_sold >= total_sell * multiplier_sell + 1:
+    #     raise ValueError('Count sold higher than total sell multiplied')
+
+    # # print('total sold and adjusted total buy')
+    # # print(count_sold)
+    # # print(effective_buy_sell_ratio)
+    # # print(total_buy * multiplier_buy * effective_buy_sell_ratio)
+
+    # for ind in pop:
+
+    #     if ind.type == 'tf':
+    #         loan_lambda = LAMBDA_TF
+    #     if ind.type == 'nt':
+    #         loan_lambda = LAMBDA_NT
+    #     if ind.type == 'vi':
+    #         loan_lambda = LAMBDA_VI
+
+    #     ind.edv_var = ind.edv
+    #     if ind.edv > 0:
+    #         before_long = ind.asset_long
+    #         to_buy = ind.edv * multiplier_buy * effective_buy_sell_ratio
+    #         # if we have enough cash, this is easy
+    #         if ind.cash >= to_buy * current_price:
+    #             ind.cash -= to_buy * current_price
+    #             ind.asset_long += to_buy
+    #             ind.edv_var -= to_buy
+    #         elif ind.cash < to_buy * current_price:
+    #             if ind.loan (to_buy * current_price) < loan_lambda * ind.wealth: 
+    #                 ind.asset_long += to_buy
+    #                 ind.edv_var -= to_buy
+    #                 ind.loan += (to_buy * current_price) - ind.cash
+    #                 ind.cash = 0
+    #         # print('Agent ' + str(ind.type) + ' long changed by ' + str(ind.asset_long - before_long))
+
+    # # Buy back of short positions
+    # bought_back = 0
+    # for ind in pop:
+    #     if ind.edv_var > 0:
+    #         if ind.asset_short > 0:
+    #             i = 0
+    #             arr = np.array(ind.asset_short, ind.edv_var)
+                
+    #             for i in range(math.floor(min(ind.asset_short, ind.edv_var))):
+    #                 while ind.cash + ind.margin > current_price:
+    #                     if ind.margin >= current_price:
+    #                         ind.asset_short -= 1
+    #                         ind.margin -= current_price
+    #                         bought_back += 1
+    #                     elif ind.margin < current_price:
+    #                         ind.cash -= current_price - ind.margin
+    #                         ind.asset_short -= 1
+    #                         ind.margin = 0
+    #                         bought_back += 1
+    # # print(str(bought_back) + ' short positions have been closed.')
+
+    # # TODO: correct that
+    # volume = total_buy * multiplier_buy + total_sell * multiplier_sell
+
     return pop, volume
 
 def earnings(pop, prev_dividend, current_price):
