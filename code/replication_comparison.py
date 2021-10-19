@@ -7,7 +7,7 @@ run = pd.read_csv("data/test_data.csv")
 ref = pd.read_csv('data/replication_data.csv')
 
 ''' Dividends '''
-data = df = pd.DataFrame()
+data = pd.DataFrame()
 data['Dividends (Reference)'] = ref['Dividends']
 data['Dividends (Simulation)'] = run['Dividends']
 data['Gen'] = run['Gen']

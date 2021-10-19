@@ -52,7 +52,7 @@ def calculate_wealth(pop, current_price):
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
 
-def determine_tsv_proc(pop, price_history):
+def determine_tsv_proc(pop, price_history, process_history):
     # For TFs to have a TSV before determining their edf.
     for ind in pop:
         if ind.type == "tf":
@@ -61,80 +61,26 @@ def determine_tsv_proc(pop, price_history):
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
         if ind.type == "nt":
-            ind.process = abs(ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1))
-            # if ind.process < 0:
-            #     ind.process = 1
+            #ind.process = abs(ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1))
+            # ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
+            if len(process_history) > 1:
+                ind.process = ind.process + RHO_NT * (MU_NT - process_history[-2]) + GAMMA_NT * random.normalvariate(0,1)
+            elif len(process_history) <= 1:
+                ind.process = ind.process + GAMMA_NT * random.normalvariate(0,1)
+            process_history.append(ind.process)
 
-def update_fval(pop, extended_dividend_history, div_g_estimation):
-    estimated_daily_div_growth = math.exp(mean(np.diff(np.log(extended_dividend_history)))) - 1
-
-    # div_diff = []
-    # for i in range(len(dividend_history) - 1):
-    #     div_diff.append(dividend_history[-1 + i] / dividend_history[-2 + i])
-
-    print('estimated daily div growth (Maarten;s formula))')
-    print(estimated_daily_div_growth)
-
-    # div_diff = []
-    # for i in range(len(extended_dividend_history) - 1):
-    #     div_diff.append(extended_dividend_history[-1 + i] / extended_dividend_history[-2 + i])
-    # estimated_daily_div_growth = mean(div_diff) - 1
-
-    # print('estimated daily (my formula)')
-    # print(estimated_daily_div_growth)
-
-    # if len(dividend_history) >= 2:
-    #     estimated_daily_div_growth = mean(np.true_divide(dividend_history[1:],dividend_history[:-1])) - 1
-    # elif len(dividend_history) < 2:
-    #     estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
-
-    # print('estimated daily div growth')
-    # print(estimated_daily_div_growth)
-
+def update_fval(pop, extended_dividend_history):
     estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
-
     annualised_estimated_daily_div_growth = (1 + estimated_daily_div_growth) ** 252 - 1
-    # print('annualised estimated')
-    # print(annualised_estimated_daily_div_growth)
-
 
     numerator = (1 + estimated_daily_div_growth) * extended_dividend_history[-1] # correct
-
     denuminator = (1 + EQUITY_COST - annualised_estimated_daily_div_growth) ** (1/252) - 1
-
     fval = numerator / denuminator
-    print('fval ' + str(fval))
-    print('numerator ' + str(numerator))
-    print('denominator ' + str(denuminator))
-    print(' maarten numerator: ' + str(0.003983))
-    print(' maarten denum: ' + str((1.01**(1/252)-1)))
-    print('annualised div growth estinmate: ' + str(annualised_estimated_daily_div_growth))
-    # print('maarten;s jupyter')
-    # print(0.003983  / (1.01**(1/252)-1))
 
-    # annualised_g = (0.00003948 + 1) ** 252 - 1
-    # print(annualised_g)
-    # print(gr)
-
-    # print('div g estimation')
-    # print(div_g_estimation)
-
-    # print('my implem')
-    # print(0.003983  / (1 + EQUITY_COST - annualised_g)**(1/252)-1)
-
-    # print('fval')
-    # print(fval)
-
-    # print(div_g_estimation)
-    # Remove an old estimation
-    # if len(div_g_estimation) > LENGTH_DIVIDEND_ESTIMATION:
-    #     del div_g_estimation[0]
-    # Update agent fundamental values
     for ind in pop: 
         if ind.type == 'vi' or ind.type == 'nt':
             ind[0] = fval
-            print(ind.type + str(' now at ' + str(ind[0])))
-    return pop, div_g_estimation
+    return pop
 
 def record_fval(pop):
     fval = 0
@@ -150,7 +96,7 @@ def determine_edf(pop):
         elif ind.type == "vi":
             return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p)) + 0.5)) - (ind.asset_long - ind.asset_short)
         elif ind.type == "nt":
-            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * ind.process) - np.log2(p)) + 0.5)) - (ind.asset_long - ind.asset_short)
+            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - (ind.asset_long - ind.asset_short)
     for ind in pop:
         ind.edf = edf
     return pop
@@ -378,7 +324,7 @@ def report_nt_signal(pop):
     fval_round = 0
     for ind in pop:
         if ind.type == "nt":
-            fval += ind[0]
+            fval += ind[0] * ind.process
             num += 1
     if num != 0:
         fval_round = fval/num
@@ -415,7 +361,7 @@ def calculate_tsv(pop, price, price_history):
         if ind.type == 'vi':
             ind.tsv = np.log2(ind[0]) - np.log2(price)
         if ind.type == 'nt':
-            ind.tsv = np.log2(ind[0] * ind.process) - np.log2(price)
+            ind.tsv = np.log2(ind[0] * abs(ind.process)) - np.log2(price)
     return ind
 
 
@@ -655,7 +601,7 @@ def report_nt_nav(pop, price):
     for ind in pop:
         if ind.type == 'nt':
             num += 1
-            total += ind.asset_long * price
+            total += ind.asset_long * price - ind.margin
     if num != 0:
         cash = total / num
     return cash
@@ -667,7 +613,7 @@ def report_vi_nav(pop, price):
     for ind in pop:
         if ind.type == 'vi':
             num += 1
-            total += ind.asset_long * price
+            total += ind.asset_long * price - ind.margin
     if num != 0:
         cash = total / num
     return cash
@@ -679,7 +625,7 @@ def report_tf_nav(pop, price):
     for ind in pop:
         if ind.type == 'tf':
             num += 1
-            total += ind.asset_long * price
+            total += ind.asset_long * price - ind.margin
     if num != 0:
         cash = total / num
     return cash
