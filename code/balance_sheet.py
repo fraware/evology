@@ -191,6 +191,8 @@ def determine_multiplier(pop):
 def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell):
 
 
+
+
     for ind in pop:
         if ind.cash < 0:
             print("Current price, type, edv, cash, asset_long, pop edvs")
@@ -238,6 +240,47 @@ def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell):
         print(count_long_assets(pop) + count_short_assets(pop))
         print(count_long_assets(pop) - count_short_assets(pop))
         raise ValueError('Asset supply constraint violated')
+
+def execute_buy(ind, current_price, leverage_limit, volume_buy, amount):
+    if ind.asset_short < amount:
+        if ind.cash >= current_price * amount:
+            ind.cash -= current_price * amount
+            ind.asset_long += amount
+            volume_buy += amount
+        elif ind.cash < current_price * amount:
+            if ind.loan + current_price * amount <= leverage_limit:
+                ind.loan += current_price * amount
+                ind.asset_long += amount
+                volume_buy += amount
+    elif ind.asset_short >= amount:
+        if ind.margin >= current_price * amount:
+            ind.asset_short -= amount
+            ind.margin -= current_price * amount
+            volume_buy += amount
+        elif ind.margin < current_price * amount:
+            if ind.cash >= current_price * amount:
+                ind.cash -= current_price * amount
+                ind.asset_short -= amount
+                volume_buy += amount
+            elif ind.cash < current_price * amount:
+                if ind.loan + current_price  * amount < leverage_limit:
+                    ind.loan += current_price * amount
+                    ind.asset_short -= amount
+                    volume_buy += amount
+    return ind, volume_buy
+
+def execute_sell(ind, current_price, leverage_limit, volume_sell, amount):
+    if ind.asset_long >= amount:
+        ind.cash += current_price * amount
+        ind.asset_long -= amount
+        volume_sell += amount
+    elif ind.asset_long < amount:
+        if ind.asset_short * current_price * amount < leverage_limit:
+            ind.asset_short += amount
+            ind.margin += current_price * amount
+            volume_sell += amount
+    return ind, volume_sell
+
 def execute_demand(pop, current_price, asset_supply):
 
     # Determine balanced excess demand values 
@@ -245,48 +288,45 @@ def execute_demand(pop, current_price, asset_supply):
     volume_buy, volume_sell = 0, 0
 
     for ind in pop:
+
         leverage_limit = ind.leverage * ind.wealth
         if ind.edv > 0:
             to_buy = ind.edv * multiplier_buy
-            for j in range(round(to_buy),0):
-                if ind.asset_short < 1:
-                    if ind.cash >= current_price:
-                        ind.cash -= current_price
-                        ind.asset_long += 1
-                        volume_buy += 1
-                    elif ind.cash < current_price:
-                        if ind.loan + current_price <= leverage_limit:
-                            ind.loan += current_price
-                            ind.asset_long += 1
-                            volume_buy += 1
-                elif ind.asset_short >= 1:
-                    if ind.margin >= current_price:
-                        ind.asset_short -= 1
-                        ind.margin -= current_price
-                        volume_buy += 1
-                    elif ind.margin < current_price:
-                        if ind.cash >= current_price:
-                            ind.cash -= current_price
-                            ind.asset_short -= 1
-                            volume_buy += 1
-                        elif ind.cash < current_price:
-                            if ind.loan + current_price < leverage_limit:
-                                ind.loan += current_price
-                                ind.asset_short -= 1
-                                volume_buy += 1
- 
+            print('to_buy' + str(to_buy))
+            j = 1
+            while j <= to_buy:
+                ind, volume_buy = execute_buy(ind, current_price, leverage_limit, volume_buy, 10)
+                j += 10
+            print('to buy, j=10)')
+            print(to_buy)
+            print(j - 10)
+            print('reminder buy')
+            reminder = to_buy - (j - 10)
+            print(reminder)
+            if reminder < 0:
+                raise ValueError('Negative reminder')
+            if reminder > 0:
+                ind, volume_buy = execute_buy(ind, current_price, leverage_limit, volume_buy, reminder)
+            del reminder 
+
         if ind.edv < 0:
             to_sell = abs(ind.edv) * multiplier_sell
-            for s in range(round(to_sell), 0):
-                if ind.asset_long >= 1:
-                    ind.cash += current_price
-                    ind.asset_long -= 1
-                    volume_sell += 1
-                elif ind.asset_long < 1:
-                    if ind.asset_short * current_price < leverage_limit:
-                        ind.asset_short += 1
-                        ind.margin += current_price
-                        volume_sell += 1
+            print('to sell ' + str(to_sell))
+            s = 1
+            while s <= to_sell:
+                ind, volume_sell = execute_sell(ind, current_price, leverage_limit, volume_sell, 10)
+                s += 10
+            print('to sell, s=10)')
+            print(to_sell)
+            print(s - 10)
+            print('reminder_sell')
+            reminder = to_sell - (s - 10)
+            print(reminder)
+            if reminder > 0:
+                ind, volume_sell = execute_sell(ind, current_price, leverage_limit, volume_sell, reminder)
+            if reminder < 0:
+                raise ValueError('Negative reminder')
+            del reminder
                 
     execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell)
     volume = volume_buy + volume_sell

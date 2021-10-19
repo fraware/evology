@@ -34,6 +34,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.update_fval(pop, extended_dividend_history)
         bs.determine_edf(pop)
 
+
         ed_functions = bs.agg_ed(pop)
 
         current_price = float(esl_mc.solve(ed_functions, current_price)[0])
@@ -41,16 +42,10 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.calculate_tsv(pop, current_price, price_history)
         price_history.append(current_price)       
 
+
         bs.calculate_edv(pop, current_price)
         mismatch = bs.calculate_total_edv(pop) 
 
-        # print("Running demands")
-        # sum = 0
-        # for ind in pop:
-        #   print(ind.type)
-        #   sum += ind.edv
-        #   print(ind.edv)
-        # print("Sum of edv is " + str(sum))
         pop, volume = bs.execute_demand(pop, current_price, asset_supply)
 
 

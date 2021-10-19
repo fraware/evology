@@ -24,17 +24,15 @@ PROBA_SELECTION = 1/21
 # General parameters
 
 LAMBDA_TF = 2/3
-LAMBDA_VI = 4
-LAMBDA_NT = 1
-SCALE_TF = 1.5
-SCALE_VI = 6 
+LAMBDA_VI = 3
+LAMBDA_NT = 2/3
+SCALE_TF = 4
+SCALE_VI = 3
 SCALE_NT = 5
+
 GAMMA_NT = 0.012
 MU_NT = 1
 RHO_NT = 0.00045832561
-
-# For between evolution
-fval = 100 # 100 #compute_fval() (Cannot be in market otherwise conflict of definition)
 
 # For within evolution
 MIN_TIME_HORIZON = 2
