@@ -6,7 +6,7 @@ import balance_sheet as bs
 import ga as ga
 import data
 import random
-from market import *
+import market as mk
 from tqdm import tqdm
 import esl_market_clearing as esl_mc
 
@@ -17,6 +17,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
     df = data.create_df()
     price_history, div_g_estimation, dividend_history = [], [], []
+    extended_dividend_history = mk.dividend_series(1*252)
 
     # Create the population
     pop = sampling.create_pop(mode, POPULATION_SIZE)
@@ -33,7 +34,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         pop = ga.strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
 
         bs.determine_tsv_proc(pop, price_history)
-        bs.update_fval(pop, dividend_history, div_g_estimation)
+        bs.update_fval(pop, extended_dividend_history, div_g_estimation)
         bs.determine_edf(pop)
 
 
@@ -68,6 +69,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         pop, dividend, random_dividend = bs.earnings(pop, dividend, current_price) 
         dividend_history.append(dividend)
+        extended_dividend_history.append(dividend)
         bs.update_margin(pop, current_price)
         bs.clear_debt(pop, current_price)
         

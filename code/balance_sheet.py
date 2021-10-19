@@ -65,46 +65,50 @@ def determine_tsv_proc(pop, price_history):
             # if ind.process < 0:
             #     ind.process = 1
 
-def update_fval(pop, dividend_history, div_g_estimation):
-    # div_g_estimation = math.exp(mean(np.diff(np.log(dividend_history)))) - 1
-    # daily_equity_cost = (EQUITY_COST + 1) ** (1/252) - 1
+def update_fval(pop, extended_dividend_history, div_g_estimation):
+    estimated_daily_div_growth = math.exp(mean(np.diff(np.log(extended_dividend_history)))) - 1
 
-    print(INITIAL_DIVIDEND)
-    if len(dividend_history) > 0:
-        print(dividend_history[-1])
+    # div_diff = []
+    # for i in range(len(dividend_history) - 1):
+    #     div_diff.append(dividend_history[-1 + i] / dividend_history[-2 + i])
 
-    div_diff = []
-    for i in range(len(dividend_history) - 1):
-        div_diff.append(dividend_history[-1 + i] / dividend_history[-2 + i])
-
-    if len(dividend_history) >= 2:
-        estimated_daily_div_growth = mean(div_diff) - 1
-    elif len(dividend_history) < 2:
-        estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
-
-    print('estimated daily div growth with div diff')
+    print('estimated daily div growth (Maarten;s formula))')
     print(estimated_daily_div_growth)
 
-    if len(dividend_history) >= 2:
-        estimated_daily_div_growth = mean(np.true_divide(dividend_history[1:],dividend_history[:-1])) - 1
-    elif len(dividend_history) < 2:
-        estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
+    # div_diff = []
+    # for i in range(len(extended_dividend_history) - 1):
+    #     div_diff.append(extended_dividend_history[-1 + i] / extended_dividend_history[-2 + i])
+    # estimated_daily_div_growth = mean(div_diff) - 1
 
-    print('estimated daily div growth')
-    print(estimated_daily_div_growth)
+    # print('estimated daily (my formula)')
+    # print(estimated_daily_div_growth)
+
+    # if len(dividend_history) >= 2:
+    #     estimated_daily_div_growth = mean(np.true_divide(dividend_history[1:],dividend_history[:-1])) - 1
+    # elif len(dividend_history) < 2:
+    #     estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
+
+    # print('estimated daily div growth')
+    # print(estimated_daily_div_growth)
+
+    estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
 
     annualised_estimated_daily_div_growth = (1 + estimated_daily_div_growth) ** 252 - 1
-    print('annualised estimated')
-    print(annualised_estimated_daily_div_growth)
+    # print('annualised estimated')
+    # print(annualised_estimated_daily_div_growth)
 
-    if len(dividend_history) >= 1:
-        numerator = (1 + estimated_daily_div_growth) * dividend_history[-1]
-    if len(dividend_history) < 1:
-        numerator = (1 + estimated_daily_div_growth) * INITIAL_DIVIDEND
+
+    numerator = (1 + estimated_daily_div_growth) * extended_dividend_history[-1] # correct
+
     denuminator = (1 + EQUITY_COST - annualised_estimated_daily_div_growth) ** (1/252) - 1
 
     fval = numerator / denuminator
     print('fval ' + str(fval))
+    print('numerator ' + str(numerator))
+    print('denominator ' + str(denuminator))
+    print(' maarten numerator: ' + str(0.003983))
+    print(' maarten denum: ' + str((1.01**(1/252)-1)))
+    print('annualised div growth estinmate: ' + str(annualised_estimated_daily_div_growth))
     # print('maarten;s jupyter')
     # print(0.003983  / (1.01**(1/252)-1))
 
