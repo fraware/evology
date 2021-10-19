@@ -69,6 +69,8 @@ INITIAL_RANDOM_DIVIDEND = 0
 DIVIDEND_ATC_TAU = 1
 dividend = INITIAL_DIVIDEND
 
+ORDER_BATCH_SIZE = 1000
+
 ''' RESULTS STORAGE '''
 dividend_history = []
 random_dividend_history = []
