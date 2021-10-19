@@ -25,8 +25,8 @@ data['Price (Simulation)'] = run['Price']
 data['Gen'] = run['Gen']
 data.plot(x="Gen", y = ["Price (Reference)", "Price (Simulation)"],
         kind="line", figsize=(15, 6), title='Comparison of price', 
-        color = ['black','black'],
-        style = [':','-'])
+        color = ['red','black'],
+        style = ['-','-'])
 plt.xlabel('Generations')
 plt.ylabel('Price')
 plt.show()
