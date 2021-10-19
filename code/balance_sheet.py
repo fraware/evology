@@ -287,8 +287,6 @@ def execute_demand(pop, current_price, asset_supply):
     multiplier_buy, multiplier_sell = determine_multiplier(pop)
     volume_buy, volume_sell = 0, 0
 
-    print('-------')
-
     for ind in pop:
 
         leverage_limit = ind.leverage * ind.wealth
@@ -300,12 +298,8 @@ def execute_demand(pop, current_price, asset_supply):
             while j <= to_buy:
                 ind, volume_buy = execute_buy(ind, current_price, leverage_limit, volume_buy, ORDER_BATCH_SIZE)
                 j += ORDER_BATCH_SIZE
-            print('to buy, j=10)')
-            print(to_buy)
-            print(j - ORDER_BATCH_SIZE)
-            print('reminder buy')
+            
             reminder = to_buy - (j - ORDER_BATCH_SIZE)
-            print(reminder)
             if reminder < 0:
                 raise ValueError('Negative reminder')
             if reminder > 0:
@@ -319,12 +313,8 @@ def execute_demand(pop, current_price, asset_supply):
             while s <= to_sell:
                 ind, volume_sell = execute_sell(ind, current_price, leverage_limit, volume_sell, ORDER_BATCH_SIZE)
                 s += ORDER_BATCH_SIZE
-            print('to sell, s=10)')
-            print(to_sell)
-            print(s - ORDER_BATCH_SIZE)
-            print('reminder_sell')
+
             reminder = to_sell - (s - ORDER_BATCH_SIZE) 
-            print(reminder)
             if reminder > 0:
                 ind, volume_sell = execute_sell(ind, current_price, leverage_limit, volume_sell, reminder)
             if reminder < 0:
