@@ -43,6 +43,3 @@ df_nl.plot(x="Gen", y = ["WShare_TF", "WShare_VI", "WShare_NT"],
 plt.show()
 
 
-df_nl.plot(x="Gen", y = ["TF_wealth", "VI_wealth", "NT_wealth"],
-        kind="line", figsize=(15, 6))
-plt.show()

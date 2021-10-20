@@ -12,6 +12,8 @@ import esl_market_clearing as esl_mc
 
 random.seed(random.random())
 
+wealth_coordinates = [0.4, 0.3, 0.4]
+
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
     # Initialise important variables and dataframe to store results
     generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
@@ -23,6 +25,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     pop = sampling.create_pop(mode, POPULATION_SIZE)
 
     for generation in tqdm(range(MAX_GENERATIONS)):
+        bs.shield_wealth(generation, pop, wealth_coordinates)
         bs.calculate_wealth(pop, current_price) # Compute agents' wealth
 
         pop, replacements, spoils = ga.hypermutate(pop, mode) # Replace insolvent agents

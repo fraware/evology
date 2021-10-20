@@ -235,8 +235,10 @@ def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell):
         for ind in pop:
             print(ind.type)
             print(ind.asset_long)
-        print('long, short, +, -')
+        print('supply, long, short, +, -')
+        print(asset_supply)
         print(count_long_assets(pop))
+        print(count_short_assets(pop))
         print(count_long_assets(pop) + count_short_assets(pop))
         print(count_long_assets(pop) - count_short_assets(pop))
         raise ValueError('Asset supply constraint violated')
@@ -634,7 +636,7 @@ def report_nt_nav(pop, price):
     for ind in pop:
         if ind.type == 'nt':
             num += 1
-            total += ind.asset_long * price - ind.margin
+            total += ind.wealth
     if num != 0:
         cash = total / num
     return cash
@@ -646,7 +648,7 @@ def report_vi_nav(pop, price):
     for ind in pop:
         if ind.type == 'vi':
             num += 1
-            total += ind.asset_long * price - ind.margin
+            total += ind.wealth
     if num != 0:
         cash = total / num
     return cash
@@ -658,7 +660,7 @@ def report_tf_nav(pop, price):
     for ind in pop:
         if ind.type == 'tf':
             num += 1
-            total += ind.asset_long * price - ind.margin
+            total += ind.wealth
     if num != 0:
         cash = total / num
     return cash
@@ -734,3 +736,13 @@ def report_tf_stocks(pop, price):
     if num != 0:
         cash = total / num
     return cash
+
+def shield_wealth(generation, pop, coordinates:list):
+    if generation <= SHIELD_DURATION:
+        size_nt, num_nt = 0, 0
+        for ind in pop:
+            if ind.type == 'nt':
+                size_nt += 
+        size_vi = 0
+        size_tf = 0
+
