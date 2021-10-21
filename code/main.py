@@ -84,4 +84,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         # print(long)
         # print(short)
         # print("----------------------")
+        # for ind in pop:
+        #     print(ind.type)
+        #     print(ind.asset_long)
     return df

@@ -186,7 +186,7 @@ def determine_multiplier(pop):
     if multiplier_sell < 0:
         raise ValueError('Multiplier Sell is negative')
 
-    return multiplier_buy, multiplier_sell
+    return multiplier_buy, multiplier_sell, total_buy, total_sell
 
 def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell, securities_contracts):
 
@@ -213,7 +213,14 @@ def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell, se
                 print(ind.edv)
             raise ValueError('Negative agent long ' )
         if ind.asset_short < 0:
-            raise ValueError('Negative agent short')
+            # print('pop: type, short, edv, edv_var')
+            # for ind in pop:
+                
+            #     print(ind.type)
+            #     print(ind.asset_short)
+            #     print(ind.edv)
+            #     print(ind.edv_var)
+            raise ValueError('Negative agent short ' + str(ind.type) + str(ind.asset_short))
 
     # if count_long_assets(pop) >= asset_supply + 1 or count_long_assets(pop) <= asset_supply - 1:
     #     print("volume buy, sell, ind type and asset_long")
@@ -237,6 +244,9 @@ def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell, se
         print(count_long_assets(pop))
         print(count_short_assets(pop))
         print(securities_contracts)
+        print('---------AGENTS: type, long, short , edv, edv_var -----')
+        for ind in pop:
+            print(str(ind.type) + ', ' + str(ind.asset_long) + ', ' + str(ind.asset_short) + ', ' + str(ind.edv) + ', ' + str(ind.edv_var))
         raise ValueError('Asset supply constraint violated')
 
 def execute_buy(i, pop, current_price, leverage_limit, volume_buy, amount, securities_contracts):
@@ -245,30 +255,41 @@ def execute_buy(i, pop, current_price, leverage_limit, volume_buy, amount, secur
     # we start by closing some short positions if we have any
     to_buy = amount
 
-    if pop[i].asset_short > 0:
-        for j in range(len(pop)):# iterate over the population
+    if pop[i].asset_short > 0: # If we have short positions to close
+        for j in range(len(pop)):# iterate over the population to find who we are in debt with
                 if securities_contracts[i,j] > 0: # If we owe shares to this trader j:
                     # Find someone who can sell us some shares so we can close our position
                     for n in range(len(pop)):
-                        if n != i:
-                            if pop[n].edv_var < 0 and pop[n].asset_long > 0:
-                                bought_back = min(securities_contracts[i,j], amount, abs(pop[n].edv_var), pop[n].asset_long) 
-                                pop[j].asset_long += bought_back
-                                if pop[i].margin >= current_price * bought_back:
-                                    pop[i].margin -= current_price * bought_back
-                                elif pop[i].cash >= current_price * bought_back:
-                                    pop[i].cash -= current_price * bought_back
-                                elif pop[i].cash < current_price * bought_back:
-                                    pop[i].loan += current_price * bought_back
+                        if pop[n].edv_var < 0 and pop[n].asset_long > 0:
 
-                                securities_contracts[i,j] -= bought_back
-                                pop[i].asset_short -= bought_back
-                                pop[i].edv_var -= bought_back
-                                pop[n].edv_var += bought_back
-                                pop[n].asset_long -= bought_back
-                                pop[n].cash += current_price * bought_back
-                                volume_buy += bought_back
-                                to_buy -= to_buy
+                            # Determine the transaction amount
+                            bought_back = min(securities_contracts[i,j], to_buy, abs(pop[n].edv_var), pop[n].asset_long) 
+
+                            # i buys asset shares from n, and pays to n.
+
+                            pop[n].asset_long -= bought_back
+                            pop[n].cash += current_price * bought_back
+
+                            if pop[i].margin >= current_price * bought_back:
+                                pop[i].margin -= current_price * bought_back
+                            elif pop[i].cash >= current_price * bought_back:
+                                pop[i].cash -= current_price * bought_back
+                            elif pop[i].cash < current_price * bought_back:
+                                pop[i].loan += current_price * bought_back
+
+                            pop[i].edv_var -= bought_back
+                            pop[n].edv_var += bought_back
+
+                            # i directly gives the asset share back to j. The contract is closed (up to the transaction amount)
+                            pop[j].asset_long += bought_back
+
+                            securities_contracts[i,j] -= bought_back
+                            securities_contracts[j,i] += bought_back
+                            pop[i].asset_short -= bought_back
+
+                            # Globals
+                            volume_buy += bought_back
+                            to_buy -= bought_back
     
     # Next we have to buy to_buy long positions
     # We buy them in cash if we can
@@ -292,8 +313,10 @@ def execute_buy(i, pop, current_price, leverage_limit, volume_buy, amount, secur
         raise ValueError('Did not execute all amount for buying ' + str(volume_buy - starting_volume - amount))
     return pop, volume_buy, securities_contracts
 
-def execute_sell(i, pop, current_price, leverage_limit, volume_sell, amount, securities_contracts):
+def execute_sell(i, pop, current_price, leverage_limit, volume_sell, volume_buy, amount, securities_contracts):
     starting_volume = volume_sell
+
+    sold_this_round = 0
 
     # If we have enough long assets to sell the amount, then sell our long assets.
     if pop[i].asset_long >= amount: 
@@ -301,8 +324,9 @@ def execute_sell(i, pop, current_price, leverage_limit, volume_sell, amount, sec
         pop[i].asset_long -= amount
         volume_sell += amount
         pop[i].edv_var += amount
+        sold_this_round += amount
 
-    # If we don't have enough long assets to sell the amount, we split or short sell.
+    # If we don't have enough long assets to sell the amount, we split and/or short sell.
     elif pop[i].asset_long < amount: 
 
         amount_sold = 0
@@ -310,9 +334,9 @@ def execute_sell(i, pop, current_price, leverage_limit, volume_sell, amount, sec
             pop[i].cash += pop[i].asset_long * current_price
             volume_sell += pop[i].asset_long
             amount_sold = pop[i].asset_long
-            volume_sell += pop[i].asset_long 
+            sold_this_round += pop[i].asset_long
             pop[i].edv_var -= pop[i].asset_long 
-            pop[i].asset_long -= pop[i].asset_long
+            pop[i].asset_long -= 0
 
         amount_to_short = amount - amount_sold
         print('we have to short ' + str(amount_to_short))
@@ -321,80 +345,255 @@ def execute_sell(i, pop, current_price, leverage_limit, volume_sell, amount, sec
         if (pop[i].asset_short + amount_to_short) * current_price < leverage_limit: # If our short position is not too large
             to_short = amount_to_short
 
-            for j in range(len(pop)):
-                if to_short > 0:
-                    # if pop[j].asset_long > 0 and pop[j].edv_var > 0: # And borrow their shares, registering a contract
-                    if pop[j].asset_long > 0: # And borrow their shares, registering a contract
+            if to_short > 0:
+                for j in range(len(pop)):
+                    if pop[j].asset_long > 0: # Find a fund that can lend us some shares
+                        for m in range(len(pop)):
+                            # if m != j:
+                            if pop[m].edv_var > 0: # Find a fund that will buy the borrowed share
 
-                        feasible = min(pop[j].asset_long, amount)
-                        print('feasible ' + str(feasible))
-                        securities_contracts[i,j] += feasible
-                        securities_contracts[j,i] -= feasible
-                        # pop[j].asset_long is unchanged
-                        to_short -= feasible
-                        pop[i].asset_short += feasible
-                        pop[i].margin += feasible * current_price
-                        pop[j].loan += feasible * current_price
-                        pop[j].edv_var -= feasible
-                        volume_sell += feasible
+                                # Determine feasible short selling amount (something we want to, that we can buy, that we can sell)
+                                feasible = min(pop[j].asset_long, to_short, pop[m].edv_var)
+                                # print('feasible ' + str(feasible))
+
+                                # i borrows a share from j
+                                securities_contracts[i,j] += feasible
+                                securities_contracts[j,i] -= feasible
+                                pop[i].asset_short += feasible
+                                pop[j].asset_long -= feasible
+                                pop[i].edv_var += feasible
+                                
+                                # i sells the share to m. m pays its price to i, who saves it as margin.
+                                
+                                pop[i].margin += feasible * current_price
+                                pop[m].asset_long += feasible
+                                pop[m].loan += feasible * current_price
+                                pop[m].edv_var -= feasible
+
+                                # Globals
+                                volume_buy += feasible
+                                volume_sell += feasible
+                                to_short -= feasible
+                                sold_this_round += feasible
         else:
             print('could not short sell anything')
    
     if volume_sell - starting_volume < amount - 0.001:
-        raise ValueError('Did not execute all amount for selling. Wanted to sell ' + str(amount))
+        print('Individual i of type: ')
+        print(i)
+        print(pop[i].type)
+        print('While pop has types, edv, edv_var and asset_long:')
+        for ind in pop:
+            print(ind.type)
+            print(ind.edv)
+            print(ind.edv_var)
+            print(ind.asset_long)
+        raise ValueError('Did not execute all amount for selling. Wanted to sell ' + str(amount) + ' and sold ' + str(volume_sell - starting_volume) + " // " + str(sold_this_round))
 
-    return pop, volume_sell, securities_contracts
+    return pop, volume_sell, volume_buy, securities_contracts
 
 def execute_demand(pop, current_price, asset_supply, securities_contracts):
 
     # Determine balanced excess demand values 
-    multiplier_buy, multiplier_sell = determine_multiplier(pop)
+    multiplier_buy, multiplier_sell, total_buy, total_sell = determine_multiplier(pop)
+    print('total buy/sell: ' + str(total_buy * multiplier_buy) + ', ' + str(total_sell * multiplier_sell))
     volume_buy, volume_sell = 0, 0
 
+    sum_plus = 0 
+    sum_minus = 0
     for ind in pop:
         edv = ind.edv
-        ind.edv_var = edv
+        if edv > 0:
+            ind.edv_var = edv * multiplier_buy
+            sum_plus += ind.edv_var
+        if edv < 0:
+            ind.edv_var = edv * multiplier_sell
+            sum_minus += ind.edv_var 
+    if abs(sum_plus + sum_minus) > 0.001 : 
+        raise ValueError('Imbalanced sum of ind.edv.var ' +str(sum_plus) + ', ' + str(sum_minus))
+    
 
-    # for ind in pop:
+    
     for i in range(len(pop)):
+        if pop[i].edv_var < 0: # agent wants to sell
 
-        # determine agent leverage limit 
-        leverage_limit = pop[i].leverage * pop[i].wealth
+            while pop[i].asset_long > 0 and pop[i].edv_var < -0.001: # if agent want / can sell from own inventory
 
-        if pop[i].edv_var < 0: # if agent wants to sell
-            to_sell = abs(pop[i].edv_var) * multiplier_sell # adjust the amount to clear markets
-            ss = ORDER_BATCH_SIZE # execute clearing of orders
-            while ss <= to_sell:
-                pop, volume_sell, securities_contracts = execute_sell(i, pop, current_price, leverage_limit, 
-                volume_sell, ORDER_BATCH_SIZE, securities_contracts)
-                ss += ORDER_BATCH_SIZE
-            reminder = to_sell - (ss - ORDER_BATCH_SIZE) 
-            if reminder > 0:
-                pop, volume_sell, securities_contracts = execute_sell(i, pop, current_price, leverage_limit, 
-                volume_sell, reminder, securities_contracts)
-            if reminder < 0:
-                raise ValueError('Negative reminder')
-            del reminder
+                print('stuck in selling from inventory  (edvvar, long)' + str(pop[i].edv_var) + ', ' + str(pop[i].asset_long))
+                # try to find an agent looking to buy
+                for j in range(len(pop)):
+                    if pop[j].edv_var > 0:
+                        # determine transaction amount
+                        amount = min(pop[i].asset_long, pop[j].edv_var, abs(pop[i].edv_var))
+                        if amount < 0:
+                            raise ValueError('Negative amount')
+                        if amount > pop[i].asset_long: 
+                            raise ValueError('Unfeasible long sell')
+
+                        # Exchange assets 
+                        pop[i].asset_long -= amount 
+                        pop[j].asset_long += amount 
+
+                        # Exchange money
+                        pop[i].cash += amount * current_price
+                        pop[j].loan += amount * current_price
+
+                        # Update current excess demand orders and volume
+                        pop[i].edv_var += amount 
+                        pop[j].edv_var -= amount
+                        volume_buy += amount
+                        volume_sell += amount
+
+                if pop[i].asset_long < 0:
+                    raise ValueError('Negative long position')
+
+            # if instead agents can no longer sell from own inventory, they will short sell
+            if pop[i].asset_long == 0 and pop[i].edv_var < -0.001:
+                # Find someone to borrow a share from
+                for j in range(len(pop)):
+                    if pop[j].asset_long > 0:
+                        # Find someone to buy the borrowed share 
+                        for m in range(len(pop)):
+                            if pop[m].edv_var > 0:
+                                # Determine transaction amount
+                                amount = min(abs(pop[i].edv_var), pop[j].asset_long, pop[m].edv_var)
+                                if amount < 0:
+                                    raise ValueError('Negative amount for short selling')
+
+                                # i borrows a share from j
+                                securities_contracts[i,j] += amount
+                                securities_contracts[j,i] -= amount
+                                pop[i].asset_short += amount
+                                pop[j].asset_long -= amount
+                                pop[i].edv_var += amount
+
+                                # i sells the share to m. m pays its price to i, who saves it as margin.  
+                                pop[i].margin += amount * current_price
+                                pop[m].asset_long += amount
+                                pop[m].loan += amount * current_price
+                                pop[m].edv_var -= amount
+                                    
+                                # Globals
+                                volume_buy += amount
+                                volume_sell += amount
+
+
                 
+                if pop[i].asset_short * current_price > pop[i].wealth * ind.leverage:
+                    warnings.warn('Agent short position exceeds its leverage limit.')
+                # We may want to include this in the regular code as a condition. 
+                # After all, now that we do the regular matching, if agents can't trade, 
+                # this does not result in an imbalance.
 
-        if pop[i].edv_var > 0: # if agent wants to buy
-            to_buy = pop[i].edv_var * multiplier_buy # revise order size to clear markets
+        # print('Successfuly went over selling')
 
-            bb = ORDER_BATCH_SIZE
-            while bb <= to_buy: # execute as many orders as we can to speed up the process
-                pop, volume_buy, securities_contracts = execute_buy(i, pop, current_price, leverage_limit, 
-                volume_buy, ORDER_BATCH_SIZE, securities_contracts)
-                bb += ORDER_BATCH_SIZE
-            reminder = to_buy - (bb - ORDER_BATCH_SIZE) # clear the last orders 
+        # for ind in pop:
+        #     print('Agent type edv edv_var ' + str(ind.type) + ', ' + str(ind.edv) + ', ' + str(ind.edv_var))
 
-            if reminder < 0:
-                raise ValueError('Negative reminder')
-            if reminder > 0:
-                pop, volume_buy, securities_contracts = execute_buy(i, pop, current_price, leverage_limit, 
-                volume_buy, reminder, securities_contracts)
-            del reminder 
+        if pop[i].edv_var > 0: # if the agent wants to buy:
+            while pop[i].asset_short > 0: # If we have short positons to close
+                print('stuck in closing shorts')
+                for j in range(len(pop)):
+                    if securities_contracts[i,j] < 0: # If we owe to agent j:
+                        # Find someone n who can sell us some shares so we can close our position to j
+                        for n in range(len(pop)):
+                            if pop[n].edv_var < 0 and pop[n].asset_long > 0:
 
+                                # Determine the transaction amount
+                                amount = min(securities_contracts[i,j], pop[i].asset_short, abs(pop[n].edv_var), pop[n].asset_long) 
 
+                                # i buys asset shares from n, and pays to n.
+                                pop[n].asset_long -= amount
+                                pop[n].cash += current_price * amount
+
+                                if pop[i].margin >= current_price * amount:
+                                    pop[i].margin -= current_price * amount
+                                elif pop[i].cash < current_price * amount:
+                                    pop[i].loan += current_price * amount
+
+                                pop[i].edv_var -= amount
+                                pop[n].edv_var += amount
+
+                                # i directly gives the asset share back to j. The contract is closed (up to the transaction amount)
+                                pop[j].asset_long += amount
+                                securities_contracts[i,j] -= amount
+                                securities_contracts[j,i] += amount
+                                pop[i].asset_short -= amount
+
+                                if pop[i].asset_short < 0:
+                                    raise ValueError('Negative agent short during closing')
+
+                                # Globals
+                                volume_buy += amount
+                                volume_sell += amount # new addition
+    
+            if pop[i].edv_var > 0:
+                # We should now have closed our short positions. We can buy long.    
+                for j in range(len(pop)):
+                    if pop[j].edv_var < 0 and pop[j].asset_long > 0:
+                        # determine transaction amount
+                        amount = min(pop[i].edv_var, abs(pop[j].edv_var), pop[j].asset_long)
+
+                        # exchange assets and payment
+                        pop[j].cash += amount * current_price 
+                        pop[i].loan -= amount * current_price 
+                        pop[i].asset_long += amount 
+                        pop[j].asset_long -= amount 
+
+                        # globals
+                        volume_buy += amount 
+                        volume_sell += amount
+                        pop[i].edv_var -= amount 
+                        pop[j].edv_var += amount 
+
+    # ###############################################
+
+    # # for ind in pop:
+    # for i in range(len(pop)):
+
+    #     # determine agent leverage limit 
+    #     leverage_limit = pop[i].leverage * pop[i].wealth
+
+    #     if pop[i].edv_var < 0: # if agent wants to sell
+    #         # to_sell = abs(pop[i].edv_var) * multiplier_sell # adjust the amount to clear markets
+    #         to_sell = abs(ind.edv_var)
+    #         print('to sell ' + str(to_sell))
+    #         ss = ORDER_BATCH_SIZE # execute clearing of orders
+    #         while ss <= to_sell:
+    #             pop, volume_sell, volume_buy, securities_contracts = execute_sell(i, pop, current_price, leverage_limit, 
+    #             volume_sell, volume_buy, ORDER_BATCH_SIZE, securities_contracts)
+    #             ss += ORDER_BATCH_SIZE
+    #         reminder = to_sell - (ss - ORDER_BATCH_SIZE) 
+    #         if reminder > 0:
+    #             pop, volume_sell, volume_buy, securities_contracts = execute_sell(i, pop, current_price, leverage_limit, 
+    #             volume_sell, volume_buy, reminder, securities_contracts)
+    #         if reminder < 0:
+    #             raise ValueError('Negative reminder')
+    #         del reminder
+                
+    # for i in range(len(pop)):
+    #     if pop[i].edv_var > 0: # if agent wants to buy
+    #         # to_buy = pop[i].edv_var * multiplier_buy # revise order size to clear markets
+    #         to_buy = ind.edv_var
+    #         print('to buy '+ str(to_buy))
+    #         bb = ORDER_BATCH_SIZE
+    #         while bb <= to_buy: # execute as many orders as we can to speed up the process
+    #             pop, volume_buy, securities_contracts = execute_buy(i, pop, current_price, leverage_limit, 
+    #             volume_buy, ORDER_BATCH_SIZE, securities_contracts)
+    #             bb += ORDER_BATCH_SIZE
+    #         reminder = to_buy - (bb - ORDER_BATCH_SIZE) # clear the last orders 
+
+    #         if reminder < 0:
+    #             raise ValueError('Negative reminder')
+    #         if reminder > 0:
+    #             pop, volume_buy, securities_contracts = execute_buy(i, pop, current_price, leverage_limit, 
+    #             volume_buy, reminder, securities_contracts)
+    #         del reminder 
+
+    # print('Succesfull went over buying')
+    for ind in pop:
+        if abs(ind.edv_var) > abs(ind.edv):
+            warnings.warn('Ind edv var abs-higher than edv')
     execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell, securities_contracts)
     volume = volume_buy + volume_sell
 
