@@ -75,13 +75,13 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
             return df
             raise ValueError('Agent went insolvent')
 
-        long = 0
-        short = 0
-        for ind in pop:
-            long += ind.asset_long 
-            short += ind.asset_short
-        print('long, short')
-        print(long)
-        print(short)
-        print("----------------------")
+        # long = 0
+        # short = 0
+        # for ind in pop:
+        #     long += ind.asset_long 
+        #     short += ind.asset_short
+        # print('long, short')
+        # print(long)
+        # print(short)
+        # print("----------------------")
     return df
