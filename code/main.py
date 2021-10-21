@@ -20,7 +20,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
     df = data.create_df()
     price_history, dividend_history, process_history = [], [], []
-    securities_contract = np.zeros((POPULATION_SIZE, POPULATION_SIZE))
+    securities_contract = np.zeros((POPULATION_SIZE, POPULATION_SIZE)) # 1st Attempt into reconstructing ecology trading networkg
     extended_dividend_history = mk.dividend_series(1*252)
 
     # Create the population

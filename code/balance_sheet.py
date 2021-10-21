@@ -243,45 +243,75 @@ def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell):
         print(count_long_assets(pop) - count_short_assets(pop))
         raise ValueError('Asset supply constraint violated')
 
-def execute_buy(ind, current_price, leverage_limit, volume_buy, amount):
-    if ind.asset_short < amount: # if 
-        if ind.cash >= current_price * amount:
-            ind.cash -= current_price * amount
-            ind.asset_long += amount
+def execute_buy(i, pop, current_price, leverage_limit, volume_buy, amount, securities_contracts):
+    if pop[i].asset_short < amount: # if the amount to buy exceeds our short position, we buy long
+        if pop[i].cash >= current_price * amount: # Do we have the cash to buy?
+            pop[i].cash -= current_price * amount
+            pop[i].asset_long += amount
             volume_buy += amount
-        elif ind.cash < current_price * amount:
-            if ind.loan + current_price * amount <= leverage_limit:
-                ind.loan += current_price * amount
-                ind.asset_long += amount
+        elif pop[i].cash < current_price * amount: # 
+            if pop[i].loan + current_price * amount <= leverage_limit: # Or can our loan be increased to buy?
+                pop[i].loan += current_price * amount
+                pop[i].asset_long += amount
                 volume_buy += amount
-    elif ind.asset_short >= amount:
-        if ind.margin >= current_price * amount:
-            ind.asset_short -= amount
-            ind.margin -= current_price * amount
-            volume_buy += amount
-        elif ind.margin < current_price * amount:
-            if ind.cash >= current_price * amount:
-                ind.cash -= current_price * amount
-                ind.asset_short -= amount
-                volume_buy += amount
-            elif ind.cash < current_price * amount:
-                if ind.loan + current_price  * amount < leverage_limit:
-                    ind.loan += current_price * amount
-                    ind.asset_short -= amount
-                    volume_buy += amount
-    return ind, volume_buy
+    elif pop[i].asset_short >= amount: # Else, we want to close our short position
+        a = 0
+        while a <= amount: # While we have not closed all we want to close:
+            for j in range(len(pop)):# iterate over the population
+                if securities_contracts[i,j] > 0: # If we owe shares to this trader j:
+                    bought_back = securities_contracts[i,j] 
+                    a += bought_back
+                    pop[j].asset_long += bought_back
+                    if pop[i].margin >= current_price * bought_back:
+                        pop[i].margin -= current_price * bought_back
+                    elif pop[i].cash >= current_price * bought_back:
+                        pop[i].cash -= current_price * bought_back
+                    elif pop[i].cash < current_price * bought_back:
+                        pop[i].loan += current_price * bought_back
 
-def execute_sell(ind, current_price, leverage_limit, volume_sell, amount):
-    if ind.asset_long >= amount:
-        ind.cash += current_price * amount
-        ind.asset_long -= amount
+                    securities_contracts[i,j] = 0
+                    pop[i].asset_short -= bought_back
+                    volume_buy += 1
+                    break
+
+        # if ind.margin >= current_price * amount:
+        #     ind.asset_short -= amount
+        #     ind.margin -= current_price * amount
+        #     volume_buy += amount
+        # elif ind.margin < current_price * amount:
+        #     if ind.cash >= current_price * amount:
+        #         ind.cash -= current_price * amount
+        #         ind.asset_short -= amount
+        #         volume_buy += amount
+        #     elif ind.cash < current_price * amount:
+        #         if ind.loan + current_price  * amount < leverage_limit:
+        #             ind.loan += current_price * amount
+        #             ind.asset_short -= amount
+        #             volume_buy += amount
+    return pop, volume_buy, securities_contracts
+
+def execute_sell(i, pop, current_price, leverage_limit, volume_sell, amount, securities_contracts):
+    if pop[i].asset_long >= amount: # If we have enough long assets to sell the amount
+        pop[i].cash += current_price * amount
+        pop[i].asset_long -= amount
         volume_sell += amount
-    elif ind.asset_long < amount:
-        if (ind.asset_short + amount) * current_price < leverage_limit:
-            ind.asset_short += amount
-            ind.margin += current_price * amount
-            volume_sell += amount
-    return ind, volume_sell
+    elif pop[i].asset_long < amount: # If we don't have enough long assets to sell the amount
+        if (pop[i].asset_short + amount) * current_price < leverage_limit: # If our short position is not too large
+            
+
+            j = 0 # Find a suitable lender
+            for j in range(len(pop)):
+                if pop[j].asset_long >= amount and pop[j].edv > 0: # And borrow their shares, registering a contract
+                    securities_contracts[i,j] += amount
+                    securities_contracts[j,i] -= amount
+                    pop[j].asset_long -= amount
+                    pop[i].asset_short += amount
+                    pop[i].margin += current_price * amount
+                    volume_sell += amount
+                    break
+            
+
+    return pop, volume_sell, securities_contracts
 
 def execute_demand(pop, current_price, asset_supply, securities_contracts):
 
@@ -289,35 +319,40 @@ def execute_demand(pop, current_price, asset_supply, securities_contracts):
     multiplier_buy, multiplier_sell = determine_multiplier(pop)
     volume_buy, volume_sell = 0, 0
 
-    for ind in pop:
+    # for ind in pop:
+    for i in range(len(pop)):
 
         # determin agent leverage limit 
-        leverage_limit = ind.leverage * ind.wealth
+        leverage_limit = pop[i].leverage * pop[i].wealth
 
-        if ind.edv > 0: # if agent wants to buy
-            to_buy = ind.edv * multiplier_buy # revise order size to clear markets
+        if pop[i].edv > 0: # if agent wants to buy
+            to_buy = pop[i].edv * multiplier_buy # revise order size to clear markets
 
-            j = ORDER_BATCH_SIZE
-            while j <= to_buy: # execute as many orders as we can to speed up the process
-                ind, volume_buy = execute_buy(ind, current_price, leverage_limit, volume_buy, ORDER_BATCH_SIZE)
-                j += ORDER_BATCH_SIZE
-            reminder = to_buy - (j - ORDER_BATCH_SIZE) # clear the last orders 
+            bb = ORDER_BATCH_SIZE
+            while bb <= to_buy: # execute as many orders as we can to speed up the process
+                pop, volume_buy, securities_contracts = execute_buy(i, pop, current_price, leverage_limit, 
+                volume_buy, ORDER_BATCH_SIZE, securities_contracts)
+                bb += ORDER_BATCH_SIZE
+            reminder = to_buy - (bb - ORDER_BATCH_SIZE) # clear the last orders 
 
             if reminder < 0:
                 raise ValueError('Negative reminder')
             if reminder > 0:
-                ind, volume_buy = execute_buy(ind, current_price, leverage_limit, volume_buy, reminder)
+                pop, volume_buy, securities_contracts = execute_buy(i, pop, current_price, leverage_limit, 
+                volume_buy, reminder, securities_contracts)
             del reminder 
 
-        if ind.edv < 0: # if agent wants to sell
-            to_sell = abs(ind.edv) * multiplier_sell # adjust the amount to clear markets
-            s = ORDER_BATCH_SIZE # execute clearing of orders
-            while s <= to_sell:
-                ind, volume_sell = execute_sell(ind, current_price, leverage_limit, volume_sell, ORDER_BATCH_SIZE)
-                s += ORDER_BATCH_SIZE
-            reminder = to_sell - (s - ORDER_BATCH_SIZE) 
+        if pop[i].edv < 0: # if agent wants to sell
+            to_sell = abs(pop[i].edv) * multiplier_sell # adjust the amount to clear markets
+            ss = ORDER_BATCH_SIZE # execute clearing of orders
+            while ss <= to_sell:
+                pop, volume_sell, securities_contracts = execute_sell(i, pop, current_price, leverage_limit, 
+                volume_sell, ORDER_BATCH_SIZE, securities_contracts)
+                ss += ORDER_BATCH_SIZE
+            reminder = to_sell - (ss - ORDER_BATCH_SIZE) 
             if reminder > 0:
-                ind, volume_sell = execute_sell(ind, current_price, leverage_limit, volume_sell, reminder)
+                pop, volume_sell, securities_contracts = execute_sell(i, pop, current_price, leverage_limit, 
+                volume_sell, reminder, securities_contracts)
             if reminder < 0:
                 raise ValueError('Negative reminder')
             del reminder
