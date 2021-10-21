@@ -244,7 +244,7 @@ def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell):
         raise ValueError('Asset supply constraint violated')
 
 def execute_buy(ind, current_price, leverage_limit, volume_buy, amount):
-    if ind.asset_short < amount:
+    if ind.asset_short < amount: # if 
         if ind.cash >= current_price * amount:
             ind.cash -= current_price * amount
             ind.asset_long += amount
@@ -283,7 +283,7 @@ def execute_sell(ind, current_price, leverage_limit, volume_sell, amount):
             volume_sell += amount
     return ind, volume_sell
 
-def execute_demand(pop, current_price, asset_supply):
+def execute_demand(pop, current_price, asset_supply, securities_contracts):
 
     # Determine balanced excess demand values 
     multiplier_buy, multiplier_sell = determine_multiplier(pop)
@@ -291,31 +291,30 @@ def execute_demand(pop, current_price, asset_supply):
 
     for ind in pop:
 
+        # determin agent leverage limit 
         leverage_limit = ind.leverage * ind.wealth
 
-        if ind.edv > 0:
-            to_buy = ind.edv * multiplier_buy
-            # print('to_buy' + str(to_buy))
+        if ind.edv > 0: # if agent wants to buy
+            to_buy = ind.edv * multiplier_buy # revise order size to clear markets
+
             j = ORDER_BATCH_SIZE
-            while j <= to_buy:
+            while j <= to_buy: # execute as many orders as we can to speed up the process
                 ind, volume_buy = execute_buy(ind, current_price, leverage_limit, volume_buy, ORDER_BATCH_SIZE)
                 j += ORDER_BATCH_SIZE
-            
-            reminder = to_buy - (j - ORDER_BATCH_SIZE)
+            reminder = to_buy - (j - ORDER_BATCH_SIZE) # clear the last orders 
+
             if reminder < 0:
                 raise ValueError('Negative reminder')
             if reminder > 0:
                 ind, volume_buy = execute_buy(ind, current_price, leverage_limit, volume_buy, reminder)
             del reminder 
 
-        if ind.edv < 0:
-            to_sell = abs(ind.edv) * multiplier_sell
-            # print('to sell ' + str(to_sell))
-            s = ORDER_BATCH_SIZE
+        if ind.edv < 0: # if agent wants to sell
+            to_sell = abs(ind.edv) * multiplier_sell # adjust the amount to clear markets
+            s = ORDER_BATCH_SIZE # execute clearing of orders
             while s <= to_sell:
                 ind, volume_sell = execute_sell(ind, current_price, leverage_limit, volume_sell, ORDER_BATCH_SIZE)
                 s += ORDER_BATCH_SIZE
-
             reminder = to_sell - (s - ORDER_BATCH_SIZE) 
             if reminder > 0:
                 ind, volume_sell = execute_sell(ind, current_price, leverage_limit, volume_sell, reminder)
@@ -326,7 +325,7 @@ def execute_demand(pop, current_price, asset_supply):
     execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell)
     volume = volume_buy + volume_sell
 
-    return pop, volume
+    return pop, volume, securities_contracts
 
 def earnings(pop, prev_dividend, current_price):
     dividend, random_dividend = draw_dividend(prev_dividend)

@@ -20,6 +20,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
     df = data.create_df()
     price_history, dividend_history, process_history = [], [], []
+    securities_contract = np.zeros((POPULATION_SIZE, POPULATION_SIZE))
     extended_dividend_history = mk.dividend_series(1*252)
 
     # Create the population
@@ -54,7 +55,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.calculate_edv(pop, current_price)
         mismatch = bs.calculate_total_edv(pop) 
 
-        pop, volume = bs.execute_demand(pop, current_price, asset_supply)
+        pop, volume, securities_contract = bs.execute_demand(pop, current_price, asset_supply, securities_contract)
 
 
 
