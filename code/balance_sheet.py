@@ -296,17 +296,23 @@ def execute_sell(i, pop, current_price, leverage_limit, volume_sell, amount, sec
                         to_short -= 10
                         bank_shorts += 10
                 # And now find someone to buy our assets
-                for k in range(len(pop)):
-                    if pop[k].edv_var >= 10:
-                        pop[i].margin += current_price * 10
-                        pop[i].edv_var += 10
-                        pop[k].loan += current_price * 10
-                        pop[k].edv_var -= 10
-                        volume_sell += 10
-                        pop[i].asset_short += 10
-                        bank_shorts -= 10
+                to_allocate = 10
+                while to_allocate != 0:
+                    for k in range(len(pop)):
+                        if pop[k].edv_var > 0:
+                            pop[i].margin += current_price * min(to_allocate, pop[k].edv_var)
+                            pop[i].edv_var += min(to_allocate, pop[k].edv_var)
+                            pop[i].asset_short += min(to_allocate, pop[k].edv_var)
 
+                            pop[k].loan += current_price * min(to_allocate, pop[k].edv_var)
+                            pop[k].edv_var -= min(to_allocate, pop[k].edv_var)
 
+                            volume_sell += min(to_allocate, pop[k].edv_var)
+                            bank_shorts -= min(to_allocate, pop[k].edv_var)
+                            to_allocate -= min(to_allocate, pop[k].edv_var)
+
+            if to_short >= 10:
+                raise ValueError('to short superior to 10')
 
             if to_short > 0 and to_short < 10:
                 j = 0 # Find a suitable lender
@@ -321,15 +327,18 @@ def execute_sell(i, pop, current_price, leverage_limit, volume_sell, amount, sec
                         to_short -= to_short
                         bank_shorts += to_short
                 # And now find someone to buy our assets
-                for k in range(len(pop)):
-                    if pop[k].edv_var >= to_short:
-                        pop[i].margin += current_price * to_short
-                        pop[i].edv_var += to_short
-                        pop[k].loan += current_price * to_short
-                        pop[k].edv_var -= to_short
-                        volume_sell += to_short
-                        pop[i].asset_short += to_short
-                        bank_shorts -= to_short
+                to_allocate = to_short
+                while to_allocate != 0:
+                    for k in range(len(pop)):
+                        if pop[k].edv_var >= 0:
+                            pop[i].margin += current_price * min(to_allocate, pop[k].edv_var)
+                            pop[i].edv_var += min(to_allocate, pop[k].edv_var)
+                            pop[k].loan += current_price * min(to_allocate, pop[k].edv_var)
+                            pop[k].edv_var -= min(to_allocate, pop[k].edv_var)
+                            volume_sell += min(to_allocate, pop[k].edv_var)
+                            pop[i].asset_short += min(to_allocate, pop[k].edv_var)
+                            bank_shorts -= min(to_allocate, pop[k].edv_var)
+                            to_allocate -= min(to_allocate, pop[k].edv_var)
 
                 
     if volume_sell - starting_volume < amount - 0.001:
