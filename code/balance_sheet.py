@@ -228,7 +228,7 @@ def execute_demand_error_messages(pop, asset_supply, volume_buy, volume_sell):
     #     print(count_long_assets(pop) - count_short_assets(pop))
     #     raise ValueError('Asset supply constraint violated')
 
-    if count_long_assets(pop) - count_short_assets(pop) >= asset_supply + 1 or count_long_assets(pop) - count_short_assets(pop) <= asset_supply - 1:
+    if count_long_assets(pop)  >= asset_supply + 1 or count_long_assets(pop) <= asset_supply - 1:
         print("volume buy, sell, ind type and asset_long")
         print(volume_buy)
         print(volume_sell)
