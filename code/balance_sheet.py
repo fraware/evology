@@ -792,7 +792,6 @@ def shield_wealth(generation, pop, coordinates:list, current_price):
         # print('Differences')
         # print(differences)
 
-        MAX_ATTEMPTS = 1_000
         attempt = 0
         while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
             # We must continue to adjust wealth. 
