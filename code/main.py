@@ -55,8 +55,9 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.calculate_edv(pop, current_price)
         mismatch = bs.calculate_total_edv(pop) 
 
-        pop, volume, securities_contract = bs.execute_demand(pop, current_price, asset_supply, securities_contract)
-
+        # pop, volume, securities_contract = bs.execute_demand(pop, current_price, asset_supply, securities_contract)
+        pop, volume, securities_contract = mk.execute_demand(pop, current_price, asset_supply, securities_contract)
+        volume = 0
 
 
         pop, dividend, random_dividend = bs.earnings(pop, dividend, current_price) 
@@ -74,6 +75,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
             print("Simulation interrupted for insolvency.")
             return df
             raise ValueError('Agent went insolvent')
+    
+    print(securities_contract)
 
         # long = 0
         # short = 0
