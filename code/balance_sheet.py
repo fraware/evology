@@ -69,7 +69,7 @@ def update_fval(pop, extended_dividend_history):
     estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
     annualised_estimated_daily_div_growth = (1 + estimated_daily_div_growth) ** 252 - 1
 
-    numerator = (1 + estimated_daily_div_growth) * extended_dividend_history[-1] # correct
+    numerator = (1 + estimated_daily_div_growth) * extended_dividend_history[-1]
     denuminator = (1 + EQUITY_COST - annualised_estimated_daily_div_growth) ** (1/252) - 1
     fval = numerator / denuminator
 

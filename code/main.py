@@ -34,41 +34,31 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.shield_wealth(generation, pop, wealth_coordinates, current_price)
 
         pop, replacements, spoils = ga.hypermutate(pop, mode) # Replace insolvent agents
-        if replacements > 0:
-            print('REPLACED')
         pop = bs.share_spoils(pop, spoils)
         
         if generation > SHIELD_DURATION:
-            print(bs.count_long_assets(pop))
             ga.compute_fitness(pop)
             pop = ga.strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, 
                 CROSSOVER_RATE, MUTATION_RATE)
-            print(bs.count_long_assets(pop))
 
         bs.determine_tsv_proc(pop, price_history, process_history)
         bs.update_fval(pop, extended_dividend_history)
         bs.determine_edf(pop)
 
-
         ed_functions = bs.agg_ed(pop)
-
         current_price = float(esl_mc.solve(ed_functions, current_price)[0])
-
         bs.calculate_tsv(pop, current_price, price_history)
         price_history.append(current_price)       
-
 
         bs.calculate_edv(pop, current_price)
         mismatch = bs.calculate_total_edv(pop) 
 
         pop, volume = mk.execute_ed(pop, current_price, asset_supply)
-
         pop, dividend, random_dividend = bs.earnings(pop, dividend, current_price) 
         dividend_history.append(dividend)
         extended_dividend_history.append(dividend)
         bs.update_margin(pop, current_price)
         bs.clear_debt(pop, current_price)
-        
 
         data.update_results(df, generation, current_price, mismatch, pop, dividend, 
             random_dividend, replacements, volume, price_history)

@@ -18,7 +18,6 @@ def solve(my_excess_demand_functions: list, current_price):
   i  = identity([0, 1])
   p  = property(i)
   initial_price = price(int(current_price * 100), currencies.USD)
-  # print(initial_price)
   initial_quote = quote(initial_price)
   model = excess_demand_model({p: initial_quote}) # for one asset
 

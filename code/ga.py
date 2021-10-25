@@ -1,9 +1,11 @@
+from math import nan
 from deap import base
 from deap import creator
 from deap import tools
 from deap import algorithms
 from operator import attrgetter
 from sampling import *
+import balance_sheet as bs
 
 def hyper_correct_ind(ind):
     ind.asset_long = 0
@@ -103,19 +105,36 @@ def selRandom(individuals, k):
     return [random.choice(individuals) for i in range(k)]
 
 # Creation of our customised selection operator (outnrament) that handles positive & negative fitness values
-def selTournament(pop, k, tournsize, fit_attr="fitness"):
+def selTournament(pop, tournsize, fit_attr="fitness"):
     chosen = []
-    for i in range(k):
-        chosen_i = []
+    for i in range(len(pop)):
+        popi_assets = pop[i].asset
+        # print('popi')
+        # print(popi_assets)
+
+        # print('-----')
+        # print(i)
+        # print('pop[i] asset ' + str(i) + ', ' +str(pop[i].type) + ', ' + str(pop[i].asset))
+
+        # chosen_i = []
         aspirants = selRandom(pop, tournsize-1) 
         aspirants.append(pop[i])
         chosen_i = max(aspirants, key=attrgetter(fit_attr))
+
+        # print(type(pop[i]))
+        # print(type(chosen_i))
 
         # print('chosen i asset precondserved '+str(chosen_i.asset))
         # print('pop i asset ' + str(pop[i].asset))
 
         # Conserve most variables
+        # print(chosen_i.asset)
+        
         chosen_i.asset = pop[i].asset
+        chosen_i.asset = popi_assets
+
+        # print(chosen_i.asset)
+
         chosen_i.wealth = pop[i].asset
         chosen_i.process = pop[i].process
         chosen_i.tsf = pop[i].tsf
@@ -129,25 +148,10 @@ def selTournament(pop, k, tournsize, fit_attr="fitness"):
         chosen_i.ema = pop[i].ema
         chosen_i.profit = pop[i].profit
 
-        # print('chosen i type '+str(chosen_i.type))
-        # print('pop i type ' + str(pop[i].type))
-
-        # print('chosen i asset '+str(chosen_i.asset))
-        # print('pop i asset ' + str(pop[i].asset))
-
-        # print('chosen i edv '+str(chosen_i.edv))
-        # print('pop i edv ' + str(pop[i].edv))
-
-        # print('chosen i strat '+str(chosen_i[0]))
-        # print('pop i strat ' + str(pop[i][0]))
-        # print('-----')
-
-        # Imitate type and strategy
-        # chosen_i[0] = max(aspirants, key=attrgetter(fit_attr))[0]
-        # chosen_i.type = max(aspirants, key=attrgetter(fit_attr))[0].type
-
         # Append to list of selected individuals
         chosen.append(chosen_i)
+        del chosen_i
+        # print('chosen i asset ' + str(chosen_i.asset))
     return chosen
 
 toolbox.register("selTournament", selTournament)
@@ -159,31 +163,32 @@ def strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RA
         # Individuals can select & imitate, and switch
 
         # Selection
-        if PROBA_SELECTION == 1:
-            offspring = toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
-            offspring = list(map(toolbox.clone, offspring))
-        if PROBA_SELECTION == 0:
-            offspring = pop.copy()
-    
-    else: 
-        # TODO: under development for when we have within mode
-        # Selection
-        if PROBA_SELECTION == 1:
-            offspring = toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
-            # fitness_for_invalid(offspring)
-            offspring = list(map(toolbox.clone, offspring))
-        if PROBA_SELECTION == 0:
-            offspring = pop.copy()
-                                            
-        # Crossover
-        for child1, child2 in zip(offspring[::2], offspring[1::2]):
-            toolbox.mate(child1,child2,CROSSOVER_RATE)
+        for i in range(len(pop)):
+            if random.random() < PROBA_SELECTION: # Social learning
+                # Create the tournament and get the winner
+                aspirants = selRandom(pop, TOURNAMENT_SIZE-1) 
+                aspirants.append(pop[i])
+                winner = max(aspirants, key=attrgetter("fitness"))
 
+                # Imitate the winner's type and strategy
+                pop[i].type = winner.type
+                pop[i][0] = winner[0]
+        
         # Mutation
-        for mutant in offspring:
-            toolbox.mutate(mutant, MUTATION_RATE)
+        types = ['nt', 'vi', 'tf']
+        for i in range(len(pop)):
+            if random.random() < MUTATION_RATE:
+                # Change type totally randomly 
+                ty = random.randint(0,2)
+                pop[i].type = types[ty]
+                if pop[i].type =='tf':
+                    pop[i][0] = 2
+                elif pop[i].type == 'nt' or pop[i].type == 'vi':
+                    pop[i][0] = nan
+                
 
-    # Replace pop by offspring
-    pop[:] = offspring
+
+
+
 
     return pop
