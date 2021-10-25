@@ -37,6 +37,9 @@ def update_margin(pop, current_price):
             elif margin_objective < ind.margin:
                 ind.cash += ind.margin - margin_objective
                 ind.margin = margin_objective
+        if ind.asset >= 0 and ind.margin > 0:
+            ind.cash += ind.margin
+            ind.margin = 0
 
     return ind
 
@@ -503,7 +506,7 @@ def report_nt_stocks(pop, price):
     num = 0
     cash = 0
     for ind in pop:
-        if ind.type == 'nt':
+        if ind.type == 'nt' and ind.asset > 0:
             num += 1
             total += ind.asset * price
     if num != 0:
@@ -515,7 +518,7 @@ def report_vi_stocks(pop, price):
     num = 0
     cash = 0
     for ind in pop:
-        if ind.type == 'vi':
+        if ind.type == 'vi' and ind.asset > 0:
             num += 1
             total += ind.asset * price
     if num != 0:
@@ -527,7 +530,7 @@ def report_tf_stocks(pop, price):
     num = 0
     cash = 0
     for ind in pop:
-        if ind.type == 'tf':
+        if ind.type == 'tf' and ind.asset > 0:
             num += 1
             total += ind.asset * price
     if num != 0:

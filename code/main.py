@@ -20,7 +20,6 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
     df = data.create_df()
     price_history, dividend_history, process_history = [], [], []
-    securities_contract = np.zeros((POPULATION_SIZE, POPULATION_SIZE)) # 1st Attempt into reconstructing ecology trading networkg
     extended_dividend_history = mk.dividend_series(1*252)
 
     # Create the population
@@ -55,11 +54,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.calculate_edv(pop, current_price)
         mismatch = bs.calculate_total_edv(pop) 
 
-        # pop, volume, securities_contract = bs.execute_demand(pop, current_price, asset_supply, securities_contract)
-        # pop, volume, securities_contract = mk.execute_demand(pop, current_price, asset_supply, securities_contract)
         pop, volume = mk.execute_ed(pop, current_price, asset_supply)
-        volume = 0
-
 
         pop, dividend, random_dividend = bs.earnings(pop, dividend, current_price) 
         dividend_history.append(dividend)
@@ -77,18 +72,5 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
             return df
             raise ValueError('Agent went insolvent')
     
-    print(securities_contract)
 
-        # long = 0
-        # short = 0
-        # for ind in pop:
-        #     long += ind.asset_long 
-        #     short += ind.asset_short
-        # print('long, short')
-        # print(long)
-        # print(short)
-        # print("----------------------")
-        # for ind in pop:
-        #     print(ind.type)
-        #     print(ind.asset_long)
-    return df
+    return df, pop
