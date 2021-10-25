@@ -7,15 +7,15 @@ RANDOM_SEED = random.random()
 
 # main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 
-def run(POPULATION_SIZE, learning_mode):
+def run(POPULATION_SIZE, learning_mode, TIME):
 
     if learning_mode == 'no learning':
-        df, pop = main("between", 12500, 0, POPULATION_SIZE, 0, 0)
+        df, pop = main("between", TIME, 0, POPULATION_SIZE, 0, 0)
     if learning_mode == 'switch':
-        df, pop = main("between", 12500, 1, POPULATION_SIZE, 0, MUTATION_RATE)
+        df, pop = main("between", TIME, 1, POPULATION_SIZE, 0, MUTATION_RATE)
     return df
 
-df = run(100, 'switch')
+df = run(100, 'switch', 23)
 
 df.to_csv("data/run_data.csv")
 print(df)

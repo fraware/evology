@@ -34,9 +34,16 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.shield_wealth(generation, pop, wealth_coordinates, current_price)
 
         pop, replacements, spoils = ga.hypermutate(pop, mode) # Replace insolvent agents
+        if replacements > 0:
+            print('REPLACED')
         pop = bs.share_spoils(pop, spoils)
-        ga.compute_fitness(pop)
-        pop = ga.strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE)
+        
+        if generation > SHIELD_DURATION:
+            print(bs.count_long_assets(pop))
+            ga.compute_fitness(pop)
+            pop = ga.strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, 
+                CROSSOVER_RATE, MUTATION_RATE)
+            print(bs.count_long_assets(pop))
 
         bs.determine_tsv_proc(pop, price_history, process_history)
         bs.update_fval(pop, extended_dividend_history)

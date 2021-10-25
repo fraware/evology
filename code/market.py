@@ -98,11 +98,17 @@ def execute_ed(pop, current_price, asset_supply):
     volume = 0
 
     for ind in pop:
+
+        # print(ind.edv)
+
         if ind.edv > 0:
             amount = ind.edv * multiplier_buy
         
         if ind.edv < 0:
             amount = ind.edv * multiplier_sell
+
+        if ind.edv == 0:
+            amount = 0
             
         ind.asset += amount 
         ind.cash -= amount * current_price
@@ -114,6 +120,6 @@ def execute_ed(pop, current_price, asset_supply):
             ind.cash = 0
         
     if bs.count_long_assets(pop) > asset_supply + 0.001 or bs.count_long_assets(pop) < asset_supply - 0.001:
-        raise ValueError('Asset supply cst violated ' +str(bs.count_long_assets(pop)))
+        raise ValueError('Asset supply cst violated ' +str(bs.count_long_assets(pop)) + '/' + str(asset_supply))
 
     return pop, volume

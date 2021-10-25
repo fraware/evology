@@ -103,37 +103,87 @@ def selRandom(individuals, k):
     return [random.choice(individuals) for i in range(k)]
 
 # Creation of our customised selection operator (outnrament) that handles positive & negative fitness values
-def selTournament(individuals, k, tournsize, fit_attr="fitness"):
+def selTournament(pop, k, tournsize, fit_attr="fitness"):
     chosen = []
     for i in range(k):
         chosen_i = []
-        aspirants = selRandom(individuals, tournsize-1) 
-        aspirants.append(individuals[i])
+        aspirants = selRandom(pop, tournsize-1) 
+        aspirants.append(pop[i])
         chosen_i = max(aspirants, key=attrgetter(fit_attr))
-        chosen_i[1:10] = individuals[i][1:10]
+
+        # print('chosen i asset precondserved '+str(chosen_i.asset))
+        # print('pop i asset ' + str(pop[i].asset))
+
+        # Conserve most variables
+        chosen_i.asset = pop[i].asset
+        chosen_i.wealth = pop[i].asset
+        chosen_i.process = pop[i].process
+        chosen_i.tsf = pop[i].tsf
+        chosen_i.edf = pop[i].edf
+        chosen_i.edv = pop[i].edv
+        chosen_i.tsv = pop[i].tsv
+        chosen_i.loan = pop[i].loan
+        chosen_i.cash = pop[i].cash
+        chosen_i.margin = pop[i].margin
+        chosen_i.margin = pop[i].margin
+        chosen_i.ema = pop[i].ema
+        chosen_i.profit = pop[i].profit
+
+        # print('chosen i type '+str(chosen_i.type))
+        # print('pop i type ' + str(pop[i].type))
+
+        # print('chosen i asset '+str(chosen_i.asset))
+        # print('pop i asset ' + str(pop[i].asset))
+
+        # print('chosen i edv '+str(chosen_i.edv))
+        # print('pop i edv ' + str(pop[i].edv))
+
+        # print('chosen i strat '+str(chosen_i[0]))
+        # print('pop i strat ' + str(pop[i][0]))
+        # print('-----')
+
+        # Imitate type and strategy
+        # chosen_i[0] = max(aspirants, key=attrgetter(fit_attr))[0]
+        # chosen_i.type = max(aspirants, key=attrgetter(fit_attr))[0].type
+
+        # Append to list of selected individuals
         chosen.append(chosen_i)
     return chosen
 
 toolbox.register("selTournament", selTournament)
 toolbox.register("select", toolbox.selTournament)
 
-def strategy_evolution(pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
-    # Selection
-    if PROBA_SELECTION == 1:
-        offspring = toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
-        # fitness_for_invalid(offspring)
-        offspring = list(map(toolbox.clone, offspring))
-    if PROBA_SELECTION == 0:
-        offspring = pop.copy()
-                                        
-    # Crossover
-    for child1, child2 in zip(offspring[::2], offspring[1::2]):
-        toolbox.mate(child1,child2,CROSSOVER_RATE)
+def strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
+    
+    if mode == 'between':
+        # Individuals can select & imitate, and switch
 
-    # Mutation
-    for mutant in offspring:
-        toolbox.mutate(mutant, MUTATION_RATE)
+        # Selection
+        if PROBA_SELECTION == 1:
+            offspring = toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
+            offspring = list(map(toolbox.clone, offspring))
+        if PROBA_SELECTION == 0:
+            offspring = pop.copy()
+    
+    else: 
+        # TODO: under development for when we have within mode
+        # Selection
+        if PROBA_SELECTION == 1:
+            offspring = toolbox.select(pop, POPULATION_SIZE, TOURNAMENT_SIZE)
+            # fitness_for_invalid(offspring)
+            offspring = list(map(toolbox.clone, offspring))
+        if PROBA_SELECTION == 0:
+            offspring = pop.copy()
+                                            
+        # Crossover
+        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+            toolbox.mate(child1,child2,CROSSOVER_RATE)
 
+        # Mutation
+        for mutant in offspring:
+            toolbox.mutate(mutant, MUTATION_RATE)
+
+    # Replace pop by offspring
     pop[:] = offspring
 
     return pop
