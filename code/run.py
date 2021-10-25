@@ -12,10 +12,10 @@ def run(POPULATION_SIZE, learning_mode, TIME):
     if learning_mode == 'no learning':
         df, pop = main("between", TIME, 0, POPULATION_SIZE, 0, 0)
     if learning_mode == 'switch':
-        df, pop = main("between", TIME, 1, POPULATION_SIZE, 0, MUTATION_RATE)
+        df, pop = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, MUTATION_RATE)
     return df
 
-df = run(100, 'switch', 10000)
+df = run(100, 'no learning', 10000)
 
 df.to_csv("data/run_data.csv")
 print(df)

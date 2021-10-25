@@ -66,6 +66,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         # Save and stop in case of insolvency
         if mode == "between" and replacements > 0 and POPULATION_SIZE == 3:
             print("Simulation interrupted for insolvency.")
+            return df
             raise ValueError('Agent went insolvent')
     
     return df, pop
