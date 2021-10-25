@@ -63,7 +63,7 @@ def determine_tsv_proc(pop, price_history, process_history):
             #ind.process = abs(ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1))
             # ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
             if len(process_history) > 1:
-                ind.process = ind.process + RHO_NT * (MU_NT - process_history[-2]) + GAMMA_NT * random.normalvariate(0,1)
+                ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * random.normalvariate(0,1)
             elif len(process_history) <= 1:
                 ind.process = ind.process + GAMMA_NT * random.normalvariate(0,1)
             process_history.append(ind.process)
