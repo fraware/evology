@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def plot_comparison(dataset):
     # Import the data
-    run = pd.read_csv("data/test_data.csv")
+    run = pd.read_csv("data/run_data.csv")
     if dataset == 'sample2':
         ref = pd.read_csv('data/replication_data_sample2.csv')
     if dataset == 'sample1':
