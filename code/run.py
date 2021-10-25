@@ -10,9 +10,4 @@ RANDOM_SEED = random.random()
 df, pop = main("between", 12500, 0, 3, 0, 0)
 print(df)
 
-
-for ind in pop:
-    print(ind.type)
-    print(ind.asset)
-
-df.to_csv("data/test_data.csv")
+df.to_csv("data/run_data.csv")

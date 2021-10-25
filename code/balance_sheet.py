@@ -6,7 +6,6 @@ from market import *
 import inspect
 import math
 import warnings
-# np.seterr(divide = 'ignore') 
 
 def clear_debt(pop, price):
     for ind in pop:
@@ -60,8 +59,6 @@ def determine_tsv_proc(pop, price_history, process_history):
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
         if ind.type == "nt":
-            #ind.process = abs(ind.process + RHO_NT * (MU_NT - ind.process) + GAMMA_NT * random.normalvariate(0,1))
-            # ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
             if len(process_history) > 1:
                 ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * random.normalvariate(0,1)
             elif len(process_history) <= 1:
