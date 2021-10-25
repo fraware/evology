@@ -24,31 +24,27 @@ def clear_debt(pop, price):
 
 def update_margin(pop, current_price):
     for ind in pop:
-        # Update margins
-        margin_objective = ind.asset_short * current_price # Margin amount to cover short position at current price.
-        if margin_objective > ind.margin: # If our current margin is not enough:
-            if ind.cash >= margin_objective - ind.margin: # If we have the cash to adjust:
-                # We spend cash to refuel the margin.
-                ind.margin += margin_objective - ind.margin
-                ind.cash -= margin_objective - ind.margin
-            if ind.cash < margin_objective - ind.margin: # If we don't have enough cash to adjust:
-                # All available cash goes to the margin, and we have some loan.
-                # Loan is a penalty on wealth notably for evaluating solvency.
-                ind.margin += ind.cash
-                ind.cash = 0
-                ind.loan += margin_objective - ind.margin - ind.cash
-                # print("Margin update unsuccesful for " + str(ind.type))
-        if margin_objective < ind.margin: # If our current margin is too high:
-            # We get some of the margin back in the form of cash.
-            ind.cash += ind.margin - margin_objective
-            ind.margin -= ind.margin - margin_objective
+        # If we have a short position, update the margin
+        if ind.asset < 0:
+            margin_objective = abs(ind.asset) * current_price # Margin amount to cover short position at current price.
+            if margin_objective > ind.margin: # If our current margin is not enough:
+                ind.cash -= margin_objective - ind.margin 
+                ind.margin = margin_objective
+                if ind.cash < 0:
+                    ind.loan += abs(ind.cash)
+                    ind.cash = 0
+            # If our margin is too high, gain the excedent as cash.
+            elif margin_objective < ind.margin:
+                ind.cash += ind.margin - margin_objective
+                ind.margin = margin_objective
+
     return ind
 
 def calculate_wealth(pop, current_price):
     for ind in pop:
         # Update wealth
         ind.prev_wealth = ind.wealth
-        ind.wealth = ind.cash + ind.asset_long * current_price - ind.loan
+        ind.wealth = ind.cash + ind.asset * current_price - ind.loan
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
 
@@ -92,11 +88,11 @@ def record_fval(pop):
 def determine_edf(pop):
     def edf(ind, p):
         if ind.type == "tf":
-            return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - (ind.asset_long - ind.asset_short)
+            return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
         elif ind.type == "vi":
-            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p)) + 0.5)) - (ind.asset_long - ind.asset_short)
+            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p)) + 0.5)) - ind.asset
         elif ind.type == "nt":
-            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - (ind.asset_long - ind.asset_short)
+            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset
     for ind in pop:
         ind.edf = edf
     return pop
@@ -115,15 +111,14 @@ def calculate_total_edv(pop):
 def count_long_assets(pop):
     count = 0
     for ind in pop:
-        if ind.asset_long > 0:
-            count += ind.asset_long
+        count += ind.asset
     return count
 
 def count_short_assets(pop):
     count = 0
     for ind in pop:
-        if ind.asset_short > 0:
-            count += ind.asset_short
+        if ind.asset < 0:
+            count += abs(ind.asset)
     return count
 
 
@@ -131,7 +126,7 @@ def earnings(pop, prev_dividend, current_price):
     dividend, random_dividend = draw_dividend(prev_dividend)
     for ind in pop:
         # former_wealth = ind.wealth
-        div_asset = ind.asset_long * dividend # Determine gain from dividends
+        div_asset = ind.asset * dividend # Determine gain from dividends
         interest_cash = ind.cash * INTEREST_RATE # Determine gain from interest
         ind.cash += REINVESTMENT_RATE * (div_asset + interest_cash) # Apply reinvestment
         # ind.wealth = ind.cash + ind.asset_long * current_price - ind.loan # Compute new wealth
@@ -178,13 +173,14 @@ def report_vi_signal(pop):
         fval_round = fval/num
     return fval_round
 
-def report_tf_signal(pop):
+def report_tf_signal(pop, price_history):
     fval = 0
     num = 0
     fval_round = 0
+
     for ind in pop:
-        if ind.type == "tf":
-            fval += ind.tsv
+        if len(price_history) > ind[0] and ind.type == 'tf':
+            fval += price_history[-1] / price_history[-ind[0]] - 1
             num += 1
     if num != 0:
         fval_round = fval/num
@@ -509,7 +505,7 @@ def report_nt_stocks(pop, price):
     for ind in pop:
         if ind.type == 'nt':
             num += 1
-            total += ind.asset_long * price
+            total += ind.asset * price
     if num != 0:
         cash = total / num
     return cash
@@ -521,7 +517,7 @@ def report_vi_stocks(pop, price):
     for ind in pop:
         if ind.type == 'vi':
             num += 1
-            total += ind.asset_long * price
+            total += ind.asset * price
     if num != 0:
         cash = total / num
     return cash
@@ -533,7 +529,7 @@ def report_tf_stocks(pop, price):
     for ind in pop:
         if ind.type == 'tf':
             num += 1
-            total += ind.asset_long * price
+            total += ind.asset * price
     if num != 0:
         cash = total / num
     return cash

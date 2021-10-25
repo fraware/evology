@@ -16,7 +16,7 @@ def create_df():
     return df
 
 def update_results(df, generation, current_price, mismatch, pop, dividend, 
-        random_dividend, replacements, volume): 
+        random_dividend, replacements, volume, price_history): 
     
     df.loc[len(df.index)] = [generation, current_price, mismatch, 
         bs.count_tf(pop), bs.count_vi(pop), 
@@ -33,7 +33,7 @@ def update_results(df, generation, current_price, mismatch, pop, dividend,
             bs.report_vi_signal(pop), bs.report_vi_stocks(pop, current_price),
         bs.report_tf_cash(pop), bs.report_tf_lending(pop), bs.report_tf_loan(pop),
             bs.report_tf_nav(pop, current_price), bs.report_tf_pnl(pop), 
-            bs.report_tf_signal(pop), bs.report_tf_stocks(pop, current_price)
+            bs.report_tf_signal(pop, price_history), bs.report_tf_stocks(pop, current_price)
         ]
     
     df.set_index('Gen')

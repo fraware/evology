@@ -56,7 +56,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         mismatch = bs.calculate_total_edv(pop) 
 
         # pop, volume, securities_contract = bs.execute_demand(pop, current_price, asset_supply, securities_contract)
-        pop, volume, securities_contract = mk.execute_demand(pop, current_price, asset_supply, securities_contract)
+        # pop, volume, securities_contract = mk.execute_demand(pop, current_price, asset_supply, securities_contract)
+        pop, volume = mk.execute_ed(pop, current_price, asset_supply)
         volume = 0
 
 
@@ -68,7 +69,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         
 
         data.update_results(df, generation, current_price, mismatch, pop, dividend, 
-            random_dividend, replacements, volume)
+            random_dividend, replacements, volume, price_history)
 
         # Save and stop in case of insolvency
         if mode == "between" and replacements > 0:

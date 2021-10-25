@@ -21,16 +21,16 @@ creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 """
 
 creator.create("ind_tf", list, typecode = 'd', fitness=creator.fitness_strategy, wealth=0, type ="tf", 
-    cash = INITIAL_CASH, asset_long = INITIAL_ASSETS, asset_short = 0, loan = 0, margin = 0, tsf = None, tsv = 0, edf = None, 
-    edv = 0, edv_var = 0, process = 0, ema = 0, profit = 0, prev_wealth = 0, leverage = 1)
+    cash = INITIAL_CASH, asset = INITIAL_ASSETS, loan = 0, margin = 0, tsf = None, tsv = 0, edf = None, 
+    edv = 0, process = 0, ema = 0, profit = 0, prev_wealth = 0, leverage = 1)
 
 creator.create("ind_vi", list, typecode = 'd', fitness=creator.fitness_strategy, wealth=0, type = "vi", 
-    cash = INITIAL_CASH, asset_long = INITIAL_ASSETS, asset_short = 0, loan = 0, margin = 0, tsf = None, tsv = 0, edf = None, 
-    edv = 0, edv_var = 0, process = 0, ema = 0, profit = 0, prev_wealth = 0, leverage = 1)
+    cash = INITIAL_CASH, asset = INITIAL_ASSETS, loan = 0, margin = 0, tsf = None, tsv = 0, edf = None, 
+    edv = 0, process = 0, ema = 0, profit = 0, prev_wealth = 0, leverage = 1)
 
 creator.create("ind_nt", list, typecode = 'd', fitness=creator.fitness_strategy, wealth=0, type = "nt", 
-    cash = INITIAL_CASH, asset_long = INITIAL_ASSETS, asset_short = 0, loan = 0, margin = 0, tsf = None, tsv = 0, edf = None, 
-    edv = 0, edv_var = 0, process = 1, ema = 0, profit = 0, prev_wealth = 0, leverage = 1)
+    cash = INITIAL_CASH, asset = INITIAL_ASSETS, loan = 0, margin = 0, tsf = None, tsv = 0, edf = None, 
+    edv = 0, process = 1, ema = 0, profit = 0, prev_wealth = 0, leverage = 1)
 # individual_ga is a list, individual_gp will be a gp.primitiveTree.
 
 # Create the individual list 
