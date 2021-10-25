@@ -14,20 +14,21 @@ def hyper_correct_ind(ind):
     ind.cash = 100_000_000
     return ind
 
-def hypermutate(pop, mode):
+def hypermutate(pop, mode, asset_supply):
     round_replacements = 0
     spoils = 0
     pop_temp = list(map(toolbox.clone, pop))
     for i in range(0, len(pop_temp)):
         if pop_temp[i].wealth <= 0:
-            print("Info on replacement")
-            print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
+            # print("Info on replacement")
+            # print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
             spoils += pop_temp[i].asset
             pop_temp[i] = toolbox.gen_rd_ind()
             pop_temp[i] = hyper_correct_ind(pop_temp[i])
+            pop_temp[i].asset = 0
             del pop_temp[i].fitness.values
             
-            print('REPLACED')
+            # print('REPLACED')
             round_replacements += 1
             
     pop[:] = pop_temp

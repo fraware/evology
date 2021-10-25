@@ -327,13 +327,13 @@ def agg_ed(pop):
 
 
 def share_spoils(pop, spoils, asset_supply):
-    if spoils > 0:
-        print('Allocating ' + str(spoils) + ' spoils')
+    if abs(spoils) > 0:
+        # print('Allocating ' + str(spoils) + ' spoils')
         per_ind_spoil = spoils / len(pop)
         for ind in pop:
             ind.asset += per_ind_spoil
 
-        if count_long_assets(pop) > asset_supply:
+        if count_long_assets(pop) > asset_supply + 0.01 or count_long_assets(pop) < asset_supply - 0.01:
             for ind in pop:
                 print(ind.type)
                 print(ind.asset)

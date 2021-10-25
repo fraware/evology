@@ -33,7 +33,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.calculate_wealth(pop, current_price) # Compute agents' wealth
         bs.shield_wealth(generation, pop, wealth_coordinates, current_price)
 
-        pop, replacements, spoils = ga.hypermutate(pop, mode) # Replace insolvent agents
+        pop, replacements, spoils = ga.hypermutate(pop, mode, asset_supply) # Replace insolvent agents
         pop = bs.share_spoils(pop, spoils, asset_supply)
         
         if generation > SHIELD_DURATION:
@@ -60,15 +60,12 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.update_margin(pop, current_price)
         bs.clear_debt(pop, current_price)
 
-        print(df)
         data.update_results(df, generation, current_price, mismatch, pop, dividend, 
             random_dividend, replacements, volume, price_history)
 
         # Save and stop in case of insolvency
-        if mode == "between" and replacements > 0:
+        if mode == "between" and replacements > 0 and POPULATION_SIZE == 3:
             print("Simulation interrupted for insolvency.")
-            return df
             raise ValueError('Agent went insolvent')
     
-
     return df, pop
