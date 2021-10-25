@@ -156,7 +156,7 @@ def report_nt_signal(pop):
     fval_round = 0
     for ind in pop:
         if ind.type == "nt":
-            fval += ind[0] * ind.process
+            fval += ind[0] * abs(ind.process)
             if fval < 0:
                 raise ValueError('Negative NT signal')
             num += 1
