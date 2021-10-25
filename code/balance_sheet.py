@@ -268,10 +268,15 @@ def wealth_share_tf(pop):
     for ind in pop:
         if ind.type == "tf":
             wealth_tf += ind.wealth
-    if 100 * wealth_tf / total_wealth(pop) > 100:
+    if 100 * wealth_tf / total_wealth(pop) > 100.01:
+        for ind in pop:
+            print(ind.type)
+            print(ind.wealth)
+        print(100 * wealth_tf / total_wealth(pop))
+        print(total_wealth(pop))
         raise ValueError("Wealth share TF superior to 100" + str(wealth_tf) + " // " + str(total_wealth(pop)))
   
-    if 100 * wealth_tf / total_wealth(pop) < 0:
+    if 100 * wealth_tf / total_wealth(pop) < -0.01:
         raise ValueError("Wealth share TF negative" + str(wealth_tf) + " // " + str(total_wealth(pop)))
     return 100 * wealth_tf / total_wealth(pop)
 
@@ -280,9 +285,14 @@ def wealth_share_vi(pop):
     for ind in pop:
         if ind.type == "vi":
             wealth_vi += ind.wealth
-    if 100 * wealth_vi / total_wealth(pop) > 100:
+    if 100 * wealth_vi / total_wealth(pop) > 100.01:
+        for ind in pop:
+            print(ind.type)
+            print(ind.wealth)
+        print(100 * wealth_vi / total_wealth(pop))
+        print(total_wealth(pop))
         raise ValueError("Wealth share VI superior to 100" + str(wealth_vi) + " // " + str(total_wealth(pop)))
-    if 100 * wealth_vi / total_wealth(pop) < 0:
+    if 100 * wealth_vi / total_wealth(pop) < -0.01:
         raise ValueError("Wealth share VI negative" + str(wealth_vi) + " // " + str(total_wealth(pop)))
 
     return 100 * wealth_vi / total_wealth(pop)
@@ -292,9 +302,15 @@ def wealth_share_nt(pop):
     for ind in pop:
         if ind.type == "nt":
             wealth_nt += ind.wealth
-    if 100 * wealth_nt / total_wealth(pop) > 100:
+
+    if 100 * wealth_nt / total_wealth(pop) > 100.01:
+        for ind in pop:
+            print(ind.type)
+            print(ind.wealth)
+        print(100 * wealth_nt / total_wealth(pop))
+        print(total_wealth(pop))
         raise ValueError("Wealth share NT superior to 100" + str(wealth_nt) + " // " + str(total_wealth(pop)))
-    if 100 * wealth_nt / total_wealth(pop) < 0:
+    if 100 * wealth_nt / total_wealth(pop) < -0.01:
         raise ValueError("Wealth share NT negative" + str(wealth_nt) + " // " + str(total_wealth(pop)))
     return 100 * wealth_nt / total_wealth(pop)
 
@@ -310,12 +326,20 @@ def agg_ed(pop):
     return functions
 
 
-def share_spoils(pop, spoils):
+def share_spoils(pop, spoils, asset_supply):
     if spoils > 0:
         print('Allocating ' + str(spoils) + ' spoils')
         per_ind_spoil = spoils / len(pop)
         for ind in pop:
-            ind.asset_long += per_ind_spoil
+            ind.asset += per_ind_spoil
+
+        if count_long_assets(pop) > asset_supply:
+            for ind in pop:
+                print(ind.type)
+                print(ind.asset)
+            print(count_long_assets(pop))
+            print(asset_supply)
+            raise ValueError ('Share spoils exceeded asset supply')
     return pop
 
 def report_nt_cash(pop):

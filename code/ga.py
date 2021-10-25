@@ -21,13 +21,13 @@ def hypermutate(pop, mode):
     for i in range(0, len(pop_temp)):
         if pop_temp[i].wealth <= 0:
             print("Info on replacement")
-            print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset_long)) + ", S-: " + str(int(pop_temp[i].asset_short)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
-            spoils += pop_temp[i].asset_long
+            print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
+            spoils += pop_temp[i].asset
             pop_temp[i] = toolbox.gen_rd_ind()
             pop_temp[i] = hyper_correct_ind(pop_temp[i])
             del pop_temp[i].fitness.values
             
-           
+            print('REPLACED')
             round_replacements += 1
             
     pop[:] = pop_temp
@@ -104,58 +104,58 @@ def random_decimal(low, high):
 def selRandom(individuals, k):
     return [random.choice(individuals) for i in range(k)]
 
-# Creation of our customised selection operator (outnrament) that handles positive & negative fitness values
-def selTournament(pop, tournsize, fit_attr="fitness"):
-    chosen = []
-    for i in range(len(pop)):
-        popi_assets = pop[i].asset
-        # print('popi')
-        # print(popi_assets)
+# # Creation of our customised selection operator (outnrament) that handles positive & negative fitness values
+# def selTournament(pop, tournsize, fit_attr="fitness"):
+#     chosen = []
+#     for i in range(len(pop)):
+#         popi_assets = pop[i].asset
+#         # print('popi')
+#         # print(popi_assets)
 
-        # print('-----')
-        # print(i)
-        # print('pop[i] asset ' + str(i) + ', ' +str(pop[i].type) + ', ' + str(pop[i].asset))
+#         # print('-----')
+#         # print(i)
+#         # print('pop[i] asset ' + str(i) + ', ' +str(pop[i].type) + ', ' + str(pop[i].asset))
 
-        # chosen_i = []
-        aspirants = selRandom(pop, tournsize-1) 
-        aspirants.append(pop[i])
-        chosen_i = max(aspirants, key=attrgetter(fit_attr))
+#         # chosen_i = []
+#         aspirants = selRandom(pop, tournsize-1) 
+#         aspirants.append(pop[i])
+#         chosen_i = max(aspirants, key=attrgetter(fit_attr))
 
-        # print(type(pop[i]))
-        # print(type(chosen_i))
+#         # print(type(pop[i]))
+#         # print(type(chosen_i))
 
-        # print('chosen i asset precondserved '+str(chosen_i.asset))
-        # print('pop i asset ' + str(pop[i].asset))
+#         # print('chosen i asset precondserved '+str(chosen_i.asset))
+#         # print('pop i asset ' + str(pop[i].asset))
 
-        # Conserve most variables
-        # print(chosen_i.asset)
+#         # Conserve most variables
+#         # print(chosen_i.asset)
         
-        chosen_i.asset = pop[i].asset
-        chosen_i.asset = popi_assets
+#         chosen_i.asset = pop[i].asset
+#         chosen_i.asset = popi_assets
 
-        # print(chosen_i.asset)
+#         # print(chosen_i.asset)
 
-        chosen_i.wealth = pop[i].asset
-        chosen_i.process = pop[i].process
-        chosen_i.tsf = pop[i].tsf
-        chosen_i.edf = pop[i].edf
-        chosen_i.edv = pop[i].edv
-        chosen_i.tsv = pop[i].tsv
-        chosen_i.loan = pop[i].loan
-        chosen_i.cash = pop[i].cash
-        chosen_i.margin = pop[i].margin
-        chosen_i.margin = pop[i].margin
-        chosen_i.ema = pop[i].ema
-        chosen_i.profit = pop[i].profit
+#         chosen_i.wealth = pop[i].asset
+#         chosen_i.process = pop[i].process
+#         chosen_i.tsf = pop[i].tsf
+#         chosen_i.edf = pop[i].edf
+#         chosen_i.edv = pop[i].edv
+#         chosen_i.tsv = pop[i].tsv
+#         chosen_i.loan = pop[i].loan
+#         chosen_i.cash = pop[i].cash
+#         chosen_i.margin = pop[i].margin
+#         chosen_i.margin = pop[i].margin
+#         chosen_i.ema = pop[i].ema
+#         chosen_i.profit = pop[i].profit
 
-        # Append to list of selected individuals
-        chosen.append(chosen_i)
-        del chosen_i
-        # print('chosen i asset ' + str(chosen_i.asset))
-    return chosen
+#         # Append to list of selected individuals
+#         chosen.append(chosen_i)
+#         del chosen_i
+#         # print('chosen i asset ' + str(chosen_i.asset))
+#     return chosen
 
-toolbox.register("selTournament", selTournament)
-toolbox.register("select", toolbox.selTournament)
+# toolbox.register("selTournament", selTournament)
+# toolbox.register("select", toolbox.selTournament)
 
 def strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
     
@@ -185,10 +185,4 @@ def strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RA
                     pop[i][0] = 2
                 elif pop[i].type == 'nt' or pop[i].type == 'vi':
                     pop[i][0] = nan
-                
-
-
-
-
-
     return pop
