@@ -185,5 +185,5 @@ def strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RA
                 if pop[i].type =='tf':
                     pop[i][0] = 2
                 elif pop[i].type == 'nt' or pop[i].type == 'vi':
-                    pop[i][0] = nan
+                    pop[i][0] = 100
     return pop
