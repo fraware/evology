@@ -7,34 +7,53 @@ from operator import attrgetter
 from sampling import *
 import balance_sheet as bs
 
-def hyper_correct_ind(ind):
-    ind.asset_long = 0
-    ind.asset_short = 0
-    ind.loan = 0
-    ind.cash = 100_000_000
-    return ind
+''' old hypermutate that we adjust for speed below '''
+# def hypermutate(pop, mode, asset_supply):
+#     round_replacements = 0
+#     spoils = 0
+#     pop_temp = list(map(toolbox.clone, pop))
+#     for i in range(0, len(pop_temp)):
+#         if pop_temp[i].wealth <= 0:
+#             # print("Info on replacement")
+#             # print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
+#             spoils += pop_temp[i].asset
+#             pop_temp[i] = toolbox.gen_rd_ind()
+#             pop_temp[i] = hyper_correct_ind(pop_temp[i])
+#             pop_temp[i].asset = 0
+#             del pop_temp[i].fitness.values
+            
+#             # print('REPLACED')
+#             round_replacements += 1
+            
+#     pop[:] = pop_temp
+#     if mode == "between":
+#         pop = adjust_mode(pop, mode)
+#     return pop, round_replacements, spoils
 
 def hypermutate(pop, mode, asset_supply):
     round_replacements = 0
     spoils = 0
-    pop_temp = list(map(toolbox.clone, pop))
-    for i in range(0, len(pop_temp)):
-        if pop_temp[i].wealth <= 0:
+
+    
+    for i in range(0, len(pop)):
+        if pop[i].wealth <= 0:
             # print("Info on replacement")
             # print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
-            spoils += pop_temp[i].asset
-            pop_temp[i] = toolbox.gen_rd_ind()
-            pop_temp[i] = hyper_correct_ind(pop_temp[i])
-            pop_temp[i].asset = 0
-            del pop_temp[i].fitness.values
-            
-            # print('REPLACED')
+            spoils += pop[i].asset
+            pop[i] = toolbox.gen_rd_ind()
+            pop[i].asset = 0
+            del pop[i].fitness.values
             round_replacements += 1
+
+    if abs(spoils) > 0:
+        per_ind_spoil = spoils / len(pop)
+        for ind in pop:
+            ind.asset += per_ind_spoil
+
             
-    pop[:] = pop_temp
     if mode == "between":
         pop = adjust_mode(pop, mode)
-    return pop, round_replacements, spoils
+    return pop, round_replacements
 
 def compute_fitness(pop):
     for ind in pop:

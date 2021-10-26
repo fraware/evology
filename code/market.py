@@ -48,17 +48,6 @@ def determine_multiplier(pop):
         order_ratio = 0
 
     if order_ratio < 0:
-            for ind in pop:
-                print("--- total buy, total sell, ind type, edv, edv_var, and feasible buy.sell order")
-                print(total_buy)
-                print(total_sell)
-                print(ind.type)
-                print(ind.edv)
-                print(ind.edv_var)
-                if ind.edv_var > 0:
-                    print(min(ind.edv_var, ind.cash / price))
-                if ind.edv_var < 0:
-                    print(min(abs(ind.edv_var), ind.asset_long))
             raise ValueError('Negative order ratio (total sell/buy): ' + str(total_sell) + str(total_buy))
 
 
@@ -88,16 +77,18 @@ def determine_multiplier(pop):
     if multiplier_sell < 0:
         raise ValueError('Multiplier Sell is negative')
 
-    return multiplier_buy, multiplier_sell, total_buy, total_sell
+    return multiplier_buy, multiplier_sell
 
 
 def execute_ed(pop, current_price, asset_supply):
 
     # Determine adjustements to edv if we have some mismatch
-    multiplier_buy, multiplier_sell, total_buy, total_sell = determine_multiplier(pop)
+    multiplier_buy, multiplier_sell = determine_multiplier(pop)
     volume = 0
 
+
     for ind in pop:
+        amount = 0
 
         # print(ind.edv)
 
@@ -106,9 +97,6 @@ def execute_ed(pop, current_price, asset_supply):
         
         if ind.edv < 0:
             amount = ind.edv * multiplier_sell
-
-        if ind.edv == 0:
-            amount = 0
             
         ind.asset += amount 
         ind.cash -= amount * current_price
@@ -119,7 +107,7 @@ def execute_ed(pop, current_price, asset_supply):
             ind.loan += abs(ind.cash)
             ind.cash = 0
         
-    if bs.count_long_assets(pop) > asset_supply + 0.001 or bs.count_long_assets(pop) < asset_supply - 0.001:
+    if bs.count_long_assets(pop) > asset_supply + 1 or bs.count_long_assets(pop) < asset_supply - 1:
         raise ValueError('Asset supply cst violated ' +str(bs.count_long_assets(pop)) + '/' + str(asset_supply))
 
     return pop, volume

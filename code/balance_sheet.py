@@ -50,30 +50,37 @@ def calculate_wealth(pop, current_price):
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
 
-def determine_tsv_proc(pop, price_history, process_history):
+def determine_tsv_proc(mode, pop, price_history):
     # For TFs to have a TSV before determining their edf.
-    for ind in pop:
-        if ind.type == "tf":
-            if len(price_history) >= ind[0]:
-                ind.tsv = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
-            elif len(price_history) < ind[0]:
-                ind.tsv = 0
-        if ind.type == "nt":
-            if len(process_history) > 1:
-                if ind.process != 0:
-                    ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1)
-                elif ind.process <= 0:
-                    ind.process = 1
-            elif len(process_history) <= 1:
-                ind.process = ind.process + GAMMA_NT * random.normalvariate(0,1)
-            process_history.append(ind.process)
+    if mode == 'between':
+        if len(price_history) >= 2:
+            tf_basic = np.log2(price_history[-1]) - np.log2(price_history[-2])
+        else: 
+            tf_basic = 0
+        for ind in pop:
+            if ind.type == "tf":   
+                ind.tsv = tf_basic
+            if ind.type == "nt":
+                ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
+
+
+
+    else:
+        for ind in pop:
+            if ind.type == "tf":
+                if len(price_history) >= ind[0]:
+                    ind.tsv = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
+                elif len(price_history) < ind[0]:
+                    ind.tsv = 0
+            if ind.type == "nt":
+                ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
+
 
 def update_fval(pop, extended_dividend_history):
     estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
-    annualised_estimated_daily_div_growth = (1 + estimated_daily_div_growth) ** 252 - 1
-
+    # annualised_estimated_daily_div_growth = (1 + estimated_daily_div_growth) ** 252 - 1
     numerator = (1 + estimated_daily_div_growth) * extended_dividend_history[-1]
-    denuminator = (1 + EQUITY_COST - annualised_estimated_daily_div_growth) ** (1/252) - 1
+    denuminator = (1 + EQUITY_COST - DIVIDEND_GROWTH_RATE_G) ** (1/252) - 1
     fval = numerator / denuminator
 
     if fval < 0:
@@ -84,12 +91,12 @@ def update_fval(pop, extended_dividend_history):
             ind[0] = fval
     return pop
 
-def record_fval(pop):
-    fval = 0
-    for ind in pop:
-        if ind.type == 'nt' or ind.type == 'vi':
-            fval = ind[0]
-    return fval
+# def record_fval(pop):
+#     fval = 0
+#     for ind in pop:
+#         if ind.type == 'nt' or ind.type == 'vi':
+#             fval = ind[0]
+#     return fval
 
 def determine_edf(pop):
     def edf(ind, p):
@@ -112,15 +119,17 @@ def determine_edf(pop):
     return pop
 
 def calculate_edv(pop, price):
+    total_edv = 0
     for ind in pop:
         ind.edv =  ind.edf(ind, price)
-    return ind
+        total_edv += ind.edv
+    return pop, total_edv
 
-def calculate_total_edv(pop):
-    total = 0
-    for ind in pop:
-        total += ind.edv
-    return total
+# def calculate_total_edv(pop):
+#     total = 0
+#     for ind in pop:
+#         total += ind.edv
+#     return total
 
 def count_long_assets(pop):
     count = 0
@@ -136,16 +145,13 @@ def count_short_assets(pop):
     return count
 
 
-def earnings(pop, prev_dividend, current_price):
+def earnings(pop, prev_dividend):
     dividend, random_dividend = draw_dividend(prev_dividend)
     for ind in pop:
-        # former_wealth = ind.wealth
         div_asset = ind.asset * dividend # Determine gain from dividends
         interest_cash = ind.cash * INTEREST_RATE # Determine gain from interest
         ind.cash += REINVESTMENT_RATE * (div_asset + interest_cash) # Apply reinvestment
-        # ind.wealth = ind.cash + ind.asset_long * current_price - ind.loan # Compute new wealth
-        # ind.profit = ind.wealth - former_wealth  # Compute profit as difference of wealth
-        
+
     return pop, dividend, random_dividend
 
 
@@ -202,8 +208,8 @@ def report_tf_signal(pop, price_history):
 
 def calculate_tsv(pop, price, price_history):
     for ind in pop:
-        if ind.type == 'tf':
-            pass # TSV already computed in calcualte_tsv_proc
+        # if ind.type == 'tf':
+        #     pass # TSV already computed in calcualte_tsv_proc
         if ind.type == 'vi':
             ind.tsv = np.log2(ind[0]) - np.log2(price)
         if ind.type == 'nt':
@@ -340,21 +346,19 @@ def agg_ed(pop):
     return functions
 
 
-def share_spoils(pop, spoils, asset_supply):
-    if abs(spoils) > 0:
-        # print('Allocating ' + str(spoils) + ' spoils')
-        per_ind_spoil = spoils / len(pop)
-        for ind in pop:
-            ind.asset += per_ind_spoil
+# def share_spoils(pop, spoils, asset_supply):
+#     if abs(spoils) > 0:
+#         # print('Allocating ' + str(spoils) + ' spoils')
+        
 
-        if count_long_assets(pop) > asset_supply + 0.01 or count_long_assets(pop) < asset_supply - 0.01:
-            for ind in pop:
-                print(ind.type)
-                print(ind.asset)
-            print(count_long_assets(pop))
-            print(asset_supply)
-            raise ValueError ('Share spoils exceeded asset supply')
-    return pop
+#         if count_long_assets(pop) > asset_supply + 0.01 or count_long_assets(pop) < asset_supply - 0.01:
+#             for ind in pop:
+#                 print(ind.type)
+#                 print(ind.asset)
+#             print(count_long_assets(pop))
+#             print(asset_supply)
+#             raise ValueError ('Share spoils exceeded asset supply')
+#     return pop
 
 def report_nt_cash(pop):
     total = 0
