@@ -38,7 +38,7 @@ def hypermutate(pop, mode, asset_supply):
 
 def compute_fitness(pop):
     for ind in pop:
-        ind.profit = ind.wealth - ind.prev_wealth
+        
         ema = (2 / (EMA_HORIZON + 1)) * (ind.profit - ind.ema) + ind.ema
         ind.ema = ema
         ind.fitness.values = ema,

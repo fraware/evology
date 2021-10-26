@@ -60,7 +60,10 @@ def determine_tsv_proc(pop, price_history, process_history):
                 ind.tsv = 0
         if ind.type == "nt":
             if len(process_history) > 1:
-                ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * random.normalvariate(0,1)
+                if ind.process != 0:
+                    ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1)
+                elif ind.process <= 0:
+                    ind.process = 1
             elif len(process_history) <= 1:
                 ind.process = ind.process + GAMMA_NT * random.normalvariate(0,1)
             process_history.append(ind.process)
@@ -647,8 +650,45 @@ def shield_wealth(generation, pop, coordinates:list, current_price):
             
 
 
+def report_nt_return(pop):
+    num = 0
+    returns = 0
+    sum_returns = 0
+    for ind in pop:
+        if ind.type == 'nt':
+            num += 1
+            sum_returns += ind.profit / ind.prev_wealth
+    if num != 0:
+        returns = sum_returns / num 
+    return returns
 
+def report_vi_return(pop):
+    num = 0
+    returns = 0
+    sum_returns = 0
+    for ind in pop:
+        if ind.type == 'vi':
+            num += 1
+            sum_returns += ind.profit / ind.prev_wealth
+    if num != 0:
+        returns = sum_returns / num 
+    return returns
+
+def report_tf_return(pop):
+    num = 0
+    returns = 0
+    sum_returns = 0
+    for ind in pop:
+        if ind.type == 'tf':
+            num += 1
+            sum_returns += ind.profit / ind.prev_wealth
+    if num != 0:
+        returns = sum_returns / num 
+    return returns
         
+def update_profit(pop):
+    for ind in pop:
+        ind.profit = ind.wealth - ind.prev_wealth
 
         
 

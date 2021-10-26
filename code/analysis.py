@@ -29,4 +29,9 @@ df.plot(x="Gen", y = ["WShare_TF", "WShare_VI", "WShare_NT"],
         kind="line", figsize=(15, 6))
 plt.show()
 
+df.plot(x="Gen", y = ["NT_returns", "VI_returns", "TF_returns"],
+        kind="line", figsize=(15, 6))
+plt.show()
+
+
 
