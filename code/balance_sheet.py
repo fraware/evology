@@ -655,7 +655,7 @@ def report_nt_return(pop):
     returns = 0
     sum_returns = 0
     for ind in pop:
-        if ind.type == 'nt':
+        if ind.type == 'nt' and ind.prev_wealth != 0:
             num += 1
             sum_returns += ind.profit / ind.prev_wealth
     if num != 0:
@@ -667,7 +667,7 @@ def report_vi_return(pop):
     returns = 0
     sum_returns = 0
     for ind in pop:
-        if ind.type == 'vi':
+        if ind.type == 'vi' and ind.prev_wealth != 0:
             num += 1
             sum_returns += ind.profit / ind.prev_wealth
     if num != 0:
@@ -679,7 +679,7 @@ def report_tf_return(pop):
     returns = 0
     sum_returns = 0
     for ind in pop:
-        if ind.type == 'tf':
+        if ind.type == 'tf' and ind.prev_wealth != 0:
             num += 1
             sum_returns += ind.profit / ind.prev_wealth
     if num != 0:
