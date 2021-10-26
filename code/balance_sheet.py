@@ -93,9 +93,9 @@ def determine_edf(pop):
         if ind.type == "tf":
             return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
         elif ind.type == "vi":
-            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(abs(ind[0]) - np.log2(p)) + 0.5))) - ind.asset
+            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p)) + 0.5)) - ind.asset
         elif ind.type == "nt":
-            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(abs(ind[0] * ind.process)) - np.log2(p)) + 0.5)) - ind.asset
+            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset
     for ind in pop:
         ind.edf = edf
     return pop
