@@ -76,6 +76,9 @@ def update_fval(pop, extended_dividend_history):
     denuminator = (1 + EQUITY_COST - annualised_estimated_daily_div_growth) ** (1/252) - 1
     fval = numerator / denuminator
 
+    if fval < 0:
+        warnings.warn('Negative fval found in update_fval')
+
     for ind in pop: 
         if ind.type == 'vi' or ind.type == 'nt':
             ind[0] = fval
