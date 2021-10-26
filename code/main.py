@@ -30,8 +30,9 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     print(types)
 
     for generation in tqdm(range(MAX_GENERATIONS)):
-        if generation == 0:
-            bs.calculate_wealth(pop, current_price) # Compute agents' wealth
+        bs.calculate_wealth(pop, current_price) # Compute agents' wealth
+        bs.update_profit(pop)
+
         bs.shield_wealth(generation, pop, wealth_coordinates, current_price)
 
         pop, replacements, spoils = ga.hypermutate(pop, mode, asset_supply) # Replace insolvent agents
@@ -60,8 +61,6 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         extended_dividend_history.append(dividend)
         bs.update_margin(pop, current_price)
         bs.clear_debt(pop, current_price)
-        bs.calculate_wealth(pop, current_price)
-        bs.update_profit(pop)
 
         # bs.calculate_wealth(pop, current_price)
 
