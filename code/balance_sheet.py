@@ -96,9 +96,17 @@ def determine_edf(pop):
         if ind.type == "tf":
             return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
         elif ind.type == "vi":
-            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
+            try:
+                return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
+            except: 
+                warnings.warn(' domain error: p, ind[0], log2ind[0] ' + str(p) + ',' + str(ind[0]) + ',' + str(math.log2(ind[0])) + ',' )
+                raise ValueError('Domain error VI')
         elif ind.type == "nt":
-            return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
+            try:
+                return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
+            except:
+                warnings.warn(' domain error: p, ind[0], proc, log2ind[0]proc ' + str(p) + ', ' + str(ind[0]) + ',' + str(ind.process) + ',' + str(math.log2(ind[0])) + ',' )
+                raise ValueError('Domain error NT')
     for ind in pop:
         ind.edf = edf
     return pop
