@@ -34,7 +34,7 @@ def test_runs(repetitions, time):
     return went_smoothly
 
 def testing(repetitions, time):
-    went_smoothly = runs(repetitions, time)
+    went_smoothly = test_runs(repetitions, time)
     assert went_smoothly == True
 
 testing(1,10)
