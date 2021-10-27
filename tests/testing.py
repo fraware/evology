@@ -1,3 +1,9 @@
+import sys
+print(sys.path)
+
+import code.main
+
+from code import main
 from main import *
 from parameters import *
 import random
@@ -5,7 +11,7 @@ random.seed = random.random()
 
 # main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 
-def test_runs(repetitions, time):
+def runs(repetitions, time):
 
     went_smoothly = True
 
@@ -33,8 +39,11 @@ def test_runs(repetitions, time):
 
     return went_smoothly
 
-def testing(repetitions, time):
-    went_smoothly = test_runs(repetitions, time)
-    assert went_smoothly == True
+# def testing(repetitions, time):
+#     went_smoothly = test_runs(repetitions, time)
+#     assert went_smoothly == True
 
-testing(1,10)
+
+def test_runs():
+    assert runs(1,10) == True
+
