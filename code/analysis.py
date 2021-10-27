@@ -63,9 +63,10 @@ df['WShare_NT_mag_sq'] = np.square(np.diff(df['WShare_NT'], prepend = 0))
 df['WShare_VI_mag_sq'] = np.square(np.diff(df['WShare_VI'], prepend = 0))
 df['WShare_TF_mag_sq'] = np.square(np.diff(df['WShare_TF'], prepend = 0))
 df['Sum_rel_mag_sq'] = df['WShare_NT_mag_sq'] + df['WShare_VI_mag_sq'] + df['WShare_TF_mag_sq']
+df['Sum_rel_mag_sq_ema'] = df["Sum_rel_mag_sq"].ewm(span = 252).mean()
 
 
-df.plot(x="Gen", y = ['Sum_rel_mag_sq'],
+df.plot(x="Gen", y = ['Sum_rel_mag_sq', 'Sum_rel_mag_sq_ema'],
         kind="line", figsize=(15, 6), ylim = [0, 20], 
         ylabel = 'Squared sum of changes in relative wealth', 
         title='Squared sum of changes in relative wealth over time')
@@ -77,6 +78,7 @@ ax1.plot(df["WShare_TF"], label = 'Wealth share TF')
 ax1.plot(df["WShare_VI"], label = 'Wealth share VI')
 ax1.plot(df["WShare_NT"], label = 'Wealth share NT')
 ax2.plot(df["Sum_rel_mag_sq"], label = 'Variability')
+ax2.plot(df["Sum_rel_mag_sq_ema"], label = 'Variability (EMA)')
 ax1.legend()
 ax2.legend()
 ax2.set_ylim(0,15)
@@ -85,14 +87,5 @@ ax1.set_title('Wealth shares of strategies')
 ax2.set_title('Squared sum of wealths share changes')
 plt.show()
 
-df['WShare_NT_mag_log'] = abs(np.diff(np.log(df['WShare_NT']), prepend = 0))
-df['WShare_VI_mag_log'] = abs(np.diff(np.log(df['WShare_VI']), prepend = 0))
-df['WShare_TF_mag_log'] = abs(np.diff(np.log(df['WShare_TF']), prepend = 0))
-df['Sum_rel_mag_log'] = df['WShare_NT_mag_log'] + df['WShare_VI_mag_log'] + df['WShare_TF_mag_log']
-
-
-df.plot(x="Gen", y = ['Sum_rel_mag_log'],
-        kind="line", figsize=(15, 6), ylim = [0, 1], ylabel = 'Absolute sum of log changes in relative wealth')
-plt.show()
 
 

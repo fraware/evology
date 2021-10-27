@@ -30,22 +30,25 @@ import balance_sheet as bs
 #         pop = adjust_mode(pop, mode)
 #     return pop, round_replacements, spoils
 
-def hypermutate(pop, mode, asset_supply):
+def hypermutate(pop, mode, asset_supply, current_price):
     round_replacements = 0
     spoils = 0
 
     
     for i in range(0, len(pop)):
         if pop[i].wealth <= 0:
+            print('Replacement')
             # print("Info on replacement")
-            # print("Type: " + str(pop_temp[i].type) + ", C: " + str(int(pop_temp[i].cash)) + ", S+: " + str(int(pop_temp[i].asset)) + ", L: " + str(int(pop_temp[i].loan)) + ", M: " + str(int(pop_temp[i].margin)) + ", W: " + str(int(pop_temp[i].wealth)))
+            print("Type: " + str(pop[i].type) + ", C: " + str(int(pop[i].cash)) + ", S+: " + str(int(pop[i].asset)) + ", L: " + str(int(pop[i].loan)) + ", M: " + str(int(pop[i].margin)) + ", W: " + str(int(pop[i].wealth)))
             spoils += pop[i].asset
             pop[i] = toolbox.gen_rd_ind()
             pop[i].asset = 0
+            pop[i].wealth = pop[i].cash + pop[i].asset * current_price - pop[i].loan
             del pop[i].fitness.values
             round_replacements += 1
 
     if abs(spoils) > 0:
+        print('spooils ' + str(spoils))
         per_ind_spoil = spoils / len(pop)
         for ind in pop:
             ind.asset += per_ind_spoil

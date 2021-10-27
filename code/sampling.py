@@ -73,9 +73,9 @@ def adjust_mode(pop, mode):
             if ind.type == "tf":
                 ind[0] = 2
             if ind.type == "vi":
-                ind[0] = INITIAL_DIVIDEND / EQUITY_COST - DIVIDEND_GROWTH_RATE_G
+                ind[0] = 100
             if ind.type == "nt":
-                ind[0] = INITIAL_DIVIDEND / EQUITY_COST - DIVIDEND_GROWTH_RATE_G
+                ind[0] = 100
     return pop
 
 def create_pop(mode, POPULATION_SIZE):
