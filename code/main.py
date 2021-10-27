@@ -77,4 +77,4 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
             return df, pop
             raise ValueError('Agent went insolvent')
     
-    return df, pop
+    return df
