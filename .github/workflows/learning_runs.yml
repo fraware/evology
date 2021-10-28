@@ -29,10 +29,11 @@ jobs:
         with:
           python-version: '3.x'
           architecture: 'x64'
-      #- run: python setup.py
+      - name: python setup
+        run: python setup.py
       - name: change permission
         run: chmod +x tests/test_learning.py
       - name: run test learning
-        run: tests/test_learning.py
+        run: python tests/test_learning.py
 
 
