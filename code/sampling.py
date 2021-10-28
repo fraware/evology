@@ -1,4 +1,10 @@
 from operator import index
+
+
+import sys
+sys.path.append('/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages')
+
+
 from deap import base
 from deap import creator
 from deap import tools

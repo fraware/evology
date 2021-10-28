@@ -1,11 +1,18 @@
 import sys
-print(sys.path)
+print(sys.version)
 
-import code.main
 
-from code import main
-from main import *
-from parameters import *
+
+sys.path.append('code')
+
+
+import main as main
+
+df = main.main("between", 10, 0, 5, 0, 0)
+print(df)
+
+
+# from parameters import *
 import random
 random.seed = random.random()
 
