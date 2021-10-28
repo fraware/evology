@@ -1,20 +1,15 @@
 import sys
-print(sys.version)
-
-
-
 sys.path.append('code')
+from main import *
+import random
+random.seed = random.random()
 
-
-import main as main
-
-df = main.main("between", 10, 0, 5, 0, 0)
+df = main("between", 10, 0, 5, 0, 0)
 print(df)
 
 
 # from parameters import *
-import random
-random.seed = random.random()
+
 
 # main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 
