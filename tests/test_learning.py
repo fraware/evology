@@ -1,9 +1,6 @@
 import sys
 print(sys.version)
-
 sys.path.append('./evology/code/')
-
-
 from main import *
 import random
 random.seed = random.random()
