@@ -28,6 +28,7 @@ jobs:
         with:
           python-version: '3.x'
           architecture: 'x64'
-      - run: python tests/test_learning.py
+      - run: python setup.py 
+      - run: tests/test_learning.py
 
 
