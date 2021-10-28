@@ -18,16 +18,17 @@ def learning_runs(repetitions, time, agents):
     while i < repetitions:
         try: 
             df = main("between", time, PROBA_SELECTION, agents, 0, MUTATION_RATE)
+            print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
             went_smoothly = False
-            print('Failure on regular run')
+            print('Process ' + str(i) + ' encoutered an exception.')
             print(str(e))
             break
         i += 1
     return went_smoothly
 
-def test_nolearning(repetitions, time, agents):
+def test_learning(repetitions, time, agents):
     went_smoothly = learning_runs(repetitions, time, agents)
     assert went_smoothly == True
 
-test_nolearning(10, 50, 4)
+test_learning(10, 1000, 4)
