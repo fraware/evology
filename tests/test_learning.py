@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env python
+
 import sys
 print(sys.version)
 sys.path.append('./evology/code/')
