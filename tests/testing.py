@@ -7,10 +7,6 @@ random.seed = random.random()
 df = main("between", 10, 0, 5, 0, 0)
 print(df)
 
-            # // "env": {"PYTHONPATH": "${workspaceRoot}"},
-# from parameters import *
-
-
 # main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 
 def runs(repetitions, time):
