@@ -6,7 +6,7 @@ We implement an artificial stock market with adaptive trading strategies: an evo
 
 ## How to use
 
-First, to obtain the packages we need, run ```system.py```.
+First, to obtain the libraries we need, run ```setup.py```.
 
 ## Credits
 
