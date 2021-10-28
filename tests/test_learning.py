@@ -1,4 +1,5 @@
-#! import sys
+#! 
+import sys
 print(sys.version)
 sys.path.append('./evology/code/')
 from main import *
