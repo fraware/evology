@@ -2,6 +2,16 @@
     "code-runner.saveFileBeforeRun": true,
     "code-runner.saveAllFilesBeforeRun": true,
     "code-runner.ignoreSelection": true,
-    "code-runner.executorMap.python": "python3 -u"
+    "code-runner.executorMap.python": "python3 -u",
+    // "editor.tokenColorCustomizations": {
+    //     "textMateRules": [
+    //         {
+    //             "scope": "meta.function-call.generic",
+    //             "settings": {
+    //                 "foreground":"#2eb8e2"
+    //             }
+    //         }
+    //     ]
+    // }
     // "python.pythonPath": "/usr/local/bin/python3"
 }
