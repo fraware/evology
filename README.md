@@ -1,6 +1,6 @@
 # Evolutionary market ecology
 
-[![Build Status](https://travis-ci.org/{aymericvie}/{evology}.png?branch=master)](https://travis-ci.org/{aymericvie}/{evology})
+![example workflow](https://github.com/aymeric/evology/actions/workflows/learning_runs/badge.svg)
 
 
 ## Description
