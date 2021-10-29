@@ -112,12 +112,12 @@ def determine_edf(pop):
                 raise ValueError('Domain error')
 
         elif ind.type == "nt":
-            if p < 0:
-                warnings.warn('p negative')
-                print('pop EDV at 0' + str(report_types(pop)))
-                for ind in pop:
-                    print(ind.type)
-                    print(ind.edf(ind, 0.0001))
+            # if p < 0:
+            #     warnings.warn('p negative')
+            #     print('pop EDV at 0' + str(report_types(pop)))
+            #     for ind in pop:
+            #         print(ind.type)
+            #         print(ind.edf(ind, 0.0001))
             try:
                 return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset
             except:
