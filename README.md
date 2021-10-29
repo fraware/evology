@@ -1,7 +1,7 @@
 # Evolutionary market ecology
 
 
-![example branch parameter](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=master)
+![example branch parameter](https://github.com/github/docs/actions/workflows/learning_runs.yml/badge.svg?branch=master)
 
 ![Build (learning)](https://github.com/github/docs/actions/workflows/learning_runs.yml/badge.svg)
 ![Build (static)](https://github.com/github/docs/actions/workflows/no_learning_runs.yml/badge.svg)
