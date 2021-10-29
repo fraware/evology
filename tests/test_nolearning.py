@@ -16,7 +16,7 @@ def nolearning_runs(repetitions, time, agents):
     i = 0
     while i < repetitions:
         try: 
-            df = main("between", time, 0, agents, 0, 0, False)
+            df = main("between", time, 0, agents, 0, 0, True)
             # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
             went_smoothly = False

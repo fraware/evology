@@ -16,7 +16,7 @@ def learning_runs(repetitions, time, agents):
     i = 0
     while i < repetitions:
         try: 
-            df = main("between", time, PROBA_SELECTION, agents, 0, MUTATION_RATE, False)
+            df = main("between", time, PROBA_SELECTION, agents, 0, MUTATION_RATE, True)
             # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
             went_smoothly = False
