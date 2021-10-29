@@ -1,6 +1,7 @@
 # Evolutionary market ecology
 
-https://img.shields.io/circleci/build/github/aymericvie/evology/master
+[![Build Status](https://travis-ci.org/{aymericvie}/{evology}.png?branch=master)](https://travis-ci.org/{aymericvie}/{evology})
+
 
 ## Description
 
