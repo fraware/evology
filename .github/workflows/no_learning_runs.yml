@@ -31,8 +31,8 @@ jobs:
           architecture: 'x64'
       - name: python setup
         run: python setup.py
-      - name: change permission
-        run: chmod +x tests/test_learning.py
+      # - name: change permission
+      #   run: chmod +x tests/test_learning.py
       - name: run test learning
         run: python tests/test_nolearning.py
 
