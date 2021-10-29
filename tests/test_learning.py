@@ -30,4 +30,8 @@ def test_learning(repetitions, time, agents):
     went_smoothly = learning_runs(repetitions, time, agents)
     assert went_smoothly == True
 
-test_learning(10, 1000, 4)
+
+test_learning(3, 100, 3)
+test_learning(5, 10000, 4)
+test_learning(5, 10000, 50)
+test_learning(5, 50000, 100)

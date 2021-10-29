@@ -26,10 +26,11 @@ def nolearning_runs(repetitions, time, agents):
         i += 1
     return went_smoothly
 
-def test_learning(repetitions, time, agents):
+def test_nolearning(repetitions, time, agents):
     went_smoothly = nolearning_runs(repetitions, time, agents)
     assert went_smoothly == True
 
-test_learning(5, 10000, 4)
-test_learning(5, 10000, 50)
-test_learning(5, 50000, 100)
+test_nolearning(3, 100, 3)
+test_nolearning(5, 10000, 4)
+test_nolearning(5, 10000, 50)
+test_nolearning(5, 50000, 100)
