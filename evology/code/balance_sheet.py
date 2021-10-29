@@ -657,7 +657,10 @@ def shield_wealth(generation, pop, coordinates:list, current_price):
                     amount = (targets[i] * all_size - sizes[i]) / (1 - targets[i])
                     if amount < 0:
                         raise ValueError('Negative bump size ' + str(amount))
-                    per_capita_amount = amount / nums[i]
+                    if nums[i] != 0:
+                        per_capita_amount = amount / nums[i]
+                    elif nums[i] == 0:
+                        per_capita_amount = 0
                     for ind in pop:
                         if ind.type == pop_types[i]:
                             ind.loan -= per_capita_amount

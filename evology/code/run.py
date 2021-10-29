@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from main import *
 import pandas as pd
 import random
@@ -15,9 +16,9 @@ def run(POPULATION_SIZE, learning_mode, TIME):
         df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, MUTATION_RATE)
     return df
 
-df = run(3, 'no learning', 50)
+df = run(4, 'no learning', 50)
 
-df.to_csv("data/run_data.csv")
+df.to_csv("evology/data/run_data.csv")
 print(df)
 
 
