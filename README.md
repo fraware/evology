@@ -1,7 +1,6 @@
 # Evolutionary market ecology
 
-![Build Status](https://circleci.com/gh/<aymericvie>/<evology>.png?circle-token=:circle-token)
-
+https://img.shields.io/circleci/build/github/aymericvie/evology/master
 
 ## Description
 
