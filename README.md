@@ -2,6 +2,7 @@
 
 ![Learning](https://github.com/aymericvie/evology/actions/workflows/learning_runs.yml/badge.svg)
 ![No_Learning](https://github.com/aymericvie/evology/actions/workflows/no_learning_runs.yml/badge.svg)
+![Long Runs](https://github.com/aymericvie/evology/actions/workflows/long_runs.yml/badge.svg)
 
 
 
