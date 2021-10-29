@@ -2,6 +2,7 @@ import random
 import numpy as np
 
 RANDOM_SEED = 9 #random.random()
+tqdm_display = False
 
 ''' STRATEGY DISTRIBUTIONS '''
 PROBA_GP = 0
