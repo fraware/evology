@@ -1,5 +1,8 @@
 # Evolutionary market ecology
 
+![Build Status](https://circleci.com/gh/<aymericvie>/<evology>.png?circle-token=:circle-token)
+
+
 ## Description
 
 We implement an artificial stock market with adaptive trading strategies: an evolutionary market ecology. On a simplified market with assets and cash, we apply various learning algorithms (imitation, Genetic Algorithm, Genetic Programming, ...) to model various means of financial learning. We estimate interactions between trading strategies and market convergence dynamics in these adaptive cases.
