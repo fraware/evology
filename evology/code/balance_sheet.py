@@ -105,8 +105,7 @@ def determine_edf(pop):
             return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
         elif ind.type == "vi":
             try:
-                return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
-                # return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p)) + 0.5)) - ind.asset
+                return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p)) + 0.5)) - ind.asset
 
             except: 
                 print('p ' + str(p))
@@ -115,9 +114,12 @@ def determine_edf(pop):
         elif ind.type == "nt":
             if p < 0:
                 warnings.warn('p negative')
+                print('pop EDV at 0' + str(report_types(pop)))
+                for ind in pop:
+                    print(ind.type)
+                    print(ind.edf(ind, 0.0001))
             try:
-                return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
-                # return(LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * ind.process) - np.log2(p)) + 0.5) - ind.asset)
+                return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset
             except:
                 print('p ' + str(p))
                 raise ValueError('Domain error')
@@ -720,4 +722,15 @@ def update_profit(pop):
         ind.profit = ind.wealth - ind.prev_wealth
 
         
-
+def report_types(pop):
+    num_tf = 0
+    num_vi = 0
+    num_nt = 0
+    for ind in pop:
+        if ind.type == 'tf':
+            num_tf += 1
+        if ind.type == 'vi':
+            num_vi += 1
+        if ind.type == 'nt':
+            num_nt += 1
+    print("TF: " + str(num_tf) + ', VI: ' + str(num_vi) + ', NT: ' + str(num_nt)) 

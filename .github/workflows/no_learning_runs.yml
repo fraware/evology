@@ -33,7 +33,7 @@ jobs:
         run: python setup.py
       # - name: change permission
       #   run: chmod +x tests/test_learning.py
-      - name: run test learning
+      - name: run test nolearning
         run: python tests/test_nolearning.py
 
 

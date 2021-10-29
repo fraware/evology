@@ -52,7 +52,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
         
         if current_price < 0:
-            raise ValueError('Negative current price before esl solve.')
+            raise ValueError('Negative current price before esl solve. ' + str(bs.report_types(pop)))
         current_price = float(esl_mc.solve(ed_functions, current_price)[0])
         bs.calculate_tsv(pop, current_price, price_history)
         price_history.append(current_price)       

@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
  
 # Import the data
-df = pd.read_csv("data/run_data.csv")
+df = pd.read_csv("evology/data/run_data.csv")
 print(df)
 
 # Basic plots
