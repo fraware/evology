@@ -1,6 +1,8 @@
 # Evolutionary market ecology
 
-![example workflow](https://github.com/aymeric/evology/actions/workflows/learning_runs/badge.svg)
+![example workflow](https://github.com/aymeric/evology/actions/workflows/learning_runs.yml/badge.svg)
+![example workflow](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+
 
 
 ## Description
