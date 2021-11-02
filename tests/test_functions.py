@@ -11,10 +11,7 @@ from parameters import *
 
 # main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 
-
-
 def learning_runs(repetitions, time, agents):
-
     went_smoothly = True
     i = 0
     while i < repetitions:
