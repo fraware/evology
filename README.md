@@ -1,8 +1,16 @@
 # Evolutionary market ecology
 
-![Learning](https://github.com/aymericvie/evology/actions/workflows/learning_runs.yml/badge.svg)
-![No_Learning](https://github.com/aymericvie/evology/actions/workflows/no_learning_runs.yml/badge.svg)
-![Long Runs](https://github.com/aymericvie/evology/actions/workflows/long_runs.yml/badge.svg)
+##### Testing (master)
+
+![Learning](https://github.com/aymericvie/evology/actions/workflows/learning_runs.yml/badge.svg?branch=master)
+![No_Learning](https://github.com/aymericvie/evology/actions/workflows/no_learning_runs.yml/badge.svg?branch=master)
+![Long Runs](https://github.com/aymericvie/evology/actions/workflows/long_runs.yml/badge.svg?branch=master)
+
+##### Testing (dev)
+
+![Learning-dev](https://github.com/aymericvie/evology/actions/workflows/learning_runs.yml/badge.svg?branch=dev)
+![No_Learning-dev](https://github.com/aymericvie/evology/actions/workflows/no_learning_runs.yml/badge.svg?branch=dev)
+![Long Runs-dev](https://github.com/aymericvie/evology/actions/workflows/long_runs.yml/badge.svg?branch=dev)
 
 
 

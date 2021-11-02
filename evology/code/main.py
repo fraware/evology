@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 from parameters import *
 from sampling import *
 import sampling
@@ -9,21 +12,24 @@ import random
 import market as mk
 from tqdm import tqdm
 import esl_market_clearing as esl_mc
+import creation as cr
 
 random.seed(random.random())
 
-wealth_coordinates = [0.4, 0.3, 0.3]
+# wealth_coordinates = [1, 0.0, 0]
+# NT VI TF
 
 
-def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE, tqdm_display):
+def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE, wealth_coordinates, tqdm_display):
     # Initialise important variables and dataframe to store results
     generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
     df = data.create_df()
     price_history, dividend_history = [], []
     extended_dividend_history = mk.dividend_series(1*252)
+    create_pop = cr.generate_creation_func(wealth_coordinates)
 
     # Create the population
-    pop = sampling.create_pop(mode, POPULATION_SIZE)
+    pop = create_pop(mode, POPULATION_SIZE)
     types = []
     for ind in pop:
         types.append(ind.type)
@@ -36,13 +42,12 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.shield_wealth(generation, pop, wealth_coordinates, current_price)
         # bs.pop_report(pop)
 
-        pop, replacements = ga.hypermutate(pop, mode, asset_supply, current_price) # Replace insolvent agents
+        pop, replacements = ga.hypermutate(pop, mode, asset_supply, current_price, generation) # Replace insolvent agents
         # pop = bs.share_spoils(pop, spoils, asset_supply)
         
         if generation > SHIELD_DURATION:
             ga.compute_fitness(pop)
-            pop = ga.strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, 
-                CROSSOVER_RATE, MUTATION_RATE)
+            pop = ga.strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates)
 
         bs.determine_tsv_proc(mode, pop, price_history)
         bs.update_fval(pop, extended_dividend_history)

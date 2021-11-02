@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import random
 import numpy as np
 
@@ -6,9 +8,9 @@ tqdm_display = False
 
 ''' STRATEGY DISTRIBUTIONS '''
 PROBA_GP = 0
-PROBA_TF = 1/3
-PROBA_VI = 1/3
-PROBA_NT = 1/3
+# PROBA_TF = 1/3
+# PROBA_VI = 1/3
+# PROBA_NT = 1/3
 
 ''' GA parmeters '''
 MUTATION_RATE = 1/252 #1/21

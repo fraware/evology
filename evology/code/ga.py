@@ -30,14 +30,14 @@ import balance_sheet as bs
 #         pop = adjust_mode(pop, mode)
 #     return pop, round_replacements, spoils
 
-def hypermutate(pop, mode, asset_supply, current_price):
+def hypermutate(pop, mode, asset_supply, current_price, generation):
     round_replacements = 0
     spoils = 0
 
     
     for i in range(0, len(pop)):
         if pop[i].wealth <= 0:
-            print('Replacement')
+            print('Replacement ' + str(generation))
             # print("Info on replacement")
             print("Type: " + str(pop[i].type) + ", C: " + str(int(pop[i].cash)) + ", S+: " + str(int(pop[i].asset)) + ", L: " + str(int(pop[i].loan)) + ", M: " + str(int(pop[i].margin)) + ", W: " + str(int(pop[i].wealth)))
             spoils += pop[i].asset
@@ -180,7 +180,7 @@ def selRandom(individuals, k):
 # toolbox.register("selTournament", selTournament)
 # toolbox.register("select", toolbox.selTournament)
 
-def strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
+def strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates):
     
     if mode == 'between':
         # Individuals can select & imitate, and switch
@@ -199,10 +199,27 @@ def strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RA
         
         # Mutation
         types = ['nt', 'vi', 'tf']
+        cum_proba = [0, 0, 0]
+        cum_proba[0] = wealth_coordinates[0]
+        i = 1
+        while i < len(wealth_coordinates):
+            cum_proba[i] = cum_proba[i-1] + wealth_coordinates[i]
+            if cum_proba[i] > 1.0001:
+                raise ValueError('Cum proba > 1 ' + str(cum_proba))
+            i += 1
+
+        if sum(cum_proba) == 0:
+            raise ValueError('Sum cumproba = 0')
+
+        # print(cum_proba)
+
         for i in range(len(pop)):
             if random.random() < MUTATION_RATE:
                 # Change type totally randomly 
-                ty = random.randint(0,2)
+                n = random.random()
+                ty = 0
+                while cum_proba[ty] < n:
+                    ty += 1
                 pop[i].type = types[ty]
                 if pop[i].type =='tf':
                     pop[i][0] = 2
