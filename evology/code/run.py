@@ -10,7 +10,7 @@ wealth_coordinates = [0.3, 0.4, 0.3]
 wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
 print(wealth_coordinates)
 
-# main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, wealth_coordinates, MUTATION_RATE):
+# def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE, wealth_coordinates, tqdm_display):
 
 def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display):
 

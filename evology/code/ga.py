@@ -30,14 +30,14 @@ import balance_sheet as bs
 #         pop = adjust_mode(pop, mode)
 #     return pop, round_replacements, spoils
 
-def hypermutate(pop, mode, asset_supply, current_price):
+def hypermutate(pop, mode, asset_supply, current_price, generation):
     round_replacements = 0
     spoils = 0
 
     
     for i in range(0, len(pop)):
         if pop[i].wealth <= 0:
-            print('Replacement')
+            print('Replacement ' + str(generation))
             # print("Info on replacement")
             print("Type: " + str(pop[i].type) + ", C: " + str(int(pop[i].cash)) + ", S+: " + str(int(pop[i].asset)) + ", L: " + str(int(pop[i].loan)) + ", M: " + str(int(pop[i].margin)) + ", W: " + str(int(pop[i].wealth)))
             spoils += pop[i].asset
