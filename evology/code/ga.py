@@ -180,7 +180,7 @@ def selRandom(individuals, k):
 # toolbox.register("selTournament", selTournament)
 # toolbox.register("select", toolbox.selTournament)
 
-def strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
+def strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates):
     
     if mode == 'between':
         # Individuals can select & imitate, and switch
@@ -199,10 +199,23 @@ def strategy_evolution(mode, pop, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RA
         
         # Mutation
         types = ['nt', 'vi', 'tf']
+        cum_proba = []
+        cum_proba[0] = wealth_coordinates[0]
+        i = 1
+        while i < range(len(wealth_coordinates)):
+            cum_proba[i] = cum_proba[i-1] + wealth_coordinates[i]
+            if cum_proba[i] > 1:
+                raise ValueError('Cum proba > 1')
+
+        print(cum_proba)
+
         for i in range(len(pop)):
             if random.random() < MUTATION_RATE:
                 # Change type totally randomly 
-                ty = random.randint(0,2)
+                n = random.random()
+                ty = 0
+                while cum_proba[ty] < n:
+                    ty += 1
                 pop[i].type = types[ty]
                 if pop[i].type =='tf':
                     pop[i][0] = 2

@@ -52,17 +52,6 @@ toolbox.register("nt", random.randint, MIN_VALUATION_NT, MAX_VALUATION_NT)
 toolbox.register("gen_nt_ind", tools.initCycle, creator.ind_nt, (toolbox.nt,), n=1)
 toolbox.register("gen_nt_pop", tools.initRepeat, list, toolbox.gen_nt_ind)
 
-def gen_rd_ind(PROBA_TF, PROBA_VI, PROBA_NT):
-        rd = random.random()
-        if rd <= PROBA_TF:
-            return toolbox.gen_tf_ind()
-        elif rd > PROBA_TF and rd <= PROBA_TF + PROBA_VI:
-            return toolbox.gen_vi_ind()
-        elif rd > PROBA_TF + PROBA_VI and rd <= PROBA_TF + PROBA_VI + PROBA_NT:
-            return toolbox.gen_nt_ind()
-
-toolbox.register("gen_rd_ind", gen_rd_ind, PROBA_TF, PROBA_VI, PROBA_NT)
-toolbox.register("gen_rd_pop", tools.initRepeat, list, toolbox.gen_rd_ind)
 
 
 def gen_ref_pop():
@@ -84,35 +73,3 @@ def adjust_mode(pop, mode):
                 ind[0] = 100
     return pop
 
-def create_pop(mode, POPULATION_SIZE):
-    if POPULATION_SIZE == 3 and mode == "between":
-        # Create a Scholl et al. like population
-        pop = adjust_mode(toolbox.gen_ref_pop(), mode)
-        count_tf, count_vi, count_nt = 0, 0, 0
-        for ind in pop:
-            if ind.type == "tf":
-                count_tf += 1
-            if ind.type == "vi":
-                count_vi += 1
-            if ind.type == "nt":
-                count_nt += 1
-        if count_tf == 1 and count_nt == 1 and count_vi == 1:
-            pass
-        else:
-            raise ValueError('Population of 3 from Scholl et al. is not balanced.')
-    if POPULATION_SIZE != 3 and mode == "between":
-        # Create a random population with unique strategy per type
-        pop = adjust_mode(toolbox.gen_rd_pop(n=POPULATION_SIZE), mode)
-    if POPULATION_SIZE != 3 and mode != "between":
-        # Create a random population with diversity within each type
-        pop = toolbox.gen_rd_pop(n=POPULATION_SIZE)
-
-    for ind in pop:
-        if ind.type == 'tf':
-            ind.leverage = LAMBDA_TF
-        if ind.type == 'vi':
-            ind.leverage = LAMBDA_VI
-        if ind.type == 'nt':
-            ind.leverage = LAMBDA_NT
-
-    return pop

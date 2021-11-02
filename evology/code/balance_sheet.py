@@ -637,45 +637,49 @@ def shield_wealth(generation, pop, coordinates:list, current_price):
     if sum(coordinates) > 1:
         raise ValueError('Sum coordinates higher than 1')
 
-    if generation <= SHIELD_DURATION:
-        pop_types = ['nt','vi','tf']
+    if 1 in coordinates: 
+        pass
+    else: 
 
-        differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
-        # print('Differences')
-        # print(differences)
+        if generation <= SHIELD_DURATION:
+            pop_types = ['nt','vi','tf']
 
-        attempt = 0
-        while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
-            # We must continue to adjust wealth. 
-
-            # Go through items of differences to see which strategies need a correction.
-            for i in range(len(differences)):
-                # If the absolute difference is above threshold and inferior, we bump this strategy.
-                if abs(differences[i]) > SHIELD_TOLERANCE and differences[i] < 0:
-                # Apply a correction round
-                    # if i == 0 # bumping nt
-                    # if i == 1 #bumping vi
-                    # if i == 2 #bumping tf
-                    amount = (targets[i] * all_size - sizes[i]) / (1 - targets[i])
-                    if amount < 0:
-                        raise ValueError('Negative bump size ' + str(amount))
-                    if nums[i] != 0:
-                        per_capita_amount = amount / nums[i]
-                    elif nums[i] == 0:
-                        per_capita_amount = 0
-                    for ind in pop:
-                        if ind.type == pop_types[i]:
-                            ind.loan -= per_capita_amount
-                    
-
-            # Recompute wealth, differences and attempts
-            calculate_wealth(pop, current_price) # Compute agents' wealth
             differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
-            # print('Current differences: ' + str(differences))
-            attempt += 1
+            # print('Differences')
+            # print(differences)
 
-        if attempt >= MAX_ATTEMPTS:
-            warnings.warn('Wealth adjustement not perfect after MAX_ATTEMPTS.')
+            attempt = 0
+            while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
+                # We must continue to adjust wealth. 
+
+                # Go through items of differences to see which strategies need a correction.
+                for i in range(len(differences)):
+                    # If the absolute difference is above threshold and inferior, we bump this strategy.
+                    if abs(differences[i]) > SHIELD_TOLERANCE and differences[i] < 0:
+                    # Apply a correction round
+                        # if i == 0 # bumping nt
+                        # if i == 1 #bumping vi
+                        # if i == 2 #bumping tf
+                        amount = (targets[i] * all_size - sizes[i]) / (1 - targets[i])
+                        if amount < 0:
+                            raise ValueError('Negative bump size ' + str(amount))
+                        if nums[i] != 0:
+                            per_capita_amount = amount / nums[i]
+                        elif nums[i] == 0:
+                            per_capita_amount = 0
+                        for ind in pop:
+                            if ind.type == pop_types[i]:
+                                ind.loan -= per_capita_amount
+                        
+
+                # Recompute wealth, differences and attempts
+                calculate_wealth(pop, current_price) # Compute agents' wealth
+                differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
+                # print('Current differences: ' + str(differences))
+                attempt += 1
+
+            if attempt >= MAX_ATTEMPTS:
+                warnings.warn('Wealth adjustement not perfect after MAX_ATTEMPTS.')
 
         # print('Wealth shield deployed. ' + str(generation))
             

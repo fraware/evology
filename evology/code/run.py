@@ -5,18 +5,20 @@ import random
 from parameters import *
 
 RANDOM_SEED = random.random()
+wealth_coordinates = [0.3, 0.4, 0.3]
+# NT VI TF
 
-# main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
+# main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, wealth_coordinates, MUTATION_RATE):
 
-def run(POPULATION_SIZE, learning_mode, TIME, tqdm_display):
+def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display):
 
     if learning_mode == 'no learning':
-        df = main("between", TIME, 0, POPULATION_SIZE, 0, 0, tqdm_display)
+        df = main("between", TIME, 0, POPULATION_SIZE, 0, 0, wealth_coordinates, tqdm_display)
     if learning_mode == 'switch':
-        df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, MUTATION_RATE, tqdm_display)
+        df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, MUTATION_RATE, wealth_coordinates, tqdm_display)
     return df
 
-df = run(4, 'no learning', 50, False)
+df = run(100, 'switch', 10, wealth_coordinates, False)
 
 df.to_csv("evology/data/run_data.csv")
 print(df)
