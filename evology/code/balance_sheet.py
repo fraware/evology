@@ -634,8 +634,8 @@ def determine_differences(coordinates, pop):
 
 def shield_wealth(generation, pop, coordinates:list, current_price):
 
-    if sum(coordinates) > 1:
-        raise ValueError('Sum coordinates higher than 1')
+    if sum(coordinates) > 1.0001:
+        raise ValueError('Sum coordinates higher than 1 ' + sum(coordinates) )
 
     if 1 in coordinates: 
         pass

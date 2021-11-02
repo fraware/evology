@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 print(sys.version)
@@ -18,9 +18,9 @@ def learning_runs(repetitions, time, agents):
     went_smoothly = True
     i = 0
     while i < repetitions:
+        wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
+        print(wealth_coordinates)
         try: 
-            wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0]
-            print(wealth_coordinates)
             df = main("between", time, PROBA_SELECTION, agents, 0, MUTATION_RATE, wealth_coordinates, True)
             # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
@@ -41,7 +41,7 @@ def nolearning_runs(repetitions, time, agents):
     i = 0
     while i < repetitions:
         try: 
-            wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0]
+            wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
             print(wealth_coordinates)
             df = main("between", time, 0, agents, 0, 0, wealth_coordinates, True)
             # print('Process ' + str(i) + ' ran succesfully.')

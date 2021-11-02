@@ -199,15 +199,19 @@ def strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordin
         
         # Mutation
         types = ['nt', 'vi', 'tf']
-        cum_proba = []
+        cum_proba = [0, 0, 0]
         cum_proba[0] = wealth_coordinates[0]
         i = 1
-        while i < range(len(wealth_coordinates)):
+        while i < len(wealth_coordinates):
             cum_proba[i] = cum_proba[i-1] + wealth_coordinates[i]
-            if cum_proba[i] > 1:
-                raise ValueError('Cum proba > 1')
+            if cum_proba[i] > 1.0001:
+                raise ValueError('Cum proba > 1 ' + str(cum_proba))
+            i += 1
 
-        print(cum_proba)
+        if sum(cum_proba) == 0:
+            raise ValueError('Sum cumproba = 0')
+
+        # print(cum_proba)
 
         for i in range(len(pop)):
             if random.random() < MUTATION_RATE:
