@@ -135,7 +135,7 @@ def efficient_test_run(POPULATION_SIZE, learning_mode, TIME):
     return df
     
 
-df_efficiency = efficient_test_run(10, 'switch', 50000)
+df_efficiency = efficient_test_run(100, 'switch', 100_000)
 
 df_efficiency.to_csv("evology/data/df_efficiency.csv")
 
