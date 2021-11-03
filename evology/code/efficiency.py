@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 ''' copy main '''
+
 import timeit
 
 from parameters import *
@@ -147,4 +150,4 @@ def efficient_test_run(POPULATION_SIZE, learning_mode, TIME):
         df, pop = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, MUTATION_RATE)
     
 
-efficient_test_run(50000, 'switch', 25)
+efficient_test_run(50000, 'switch', 1000)
