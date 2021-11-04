@@ -20,7 +20,7 @@ def generate_creation_func(wealth_coordinates):
 
 
     def create_pop(mode, POPULATION_SIZE):
-        if POPULATION_SIZE == 3 and mode == "between":
+        if POPULATION_SIZE == 3:
             # Create a Scholl et al. like population
             pop = adjust_mode(toolbox.gen_ref_pop(), mode)
             count_tf, count_vi, count_nt = 0, 0, 0
@@ -35,12 +35,14 @@ def generate_creation_func(wealth_coordinates):
                 pass
             else:
                 raise ValueError('Population of 3 from Scholl et al. is not balanced.')
-        if POPULATION_SIZE != 3 and mode == "between":
+        if POPULATION_SIZE != 3:
             # Create a random population with unique strategy per type
             pop = adjust_mode(toolbox.gen_rd_pop(n=POPULATION_SIZE), mode)
+
+        ''' For later when we have variations within strategies 
         if POPULATION_SIZE != 3 and mode != "between":
             # Create a random population with diversity within each type
-            pop = toolbox.gen_rd_pop(n=POPULATION_SIZE)
+            pop = toolbox.gen_rd_pop(n=POPULATION_SIZE) '''
 
         for ind in pop:
             if ind.type == 'tf':

@@ -28,15 +28,15 @@ creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 
 creator.create("ind_tf", list, typecode = 'd', fitness=creator.fitness_strategy, wealth=0, type ="tf", 
     cash = INITIAL_CASH, asset = INITIAL_ASSETS, loan = 0, margin = 0, tsf = None, tsv = 0, edf = None, 
-    edv = 0, process = 1, ema = 0, profit = 0, prev_wealth = 0, leverage = 1)
+    edv = 0, process = 1, ema = 0, profit = 0, prev_wealth = INITIAL_CASH + INITIAL_ASSETS * INITIAL_PRICE, leverage = 1)
 
 creator.create("ind_vi", list, typecode = 'd', fitness=creator.fitness_strategy, wealth=0, type = "vi", 
     cash = INITIAL_CASH, asset = INITIAL_ASSETS, loan = 0, margin = 0, tsf = None, tsv = 0, edf = None, 
-    edv = 0, process = 1, ema = 0, profit = 0, prev_wealth = 0, leverage = 1)
+    edv = 0, process = 1, ema = 0, profit = 0, prev_wealth = INITIAL_CASH + INITIAL_ASSETS * INITIAL_PRICE, leverage = 1)
 
 creator.create("ind_nt", list, typecode = 'd', fitness=creator.fitness_strategy, wealth=0, type = "nt", 
     cash = INITIAL_CASH, asset = INITIAL_ASSETS, loan = 0, margin = 0, tsf = None, tsv = 0, edf = None, 
-    edv = 0, process = 1, ema = 0, profit = 0, prev_wealth = 0, leverage = 1)
+    edv = 0, process = 1, ema = 0, profit = 0, prev_wealth = INITIAL_CASH + INITIAL_ASSETS * INITIAL_PRICE, leverage = 1)
 # individual_ga is a list, individual_gp will be a gp.primitiveTree.
 
 # Create the individual list 

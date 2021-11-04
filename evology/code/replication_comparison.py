@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
@@ -5,11 +7,11 @@ import matplotlib.pyplot as plt
 
 def plot_comparison(dataset):
     # Import the data
-    run = pd.read_csv("data/run_data.csv")
+    run = pd.read_csv("evology/data/run_data.csv")
     if dataset == 'sample2':
-        ref = pd.read_csv('data/replication_data_sample2.csv')
+        ref = pd.read_csv('evology/data/replication_data_sample2.csv')
     if dataset == 'sample1':
-        ref = pd.read_csv('data/replication_data_sample1.csv')
+        ref = pd.read_csv('evology/data/replication_data_sample1.csv')
 
     ''' Dividends '''
     data = pd.DataFrame()
@@ -42,7 +44,7 @@ def plot_comparison(dataset):
     data['Gen'] = run['Gen']
     data.plot(x="Gen", y = ["Volume (Reference)", "Volume (Simulation)"],
             kind="line", figsize=(15, 6), title='Comparison of volume', 
-            color = ['black','black'],
+            color = ['black','red'],
             style = [':','-'])
     plt.xlabel('Generations')
     plt.ylabel('Volume')

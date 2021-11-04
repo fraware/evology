@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-
-
 from parameters import *
 from sampling import *
 import sampling
-import pandas
+import pandas as pd
 import balance_sheet as bs
 import ga as ga
 import data
@@ -13,72 +11,40 @@ import market as mk
 from tqdm import tqdm
 import esl_market_clearing as esl_mc
 import creation as cr
-
+import timeit
+from steps import *
 random.seed(random.random())
-
-# wealth_coordinates = [1, 0.0, 0]
-# NT VI TF
-
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE, wealth_coordinates, tqdm_display):
     # Initialise important variables and dataframe to store results
     generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
-    df = data.create_df()
+    results = np.zeros((MAX_GENERATIONS - SHIELD_DURATION, data.variables))
     price_history, dividend_history = [], []
     extended_dividend_history = mk.dividend_series(1*252)
     create_pop = cr.generate_creation_func(wealth_coordinates)
-
     # Create the population
     pop = create_pop(mode, POPULATION_SIZE)
-    types = []
-    for ind in pop:
-        types.append(ind.type)
-    print(types)
+
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display):
-        bs.calculate_wealth(pop, current_price) # Compute agents' wealth
-        bs.update_profit(pop)
 
-        bs.shield_wealth(generation, pop, wealth_coordinates, current_price)
-        # bs.pop_report(pop)
+        pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates)
+        pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation) # Replace insolvent agents     
+        pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates)
+        pop, timeD  = decision_updates(pop, mode, price_history, extended_dividend_history)
+        pop, mismatch, current_price, price_history, timeE = marketClearing(pop, current_price, price_history)
 
-        pop, replacements = ga.hypermutate(pop, mode, asset_supply, current_price, generation) # Replace insolvent agents     
-        
-        if generation > SHIELD_DURATION:
-            ga.compute_fitness(pop)
-            pop = ga.strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates)
+        pop, volume, dividend, random_dividend, dividend_history, extended_dividend_history, timeF = marketActivity(pop, 
+            current_price, asset_supply, dividend, dividend_history, extended_dividend_history)
 
-        bs.determine_tsv_proc(mode, pop, price_history)
-        bs.update_fval(pop, extended_dividend_history)
-        bs.determine_edf(pop)
+        results = data.record_results(results, generation, current_price, mismatch, 
+        dividend, random_dividend, volume, replacements, pop, price_history, spoils, 
+        timeA, timeB, timeC, timeD, timeE, timeF)
 
-        ed_functions = bs.agg_ed(pop)
+        if replacements > 0 and POPULATION_SIZE == 3:
+            print('Error: Insolvency in the 3-strategy ecology')
+            break
 
-        
-        if current_price < 0:
-            raise ValueError('Negative current price before esl solve. ' + str(bs.report_types(pop)))
-        current_price = float(esl_mc.solve(ed_functions, current_price)[0])
-        bs.calculate_tsv(pop, current_price, price_history)
-        price_history.append(current_price)       
-
-        pop, mismatch = bs.calculate_edv(pop, current_price)
-
-        pop, volume = mk.execute_ed(pop, current_price, asset_supply)
-        pop, dividend, random_dividend = bs.earnings(pop, dividend) 
-        dividend_history.append(dividend)
-        extended_dividend_history.append(dividend)
-        bs.update_margin(pop, current_price)
-        bs.clear_debt(pop, current_price)
-
-        # bs.calculate_wealth(pop, current_price)
-
-        data.update_results(df, generation, current_price, mismatch, pop, dividend, 
-            random_dividend, replacements, volume, price_history)
-
-        # Save and stop in case of insolvency
-        if mode == "between" and replacements > 0 and POPULATION_SIZE == 3:
-            print("Simulation interrupted for insolvency.")
-            return df, pop
-            raise ValueError('Agent went insolvent')
+    df = pd.DataFrame(results, columns = data.columns)
     
     return df
