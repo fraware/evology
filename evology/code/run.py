@@ -5,7 +5,7 @@ import random
 from parameters import *
 
 RANDOM_SEED = random.random()
-wealth_coordinates = [0.4, 0.4, 0.2]
+wealth_coordinates = [0.42, 0.33, 0.25]
 # NT VI TF
 # wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
 print(wealth_coordinates)
@@ -14,15 +14,16 @@ print(wealth_coordinates)
 
 def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display):
 
-    if learning_mode == 'no learning':
-        df = main("between", TIME, 0, POPULATION_SIZE, 0, 0, wealth_coordinates, tqdm_display)
-    if learning_mode == 'switch':
+    if learning_mode == 0:
+        df = main("static", TIME, 0, POPULATION_SIZE, 0, 0, wealth_coordinates, tqdm_display)
+    if learning_mode == 1:
         df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, MUTATION_RATE, wealth_coordinates, tqdm_display)
     return df
 
-df = run(100, 'switch', 100_000, wealth_coordinates, False)
+df = run(3, 0, 15000, wealth_coordinates, False)
 
 df.to_csv("evology/data/run_data.csv")
-print(df)
+# print(df)
+
 
 

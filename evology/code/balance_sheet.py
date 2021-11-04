@@ -106,7 +106,10 @@ def determine_edf(pop):
         elif ind.type == "vi":
             try:
                 return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p)) + 0.5)) - ind.asset
-
+            except RuntimeWarning:
+                print('Runtime warning in NT')
+                print((LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset)
+           
             except: 
                 print('p ' + str(p))
                 raise ValueError('Domain error')
@@ -120,6 +123,9 @@ def determine_edf(pop):
             #         print(ind.edf(ind, 0.0001))
             try:
                 return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset
+            except RuntimeWarning:
+                print('Runtime warning in NT')
+                print((LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset)
             except:
                 print('p ' + str(p))
                 raise ValueError('Domain error')
