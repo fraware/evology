@@ -42,8 +42,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         bs.shield_wealth(generation, pop, wealth_coordinates, current_price)
         # bs.pop_report(pop)
 
-        pop, replacements = ga.hypermutate(pop, mode, asset_supply, current_price, generation) # Replace insolvent agents
-        # pop = bs.share_spoils(pop, spoils, asset_supply)
+        pop, replacements = ga.hypermutate(pop, mode, asset_supply, current_price, generation) # Replace insolvent agents     
         
         if generation > SHIELD_DURATION:
             ga.compute_fitness(pop)

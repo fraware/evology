@@ -89,5 +89,20 @@ ax1.set_title('Wealth shares of strategies')
 ax2.set_title('Squared sum of wealths share changes')
 plt.show()
 
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize = (10, 5), sharex = True)
+fig.suptitle('Strategy wealth share and %neg')
+ax1.plot(df["WShare_TF"], label = 'Wealth share TF')
+ax1.plot(df["WShare_VI"], label = 'Wealth share VI')
+ax1.plot(df["WShare_NT"], label = 'Wealth share NT')
+ax2.plot(df["NegW_per"], label = 'Percentage')
+
+ax1.legend()
+ax2.legend()
+ax2.set_xlabel('Time (days)')
+ax1.set_title('Wealth shares of strategies')
+ax2.set_title('Percentage of negative wealth')
+plt.show()
+
+
 
 

@@ -293,14 +293,16 @@ def mean_nt(pop):
 def total_wealth(pop):
     wealth = 0
     for ind in pop:
-        wealth += ind.wealth
+        if ind.wealth > 0:
+            wealth += ind.wealth
     return wealth
 
 def wealth_share_tf(pop):
     wealth_tf = 0
     for ind in pop:
-        if ind.type == "tf":
+        if ind.type == "tf" and ind.wealth > 0:
             wealth_tf += ind.wealth
+
     if 100 * wealth_tf / total_wealth(pop) > 100.01:
         for ind in pop:
             print(ind.type)
@@ -316,7 +318,7 @@ def wealth_share_tf(pop):
 def wealth_share_vi(pop):
     wealth_vi = 0
     for ind in pop:
-        if ind.type == "vi":
+        if ind.type == "vi" and ind.wealth > 0:
             wealth_vi += ind.wealth
     if 100 * wealth_vi / total_wealth(pop) > 100.01:
         for ind in pop:
@@ -333,7 +335,7 @@ def wealth_share_vi(pop):
 def wealth_share_nt(pop):
     wealth_nt = 0
     for ind in pop:
-        if ind.type == "nt":
+        if ind.type == "nt" and ind.wealth > 0:
             wealth_nt += ind.wealth
 
     if 100 * wealth_nt / total_wealth(pop) > 100.01:
@@ -486,7 +488,7 @@ def report_nt_nav(pop, price):
     num = 0
     cash = 0
     for ind in pop:
-        if ind.type == 'nt':
+        if ind.type == 'nt' and ind.wealth > 0:
             num += 1
             total += ind.wealth
     if num != 0:
@@ -498,7 +500,7 @@ def report_vi_nav(pop, price):
     num = 0
     cash = 0
     for ind in pop:
-        if ind.type == 'vi':
+        if ind.type == 'vi' and ind.wealth > 0:
             num += 1
             total += ind.wealth
     if num != 0:
@@ -510,7 +512,7 @@ def report_tf_nav(pop, price):
     num = 0
     cash = 0
     for ind in pop:
-        if ind.type == 'tf':
+        if ind.type == 'tf' and ind.wealth > 0:
             num += 1
             total += ind.wealth
     if num != 0:
@@ -738,3 +740,11 @@ def report_types(pop):
         if ind.type == 'nt':
             num_nt += 1
     print("TF: " + str(num_tf) + ', VI: ' + str(num_vi) + ', NT: ' + str(num_nt)) 
+
+def report_negW(pop):
+    count_neg = 0
+    for ind in pop:
+        if ind.wealth <= 0:
+            count_neg += 1
+    prop = 100 * count_neg / len(pop)
+    return prop
