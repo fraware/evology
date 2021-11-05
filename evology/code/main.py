@@ -41,7 +41,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         dividend, random_dividend, volume, replacements, pop, price_history, spoils, 
         timeA, timeB, timeC, timeD, timeE, timeF)
 
-        if replacements > 0 and POPULATION_SIZE == 3:
+        if replacements > 0 and POPULATION_SIZE == 3 and mode == 'static':
             print('Error: Insolvency in the 3-strategy ecology')
             break
 
