@@ -24,13 +24,15 @@ columns = [
     # Additional measures
     'MeanReturn', 'Spoils',
     # Run time data
-    'TimeA', 'TimeB', 'TimeC', 'TimeD', 'TimeE', 'TimeF', 'TimeG', 'TotalTime'
+    'TimeA', 'TimeB', 'TimeC', 'TimeD', 'TimeE', 'TimeF', 'TimeG', 'TotalTime',
+    # More measures
+    'PerSpoils'
 ]
 
 variables = len(columns)
 
 def record_results(results, generation, current_price, mismatch, dividend,
-    random_dividend, volume, replacements, pop, price_history, spoils,
+    random_dividend, volume, replacements, pop, price_history, spoils, asset_supply,
     timeA, timeB, timeC, timeD, timeE, timeF
     ):
 
@@ -47,8 +49,8 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 4] = random_dividend
         results[current, 5] = volume
         results[current, 6] = replacements
-        results[current, 7] = bs.count_long_assets(pop)
-        results[current, 8] = bs.count_short_assets(pop)
+        results[current, 7] = bs.count_long_assets(pop, spoils)
+        results[current, 8] = bs.count_short_assets(pop, spoils)
         results[current, 9] = bs.report_negW(pop)
 
 
@@ -109,6 +111,9 @@ def record_results(results, generation, current_price, mismatch, dividend,
         timeG = timeit.default_timer() - starttime
         results[current, 51] = timeG
         results[current, 52] = timeA + timeB + timeC + timeD + timeE + timeF + timeG
+
+        ''' More measures '''
+        results[current, 53] = abs(100 * spoils / asset_supply)
 
 
     return results

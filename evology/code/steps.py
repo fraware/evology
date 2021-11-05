@@ -30,25 +30,25 @@ def decision_updates(pop, mode, price_history, extended_dividend_history):
     timeD = timeit.default_timer() - starttime
     return pop, timeD
 
-def marketClearing(pop, current_price, price_history):
+def marketClearing(pop, current_price, price_history, spoils):
     starttime = timeit.default_timer()
-    ed_functions = bs.agg_ed(pop)
-    if current_price < 0:
-        raise ValueError('Negative current price before esl solve. ' + str(bs.report_types(pop)))
+    ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
+    # if current_price < 0:
+    #     raise ValueError('Negative current price before esl solve. ' + str(bs.report_types(pop)))
     current_price = float(esl_mc.solve(ed_functions, current_price)[0])
     bs.calculate_tsv(pop, current_price, price_history)
     price_history.append(current_price)       
     pop, mismatch = bs.calculate_edv(pop, current_price)
     timeE = timeit.default_timer() - starttime
-    return pop, mismatch, current_price, price_history, timeE
+    return pop, mismatch, current_price, price_history, ToLiquidate, timeE
 
-def marketActivity(pop, current_price, asset_supply, dividend, dividend_history, extended_dividend_history):
+def marketActivity(pop, current_price, asset_supply, dividend, dividend_history, extended_dividend_history, spoils, ToLiquidate):
     starttime = timeit.default_timer()
-    pop, volume = mk.execute_ed(pop, current_price, asset_supply)
+    pop, volume, spoils = mk.execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate)
     pop, dividend, random_dividend = bs.earnings(pop, dividend) 
     dividend_history.append(dividend)
     extended_dividend_history.append(dividend)
     bs.update_margin(pop, current_price)
     bs.clear_debt(pop, current_price)
     timeF = timeit.default_timer() - starttime
-    return pop, volume, dividend, random_dividend, dividend_history, extended_dividend_history, timeF
+    return pop, volume, dividend, random_dividend, dividend_history, extended_dividend_history, spoils, timeF
