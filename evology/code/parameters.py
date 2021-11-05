@@ -24,7 +24,7 @@ PROBA_SELECTION = 1/(252 * 2) #1/21
 
 # General parameters
 
-LAMBDA_TF = 1 #2/3
+LAMBDA_TF = 1#2/3
 LAMBDA_VI = 1 #3
 LAMBDA_NT = 1#2/3
 SCALE_TF = 1#4

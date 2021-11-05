@@ -221,8 +221,8 @@ def report_tf_signal(pop, price_history):
 
 def calculate_tsv(pop, price, price_history):
 
-    if price < 0:
-        raise ValueError('Negative price '+ str(price) )
+    # if price < 0:
+    #     raise ValueError('Negative price '+ str(price) )
 
     for ind in pop:
         # if ind.type == 'tf':
