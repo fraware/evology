@@ -55,6 +55,7 @@ def determine_tsv_proc(mode, pop, price_history):
     if mode == 'between':
         if len(price_history) >= 2:
             tf_basic = np.log2(price_history[-1]) - np.log2(price_history[-2])
+            # tf_basic = price_history[-1] - price_history[-2]
         else: 
             tf_basic = 0
         for ind in pop:
@@ -91,47 +92,44 @@ def update_fval(pop, extended_dividend_history):
             ind[0] = fval
     return pop
 
-# def record_fval(pop):
-#     fval = 0
-#     for ind in pop:
-#         if ind.type == 'nt' or ind.type == 'vi':
-#             fval = ind[0]
-#     return fval
 
 def determine_edf(pop):
     def edf(ind, p):
         if ind.type == "tf":
-            
             return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
+
         elif ind.type == "vi":
             try:
-                return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (np.log2(ind[0]) - np.log2(p)) + 0.5)) - ind.asset
-            except RuntimeWarning:
-                print('Runtime warning in NT')
-                print((LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset)
-           
-            except: 
-                print('p ' + str(p))
-                raise ValueError('Domain error')
+                return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
+            except:
+                return (LAMBDA_VI * ind.wealth / p) * (0.5) - ind.asset
 
         elif ind.type == "nt":
-            # if p < 0:
-            #     warnings.warn('p negative')
-            #     print('pop EDV at 0' + str(report_types(pop)))
-            #     for ind in pop:
-            #         print(ind.type)
-            #         print(ind.edf(ind, 0.0001))
             try:
-                return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset
-            except RuntimeWarning:
-                print('Runtime warning in NT')
-                print((LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (np.log2(ind[0] * abs(ind.process)) - np.log2(p)) + 0.5)) - ind.asset)
+                return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
             except:
-                print('p ' + str(p))
-                raise ValueError('Domain error')
+                return (LAMBDA_NT * ind.wealth / p) * (0.5) - ind.asset
+
     for ind in pop:
         ind.edf = edf
-    return pop
+    return pop 
+
+''' removing logs did not work
+def determine_edf(pop):
+    def edf(ind, p):
+        if ind.type == "tf":
+            return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
+
+        elif ind.type == "vi":
+            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (ind[0] - p) + 0.5)) - ind.asset
+
+        elif ind.type == "nt":
+            return (LAMBDA_NT * ind.wealth / p) * (np.tanh((SCALE_NT * (ind[0] * abs(ind.process)) - p) + 0.5)) - ind.asset
+
+
+    for ind in pop:
+        ind.edf = edf
+    return pop '''
 
 def calculate_edv(pop, price):
     total_edv = 0
