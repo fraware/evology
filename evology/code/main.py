@@ -17,7 +17,7 @@ random.seed(random.random())
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE, wealth_coordinates, tqdm_display):
     # Initialise important variables and dataframe to store results
-    generation, current_price, dividend, asset_supply = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS
+    generation, current_price, dividend, asset_supply, spoils = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS, 0
     results = np.zeros((MAX_GENERATIONS - SHIELD_DURATION, data.variables))
     price_history, dividend_history = [], []
     extended_dividend_history = mk.dividend_series(1*252)
@@ -29,17 +29,17 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display):
 
         pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates)
-        pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation) # Replace insolvent agents     
+        pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation, spoils) # Replace insolvent agents     
         pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates)
         pop, timeD  = decision_updates(pop, mode, price_history, extended_dividend_history)
-        pop, mismatch, current_price, price_history, timeE = marketClearing(pop, current_price, price_history)
+        pop, mismatch, current_price, price_history, ToLiquidate, timeE = marketClearing(pop, current_price, price_history, spoils)
 
-        pop, volume, dividend, random_dividend, dividend_history, extended_dividend_history, timeF = marketActivity(pop, 
-            current_price, asset_supply, dividend, dividend_history, extended_dividend_history)
+        pop, volume, dividend, random_dividend, dividend_history, extended_dividend_history, spoils, timeF = marketActivity(pop, 
+            current_price, asset_supply, dividend, dividend_history, extended_dividend_history, spoils, ToLiquidate)
 
         results = data.record_results(results, generation, current_price, mismatch, 
         dividend, random_dividend, volume, replacements, pop, price_history, spoils, 
-        timeA, timeB, timeC, timeD, timeE, timeF)
+        asset_supply, timeA, timeB, timeC, timeD, timeE, timeF)
 
         if replacements > 0 and POPULATION_SIZE == 3 and mode == 'static':
             print('Error: Insolvency in the 3-strategy ecology')

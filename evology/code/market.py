@@ -28,7 +28,7 @@ def dividend_series(horizon):
 
 
 
-def determine_multiplier(pop):
+def determine_multiplier(pop, spoils, ToLiquidate):
 
     total_buy = 0
     total_sell = 0
@@ -41,6 +41,10 @@ def determine_multiplier(pop):
             # total_sell += math.floor(abs(ind.edv))
             total_sell += abs(ind.edv)
 
+    if spoils > 0:
+        total_sell += ToLiquidate
+    if spoils < 0:
+        total_buy += ToLiquidate
 
     if total_sell != 0:
         order_ratio = total_buy / total_sell 
@@ -80,17 +84,17 @@ def determine_multiplier(pop):
     return multiplier_buy, multiplier_sell
 
 
-def execute_ed(pop, current_price, asset_supply):
+def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
+
+    # print('Pre liquidation pop ownership: ' + str(bs.count_pop_long_assets(pop)))
+
 
     # Determine adjustements to edv if we have some mismatch
-    multiplier_buy, multiplier_sell = determine_multiplier(pop)
+    multiplier_buy, multiplier_sell = determine_multiplier(pop, spoils, ToLiquidate)
     volume = 0
-
 
     for ind in pop:
         amount = 0
-
-        # print(ind.edv)
 
         if ind.edv > 0:
             amount = ind.edv * multiplier_buy
@@ -107,7 +111,20 @@ def execute_ed(pop, current_price, asset_supply):
             ind.loan += abs(ind.cash)
             ind.cash = 0
         
-    if bs.count_long_assets(pop) > asset_supply + 1 or bs.count_long_assets(pop) < asset_supply - 1:
-        raise ValueError('Asset supply cst violated ' +str(bs.count_long_assets(pop)) + '/' + str(asset_supply))
 
-    return pop, volume
+    # Record that we liquidated some spoils
+    
+    if spoils > 0:
+        spoils -= ToLiquidate * multiplier_sell
+    if spoils < 0:
+        spoils += ToLiquidate * multiplier_buy
+    # print('Post liquidation spoils ' + str(spoils))
+    # print('Post liquidation pop ownership: ' + str(bs.count_pop_long_assets(pop)))
+
+    if bs.count_long_assets(pop, spoils) > asset_supply + 1 or bs.count_long_assets(pop, spoils) < asset_supply - 1:
+        print('Spoils ' + str(spoils))
+        print('ToLiquidate ' + str(ToLiquidate))
+        print('Pop ownership ' + str(bs.count_pop_long_assets(pop)))
+        raise ValueError('Asset supply cst violated ' +str(bs.count_long_assets(pop, spoils)) + '/' + str(asset_supply))
+
+    return pop, volume, spoils

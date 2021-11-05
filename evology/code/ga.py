@@ -8,11 +8,10 @@ from sampling import *
 import balance_sheet as bs
 import timeit
 
-def hypermutate(pop, mode, asset_supply, current_price, generation):
+def hypermutate(pop, mode, asset_supply, current_price, generation, spoils):
 
     starttime = timeit.default_timer()
     round_replacements = 0
-    spoils = 0
 
     for i in range(0, len(pop)):
         if pop[i].wealth <= 0:
@@ -24,11 +23,11 @@ def hypermutate(pop, mode, asset_supply, current_price, generation):
             del pop[i].fitness.values
             round_replacements += 1
 
-    if abs(spoils) > 0:
-        print('spooils ' + str(spoils))
-        per_ind_spoil = spoils / len(pop)
-        for ind in pop:
-            ind.asset += per_ind_spoil
+    # if abs(spoils) > 0:
+    #     print('spooils ' + str(spoils))
+    #     per_ind_spoil = spoils / len(pop)
+    #     for ind in pop:
+    #         ind.asset += per_ind_spoil
 
             
     if mode == "between":

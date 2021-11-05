@@ -100,8 +100,8 @@ def determine_edf(pop):
                 return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
             except: 
                 warnings.warn('TF Error')
-                # return (LAMBDA_TF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
-                return (LAMBDA_TF * ind.wealth / p) * (np.tanh(ind.tsv + 0.5)) - ind.asset
+                return (LAMBDA_TF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
+                # return (LAMBDA_TF * ind.wealth / p) * (np.tanh(ind.tsv + 0.5)) - ind.asset
                 
 
         elif ind.type == "vi":
@@ -109,8 +109,8 @@ def determine_edf(pop):
                 return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
             except:
                 warnings.warn('VI Error')
-                # return (LAMBDA_VI * ind.wealth / p) * (0.5) - ind.asset
-                return (LAMBDA_VI * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
+                return (LAMBDA_VI * ind.wealth / p) * (0.5) - ind.asset
+                # return (LAMBDA_VI * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
 
 
 
@@ -119,8 +119,8 @@ def determine_edf(pop):
                 return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
             except:
                 warnings.warn('NT Error')
-                # return (LAMBDA_NT * ind.wealth / p) * (0.5) - ind.asset
-                return (LAMBDA_NT * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
+                return (LAMBDA_NT * ind.wealth / p) * (0.5) - ind.asset
+                # return (LAMBDA_NT * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
                 
 
 
@@ -158,18 +158,35 @@ def calculate_edv(pop, price):
 #         total += ind.edv
 #     return total
 
-def count_long_assets(pop):
+def count_pop_long_assets(pop):
     count = 0
     for ind in pop:
         count += ind.asset
     return count
 
-def count_short_assets(pop):
+def count_long_assets(pop, spoils):
+    count = 0
+    for ind in pop:
+        count += ind.asset
+    count += spoils
+    return count
+
+def count_short_assets(pop, spoils):
+    count = 0
+    for ind in pop:
+        if ind.asset < 0:
+            count += abs(ind.asset)
+    if spoils < 0:
+        count += abs(spoils)
+    return count
+
+def count_pop_short_assets(pop):
     count = 0
     for ind in pop:
         if ind.asset < 0:
             count += abs(ind.asset)
     return count
+
 
 
 def earnings(pop, prev_dividend):
@@ -366,30 +383,42 @@ def wealth_share_nt(pop):
     return 100 * wealth_nt / total_wealth(pop)
 
 
-def agg_ed(pop): 
+def agg_ed(pop, spoils): 
     functions = []
-    def big_edf(asset_key, price):
-        result = 0
-        for ind in pop:
-            result += ind.edf(ind, price)
-        return result
+    ToLiquidate = 0
+
+    if spoils == 0:
+        def big_edf(asset_key, price):
+            result = 0
+            for ind in pop:
+                result += ind.edf(ind, price)
+            return result
+
+    if spoils > 0:
+        ToLiquidate = min(spoils, LIQUIDATION_ORDER_SIZE )
+        # Spoils are positive. We want to sell some long shares in the market. Hence AdminEDV = -TL.
+        def big_edf(asset_key, price):
+            result = - ToLiquidate
+            for ind in pop:
+                result += ind.edf(ind, price)
+            return result
+
+    if spoils < 0:
+        ToLiquidate = min(abs(spoils), LIQUIDATION_ORDER_SIZE)
+        # Spoils are negative. We want to buy some long shares in the market to close shorts. Hence AdminEDV = +TL.
+        def big_edf(asset_key, price):
+            result = LIQUIDATION_ORDER_SIZE
+            for ind in pop:
+                result += ind.edf(ind, price)
+            return result
     functions.append(big_edf)
-    return functions
+
+    # print('Spoils is ' + str(spoils))
+    # print('Liquidation today is ' +str(ToLiquidate))
+
+    return functions, ToLiquidate
 
 
-# def share_spoils(pop, spoils, asset_supply):
-#     if abs(spoils) > 0:
-#         # print('Allocating ' + str(spoils) + ' spoils')
-        
-
-#         if count_long_assets(pop) > asset_supply + 0.01 or count_long_assets(pop) < asset_supply - 0.01:
-#             for ind in pop:
-#                 print(ind.type)
-#                 print(ind.asset)
-#             print(count_long_assets(pop))
-#             print(asset_supply)
-#             raise ValueError ('Share spoils exceeded asset supply')
-#     return pop
 
 def report_nt_cash(pop):
     total = 0
