@@ -45,6 +45,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
             print('Error: Insolvency in the 3-strategy ecology')
             break
 
+
     df = pd.DataFrame(results, columns = data.columns)
     
     return df

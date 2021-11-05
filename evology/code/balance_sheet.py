@@ -96,19 +96,33 @@ def update_fval(pop, extended_dividend_history):
 def determine_edf(pop):
     def edf(ind, p):
         if ind.type == "tf":
-            return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
+            try:
+                return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
+            except: 
+                warnings.warn('TF Error')
+                # return (LAMBDA_TF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
+                return (LAMBDA_TF * ind.wealth / p) * (np.tanh(ind.tsv + 0.5)) - ind.asset
+                
 
         elif ind.type == "vi":
             try:
                 return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
             except:
-                return (LAMBDA_VI * ind.wealth / p) * (0.5) - ind.asset
+                warnings.warn('VI Error')
+                # return (LAMBDA_VI * ind.wealth / p) * (0.5) - ind.asset
+                return (LAMBDA_VI * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
+
+
 
         elif ind.type == "nt":
             try:
                 return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
             except:
-                return (LAMBDA_NT * ind.wealth / p) * (0.5) - ind.asset
+                warnings.warn('NT Error')
+                # return (LAMBDA_NT * ind.wealth / p) * (0.5) - ind.asset
+                return (LAMBDA_NT * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
+                
+
 
     for ind in pop:
         ind.edf = edf
@@ -221,12 +235,10 @@ def report_tf_signal(pop, price_history):
 
 def calculate_tsv(pop, price, price_history):
 
-    # if price < 0:
-    #     raise ValueError('Negative price '+ str(price) )
+    if price < 0:
+        warnings.warn('Negative price '+ str(price) )
 
     for ind in pop:
-        # if ind.type == 'tf':
-        #     pass # TSV already computed in calcualte_tsv_proc
         if ind.type == 'vi':
             ind.tsv = np.log2(ind[0]) - np.log2(price)
         if ind.type == 'nt':
