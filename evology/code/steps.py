@@ -6,11 +6,11 @@ from parameters import *
 import esl_market_clearing as esl_mc
 import market as mk
 
-def update_wealth(pop, current_price, generation, wealth_coordinates):
+def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE):
     starttime = timeit.default_timer()
     bs.calculate_wealth(pop, current_price) # Compute agents' wealth
     bs.update_profit(pop)
-    bs.shield_wealth(generation, pop, wealth_coordinates, current_price)
+    bs.shield_wealth(generation, pop, wealth_coordinates, current_price, POPULATION_SIZE)
     timeA = timeit.default_timer() - starttime
     return pop, timeA
 

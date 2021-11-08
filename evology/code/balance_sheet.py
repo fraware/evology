@@ -679,7 +679,7 @@ def determine_differences(coordinates, pop):
     differences = [x1 - x2 for (x1, x2) in zip(currents, targets)]
     return differences, targets, sizes, all_size, nums 
 
-def shield_wealth(generation, pop, coordinates:list, current_price):
+def shield_wealth(generation, pop, coordinates:list, current_price, POPULATION_SIZE):
 
     if sum(coordinates) > 1.0001:
         raise ValueError('Sum coordinates higher than 1 ' + sum(coordinates) )
@@ -696,7 +696,7 @@ def shield_wealth(generation, pop, coordinates:list, current_price):
             # print(differences)
 
             attempt = 0
-            while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
+            while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS * POPULATION_SIZE:
                 # We must continue to adjust wealth. 
 
                 # Go through items of differences to see which strategies need a correction.
@@ -717,6 +717,7 @@ def shield_wealth(generation, pop, coordinates:list, current_price):
                         for ind in pop:
                             if ind.type == pop_types[i]:
                                 ind.loan -= per_capita_amount
+                        break
                         
 
                 # Recompute wealth, differences and attempts
@@ -725,7 +726,7 @@ def shield_wealth(generation, pop, coordinates:list, current_price):
                 # print('Current differences: ' + str(differences))
                 attempt += 1
 
-            if attempt >= MAX_ATTEMPTS:
+            if attempt >= MAX_ATTEMPTS * POPULATION_SIZE:
                 warnings.warn('Wealth adjustement not perfect after MAX_ATTEMPTS.')
 
         # print('Wealth shield deployed. ' + str(generation))
