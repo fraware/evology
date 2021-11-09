@@ -47,6 +47,10 @@ def calculate_wealth(pop, current_price):
         # Update wealth
         ind.prev_wealth = ind.wealth
         ind.wealth = ind.cash + ind.asset * current_price - ind.loan
+        ind.MonWealth.insert(0, ind.wealth)
+        del ind.MonWealth[-1]
+        if len(ind.MonWealth) != 21:
+            raise ValueError('Wealth monthly history len is not equal to 21 ' + str(ind.MonWealth))
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
 
@@ -679,7 +683,7 @@ def determine_differences(coordinates, pop):
     differences = [x1 - x2 for (x1, x2) in zip(currents, targets)]
     return differences, targets, sizes, all_size, nums 
 
-def shield_wealth(generation, pop, coordinates:list, current_price):
+def shield_wealth(generation, pop, coordinates:list, current_price, POPULATION_SIZE):
 
     if sum(coordinates) > 1.0001:
         raise ValueError('Sum coordinates higher than 1 ' + sum(coordinates) )
@@ -717,6 +721,7 @@ def shield_wealth(generation, pop, coordinates:list, current_price):
                         for ind in pop:
                             if ind.type == pop_types[i]:
                                 ind.loan -= per_capita_amount
+                        break
                         
 
                 # Recompute wealth, differences and attempts
@@ -734,39 +739,75 @@ def shield_wealth(generation, pop, coordinates:list, current_price):
 
 def report_nt_return(pop):
     num = 0
-    returns = 0
+    returns = np.nan
     sum_returns = 0
     for ind in pop:
         if ind.type == 'nt' and ind.prev_wealth != 0:
             num += 1
-            sum_returns += ind.profit / ind.prev_wealth
+            sum_returns += ind.wealth / ind.prev_wealth
     if num != 0:
         returns = sum_returns / num 
     return returns
 
 def report_vi_return(pop):
     num = 0
-    returns = 0
+    returns = np.nan
     sum_returns = 0
     for ind in pop:
         if ind.type == 'vi' and ind.prev_wealth != 0:
             num += 1
-            sum_returns += ind.profit / ind.prev_wealth
+            sum_returns += ind.wealth / ind.prev_wealth
     if num != 0:
         returns = sum_returns / num 
     return returns
 
 def report_tf_return(pop):
     num = 0
-    returns = 0
+    returns = np.nan
     sum_returns = 0
     for ind in pop:
         if ind.type == 'tf' and ind.prev_wealth != 0:
             num += 1
-            sum_returns += ind.profit / ind.prev_wealth
+            sum_returns += ind.wealth / ind.prev_wealth
     if num != 0:
         returns = sum_returns / num 
     return returns
+
+def ReportTFMonReturn(pop):
+    num = 0
+    returns = np.nan
+    sum_returns = 0
+    for ind in pop:
+        if ind.type == 'tf' and ind.MonWealth[-1] != 0:
+            num += 1
+            sum_returns += ind.wealth / ind.MonWealth[-1]
+    if num != 0:
+        returns = sum_returns / num - 1 
+    return returns 
+
+def ReportVIMonReturn(pop):
+    num = 0
+    returns = np.nan
+    sum_returns = 0
+    for ind in pop:
+        if ind.type == 'vi' and ind.MonWealth[-1] != 0:
+            num += 1
+            sum_returns += ind.wealth / ind.MonWealth[-1]
+    if num != 0:
+        returns = sum_returns / num - 1 
+    return returns 
+
+def ReportNTMonReturn(pop):
+    num = 0
+    returns = np.nan
+    sum_returns = 0
+    for ind in pop:
+        if ind.type == 'nt' and ind.MonWealth[-1] != 0:
+            num += 1
+            sum_returns += ind.wealth / ind.MonWealth[-1]
+    if num != 0:
+        returns = sum_returns / num - 1
+    return returns 
         
 def update_profit(pop):
     for ind in pop:

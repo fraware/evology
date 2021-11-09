@@ -6,6 +6,7 @@ from parameters import *
 
 RANDOM_SEED = random.random()
 # wealth_coordinates = [0.42, 0.33, 0.25]
+wealth_coordinates = [1/3, 1/3, 1/3]
 # wealth_coordinates = [0.1, 0.1, 0.8]
 # NT VI TF
 wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
@@ -21,7 +22,7 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display):
         df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, MUTATION_RATE, wealth_coordinates, tqdm_display)
     return df
 
-df = run(100, 1, 5000, wealth_coordinates, False)
+df = run(100, 0, 1000, wealth_coordinates, False)
 
 df.to_csv("evology/data/run_data.csv")
 # print(df)

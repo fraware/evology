@@ -28,7 +28,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display):
 
-        pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates)
+        pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE)
         pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation, spoils) # Replace insolvent agents     
         pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates)
         pop, timeD  = decision_updates(pop, mode, price_history, extended_dividend_history)
