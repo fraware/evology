@@ -47,6 +47,10 @@ def calculate_wealth(pop, current_price):
         # Update wealth
         ind.prev_wealth = ind.wealth
         ind.wealth = ind.cash + ind.asset * current_price - ind.loan
+        ind.MonWealth.insert(0, ind.wealth)
+        del ind.MonWealth[-1]
+        if len(ind.MonWealth) != 21:
+            raise ValueError('Wealth monthly history len is not equal to 21 ' + str(ind.MonWealth))
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
     return ind
 
@@ -735,39 +739,75 @@ def shield_wealth(generation, pop, coordinates:list, current_price, POPULATION_S
 
 def report_nt_return(pop):
     num = 0
-    returns = 0
+    returns = np.nan
     sum_returns = 0
     for ind in pop:
         if ind.type == 'nt' and ind.prev_wealth != 0:
             num += 1
-            sum_returns += ind.profit / ind.prev_wealth
+            sum_returns += ind.wealth / ind.prev_wealth
     if num != 0:
         returns = sum_returns / num 
     return returns
 
 def report_vi_return(pop):
     num = 0
-    returns = 0
+    returns = np.nan
     sum_returns = 0
     for ind in pop:
         if ind.type == 'vi' and ind.prev_wealth != 0:
             num += 1
-            sum_returns += ind.profit / ind.prev_wealth
+            sum_returns += ind.wealth / ind.prev_wealth
     if num != 0:
         returns = sum_returns / num 
     return returns
 
 def report_tf_return(pop):
     num = 0
-    returns = 0
+    returns = np.nan
     sum_returns = 0
     for ind in pop:
         if ind.type == 'tf' and ind.prev_wealth != 0:
             num += 1
-            sum_returns += ind.profit / ind.prev_wealth
+            sum_returns += ind.wealth / ind.prev_wealth
     if num != 0:
         returns = sum_returns / num 
     return returns
+
+def ReportTFMonReturn(pop):
+    num = 0
+    returns = np.nan
+    sum_returns = 0
+    for ind in pop:
+        if ind.type == 'tf' and ind.MonWealth[-1] != 0:
+            num += 1
+            sum_returns += ind.wealth / ind.MonWealth[-1]
+    if num != 0:
+        returns = sum_returns / num - 1 
+    return returns 
+
+def ReportVIMonReturn(pop):
+    num = 0
+    returns = np.nan
+    sum_returns = 0
+    for ind in pop:
+        if ind.type == 'vi' and ind.MonWealth[-1] != 0:
+            num += 1
+            sum_returns += ind.wealth / ind.MonWealth[-1]
+    if num != 0:
+        returns = sum_returns / num - 1 
+    return returns 
+
+def ReportNTMonReturn(pop):
+    num = 0
+    returns = np.nan
+    sum_returns = 0
+    for ind in pop:
+        if ind.type == 'nt' and ind.MonWealth[-1] != 0:
+            num += 1
+            sum_returns += ind.wealth / ind.MonWealth[-1]
+    if num != 0:
+        returns = sum_returns / num - 1
+    return returns 
         
 def update_profit(pop):
     for ind in pop:

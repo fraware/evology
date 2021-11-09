@@ -26,7 +26,7 @@ columns = [
     # Run time data
     'TimeA', 'TimeB', 'TimeC', 'TimeD', 'TimeE', 'TimeF', 'TimeG', 'TotalTime',
     # More measures
-    'PerSpoils'
+    'PerSpoils', 'NT_MonReturns', 'VI_MonReturns', 'TF_MonReturns', 'AvgMonReturn'
 ]
 
 variables = len(columns)
@@ -114,12 +114,20 @@ def record_results(results, generation, current_price, mismatch, dividend,
 
         ''' More measures '''
         results[current, 53] = abs(100 * spoils / asset_supply)
+        results[current, 54] = bs.ReportNTMonReturn(pop)
+        results[current, 55] = bs.ReportVIMonReturn(pop)
+        results[current, 56] = bs.ReportTFMonReturn(pop)
+        results[current, 57] = ComputeAvgMonReturn(results, current, pop)
 
 
     return results
 
 def ComputeAvgReturn(results, generation, pop):
     AvgReturn = (results[generation, 10] * results[generation, 26] + results[generation, 11] * results[generation, 34] + results[generation, 12] * results[generation, 42]) / len(pop)
+    return AvgReturn
+
+def ComputeAvgMonReturn(results, generation, pop):
+    AvgReturn = (results[generation, 10] * results[generation, 54] + results[generation, 11] * results[generation, 55] + results[generation, 12] * results[generation, 56]) / len(pop)
     return AvgReturn
     
 
