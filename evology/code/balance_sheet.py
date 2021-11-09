@@ -696,7 +696,7 @@ def shield_wealth(generation, pop, coordinates:list, current_price, POPULATION_S
             # print(differences)
 
             attempt = 0
-            while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS * POPULATION_SIZE:
+            while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
                 # We must continue to adjust wealth. 
 
                 # Go through items of differences to see which strategies need a correction.
@@ -726,7 +726,7 @@ def shield_wealth(generation, pop, coordinates:list, current_price, POPULATION_S
                 # print('Current differences: ' + str(differences))
                 attempt += 1
 
-            if attempt >= MAX_ATTEMPTS * POPULATION_SIZE:
+            if attempt >= MAX_ATTEMPTS:
                 warnings.warn('Wealth adjustement not perfect after MAX_ATTEMPTS.')
 
         # print('Wealth shield deployed. ' + str(generation))
