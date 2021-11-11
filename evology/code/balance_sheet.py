@@ -47,8 +47,10 @@ def calculate_wealth(pop, current_price):
         # Update wealth
         ind.prev_wealth = ind.wealth
         ind.wealth = ind.cash + ind.asset * current_price - ind.loan
-        ind.MonWealth.insert(0, ind.wealth)
+
         del ind.MonWealth[-1]
+        ind.MonWealth.insert(0, ind.wealth)
+
         if len(ind.MonWealth) != 21:
             raise ValueError('Wealth monthly history len is not equal to 21 ' + str(ind.MonWealth))
         # The amount due by short selling is equally captured by the margin, hence does not appear here.

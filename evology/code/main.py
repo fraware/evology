@@ -45,6 +45,16 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
             print('Error: Insolvency in the 3-strategy ecology')
             break
 
+        # for ind in pop:
+        #     if ind.type == 'vi': 
+        #         print(ind.wealth)
+        #         print(ind.MonWealth[-1])
+        #         if ind.MonWealth[-1] != 0:
+        #             print(ind.wealth / ind.MonWealth[-1])
+        #         print(ind.MonWealth)
+        #         break
+        # print('---')
+
 
     df = pd.DataFrame(results, columns = data.columns)
     
