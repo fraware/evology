@@ -20,7 +20,7 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils):
             pop[i] = toolbox.gen_rd_ind()
             pop[i].asset = 0
             pop[i].wealth = pop[i].cash + pop[i].asset * current_price - pop[i].loan
-            pop[i].MonWealth = np.zeros((1, 21))
+            pop[i].MonWealth = np.zeros((1, 21))[0]
             del pop[i].fitness.values
             round_replacements += 1
 

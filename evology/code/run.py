@@ -29,16 +29,5 @@ df = run(100, 0, 100, wealth_coordinates, False)
 df.to_csv("evology/data/run_data.csv")
 # print(df)
 
-# print(df['NT_MonReturns'])
-# print(df['NT_MonReturns'].mean())
-
-print(df['VI_MonReturns'])
-print(df['VI_MonReturns'].mean())
-print(wealth_coordinates)
-print(df['TF_MonReturns'].mean())
-print(df['NT_MonReturns'].mean())
-
-# print(df['TF_MonReturns'])
-# print(df['TF_MonReturns'].mean())
 
 

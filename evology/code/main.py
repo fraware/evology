@@ -56,6 +56,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
         # print('---')
 
 
+
+
     df = pd.DataFrame(results, columns = data.columns)
     
     return df
