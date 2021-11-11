@@ -734,8 +734,8 @@ def shield_wealth(generation, pop, coordinates:list, current_price, POPULATION_S
                 # print('Current differences: ' + str(differences))
                 attempt += 1
 
-            if attempt >= MAX_ATTEMPTS:
-                warnings.warn('Wealth adjustement not perfect after MAX_ATTEMPTS.')
+            # if attempt >= MAX_ATTEMPTS:
+                # print('Wealth adjustement not perfect after MAX_ATTEMPTS.')
 
         # print('Wealth shield deployed. ' + str(generation))
             

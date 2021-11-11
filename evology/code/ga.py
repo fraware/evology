@@ -7,6 +7,7 @@ from operator import attrgetter
 from sampling import *
 import balance_sheet as bs
 import timeit
+import warnings
 
 def hypermutate(pop, mode, asset_supply, current_price, generation, spoils):
 
