@@ -48,8 +48,10 @@ def calculate_wealth(pop, current_price):
         ind.prev_wealth = ind.wealth
         ind.wealth = ind.cash + ind.asset * current_price - ind.loan
 
-        del ind.MonWealth[-1]
-        ind.MonWealth.insert(0, ind.wealth)
+        # del ind.MonWealth[-1]
+        # ind.MonWealth.insert(0, ind.wealth)
+        ind.MonWealth = np.insert(ind.MonWealth, 0, ind.wealth)[:-1]
+        
 
         if len(ind.MonWealth) != 21:
             raise ValueError('Wealth monthly history len is not equal to 21 ' + str(ind.MonWealth))
