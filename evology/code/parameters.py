@@ -25,11 +25,11 @@ PROBA_SELECTION = 1/(252 * 2) #1/21
 # General parameters
 
 LAMBDA_TF = 1
-LAMBDA_VI = 8 
+LAMBDA_VI = 1
 LAMBDA_NT = 1
-SCALE_TF = 4
-SCALE_VI = 10
-SCALE_NT = 5
+SCALE_TF = 1#4
+SCALE_VI = 1#10
+SCALE_NT = 1#5
 
 GAMMA_NT = 0.2 * np.sqrt(1/252)
 MU_NT = 1
