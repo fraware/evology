@@ -6,6 +6,7 @@ from market import *
 import inspect
 import math
 import warnings
+import random
 
 def clear_debt(pop, price):
     for ind in pop:
@@ -750,7 +751,7 @@ def report_nt_return(pop):
             num += 1
             sum_returns += ind.wealth / ind.prev_wealth
     if num != 0:
-        returns = sum_returns / num 
+        returns = sum_returns / num - 1
     return returns
 
 def report_vi_return(pop):
@@ -762,7 +763,7 @@ def report_vi_return(pop):
             num += 1
             sum_returns += ind.wealth / ind.prev_wealth
     if num != 0:
-        returns = sum_returns / num 
+        returns = sum_returns / num - 1
     return returns
 
 def report_tf_return(pop):
@@ -774,7 +775,7 @@ def report_tf_return(pop):
             num += 1
             sum_returns += ind.wealth / ind.prev_wealth
     if num != 0:
-        returns = sum_returns / num 
+        returns = sum_returns / num - 1
     return returns
 
 def ReportTFMonReturn(pop):

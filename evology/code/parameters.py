@@ -1,35 +1,29 @@
 #!/usr/bin/env python3
-
-import random
 import numpy as np
 
-RANDOM_SEED = 9 #random.random()
+RANDOM_SEED = 9 
 tqdm_display = False
 
 ''' STRATEGY DISTRIBUTIONS '''
 PROBA_GP = 0
-# PROBA_TF = 1/3
-# PROBA_VI = 1/3
-# PROBA_NT = 1/3
 
 ''' GA parmeters '''
-MUTATION_RATE = 1/(252 * 2) #1/21
+MUTATION_RATE = 1/(252 * 2) 
 CROSSOVER_RATE = 1/21
 TOURNAMENT_SIZE = 5
-PROBA_SELECTION = 1/(252 * 2) #1/21
+PROBA_SELECTION = 1/(252 * 2) 
 
 ''' GP PARAMETERS '''
 
 ''' STRATEGY PARAMETERS '''
-
 # General parameters
 
 LAMBDA_TF = 1
-LAMBDA_VI = 8
+LAMBDA_VI = 1
 LAMBDA_NT = 1
-SCALE_TF = 4
-SCALE_VI = 10 #10
-SCALE_NT = 5 #5
+SCALE_TF = 1
+SCALE_VI = 1 
+SCALE_NT = 1 
 
 GAMMA_NT = 0.2 * np.sqrt(1/252)
 MU_NT = 1
@@ -51,10 +45,9 @@ share_increment = 1
 INITIAL_PRICE = 100
 
 price = INITIAL_PRICE
-INITIAL_CASH = 50000000 #+ 10_000_000_000
+INITIAL_CASH = 50000000
 INITIAL_ASSETS = 500000
-INITIAL_LOAN = 0#- 10_000_000_000
-# short_bound = 1
+INITIAL_LOAN = 0
 CONSUMPTION_RATE = 0
 LIMIT_SHORT_POS_SIZE = 10
  
