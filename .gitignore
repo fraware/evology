@@ -2,4 +2,4 @@
 *.pyc
 *.DS_Store
 .vscode
-**.csv
+*.csv
