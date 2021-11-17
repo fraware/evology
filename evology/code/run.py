@@ -14,17 +14,17 @@ print(wealth_coordinates)
 
 # def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE, wealth_coordinates, tqdm_display):
 
-def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display):
+def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, reset_wealth):
 
     if learning_mode == 0:
-        df = main("static", TIME, 0, POPULATION_SIZE, 0, 0, wealth_coordinates, tqdm_display)
+        df = main("static", TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 1:
-        df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, MUTATION_RATE, wealth_coordinates, tqdm_display)
+        df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 2:
-        df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, 0, wealth_coordinates, tqdm_display)
+        df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     return df
 
-df = run(50, 1, 20000, wealth_coordinates, False)
+df = run(50, 1, 1000, wealth_coordinates, tqdm_display=False, reset_wealth=True)
 
 df.to_csv("evology/data/run_data.csv")
 # print(df)

@@ -15,7 +15,7 @@ import timeit
 from steps import *
 random.seed(random.random())
 
-def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE, wealth_coordinates, tqdm_display):
+def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
     # Initialise important variables and dataframe to store results
     generation, current_price, dividend, asset_supply, spoils = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS, 0
     results = np.zeros((MAX_GENERATIONS - SHIELD_DURATION, data.variables))
@@ -28,9 +28,9 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display):
 
-        pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE)
+        pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
         pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation, spoils) # Replace insolvent agents     
-        pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates)
+        pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
         pop, timeD  = decision_updates(pop, mode, price_history, extended_dividend_history)
         pop, mismatch, current_price, price_history, ToLiquidate, timeE = marketClearing(pop, current_price, price_history, spoils)
 
