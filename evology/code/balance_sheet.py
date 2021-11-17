@@ -688,7 +688,7 @@ def determine_differences(coordinates, pop):
     differences = [x1 - x2 for (x1, x2) in zip(currents, targets)]
     return differences, targets, sizes, all_size, nums 
 
-def shield_wealth(generation, pop, coordinates:list, current_price, POPULATION_SIZE):
+def shield_wealth(generation, pop, coordinates:list, current_price, reset_wealth):
 
     if sum(coordinates) > 1.0001:
         raise ValueError('Sum coordinates higher than 1 ' + sum(coordinates) )
@@ -697,7 +697,7 @@ def shield_wealth(generation, pop, coordinates:list, current_price, POPULATION_S
         pass
     else: 
 
-        if generation <= SHIELD_DURATION:
+        if generation <= SHIELD_DURATION or reset_wealth == True:
             pop_types = ['nt','vi','tf']
 
             differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)

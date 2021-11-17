@@ -2,19 +2,19 @@
 import balance_sheet as bs
 import ga as ga
 import timeit
-from parameters import *
+from parameters import SHIELD_DURATION
 import esl_market_clearing as esl_mc
 import market as mk
 
-def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE):
+def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth):
     starttime = timeit.default_timer()
     bs.calculate_wealth(pop, current_price) # Compute agents' wealth
     bs.update_profit(pop)
-    bs.shield_wealth(generation, pop, wealth_coordinates, current_price, POPULATION_SIZE)
+    bs.shield_wealth(generation, pop, wealth_coordinates, current_price, reset_wealth)
     timeA = timeit.default_timer() - starttime
     return pop, timeA
 
-def ga_evolution(pop, mode, generation, wealth_coordinates):
+def ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE):
     starttime = timeit.default_timer()
     if generation > SHIELD_DURATION:
         ga.compute_fitness(pop)
