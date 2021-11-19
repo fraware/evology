@@ -24,10 +24,13 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
         df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     return df
 
-df = run(50, 1, 1000, wealth_coordinates, tqdm_display=False, reset_wealth=True)
+df = run(50, 0, 22, wealth_coordinates, tqdm_display=False, reset_wealth=False)
 
 df.to_csv("evology/data/run_data.csv")
 # print(df)
 
+
+
+# TODO: rework pop creation so that we have at least one agent of each type
 
 
