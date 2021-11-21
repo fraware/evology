@@ -688,52 +688,107 @@ def determine_differences(coordinates, pop):
     differences = [x1 - x2 for (x1, x2) in zip(currents, targets)]
     return differences, targets, sizes, all_size, nums 
 
-def shield_wealth(generation, pop, coordinates:list, current_price, reset_wealth):
+def DetRatio(x,y):
+    return np.linalg.det(x)/np.linalg.det(y)
 
-    if sum(coordinates) > 1.0001:
-        raise ValueError('Sum coordinates higher than 1 ' + sum(coordinates) )
+def WealthShieldSimplified(pop, coordinates):
+    currents, WealthNT, WealthVI, WealthTF, all_size, NumNT, NumVI, NumTF = determine_strat_size(pop)
 
-    if 1 in coordinates: 
-        pass
-    else: 
+    TargetNT = coordinates[0]
+    TargetVI = coordinates[1]
+    TargetTF = coordinates[2]
 
-        if generation <= SHIELD_DURATION or reset_wealth == True:
-            pop_types = ['nt','vi','tf']
+    WealthSum = WealthNT + WealthVI + WealthTF 
 
-            differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
-            # print('Differences')
-            # print(differences)
+    if TargetTF + TargetVI + TargetNT != 1:
+        raise ValueError('Target coordinates do not sum to 1.')
 
-            attempt = 0
-            while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
-                # We must continue to adjust wealth. 
+    D = np.array([
+    [1-TargetNT,-TargetNT, -TargetNT], 
+    [-TargetVI, 1-TargetVI, -TargetNT],
+    [-TargetTF, -TargetTF, 1-TargetTF]]) 
 
-                # Go through items of differences to see which strategies need a correction.
-                for i in range(len(differences)):
-                    # If the absolute difference is above threshold and inferior, we bump this strategy.
-                    if abs(differences[i]) > SHIELD_TOLERANCE and differences[i] < 0:
-                    # Apply a correction round
-                        # if i == 0 # bumping nt
-                        # if i == 1 #bumping vi
-                        # if i == 2 #bumping tf
-                        amount = (targets[i] * all_size - sizes[i]) / (1 - targets[i])
-                        if amount < 0:
-                            raise ValueError('Negative bump size ' + str(amount))
-                        if nums[i] != 0:
-                            per_capita_amount = amount / nums[i]
-                        elif nums[i] == 0:
-                            per_capita_amount = 0
-                        for ind in pop:
-                            if ind.type == pop_types[i]:
-                                ind.loan -= per_capita_amount
-                        break
+    Dx = np.array([
+    [TargetNT * WealthSum - WealthNT,-TargetNT, -TargetNT], 
+    [TargetVI * WealthSum - WealthVI, 1-TargetVI, -TargetNT],
+    [TargetTF * WealthSum - WealthTF, -TargetTF, 1-TargetTF]]) 
+
+    Dy = np.array([
+    [1-TargetNT, TargetNT * WealthSum - WealthNT, -TargetNT], 
+    [-TargetVI, TargetVI * WealthSum - WealthVI, -TargetNT],
+    [-TargetTF, TargetTF * WealthSum - WealthTF, 1-TargetTF]]) 
+
+    Dz = np.array([
+    [1-TargetNT, -TargetNT, TargetNT * WealthSum - WealthNT], 
+    [-TargetVI, 1-TargetVI, TargetVI * WealthSum - WealthVI],
+    [-TargetTF, -TargetTF, TargetTF * WealthSum - WealthTF]]) 
+
+    TransferNT = DetRatio(Dx,D) 
+    TransferVI = DetRatio(Dy,D)
+    TransferTF = DetRatio(Dz,D)
+
+    PcTransferNT = TransferNT / NumNT
+    PcTransferVI = TransferVI / NumVI
+    PcTransferTF = TransferTF / NumTF
+
+    for ind in pop:
+        if ind.type == 'nt':
+            ind.loan -= PcTransferNT
+        if ind.type == 'vi':
+            ind.loan -= PcTransferVI
+        if ind.type == 'tf':
+            ind.loan -= PcTransferTF
+
+# def shield_wealth(generation, pop, coordinates:list, current_price, reset_wealth):
+
+#     if sum(coordinates) > 1.0001:
+#         raise ValueError('Sum coordinates higher than 1 ' + sum(coordinates) )
+
+#     if 1 in coordinates: 
+#         pass
+#     else: 
+
+#         if generation <= SHIELD_DURATION or reset_wealth == True:
+
+
+#             WealthShieldSimplified(pop, coordinates)
+
+            # pop_types = ['nt','vi','tf']
+
+            # differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
+            # # print('Differences')
+            # # print(differences)
+
+            # attempt = 0
+            # while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
+            #     # We must continue to adjust wealth. 
+
+            #     # Go through items of differences to see which strategies need a correction.
+            #     for i in range(len(differences)):
+            #         # If the absolute difference is above threshold and inferior, we bump this strategy.
+            #         if abs(differences[i]) > SHIELD_TOLERANCE and differences[i] < 0:
+            #         # Apply a correction round
+            #             # if i == 0 # bumping nt
+            #             # if i == 1 #bumping vi
+            #             # if i == 2 #bumping tf
+            #             amount = (targets[i] * all_size - sizes[i]) / (1 - targets[i])
+            #             if amount < 0:
+            #                 raise ValueError('Negative bump size ' + str(amount))
+            #             if nums[i] != 0:
+            #                 per_capita_amount = amount / nums[i]
+            #             elif nums[i] == 0:
+            #                 per_capita_amount = 0
+            #             for ind in pop:
+            #                 if ind.type == pop_types[i]:
+            #                     ind.loan -= per_capita_amount
+            #             break
                         
 
-                # Recompute wealth, differences and attempts
-                calculate_wealth(pop, current_price) # Compute agents' wealth
-                differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
-                # print('Current differences: ' + str(differences))
-                attempt += 1
+            #     # Recompute wealth, differences and attempts
+            #     calculate_wealth(pop, current_price) # Compute agents' wealth
+            #     differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
+            #     # print('Current differences: ' + str(differences))
+            #     attempt += 1
 
             # if attempt >= MAX_ATTEMPTS:
                 # print('Wealth adjustement not perfect after MAX_ATTEMPTS.')
@@ -839,3 +894,18 @@ def report_negW(pop):
             count_neg += 1
     prop = 100 * count_neg / len(pop)
     return prop
+
+
+def GetWealth(pop, type):
+    TotalWealth = 0
+    for ind in pop:
+        if ind.type == type:
+            TotalWealth += ind.wealth
+    return TotalWealth
+
+def GetNumber(pop, type):
+    TotalNumber = 0
+    for ind in pop:
+        if ind.type == type:
+            TotalNumber += 1
+    return TotalNumber

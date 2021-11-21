@@ -41,23 +41,6 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE,
         dividend, random_dividend, volume, replacements, pop, price_history, spoils, 
         asset_supply, timeA, timeB, timeC, timeD, timeE, timeF)
 
-        # if replacements > 0 and POPULATION_SIZE == 3 and mode == 'static':
-        #     print('Error: Insolvency in the 3-strategy ecology')
-        #     break
-
-        # for ind in pop:
-        #     if ind.type == 'vi': 
-        #         print(ind.wealth)
-        #         print(ind.MonWealth[-1])
-        #         if ind.MonWealth[-1] != 0:
-        #             print(ind.wealth / ind.MonWealth[-1])
-        #         print(ind.MonWealth)
-        #         break
-        # print('---')
-
-
-
-
     df = pd.DataFrame(results, columns = data.columns)
     
     return df
