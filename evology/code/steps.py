@@ -15,6 +15,8 @@ def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION
     pop = sh.ShieldWealth(pop, wealth_coordinates, generation, reset_wealth)
 
     # TODO: add one more compute wealth
+    # TODO: wealth shiled creates returns
+    # TODO" clean all code
     timeA = timeit.default_timer() - starttime
     return pop, timeA
 
