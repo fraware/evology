@@ -704,56 +704,56 @@ def report_tf_stocks(pop, price):
 #     differences = [x1 - x2 for (x1, x2) in zip(currents, targets)]
 #     return differences, targets, sizes, all_size, nums 
 
-def DetRatio(x,y):
-    return np.linalg.det(x)/np.linalg.det(y)
+# def DetRatio(x,y):
+#     return np.linalg.det(x)/np.linalg.det(y)
 
-def WealthShieldSimplified(pop, coordinates):
-    currents, WealthNT, WealthVI, WealthTF, all_size, NumNT, NumVI, NumTF = determine_strat_size(pop)
+# def WealthShieldSimplified(pop, coordinates):
+#     currents, WealthNT, WealthVI, WealthTF, all_size, NumNT, NumVI, NumTF = determine_strat_size(pop)
 
-    TargetNT = coordinates[0]
-    TargetVI = coordinates[1]
-    TargetTF = coordinates[2]
+#     TargetNT = coordinates[0]
+#     TargetVI = coordinates[1]
+#     TargetTF = coordinates[2]
 
-    WealthSum = WealthNT + WealthVI + WealthTF 
+#     WealthSum = WealthNT + WealthVI + WealthTF 
 
-    if TargetTF + TargetVI + TargetNT != 1:
-        raise ValueError('Target coordinates do not sum to 1.')
+#     if TargetTF + TargetVI + TargetNT != 1:
+#         raise ValueError('Target coordinates do not sum to 1.')
 
-    D = np.array([
-    [1-TargetNT,-TargetNT, -TargetNT], 
-    [-TargetVI, 1-TargetVI, -TargetNT],
-    [-TargetTF, -TargetTF, 1-TargetTF]]) 
+#     D = np.array([
+#     [1-TargetNT,-TargetNT, -TargetNT], 
+#     [-TargetVI, 1-TargetVI, -TargetNT],
+#     [-TargetTF, -TargetTF, 1-TargetTF]]) 
 
-    Dx = np.array([
-    [TargetNT * WealthSum - WealthNT,-TargetNT, -TargetNT], 
-    [TargetVI * WealthSum - WealthVI, 1-TargetVI, -TargetNT],
-    [TargetTF * WealthSum - WealthTF, -TargetTF, 1-TargetTF]]) 
+#     Dx = np.array([
+#     [TargetNT * WealthSum - WealthNT,-TargetNT, -TargetNT], 
+#     [TargetVI * WealthSum - WealthVI, 1-TargetVI, -TargetNT],
+#     [TargetTF * WealthSum - WealthTF, -TargetTF, 1-TargetTF]]) 
 
-    Dy = np.array([
-    [1-TargetNT, TargetNT * WealthSum - WealthNT, -TargetNT], 
-    [-TargetVI, TargetVI * WealthSum - WealthVI, -TargetNT],
-    [-TargetTF, TargetTF * WealthSum - WealthTF, 1-TargetTF]]) 
+#     Dy = np.array([
+#     [1-TargetNT, TargetNT * WealthSum - WealthNT, -TargetNT], 
+#     [-TargetVI, TargetVI * WealthSum - WealthVI, -TargetNT],
+#     [-TargetTF, TargetTF * WealthSum - WealthTF, 1-TargetTF]]) 
 
-    Dz = np.array([
-    [1-TargetNT, -TargetNT, TargetNT * WealthSum - WealthNT], 
-    [-TargetVI, 1-TargetVI, TargetVI * WealthSum - WealthVI],
-    [-TargetTF, -TargetTF, TargetTF * WealthSum - WealthTF]]) 
+#     Dz = np.array([
+#     [1-TargetNT, -TargetNT, TargetNT * WealthSum - WealthNT], 
+#     [-TargetVI, 1-TargetVI, TargetVI * WealthSum - WealthVI],
+#     [-TargetTF, -TargetTF, TargetTF * WealthSum - WealthTF]]) 
 
-    TransferNT = DetRatio(Dx,D) 
-    TransferVI = DetRatio(Dy,D)
-    TransferTF = DetRatio(Dz,D)
+#     TransferNT = DetRatio(Dx,D) 
+#     TransferVI = DetRatio(Dy,D)
+#     TransferTF = DetRatio(Dz,D)
 
-    PcTransferNT = TransferNT / NumNT
-    PcTransferVI = TransferVI / NumVI
-    PcTransferTF = TransferTF / NumTF
+#     PcTransferNT = TransferNT / NumNT
+#     PcTransferVI = TransferVI / NumVI
+#     PcTransferTF = TransferTF / NumTF
 
-    for ind in pop:
-        if ind.type == 'nt':
-            ind.loan -= PcTransferNT
-        if ind.type == 'vi':
-            ind.loan -= PcTransferVI
-        if ind.type == 'tf':
-            ind.loan -= PcTransferTF
+#     for ind in pop:
+#         if ind.type == 'nt':
+#             ind.loan -= PcTransferNT
+#         if ind.type == 'vi':
+#             ind.loan -= PcTransferVI
+#         if ind.type == 'tf':
+#             ind.loan -= PcTransferTF
 
 # def shield_wealth(generation, pop, coordinates:list, current_price, reset_wealth):
 

@@ -7,7 +7,7 @@ from parameters import *
 RANDOM_SEED = random.random()
 wealth_coordinates = [1/3, 1/3, 1/3]
 
-wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
+# wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
 print(wealth_coordinates)
 
 # def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE, wealth_coordinates, tqdm_display):
@@ -22,7 +22,7 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
         df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     return df
 
-df = run(50, 2, 200, wealth_coordinates, tqdm_display=False, reset_wealth=False)
+df = run(100, 0, 200, wealth_coordinates, tqdm_display=False, reset_wealth=True)
 
 df.to_csv("evology/data/run_data.csv")
 # print(df)
