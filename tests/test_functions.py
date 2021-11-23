@@ -18,7 +18,8 @@ def learning_runs(repetitions, time, agents):
         wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
         print(wealth_coordinates)
         try: 
-            df = main("between", time, PROBA_SELECTION, agents, 0, MUTATION_RATE, wealth_coordinates, True)
+            df = main("between", time, PROBA_SELECTION, agents, MUTATION_RATE, wealth_coordinates, tqdm_display=True, reset_wealth = False)
+
             # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
             went_smoothly = False
@@ -40,7 +41,8 @@ def nolearning_runs(repetitions, time, agents):
         try: 
             wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
             print(wealth_coordinates)
-            df = main("between", time, 0, agents, 0, 0, wealth_coordinates, True)
+            df = main("static", time, 0, agents, 0, wealth_coordinates, tqdm_display=True, reset_wealth = False)
+
             # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
             went_smoothly = False
