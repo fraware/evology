@@ -20,7 +20,7 @@ def adjust_mode(pop, mode):
                 ind[0] = 100
     return pop
 
-def hypermutate(pop, mode, asset_supply, current_price, generation, spoils):
+def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, wealth_coordinates):
 
     starttime = timeit.default_timer()
     round_replacements = 0
@@ -29,7 +29,7 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils):
         if pop[i].wealth <= 0:
             warnings.warn("Replacing // Gen " + str(generation) + " // Type: " + str(pop[i].type) + ", C: " + str(int(pop[i].cash)) + ", S+: " + str(int(pop[i].asset)) + ", L: " + str(int(pop[i].loan)) + ", M: " + str(int(pop[i].margin)) + ", W: " + str(int(pop[i].wealth)))
             spoils += pop[i].asset
-            pop[i] = toolbox.gen_rd_ind()
+            pop[i] = toolbox.gen_rd_ind(wealth_coordinates)
             pop[i].asset = 0
             pop[i].wealth = pop[i].cash + pop[i].asset * current_price - pop[i].loan
             pop[i].MonWealth = np.zeros((1, 21))[0]
