@@ -80,6 +80,17 @@ toolbox.register("gen_vi_ind", tools.initCycle, creator.ind_vi, (toolbox.vi,), n
 toolbox.register("nt", random.randint, MIN_VALUATION_NT, MAX_VALUATION_NT)
 toolbox.register("gen_nt_ind", tools.initCycle, creator.ind_nt, (toolbox.nt,), n=1)
 
+def gen_rd_ind(Coords):
+    rd = random.random()
+    if rd <= Coords[0]:
+        return toolbox.gen_nt_ind()
+    elif rd > Coords[0] and rd <= Coords[0] + Coords[1]:
+        return toolbox.gen_vi_ind()
+    elif rd > Coords[0] + Coords[1] and rd <= Coords[2] + Coords[1] + Coords[0]:
+        return toolbox.gen_tf_ind()
+
+toolbox.register("gen_rd_ind", gen_rd_ind)
+
 
 def CreatePop(n, WealthCoords):
 
