@@ -4,10 +4,21 @@ from deap import creator
 from deap import tools
 from deap import algorithms
 from operator import attrgetter
-from sampling import *
+from creation import *
 import balance_sheet as bs
 import timeit
 import warnings
+
+def adjust_mode(pop, mode):
+    if mode == "between":
+        for ind in pop:
+            if ind.type == "tf":
+                ind[0] = 2
+            if ind.type == "vi":
+                ind[0] = 100
+            if ind.type == "nt":
+                ind[0] = 100
+    return pop
 
 def hypermutate(pop, mode, asset_supply, current_price, generation, spoils):
 

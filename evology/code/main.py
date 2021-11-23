@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 from parameters import *
-from sampling import *
-import sampling
 import pandas as pd
 import balance_sheet as bs
 import ga as ga
@@ -17,13 +15,12 @@ random.seed(random.random())
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
     # Initialise important variables and dataframe to store results
-    generation, current_price, dividend, asset_supply, spoils = 0, INITIAL_PRICE, INITIAL_DIVIDEND, POPULATION_SIZE * INITIAL_ASSETS, 0
+    generation, current_price, dividend, spoils = 0, InitialPrice, INITIAL_DIVIDEND, 0
     results = np.zeros((MAX_GENERATIONS - SHIELD_DURATION, data.variables))
     price_history, dividend_history = [], []
     extended_dividend_history = mk.dividend_series(1*252)
-    create_pop = cr.generate_creation_func(wealth_coordinates)
-    # Create the population
-    pop = create_pop(mode, POPULATION_SIZE)
+
+    pop, asset_supply = cr.CreatePop(POPULATION_SIZE, wealth_coordinates)
 
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display):

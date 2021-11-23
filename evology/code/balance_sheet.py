@@ -7,6 +7,7 @@ import inspect
 import math
 import warnings
 import random
+import timeit
 
 def clear_debt(pop, price):
     for ind in pop:
@@ -44,19 +45,32 @@ def update_margin(pop, current_price):
     return ind
 
 def calculate_wealth(pop, current_price):
+    timeA1, timeA2 = 0, 0
     for ind in pop:
         # Update wealth
+
+        starttime1 = timeit.default_timer()
+
         ind.prev_wealth = ind.wealth
         ind.wealth = ind.cash + ind.asset * current_price - ind.loan
 
+        timeA1 += timeit.default_timer() - starttime1
+        
         # del ind.MonWealth[-1]
         # ind.MonWealth.insert(0, ind.wealth)
-        ind.MonWealth = np.insert(ind.MonWealth, 0, ind.wealth)[:-1]
-        
 
+        starttime2 = timeit.default_timer()
+        ind.MonWealth = np.insert(ind.MonWealth, 0, ind.wealth)[:-1]
+        timeA2 += timeit.default_timer() - starttime2
+        
         if len(ind.MonWealth) != 21:
             raise ValueError('Wealth monthly history len is not equal to 21 ' + str(ind.MonWealth))
         # The amount due by short selling is equally captured by the margin, hence does not appear here.
+    ''' Iteration time    
+    # print('Time A1 A2')
+    # print(timeA1 * 100000)
+    # print(timeA2 * 100000) ''' 
+
     return ind
 
 def determine_tsv_proc(mode, pop, price_history):
@@ -103,36 +117,38 @@ def update_fval(pop, extended_dividend_history):
 
 
 def determine_edf(pop):
+
+    # Define a function wrt agent type
     def edf(ind, p):
         if ind.type == "tf":
             try:
-                return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
+                return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
             except: 
                 warnings.warn('TF Error')
-                return (LAMBDA_TF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
-                # return (LAMBDA_TF * ind.wealth / p) * (np.tanh(ind.tsv + 0.5)) - ind.asset
+                return (LeverageTF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
+                # return (LeverageTF * ind.wealth / p) * (np.tanh(ind.tsv + 0.5)) - ind.asset
                 
 
         elif ind.type == "vi":
             try:
-                return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
+                return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
             except:
                 warnings.warn('VI Error')
-                return (LAMBDA_VI * ind.wealth / p) * (0.5) - ind.asset
-                # return (LAMBDA_VI * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
+                return (LeverageVI * ind.wealth / p) * (0.5) - ind.asset
+                # return (LeverageVI * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
 
 
 
         elif ind.type == "nt":
             try:
-                return (LAMBDA_NT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
+                return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
             except:
                 warnings.warn('NT Error')
-                return (LAMBDA_NT * ind.wealth / p) * (0.5) - ind.asset
-                # return (LAMBDA_NT * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
+                return (LeverageNT * ind.wealth / p) * (0.5) - ind.asset
+                # return (LeverageNT * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
                 
 
-
+    # Assign this function to be the agent's edf
     for ind in pop:
         ind.edf = edf
     return pop 
@@ -141,13 +157,13 @@ def determine_edf(pop):
 def determine_edf(pop):
     def edf(ind, p):
         if ind.type == "tf":
-            return (LAMBDA_TF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
+            return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
 
         elif ind.type == "vi":
-            return (LAMBDA_VI * ind.wealth / p) * (np.tanh(SCALE_VI * (ind[0] - p) + 0.5)) - ind.asset
+            return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (ind[0] - p) + 0.5)) - ind.asset
 
         elif ind.type == "nt":
-            return (LAMBDA_NT * ind.wealth / p) * (np.tanh((SCALE_NT * (ind[0] * abs(ind.process)) - p) + 0.5)) - ind.asset
+            return (LeverageNT * ind.wealth / p) * (np.tanh((SCALE_NT * (ind[0] * abs(ind.process)) - p) + 0.5)) - ind.asset
 
 
     for ind in pop:
@@ -645,48 +661,48 @@ def report_tf_stocks(pop, price):
         cash = total / num
     return cash
 
-def determine_strat_size(pop):
-    size_nt, num_nt = 0, 0
-    size_vi, num_vi = 0, 0
-    size_tf, num_tf = 0, 0 
-    for ind in pop:
-        if ind.type == 'nt':
-            size_nt += ind.wealth
-            num_nt += 1
-        if ind.type == 'vi':
-            size_vi += ind.wealth
-            num_vi += 1
-        if ind.type == 'tf':
-            size_tf += ind.wealth
-            num_tf += 1
-    all_size = size_vi + size_tf + size_nt 
-    if all_size == 0:
-        raise ValueError('All size = 0')
+# def determine_strat_size(pop):
+#     size_nt, num_nt = 0, 0
+#     size_vi, num_vi = 0, 0
+#     size_tf, num_tf = 0, 0 
+#     for ind in pop:
+#         if ind.type == 'nt':
+#             size_nt += ind.wealth
+#             num_nt += 1
+#         if ind.type == 'vi':
+#             size_vi += ind.wealth
+#             num_vi += 1
+#         if ind.type == 'tf':
+#             size_tf += ind.wealth
+#             num_tf += 1
+#     all_size = size_vi + size_tf + size_nt 
+#     if all_size == 0:
+#         raise ValueError('All size = 0')
 
-    current_nt = size_nt / all_size
-    current_vi = size_vi / all_size
-    current_tf = size_tf / all_size
-    currents = [current_nt, current_vi, current_tf]
+#     current_nt = size_nt / all_size
+#     current_vi = size_vi / all_size
+#     current_tf = size_tf / all_size
+#     currents = [current_nt, current_vi, current_tf]
 
-    return currents, size_nt, size_vi, size_tf, all_size, num_nt, num_vi, num_tf
+#     return currents, size_nt, size_vi, size_tf, all_size, num_nt, num_vi, num_tf
 
-def determine_differences(coordinates, pop):
-    # Determine targets
-    target_nt = coordinates[0]
-    target_vi = coordinates[1]
-    target_tf = coordinates[2]
-    targets = [target_nt, target_vi, target_tf]
+# def determine_differences(coordinates, pop):
+#     # Determine targets
+#     target_nt = coordinates[0]
+#     target_vi = coordinates[1]
+#     target_tf = coordinates[2]
+#     targets = [target_nt, target_vi, target_tf]
 
-    # Determine size of strategies
-    currents, size_nt, size_vi, size_tf, all_size, num_nt, num_vi, num_tf = determine_strat_size(pop)
-    sizes = [size_nt, size_vi, size_tf]
-    nums = [num_nt, num_vi, num_tf]
+#     # Determine size of strategies
+#     currents, size_nt, size_vi, size_tf, all_size, num_nt, num_vi, num_tf = determine_strat_size(pop)
+#     sizes = [size_nt, size_vi, size_tf]
+#     nums = [num_nt, num_vi, num_tf]
 
-    # print('Currents ' + str(currents))
-    # print('Targets ' + str(targets))
+#     # print('Currents ' + str(currents))
+#     # print('Targets ' + str(targets))
 
-    differences = [x1 - x2 for (x1, x2) in zip(currents, targets)]
-    return differences, targets, sizes, all_size, nums 
+#     differences = [x1 - x2 for (x1, x2) in zip(currents, targets)]
+#     return differences, targets, sizes, all_size, nums 
 
 def DetRatio(x,y):
     return np.linalg.det(x)/np.linalg.det(y)
@@ -746,54 +762,55 @@ def WealthShieldSimplified(pop, coordinates):
 
 #     if 1 in coordinates: 
 #         pass
+
 #     else: 
 
 #         if generation <= SHIELD_DURATION or reset_wealth == True:
 
 
-#             WealthShieldSimplified(pop, coordinates)
+#             # WealthShieldSimplified(pop, coordinates)
 
-            # pop_types = ['nt','vi','tf']
+#             pop_types = ['nt','vi','tf']
 
-            # differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
-            # # print('Differences')
-            # # print(differences)
+#             differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
+#             # print('Differences')
+#             # print(differences)
 
-            # attempt = 0
-            # while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
-            #     # We must continue to adjust wealth. 
+#             attempt = 0
+#             while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
+#                 # We must continue to adjust wealth. 
 
-            #     # Go through items of differences to see which strategies need a correction.
-            #     for i in range(len(differences)):
-            #         # If the absolute difference is above threshold and inferior, we bump this strategy.
-            #         if abs(differences[i]) > SHIELD_TOLERANCE and differences[i] < 0:
-            #         # Apply a correction round
-            #             # if i == 0 # bumping nt
-            #             # if i == 1 #bumping vi
-            #             # if i == 2 #bumping tf
-            #             amount = (targets[i] * all_size - sizes[i]) / (1 - targets[i])
-            #             if amount < 0:
-            #                 raise ValueError('Negative bump size ' + str(amount))
-            #             if nums[i] != 0:
-            #                 per_capita_amount = amount / nums[i]
-            #             elif nums[i] == 0:
-            #                 per_capita_amount = 0
-            #             for ind in pop:
-            #                 if ind.type == pop_types[i]:
-            #                     ind.loan -= per_capita_amount
-            #             break
+#                 # Go through items of differences to see which strategies need a correction.
+#                 for i in range(len(differences)):
+#                     # If the absolute difference is above threshold and inferior, we bump this strategy.
+#                     if abs(differences[i]) > SHIELD_TOLERANCE and differences[i] < 0:
+#                     # Apply a correction round
+#                         # if i == 0 # bumping nt
+#                         # if i == 1 #bumping vi
+#                         # if i == 2 #bumping tf
+#                         amount = (targets[i] * all_size - sizes[i]) / (1 - targets[i])
+#                         if amount < 0:
+#                             raise ValueError('Negative bump size ' + str(amount))
+#                         if nums[i] != 0:
+#                             per_capita_amount = amount / nums[i]
+#                         elif nums[i] == 0:
+#                             per_capita_amount = 0
+#                         for ind in pop:
+#                             if ind.type == pop_types[i]:
+#                                 ind.loan -= per_capita_amount
+#                         break
                         
 
-            #     # Recompute wealth, differences and attempts
-            #     calculate_wealth(pop, current_price) # Compute agents' wealth
-            #     differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
-            #     # print('Current differences: ' + str(differences))
-            #     attempt += 1
+#                 # Recompute wealth, differences and attempts
+#                 calculate_wealth(pop, current_price) # Compute agents' wealth
+#                 differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
+#                 # print('Current differences: ' + str(differences))
+#                 attempt += 1
 
-            # if attempt >= MAX_ATTEMPTS:
-                # print('Wealth adjustement not perfect after MAX_ATTEMPTS.')
+#             if attempt >= MAX_ATTEMPTS:
+#                 print('Wealth adjustement not perfect after MAX_ATTEMPTS.')
 
-        # print('Wealth shield deployed. ' + str(generation))
+#         # print('Wealth shield deployed. ' + str(generation))
             
 
 
