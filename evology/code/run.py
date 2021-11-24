@@ -22,7 +22,7 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
         df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     return df
 
-df = run(3, 2, 1000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
+df = run(100, 2, 1000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
 
 df.to_csv("evology/data/run_data.csv")
 # print(df)

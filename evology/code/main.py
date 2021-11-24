@@ -15,6 +15,7 @@ random.seed(random.random())
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
     # Initialise important variables and dataframe to store results
+    ReturnsNT, ReturnsVI, ReturnsTF = np.zeros((MAX_GENERATIONS - SHIELD_DURATION, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - SHIELD_DURATION, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - SHIELD_DURATION, POPULATION_SIZE))
     generation, current_price, dividend, spoils = 0, InitialPrice, INITIAL_DIVIDEND, 0
     results = np.zeros((MAX_GENERATIONS - SHIELD_DURATION, data.variables))
     price_history, dividend_history = [], []
@@ -34,9 +35,9 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE,
         pop, volume, dividend, random_dividend, dividend_history, extended_dividend_history, spoils, timeF = marketActivity(pop, 
             current_price, asset_supply, dividend, dividend_history, extended_dividend_history, spoils, ToLiquidate)
 
-        results = data.record_results(results, generation, current_price, mismatch, 
+        results, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(results, generation, current_price, mismatch, 
         dividend, random_dividend, volume, replacements, pop, price_history, spoils, 
-        asset_supply, timeA, timeB, timeC, timeD, timeE, timeF)
+        asset_supply, timeA, timeB, timeC, timeD, timeE, timeF, ReturnsNT, ReturnsVI, ReturnsTF)
 
     df = pd.DataFrame(results, columns = data.columns)
     

@@ -12,6 +12,7 @@ def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION
     starttime = timeit.default_timer()
     bs.calculate_wealth(pop, current_price) # Compute agents' wealth
     bs.update_profit(pop)
+    bs.ComputeReturn(pop)
     # sh.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
     pop = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
 

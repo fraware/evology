@@ -26,20 +26,32 @@ columns = [
     # Run time data
     'TimeA', 'TimeB', 'TimeC', 'TimeD', 'TimeE', 'TimeF', 'TimeG', 'TotalTime',
     # More measures
-    'PerSpoils', 'NT_MonReturns', 'VI_MonReturns', 'TF_MonReturns', 'AvgMonReturn'
+    'PerSpoils', 'NT_DayReturns', 'VI_DayReturns', 'TF_DayReturns', 'AvgDayReturn'
+
+    # TODO: add monthly returns back just as exponentiation of daily (because we would not track funds for this)
 ]
 
 variables = len(columns)
 
 def record_results(results, generation, current_price, mismatch, dividend,
     random_dividend, volume, replacements, pop, price_history, spoils, asset_supply,
-    timeA, timeB, timeC, timeD, timeE, timeF
+    timeA, timeB, timeC, timeD, timeE, timeF,
+    ReturnsNT, ReturnsVI, ReturnsTF
     ):
 
     if generation >= SHIELD_DURATION:
         starttime = timeit.default_timer()
 
         current = generation - SHIELD_DURATION
+
+        DailyNTReturns = FillList(GetDayReturn(pop, 'nt'), len(pop))
+        ReturnsNT[current, :] = DailyNTReturns
+
+        DailyVIReturns = FillList(GetDayReturn(pop, 'vi'), len(pop))
+        ReturnsVI[current, :] = DailyVIReturns
+
+        DailyTFReturns = FillList(GetDayReturn(pop, 'tf'), len(pop))
+        ReturnsTF[current, :] = DailyTFReturns
 
         ''' Global variables '''
         results[current, 0] = generation - SHIELD_DURATION 
@@ -114,13 +126,28 @@ def record_results(results, generation, current_price, mismatch, dividend,
 
         ''' More measures '''
         results[current, 53] = abs(100 * spoils / asset_supply)
-        results[current, 54] = bs.ReportNTMonReturn(pop)
-        results[current, 55] = bs.ReportVIMonReturn(pop)
-        results[current, 56] = bs.ReportTFMonReturn(pop)
-        results[current, 57] = ComputeAvgMonReturn(results, current, pop)
+        results[current, 54] = np.nanmean(DailyNTReturns) 
+        results[current, 55] = np.nanmean(DailyVIReturns) 
+        results[current, 56] = np.nanmean(DailyTFReturns) 
+        results[current, 57] = (results[current, 54] + results[current, 55] + results[current, 56]) / 3
 
 
-    return results
+
+
+
+    return results, ReturnsNT, ReturnsVI, ReturnsTF
+
+def GetDayReturn(pop, strat):
+    lis = []
+    for ind in pop:
+        if ind.type == strat:
+            lis.append(ind.DailyReturn)
+    return lis
+
+def FillList(lis, n):
+    while len(lis) < n:
+        lis.append(np.nan)
+    return lis
 
 def ComputeAvgReturn(results, generation, pop):
     AvgReturn = (results[generation, 10] * results[generation, 26] + results[generation, 11] * results[generation, 34] + results[generation, 12] * results[generation, 42]) / len(pop)
