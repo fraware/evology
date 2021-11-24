@@ -175,4 +175,4 @@ def WealthReset(pop, WealthCoords, generation, ResetWealth, price):
     else: 
         if ResetWealth == True:
             pop, asset_supply = CreatePop(len(pop), WealthCoords, price)
-    return pop, asset_supply
+    return pop
