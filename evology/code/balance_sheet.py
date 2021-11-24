@@ -409,11 +409,80 @@ def wealth_share_nt(pop):
 
 
 def agg_ed(pop, spoils): 
+    # functions = []
+    ToLiquidate = 0
+
+    ###
+    # edf_functions = np.empty(len(pop))
+    edf_functions = []
+    for i, ind in enumerate(pop):
+        def ind_edf(price):
+            return ind.edf(ind, price)
+        edf_functions.append(ind_edf)
+    ###
+
+    if spoils > 0:
+        ToLiquidate = - min(spoils, LIQUIDATION_ORDER_SIZE )
+    elif spoils == 0:
+        ToLiquidate = 0
+    elif spoils < 0:
+        ToLiquidate = min(abs(spoils), LIQUIDATION_ORDER_SIZE)
+    def big_edf(price):
+        result = 0
+        for ind in pop:
+            result += ind.edf(ind, price)
+        return result
+
+
+    if spoils == 0:
+        # def big_edf(asset_key, price):
+        def big_edf(price):
+            result = 0
+            for ind in pop:
+                result += ind.edf(ind, price)
+            return result
+
+    if spoils > 0:
+        ToLiquidate = min(spoils, LIQUIDATION_ORDER_SIZE )
+        # Spoils are positive. We want to sell some long shares in the market. Hence AdminEDV = -TL.
+        # def big_edf(asset_key, price):
+        def big_edf(price):
+            result = - ToLiquidate
+            for ind in pop:
+                result += ind.edf(ind, price)
+            return result
+
+    if spoils < 0:
+        ToLiquidate = min(abs(spoils), LIQUIDATION_ORDER_SIZE)
+        # Spoils are negative. We want to buy some long shares in the market to close shorts. Hence AdminEDV = +TL.
+        # def big_edf(asset_key, price):
+        def big_edf(price):
+            result = LIQUIDATION_ORDER_SIZE
+            for ind in pop:
+                result += ind.edf(ind, price)
+            return result
+    # functions.append(big_edf)
+
+    # print('Spoils is ' + str(spoils))
+    # print('Liquidation today is ' +str(ToLiquidate))
+
+    ###
+    def big_edf(price):
+        result = 0
+        for i in edf_functions:
+            result += i(price)
+    ##
+
+    return big_edf, ToLiquidate
+
+
+def agg_ed_esl(pop, spoils): 
     functions = []
     ToLiquidate = 0
 
     if spoils == 0:
         def big_edf(asset_key, price):
+        # def big_edf(price):
             result = 0
             for ind in pop:
                 result += ind.edf(ind, price)
@@ -423,6 +492,7 @@ def agg_ed(pop, spoils):
         ToLiquidate = min(spoils, LIQUIDATION_ORDER_SIZE )
         # Spoils are positive. We want to sell some long shares in the market. Hence AdminEDV = -TL.
         def big_edf(asset_key, price):
+        # def big_edf(price):
             result = - ToLiquidate
             for ind in pop:
                 result += ind.edf(ind, price)
@@ -432,7 +502,8 @@ def agg_ed(pop, spoils):
         ToLiquidate = min(abs(spoils), LIQUIDATION_ORDER_SIZE)
         # Spoils are negative. We want to buy some long shares in the market to close shorts. Hence AdminEDV = +TL.
         def big_edf(asset_key, price):
-            result = LIQUIDATION_ORDER_SIZE
+        # def big_edf(price):
+            result = ToLiquidate
             for ind in pop:
                 result += ind.edf(ind, price)
             return result

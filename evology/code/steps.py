@@ -7,6 +7,9 @@ import esl_market_clearing as esl_mc
 import market as mk
 import shield as sh
 import creation as cr
+from scipy import optimize
+
+eslmc = True
 
 def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth):
     starttime = timeit.default_timer()
@@ -40,10 +43,20 @@ def decision_updates(pop, mode, price_history, extended_dividend_history):
 
 def marketClearing(pop, current_price, price_history, spoils):
     starttime = timeit.default_timer()
-    ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
+
+    if eslmc == True:
+        ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
+        current_price = float(esl_mc.solve(ed_functions, current_price)[0])
+    elif eslmc == False:
+        agg_edf, ToLiquidate = bs.agg_ed(pop, spoils)
+        current_price = optimize.brentq(agg_edf, 0.5 * current_price, 2 * current_price)
+
+    # print(agg_edf)
+    # print(agg_edf(1))
     # if current_price < 0:
     #     raise ValueError('Negative current price before esl solve. ' + str(bs.report_types(pop)))
-    current_price = float(esl_mc.solve(ed_functions, current_price)[0])
+    # 
+    
     bs.calculate_tsv(pop, current_price, price_history)
     price_history.append(current_price)       
     pop, mismatch = bs.calculate_edv(pop, current_price)
