@@ -251,3 +251,4 @@ def OperateReset(pop, WealthCoords, price):
             ind.loan = 0
         ind.wealth = ind.cash + ind.asset * price - ind.loan
 
+

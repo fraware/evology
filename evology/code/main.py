@@ -20,7 +20,7 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE,
     price_history, dividend_history = [], []
     extended_dividend_history = mk.dividend_series(1*252)
 
-    pop, asset_supply = cr.CreatePop(POPULATION_SIZE, wealth_coordinates)
+    pop, asset_supply = cr.CreatePop(POPULATION_SIZE, wealth_coordinates, current_price)
 
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display):

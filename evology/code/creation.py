@@ -92,7 +92,10 @@ def gen_rd_ind(Coords):
 toolbox.register("gen_rd_ind", gen_rd_ind)
 
 
-def CreatePop(n, WealthCoords):
+def CreatePop(n, WealthCoords, price):
+
+    if n < 3:
+        raise ValueError('Cannot create diverse population with less than 3 agents.')
 
     # Determine total and strategy assets and cash
     TotalAsset, TotalCash = n * RefAssets, n * RefCash
@@ -104,9 +107,9 @@ def CreatePop(n, WealthCoords):
 
     # Draw 
     pop = []
-    pop.append(toolbox.gen_tf_ind())
-    pop.append(toolbox.gen_vi_ind())
     pop.append(toolbox.gen_nt_ind())
+    pop.append(toolbox.gen_vi_ind())
+    pop.append(toolbox.gen_tf_ind())
     NumNT, NumVI, NumTF = 1, 1, 1
 
     for i in range(n-3):
@@ -146,7 +149,8 @@ def CreatePop(n, WealthCoords):
             ind[0] = 2
             ind.cash = PcTFCash 
             ind.asset = PcTFAsset
-        ind.prev_wealth = ind.cash + ind.asset * InitialPrice 
+        ind.prev_wealth = ind.cash + ind.asset * price 
+        ind.wealth = ind.cash + ind.asset * price - ind.loan
 
 
     ''' optional bit just to check 
@@ -165,3 +169,10 @@ def CreatePop(n, WealthCoords):
 
     return pop, TotalAsset
 
+def WealthReset(pop, WealthCoords, generation, ResetWealth, price):
+    if generation <= SHIELD_DURATION:
+        pop, asset_supply = CreatePop(len(pop), WealthCoords, price)
+    else: 
+        if ResetWealth == True:
+            pop, asset_supply = CreatePop(len(pop), WealthCoords, price)
+    return pop, asset_supply

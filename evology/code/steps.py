@@ -6,14 +6,15 @@ from parameters import SHIELD_DURATION
 import esl_market_clearing as esl_mc
 import market as mk
 import shield as sh
+import creation as cr
 
 def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth):
     starttime = timeit.default_timer()
     bs.calculate_wealth(pop, current_price) # Compute agents' wealth
     bs.update_profit(pop)
-    sh.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
-    # sh.shield_wealth(generation, pop, wealth_coordinates, current_price, reset_wealth)
-    # pop = sh.ShieldWealth(pop, wealth_coordinates, generation, reset_wealth)
+    # sh.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
+    pop, asset_supply = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
+
     # TODO: add one more compute wealth
     # TODO: wealth shiled creates returns
     # TODO" clean all code

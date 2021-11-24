@@ -855,9 +855,9 @@ def ReportTFMonReturn(pop):
     returns = np.nan
     sum_returns = 0
     for ind in pop:
-        if ind.type == 'tf' and ind.MonWealth[-1] != 0:
+        if ind.type == 'tf' and ind.MonWealth[0,-1] != 0:
             num += 1
-            sum_returns += ind.wealth / ind.MonWealth[-1]
+            sum_returns += ind.wealth / ind.MonWealth[0,-1]
     if num != 0:
         returns = sum_returns / num - 1 
     return returns 
@@ -867,9 +867,9 @@ def ReportVIMonReturn(pop):
     returns = np.nan
     sum_returns = 0
     for ind in pop:
-        if ind.type == 'vi' and ind.MonWealth[-1] != 0:
+        if ind.type == 'vi' and ind.MonWealth[0,-1] != 0:
             num += 1
-            sum_returns += ind.wealth / ind.MonWealth[-1]
+            sum_returns += ind.wealth / ind.MonWealth[0,-1]
     if num != 0:
         returns = sum_returns / num - 1 
     return returns 
@@ -879,9 +879,9 @@ def ReportNTMonReturn(pop):
     returns = np.nan
     sum_returns = 0
     for ind in pop:
-        if ind.type == 'nt' and ind.MonWealth[-1] != 0:
+        if ind.type == 'nt' and ind.MonWealth[0,-1] != 0:
             num += 1
-            sum_returns += ind.wealth / ind.MonWealth[-1]
+            sum_returns += ind.wealth / ind.MonWealth[0,-1]
     if num != 0:
         returns = sum_returns / num - 1
     return returns 
