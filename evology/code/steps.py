@@ -49,7 +49,8 @@ def marketClearing(pop, current_price, price_history, spoils):
         current_price = float(esl_mc.solve(ed_functions, current_price)[0])
     elif eslmc == False:
         agg_edf, ToLiquidate = bs.agg_ed(pop, spoils)
-        current_price = optimize.brentq(agg_edf, 0.5 * current_price, 2 * current_price)
+        # current_price = optimize.brentq(agg_edf, 0.5 * current_price, 2 * current_price)
+        # current_price = steff(agg_edf, x)
 
     # print(agg_edf)
     # print(agg_edf(1))
@@ -73,3 +74,39 @@ def marketActivity(pop, current_price, asset_supply, dividend, dividend_history,
     bs.clear_debt(pop, current_price)
     timeF = timeit.default_timer() - starttime
     return pop, volume, dividend, random_dividend, dividend_history, extended_dividend_history, spoils, timeF
+
+
+
+
+
+# from typing import Callable, Iterator
+# Func = Callable[[float], float]
+
+# def g(f: Func, x: float, fx: float) -> Func:
+#     """First-order divided difference function.
+
+#     Arguments:
+#         f: Function input to g
+#         x: Point at which to evaluate g
+#         fx: Function f evaluated at x 
+#     """
+#     return lambda x: f(x + fx) / fx - 1
+
+# def steff(f: Func, x: float) -> Iterator[float]:
+#     """Steffenson algorithm for finding roots.
+
+#     This recursive generator yields the x_{n+1} value first then, when the generator iterates,
+#     it yields x_{n+2} from the next level of recursion.
+
+#     Arguments:
+#         f: Function whose root we are searching for
+#         x: Starting value upon first call, each level n that the function recurses x is x_n
+#     """
+#     while True:    
+#         fx = f(x)
+#         gx = g(f, x, fx)(x)
+#         if gx == 0:
+#             break
+#         else:
+#             x = x - fx / gx    # Update to x_{n+1}
+#             yield x            # Yield value

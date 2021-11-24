@@ -280,3 +280,18 @@ print(np.nanmean(returns1))
 print(np.nanmean(returns2))
 
 print(np.nanmean([]))'''
+
+
+
+# from parameters import *
+# import creation as cr
+# from steps import *
+# POPULATION_SIZE = 100
+# wealth_coordinates = [1/3, 1/3, 1/3]
+# current_price = 100
+
+# pop, asset_supply = cr.CreatePop(POPULATION_SIZE, wealth_coordinates, current_price)
+# pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
+# pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation, spoils, wealth_coordinates) # Replace insolvent agents     
+# pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
+# pop, timeD  = decision_updates(pop, mode, price_history, extended_dividend_history)

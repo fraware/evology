@@ -414,12 +414,12 @@ def agg_ed(pop, spoils):
 
     ###
     # edf_functions = np.empty(len(pop))
-    edf_functions = []
-    for i, ind in enumerate(pop):
-        def ind_edf(price):
-            return ind.edf(ind, price)
-        edf_functions.append(ind_edf)
-    ###
+    # edf_functions = []
+    # for i, ind in enumerate(pop):
+    #     def ind_edf(price):
+    #         return ind.edf(ind, price)
+    #     edf_functions.append(ind_edf)
+    # ###
 
     if spoils > 0:
         ToLiquidate = - min(spoils, LIQUIDATION_ORDER_SIZE )
@@ -433,6 +433,8 @@ def agg_ed(pop, spoils):
         for ind in pop:
             result += ind.edf(ind, price)
         return result
+
+
 
     return big_edf, ToLiquidate
 
