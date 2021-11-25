@@ -17,7 +17,7 @@ def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION
     bs.update_profit(pop)
     bs.ComputeReturn(pop)
     # sh.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
-    pop = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
+    
 
     # TODO: add one more compute wealth
     # TODO: wealth shiled creates returns

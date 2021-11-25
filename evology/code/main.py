@@ -22,18 +22,28 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE,
     extended_dividend_history = mk.dividend_series(1*252)
 
     pop, asset_supply = cr.CreatePop(POPULATION_SIZE, wealth_coordinates, current_price)
+    bs.calculate_wealth(pop, current_price)
+    bs.UpdatePrevWealth(pop)
 
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display):
-
-        pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
         pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation, spoils, wealth_coordinates) # Replace insolvent agents     
         pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
+
+        pop = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
+        bs.calculate_wealth(pop, current_price)
+        bs.UpdatePrevWealth(pop)
+
+        # pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
+        # pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation, spoils, wealth_coordinates) # Replace insolvent agents     
+        # pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
         pop, timeD  = decision_updates(pop, mode, price_history, extended_dividend_history)
         pop, mismatch, current_price, price_history, ToLiquidate, timeE = marketClearing(pop, current_price, price_history, spoils)
 
         pop, volume, dividend, random_dividend, dividend_history, extended_dividend_history, spoils, timeF = marketActivity(pop, 
             current_price, asset_supply, dividend, dividend_history, extended_dividend_history, spoils, ToLiquidate)
+        
+        pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
 
         results, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(results, generation, current_price, mismatch, 
         dividend, random_dividend, volume, replacements, pop, price_history, spoils, 

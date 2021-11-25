@@ -147,8 +147,8 @@ def CreatePop(n, WealthCoords, price):
             ind[0] = 2
             ind.cash = PcTFCash 
             ind.asset = PcTFAsset
-        ind.prev_wealth = ind.cash + ind.asset * price 
-        ind.wealth = ind.cash + ind.asset * price - ind.loan
+        # ind.prev_wealth = ind.cash + ind.asset * price 
+        # ind.wealth = ind.cash + ind.asset * price - ind.loan
 
 
     ''' optional bit just to check 
