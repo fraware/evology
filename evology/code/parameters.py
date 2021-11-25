@@ -19,9 +19,6 @@ PROBA_SELECTION = 1/(252 * 2)
 # General parameters
 
 LeverageNT, LeverageVI, LeverageTF = 1, 1, 1
-# LAMBDA_TF = 1
-# LAMBDA_VI = 1
-# LAMBDA_NT = 1
 SCALE_TF = 1
 SCALE_VI = 1 
 SCALE_NT = 1 
@@ -42,16 +39,9 @@ MAX_VALUATION_NT = 20
 
 ''' MARKET PARAMETERS '''
 TRADING_DAYS = 252
-share_increment = 1 #deprec
-INITIAL_PRICE = 100 #deprec
 InitialPrice = 100
-
-price = INITIAL_PRICE
-# INITIAL_CASH = 50_000_000
-# INITIAL_ASSETS = 500000
-# INITIAL_LOAN = 0
+price = InitialPrice
 CONSUMPTION_RATE = 0
-LIMIT_SHORT_POS_SIZE = 10
 
 RefLoan = 0
 RefCash = 3 * 50_000_000

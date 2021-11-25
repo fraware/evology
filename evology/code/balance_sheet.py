@@ -409,17 +409,8 @@ def wealth_share_nt(pop):
 
 
 def agg_ed(pop, spoils): 
-    # functions = []
+    functions = []
     ToLiquidate = 0
-
-    ###
-    # edf_functions = np.empty(len(pop))
-    # edf_functions = []
-    # for i, ind in enumerate(pop):
-    #     def ind_edf(price):
-    #         return ind.edf(ind, price)
-    #     edf_functions.append(ind_edf)
-    # ###
 
     if spoils > 0:
         ToLiquidate = - min(spoils, LIQUIDATION_ORDER_SIZE )
@@ -433,50 +424,28 @@ def agg_ed(pop, spoils):
         for ind in pop:
             result += ind.edf(ind, price)
         return result
-
-
-
-    return big_edf, ToLiquidate
+    functions.append(big_edf)
+    return functions, ToLiquidate
 
 
 def agg_ed_esl(pop, spoils): 
     functions = []
     ToLiquidate = 0
 
-    if spoils == 0:
-        def big_edf(asset_key, price):
-        # def big_edf(price):
-            result = 0
-            for ind in pop:
-                result += ind.edf(ind, price)
-            return result
-
     if spoils > 0:
-        ToLiquidate = min(spoils, LIQUIDATION_ORDER_SIZE )
-        # Spoils are positive. We want to sell some long shares in the market. Hence AdminEDV = -TL.
-        def big_edf(asset_key, price):
-        # def big_edf(price):
-            result = - ToLiquidate
-            for ind in pop:
-                result += ind.edf(ind, price)
-            return result
-
-    if spoils < 0:
+        ToLiquidate = - min(spoils, LIQUIDATION_ORDER_SIZE )
+    elif spoils == 0:
+        ToLiquidate = 0
+    elif spoils < 0:
         ToLiquidate = min(abs(spoils), LIQUIDATION_ORDER_SIZE)
-        # Spoils are negative. We want to buy some long shares in the market to close shorts. Hence AdminEDV = +TL.
-        def big_edf(asset_key, price):
-        # def big_edf(price):
-            result = ToLiquidate
-            for ind in pop:
-                result += ind.edf(ind, price)
-            return result
+
+    def big_edf(asset_key, price):
+        result = ToLiquidate
+        for ind in pop:
+            result += ind.edf(ind, price)
+        return result
     functions.append(big_edf)
-
-    # print('Spoils is ' + str(spoils))
-    # print('Liquidation today is ' +str(ToLiquidate))
-
     return functions, ToLiquidate
-
 
 
 def report_nt_cash(pop):
@@ -695,157 +664,6 @@ def report_tf_stocks(pop, price):
         cash = total / num
     return cash
 
-# def determine_strat_size(pop):
-#     size_nt, num_nt = 0, 0
-#     size_vi, num_vi = 0, 0
-#     size_tf, num_tf = 0, 0 
-#     for ind in pop:
-#         if ind.type == 'nt':
-#             size_nt += ind.wealth
-#             num_nt += 1
-#         if ind.type == 'vi':
-#             size_vi += ind.wealth
-#             num_vi += 1
-#         if ind.type == 'tf':
-#             size_tf += ind.wealth
-#             num_tf += 1
-#     all_size = size_vi + size_tf + size_nt 
-#     if all_size == 0:
-#         raise ValueError('All size = 0')
-
-#     current_nt = size_nt / all_size
-#     current_vi = size_vi / all_size
-#     current_tf = size_tf / all_size
-#     currents = [current_nt, current_vi, current_tf]
-
-#     return currents, size_nt, size_vi, size_tf, all_size, num_nt, num_vi, num_tf
-
-# def determine_differences(coordinates, pop):
-#     # Determine targets
-#     target_nt = coordinates[0]
-#     target_vi = coordinates[1]
-#     target_tf = coordinates[2]
-#     targets = [target_nt, target_vi, target_tf]
-
-#     # Determine size of strategies
-#     currents, size_nt, size_vi, size_tf, all_size, num_nt, num_vi, num_tf = determine_strat_size(pop)
-#     sizes = [size_nt, size_vi, size_tf]
-#     nums = [num_nt, num_vi, num_tf]
-
-#     # print('Currents ' + str(currents))
-#     # print('Targets ' + str(targets))
-
-#     differences = [x1 - x2 for (x1, x2) in zip(currents, targets)]
-#     return differences, targets, sizes, all_size, nums 
-
-# def DetRatio(x,y):
-#     return np.linalg.det(x)/np.linalg.det(y)
-
-# def WealthShieldSimplified(pop, coordinates):
-#     currents, WealthNT, WealthVI, WealthTF, all_size, NumNT, NumVI, NumTF = determine_strat_size(pop)
-
-#     TargetNT = coordinates[0]
-#     TargetVI = coordinates[1]
-#     TargetTF = coordinates[2]
-
-#     WealthSum = WealthNT + WealthVI + WealthTF 
-
-#     if TargetTF + TargetVI + TargetNT != 1:
-#         raise ValueError('Target coordinates do not sum to 1.')
-
-#     D = np.array([
-#     [1-TargetNT,-TargetNT, -TargetNT], 
-#     [-TargetVI, 1-TargetVI, -TargetNT],
-#     [-TargetTF, -TargetTF, 1-TargetTF]]) 
-
-#     Dx = np.array([
-#     [TargetNT * WealthSum - WealthNT,-TargetNT, -TargetNT], 
-#     [TargetVI * WealthSum - WealthVI, 1-TargetVI, -TargetNT],
-#     [TargetTF * WealthSum - WealthTF, -TargetTF, 1-TargetTF]]) 
-
-#     Dy = np.array([
-#     [1-TargetNT, TargetNT * WealthSum - WealthNT, -TargetNT], 
-#     [-TargetVI, TargetVI * WealthSum - WealthVI, -TargetNT],
-#     [-TargetTF, TargetTF * WealthSum - WealthTF, 1-TargetTF]]) 
-
-#     Dz = np.array([
-#     [1-TargetNT, -TargetNT, TargetNT * WealthSum - WealthNT], 
-#     [-TargetVI, 1-TargetVI, TargetVI * WealthSum - WealthVI],
-#     [-TargetTF, -TargetTF, TargetTF * WealthSum - WealthTF]]) 
-
-#     TransferNT = DetRatio(Dx,D) 
-#     TransferVI = DetRatio(Dy,D)
-#     TransferTF = DetRatio(Dz,D)
-
-#     PcTransferNT = TransferNT / NumNT
-#     PcTransferVI = TransferVI / NumVI
-#     PcTransferTF = TransferTF / NumTF
-
-#     for ind in pop:
-#         if ind.type == 'nt':
-#             ind.loan -= PcTransferNT
-#         if ind.type == 'vi':
-#             ind.loan -= PcTransferVI
-#         if ind.type == 'tf':
-#             ind.loan -= PcTransferTF
-
-# def shield_wealth(generation, pop, coordinates:list, current_price, reset_wealth):
-
-#     if sum(coordinates) > 1.0001:
-#         raise ValueError('Sum coordinates higher than 1 ' + sum(coordinates) )
-
-#     if 1 in coordinates: 
-#         pass
-
-#     else: 
-
-#         if generation <= SHIELD_DURATION or reset_wealth == True:
-
-
-#             # WealthShieldSimplified(pop, coordinates)
-
-#             pop_types = ['nt','vi','tf']
-
-#             differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
-#             # print('Differences')
-#             # print(differences)
-
-#             attempt = 0
-#             while any([abs(x) >= SHIELD_TOLERANCE for x in differences]) and attempt < MAX_ATTEMPTS:
-#                 # We must continue to adjust wealth. 
-
-#                 # Go through items of differences to see which strategies need a correction.
-#                 for i in range(len(differences)):
-#                     # If the absolute difference is above threshold and inferior, we bump this strategy.
-#                     if abs(differences[i]) > SHIELD_TOLERANCE and differences[i] < 0:
-#                     # Apply a correction round
-#                         # if i == 0 # bumping nt
-#                         # if i == 1 #bumping vi
-#                         # if i == 2 #bumping tf
-#                         amount = (targets[i] * all_size - sizes[i]) / (1 - targets[i])
-#                         if amount < 0:
-#                             raise ValueError('Negative bump size ' + str(amount))
-#                         if nums[i] != 0:
-#                             per_capita_amount = amount / nums[i]
-#                         elif nums[i] == 0:
-#                             per_capita_amount = 0
-#                         for ind in pop:
-#                             if ind.type == pop_types[i]:
-#                                 ind.loan -= per_capita_amount
-#                         break
-                        
-
-#                 # Recompute wealth, differences and attempts
-#                 calculate_wealth(pop, current_price) # Compute agents' wealth
-#                 differences, targets, sizes, all_size, nums = determine_differences(coordinates, pop)
-#                 # print('Current differences: ' + str(differences))
-#                 attempt += 1
-
-#             if attempt >= MAX_ATTEMPTS:
-#                 print('Wealth adjustement not perfect after MAX_ATTEMPTS.')
-
-#         # print('Wealth shield deployed. ' + str(generation))
-            
 
 
 def report_nt_return(pop):
@@ -918,17 +736,16 @@ def report_negW(pop):
     prop = 100 * count_neg / len(pop)
     return prop
 
-
-def GetWealth(pop, type):
+def GetWealth(pop, strat):
     TotalWealth = 0
     for ind in pop:
-        if ind.type == type:
+        if ind.type == strat:
             TotalWealth += ind.wealth
     return TotalWealth
 
-def GetNumber(pop, type):
+def GetNumber(pop, strat):
     TotalNumber = 0
     for ind in pop:
-        if ind.type == type:
+        if ind.type == start:
             TotalNumber += 1
     return TotalNumber

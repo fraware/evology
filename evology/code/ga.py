@@ -36,14 +36,7 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
             pop[i].prev_wealth = 0
             del pop[i].fitness.values
             round_replacements += 1
-
-    # if abs(spoils) > 0:
-    #     print('spooils ' + str(spoils))
-    #     per_ind_spoil = spoils / len(pop)
-    #     for ind in pop:
-    #         ind.asset += per_ind_spoil
-
-            
+    
     if mode == "between":
         pop = adjust_mode(pop, mode)
 
@@ -118,59 +111,6 @@ def random_decimal(low, high):
 
 def selRandom(individuals, k):
     return [random.choice(individuals) for i in range(k)]
-
-# # Creation of our customised selection operator (outnrament) that handles positive & negative fitness values
-# def selTournament(pop, tournsize, fit_attr="fitness"):
-#     chosen = []
-#     for i in range(len(pop)):
-#         popi_assets = pop[i].asset
-#         # print('popi')
-#         # print(popi_assets)
-
-#         # print('-----')
-#         # print(i)
-#         # print('pop[i] asset ' + str(i) + ', ' +str(pop[i].type) + ', ' + str(pop[i].asset))
-
-#         # chosen_i = []
-#         aspirants = selRandom(pop, tournsize-1) 
-#         aspirants.append(pop[i])
-#         chosen_i = max(aspirants, key=attrgetter(fit_attr))
-
-#         # print(type(pop[i]))
-#         # print(type(chosen_i))
-
-#         # print('chosen i asset precondserved '+str(chosen_i.asset))
-#         # print('pop i asset ' + str(pop[i].asset))
-
-#         # Conserve most variables
-#         # print(chosen_i.asset)
-        
-#         chosen_i.asset = pop[i].asset
-#         chosen_i.asset = popi_assets
-
-#         # print(chosen_i.asset)
-
-#         chosen_i.wealth = pop[i].asset
-#         chosen_i.process = pop[i].process
-#         chosen_i.tsf = pop[i].tsf
-#         chosen_i.edf = pop[i].edf
-#         chosen_i.edv = pop[i].edv
-#         chosen_i.tsv = pop[i].tsv
-#         chosen_i.loan = pop[i].loan
-#         chosen_i.cash = pop[i].cash
-#         chosen_i.margin = pop[i].margin
-#         chosen_i.margin = pop[i].margin
-#         chosen_i.ema = pop[i].ema
-#         chosen_i.profit = pop[i].profit
-
-#         # Append to list of selected individuals
-#         chosen.append(chosen_i)
-#         del chosen_i
-#         # print('chosen i asset ' + str(chosen_i.asset))
-#     return chosen
-
-# toolbox.register("selTournament", selTournament)
-# toolbox.register("select", toolbox.selTournament)
 
 def strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates):
     

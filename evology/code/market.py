@@ -12,7 +12,6 @@ def draw_dividend(dividend):
     
     random_dividend = random.normalvariate(0, 1)
     if len(random_dividend_history) > DIVIDEND_ATC_TAU:
-        # random_dividend = (1 - DIVIDEND_AUTOCORRELATION ** 2) * random_dividend + DIVIDEND_AUTOCORRELATION * random_dividend_history[len(random_dividend_history) - 1 - DIVIDEND_ATC_TAU]
         random_dividend = (1 - DIVIDEND_AUTOCORRELATION ** 2) * random_dividend + DIVIDEND_AUTOCORRELATION * random_dividend_history[- 1 - DIVIDEND_ATC_TAU]
 
     dividend = abs(dividend + DIVIDEND_GROWTH_RATE * dividend + DIVIDEND_GROWTH_VOLATILITY * dividend * random_dividend)
@@ -36,10 +35,8 @@ def determine_multiplier(pop, spoils, ToLiquidate):
 
     for ind in pop:
         if ind.edv > 0:
-            # total_buy += math.floor(ind.edv)
             total_buy += (ind.edv)
         elif ind.edv < 0:
-            # total_sell += math.floor(abs(ind.edv))
             total_sell += abs(ind.edv)
 
     if spoils > 0:
