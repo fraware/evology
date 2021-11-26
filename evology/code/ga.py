@@ -26,7 +26,7 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
     round_replacements = 0
 
     for i in range(0, len(pop)):
-        if pop[i].wealth <= 0:
+        if pop[i].wealth < 0:
             warnings.warn("Replacing // Gen " + str(generation) + " // Type: " + str(pop[i].type) + ", C: " + str(int(pop[i].cash)) + ", S+: " + str(int(pop[i].asset)) + ", L: " + str(int(pop[i].loan)) + ", M: " + str(int(pop[i].margin)) + ", W: " + str(int(pop[i].wealth)))
             spoils += pop[i].asset
             pop[i] = toolbox.gen_rd_ind(wealth_coordinates)

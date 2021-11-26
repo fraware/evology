@@ -96,27 +96,20 @@ def update_fval(pop, extended_dividend_history):
 
 
 def determine_edf(pop):
-
-    # Define a function wrt agent type
     def edf(ind, p):
         if ind.type == "tf":
             try:
-                return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
+                return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * (1 / DIVIDEND_AUTOCORRELATION) * ind.tsv + 0.5)) - ind.asset
             except: 
                 warnings.warn('TF Error')
                 return (LeverageTF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
-                # return (LeverageTF * ind.wealth / p) * (np.tanh(ind.tsv + 0.5)) - ind.asset
                 
-
         elif ind.type == "vi":
             try:
                 return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
             except:
                 warnings.warn('VI Error')
                 return (LeverageVI * ind.wealth / p) * (0.5) - ind.asset
-                # return (LeverageVI * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
-
-
 
         elif ind.type == "nt":
             try:
@@ -124,30 +117,12 @@ def determine_edf(pop):
             except:
                 warnings.warn('NT Error')
                 return (LeverageNT * ind.wealth / p) * (0.5) - ind.asset
-                # return (LeverageNT * ind.wealth / p) * (ind.tsv + 0.5) - ind.asset
                 
 
     # Assign this function to be the agent's edf
     for ind in pop:
         ind.edf = edf
     return pop 
-
-''' removing logs did not work
-def determine_edf(pop):
-    def edf(ind, p):
-        if ind.type == "tf":
-            return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * ind.tsv + 0.5)) - ind.asset
-
-        elif ind.type == "vi":
-            return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (ind[0] - p) + 0.5)) - ind.asset
-
-        elif ind.type == "nt":
-            return (LeverageNT * ind.wealth / p) * (np.tanh((SCALE_NT * (ind[0] * abs(ind.process)) - p) + 0.5)) - ind.asset
-
-
-    for ind in pop:
-        ind.edf = edf
-    return pop '''
 
 def calculate_edv(pop, price):
     total_edv = 0
@@ -725,6 +700,6 @@ def GetWealth(pop, strat):
 def GetNumber(pop, strat):
     TotalNumber = 0
     for ind in pop:
-        if ind.type == start:
+        if ind.type == strat:
             TotalNumber += 1
     return TotalNumber

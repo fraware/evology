@@ -27,24 +27,34 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE,
 
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display):
+
+        # Population reset
+        pop = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
+
+        # Hypermutation
         pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation, spoils, wealth_coordinates) # Replace insolvent agents     
+        
+        # Strategy evolution
         pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
 
-        pop = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
+        # Calculate wealth and previous wealth
         bs.calculate_wealth(pop, current_price)
         bs.UpdatePrevWealth(pop)
 
-        # pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
-        # pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, current_price, generation, spoils, wealth_coordinates) # Replace insolvent agents     
-        # pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
+        # Market decisions (tsv, proc, edf)
         pop, timeD  = decision_updates(pop, mode, price_history, extended_dividend_history)
+
+        # Market clearing 
         pop, mismatch, current_price, price_history, ToLiquidate, timeE = marketClearing(pop, current_price, price_history, spoils)
 
+        # Market execution
         pop, volume, dividend, random_dividend, dividend_history, extended_dividend_history, spoils, timeF = marketActivity(pop, 
             current_price, asset_supply, dividend, dividend_history, extended_dividend_history, spoils, ToLiquidate)
         
+        # Earnings, compute profits
         pop, timeA = update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
 
+        # Record results
         results, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(results, generation, current_price, mismatch, 
         dividend, random_dividend, volume, replacements, pop, price_history, spoils, 
         asset_supply, timeA, timeB, timeC, timeD, timeE, timeF, ReturnsNT, ReturnsVI, ReturnsTF)
