@@ -18,22 +18,13 @@ PROBA_SELECTION = 1/(252 * 2)
 ''' STRATEGY PARAMETERS '''
 # General parameters
 
-LeverageNT, LeverageVI, LeverageTF = 1, 8, 1
-SCALE_NT, SCALE_VI, SCALE_TF = 5, 10, 4
+LeverageNT, LeverageVI, LeverageTF = 2/3, 3, 2/3 # 1, 1, 1 #1, 8, 1
+SCALE_NT, SCALE_VI, SCALE_TF = 5, 3, 4 #1, 1, 1 #5, 10, 4
 
 GAMMA_NT = 0.2 * np.sqrt(1/252)
 MU_NT = 1
 RHO_NT = 0.00045832561
 
-# For within evolution
-MIN_TIME_HORIZON = 2
-MAX_TIME_HORIZON = 10
-
-MIN_VALUATION_VI = 11
-MAX_VALUATION_VI = 20
-
-MIN_VALUATION_NT = 11
-MAX_VALUATION_NT = 20
 
 ''' MARKET PARAMETERS '''
 TRADING_DAYS = 252
@@ -69,3 +60,14 @@ LIQUIDATION_ORDER_SIZE = 100000
 dividend_history = []
 random_dividend_history = []
 
+
+
+# For within evolution
+MIN_TIME_HORIZON = 2
+MAX_TIME_HORIZON = 10
+
+MIN_VALUATION_VI = 11
+MAX_VALUATION_VI = 20
+
+MIN_VALUATION_NT = 11
+MAX_VALUATION_NT = 20
