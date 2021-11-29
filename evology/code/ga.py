@@ -25,20 +25,37 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
     starttime = timeit.default_timer()
     round_replacements = 0
 
-    for i in range(0, len(pop)):
-        if pop[i].wealth < 0:
-            warnings.warn("Replacing // Gen " + str(generation) + " // Type: " + str(pop[i].type) + ", C: " + str(int(pop[i].cash)) + ", S+: " + str(int(pop[i].asset)) + ", L: " + str(int(pop[i].loan)) + ", M: " + str(int(pop[i].margin)) + ", W: " + str(int(pop[i].wealth)))
-            spoils += pop[i].asset
-            pop[i] = toolbox.gen_rd_ind(wealth_coordinates)
-            pop[i].cash = 50_000_000
-            pop[i].wealth = pop[i].cash + pop[i].asset * current_price - pop[i].loan
-            pop[i].MonWealth = np.zeros((1, 21))[0]
-            pop[i].prev_wealth = 0
-            del pop[i].fitness.values
-            round_replacements += 1
-    
-    if mode == "between":
-        pop = adjust_mode(pop, mode)
+    hyperm = False
+
+    if hyperm == True:
+        for i in range(0, len(pop)):
+            
+            if pop[i].wealth < 0:
+                warnings.warn("Replacing // Gen " + str(generation) + " // Type: " + str(pop[i].type) + ", C: " + str(int(pop[i].cash)) + ", S+: " + str(int(pop[i].asset)) + ", L: " + str(int(pop[i].loan)) + ", M: " + str(int(pop[i].margin)) + ", W: " + str(int(pop[i].wealth)))
+                spoils += pop[i].asset
+                pop[i] = toolbox.gen_rd_ind(wealth_coordinates)
+                pop[i].cash = 50_000_000
+                pop[i].wealth = pop[i].cash + pop[i].asset * current_price - pop[i].loan
+                pop[i].MonWealth = np.zeros((1, 21))[0]
+                pop[i].prev_wealth = 0
+                del pop[i].fitness.values
+                round_replacements += 1
+        
+        if mode == "between":
+            pop = adjust_mode(pop, mode)
+
+    if hyperm == False:
+        replaced = False
+        ReplacedCount = 0
+        for ind in pop:
+            if ind.wealth < 0:
+                ReplacedCount += 1
+                replaced = True
+                ind.loan -= 2 * abs(ind.wealth)
+                ind.wealth = ind.cash + ind.asset * current_price - ind.loan
+                    
+        if replaced == True:
+            print('Bailed out today (' + str(ReplacedCount) + ').')
 
     timeB = timeit.default_timer() - starttime
     return pop, round_replacements, spoils, timeB
