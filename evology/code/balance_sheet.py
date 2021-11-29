@@ -64,7 +64,8 @@ def determine_tsv_proc(mode, pop, price_history):
             if ind.type == "tf":   
                 ind.tsv = tf_basic
             if ind.type == "nt":
-                ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
+                # ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
+                ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
 
 
 
@@ -76,7 +77,8 @@ def determine_tsv_proc(mode, pop, price_history):
                 elif len(price_history) < ind[0]:
                     ind.tsv = 0
             if ind.type == "nt":
-                ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
+                # ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
+                ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
 
 
 def update_fval(pop, extended_dividend_history):
@@ -99,21 +101,23 @@ def determine_edf(pop):
     def edf(ind, p):
         if ind.type == "tf":
             try:
-                return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * (1 / DIVIDEND_AUTOCORRELATION) * ind.tsv + 0.5)) - ind.asset
+                return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * (1 / DIVIDEND_AUTOCORRELATION) * ind.tsv) + 0.5) - ind.asset
             except: 
                 warnings.warn('TF Error')
                 return (LeverageTF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
                 
         elif ind.type == "vi":
             try:
-                return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p)) + 0.5)) - ind.asset
+                return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p))) + 0.5) - ind.asset
             except:
                 warnings.warn('VI Error')
                 return (LeverageVI * ind.wealth / p) * (0.5) - ind.asset
 
         elif ind.type == "nt":
             try:
-                return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
+                # return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
+                return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - math.log2(p))) + 0.5) - ind.asset
+            
             except:
                 warnings.warn('NT Error')
                 return (LeverageNT * ind.wealth / p) * (0.5) - ind.asset
@@ -196,9 +200,9 @@ def report_nt_signal(pop):
     fval_round = 0
     for ind in pop:
         if ind.type == "nt":
-            fval += ind[0] * abs(ind.process)
+            fval += ind[0] * ind.process
             if fval < 0:
-                raise ValueError('Negative NT signal')
+                warnings.warn('Negative NT signal')
             num += 1
     if num != 0:
         fval_round = fval/num
@@ -223,7 +227,7 @@ def report_tf_signal(pop, price_history):
 
     for ind in pop:
         if len(price_history) > ind[0] and ind.type == 'tf':
-            fval += price_history[-1] / price_history[-ind[0]] - 1
+            fval += (price_history[-1] / price_history[-ind[0]]) - 1
             num += 1
     if num != 0:
         fval_round = fval/num
