@@ -50,7 +50,7 @@ def CircuitClearing(ed_functions, current_price):
 
   ClearingPrice = float(solve(ed_functions, current_price)[0])
 
-  Circuit = False
+  Circuit = True
 
   if Circuit == True: 
     LimitBelow = current_price * 0.5
