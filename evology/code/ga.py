@@ -24,7 +24,7 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
 
     starttime = timeit.default_timer()
     round_replacements = 0
-
+    ''' 
     hyperm = False
 
     if hyperm == True:
@@ -57,6 +57,7 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
         if replaced == True:
             print('Bailed out today (' + str(ReplacedCount) + ').')
 
+    '''
     timeB = timeit.default_timer() - starttime
     return pop, round_replacements, spoils, timeB
 
