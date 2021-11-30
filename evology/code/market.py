@@ -119,10 +119,25 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
     # print('Post liquidation spoils ' + str(spoils))
     # print('Post liquidation pop ownership: ' + str(bs.count_pop_long_assets(pop)))
 
-    if bs.count_long_assets(pop, spoils) > asset_supply + 1 or bs.count_long_assets(pop, spoils) < asset_supply - 1:
-        print('Spoils ' + str(spoils))
-        print('ToLiquidate ' + str(ToLiquidate))
-        print('Pop ownership ' + str(bs.count_pop_long_assets(pop)))
-        raise ValueError('Asset supply cst violated ' +str(bs.count_long_assets(pop, spoils)) + '/' + str(asset_supply))
+    if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 0.001 * asset_supply:
+        # If we violate the asset supply constraint by more than 0.1%, raise an error.
+        if abs(bs.count_long_assets(pop, spoils) - asset_supply) >= 0.01 * asset_supply:
+            print('Spoils ' + str(spoils))
+            print('ToLiquidate ' + str(ToLiquidate))
+            print('Pop ownership ' + str(bs.count_pop_long_assets(pop)))
+            raise ValueError('Asset supply cst violated ' +str(bs.count_long_assets(pop, spoils)) + '/' + str(asset_supply))
+
+        # If the violation of the asset supply is minor, correct the rounding error.
+    if abs(bs.count_long_assets(pop, spoils) - asset_supply) < 0.01 * asset_supply:  
+        # print('Rounding error correction for AS')
+        # print(bs.count_long_assets(pop, spoils))
+        # print(asset_supply)
+        SupplyCorrectionRatio = (asset_supply / bs.count_long_assets(pop, spoils))
+        for ind in pop:
+            ind.asset = SupplyCorrectionRatio * ind.asset
+        if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 1:
+            print(abs(bs.count_long_assets(pop, spoils) - asset_supply))
+            raise ValueError('Rounding violation of asset supply was not succesfully corrected. ' + str(SupplyCorrectionRatio) + '//' + str(bs.count_long_assets(pop, spoils)) + '//' + str(asset_supply))
+
 
     return pop, volume, spoils
