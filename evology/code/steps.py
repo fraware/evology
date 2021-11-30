@@ -41,7 +41,8 @@ def marketClearing(pop, current_price, price_history, spoils):
 
     if eslmc == True:
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
-        current_price = float(esl_mc.solve(ed_functions, current_price)[0])
+        current_price = esl_mc.CircuitClearing(ed_functions, current_price)    
+        # float(esl_mc.solve(ed_functions, current_price)[0])
     elif eslmc == False:
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         agg_edf = ed_functions[0]

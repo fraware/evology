@@ -134,9 +134,16 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
         # print(asset_supply)
         SupplyCorrectionRatio = (asset_supply / bs.count_long_assets(pop, spoils))
         for ind in pop:
+            previous = ind.asset
             ind.asset = SupplyCorrectionRatio * ind.asset
+            if ind.asset != previous * SupplyCorrectionRatio:
+                warnings.warn('Previous asset = new ind.asset ' + str(previous) + '/' + str(ind.asset) + '/' + str(SupplyCorrectionRatio) + '/' + str(previous * SupplyCorrectionRatio))
+
         if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 1:
             print(abs(bs.count_long_assets(pop, spoils) - asset_supply))
+            print('---')
+            for ind in pop:
+                print(ind.asset)
             raise ValueError('Rounding violation of asset supply was not succesfully corrected. ' + str(SupplyCorrectionRatio) + '//' + str(bs.count_long_assets(pop, spoils)) + '//' + str(asset_supply))
 
 
