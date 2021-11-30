@@ -101,19 +101,20 @@ def determine_edf(pop):
     def edf(ind, p):
         if ind.type == "tf":
             try:
-                return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * (1 / DIVIDEND_AUTOCORRELATION) * ind.tsv) + 0.5) - ind.asset
+                return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * ATC_TF * ind.tsv) + 0.5) - ind.asset
             except: 
                 warnings.warn('TF Error, for p: ' + str(p))
-                # return (LeverageTF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
-                return 0
+                return (LeverageTF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
+                # return 0
                 
         elif ind.type == "vi":
             try:
                 return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p))) + 0.5) - ind.asset
             except:
                 warnings.warn('VI Error, for p: ' + str(p))
-                # return (LeverageVI * ind.wealth / p) * (0.5) - ind.asset
-                return 0
+                raise ValueError('VI Error, for p: ' + str(p))
+                return (LeverageVI * ind.wealth / p) * (0.5) - ind.asset
+                # return 0
 
         elif ind.type == "nt":
             try:
@@ -122,8 +123,9 @@ def determine_edf(pop):
             
             except:
                 warnings.warn('NT Error, for p: ' + str(p))
-                # return (LeverageNT * ind.wealth / p) * (0.5) - ind.asset
-                return 0
+                raise ValueError('NT Error, for p: ' + str(p))
+                return (LeverageNT * ind.wealth / p) * (0.5) - ind.asset
+                # return 0
                 
 
     # Assign this function to be the agent's edf

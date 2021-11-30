@@ -28,6 +28,8 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE,
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display):
 
+        print('Price at gen ' +str(generation) + str(' is ') + str(current_price))
+
         # Population reset
         pop = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
 

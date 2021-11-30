@@ -9,7 +9,7 @@ import shield as sh
 import creation as cr
 from scipy import optimize
 
-eslmc = True
+
 
 def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth):
     starttime = timeit.default_timer()
@@ -38,6 +38,8 @@ def decision_updates(pop, mode, price_history, extended_dividend_history):
 
 def marketClearing(pop, current_price, price_history, spoils):
     starttime = timeit.default_timer()
+
+    eslmc = True
 
     if eslmc == True:
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
