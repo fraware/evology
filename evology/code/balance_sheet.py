@@ -101,42 +101,46 @@ def update_fval(pop, extended_dividend_history):
 def determine_edf(pop):
     def edf(ind, p):
         if ind.type == "tf":
-            # return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * ATC_TF * ind.tsv) + 0.5) - ind.asset
+            return (LeverageTF * ind.wealth / p) * np.tanh(ind.tsv) - ind.asset
+
 
             
-            try:
-                return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * ATC_TF * ind.tsv) + 0.5) - ind.asset
-            except: 
-                warnings.warn('TF Error, for p: ' + str(p))
-                return (LeverageTF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
-                # return 0
+            # try:
+            #     return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * ATC_TF * ind.tsv) + 0.5) - ind.asset
+            # except: 
+            #     warnings.warn('TF Error, for p: ' + str(p))
+            #     return (LeverageTF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
                 
                 
         elif ind.type == "vi":
-            # return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (ind[0] - p)) + 0.5) - ind.asset
-            
             try:
-                return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p))) + 0.5) - ind.asset
+                return (LeverageVI * ind.wealth / p) * np.tanh(math.log2(ind[0]) - np.log2(p)) - ind.asset
             except:
-                warnings.warn('VI Error, for p: ' + str(p))
-                # raise ValueError('VI Error, for p: ' + str(p))
-                return (LeverageVI * ind.wealth / p) * (0.5) - ind.asset
-                # return 0
-                # '''
+                print(p)
+                print(ind[0])
+                print(math.log2(ind[0]) - math.log2(p))
+                raise ValueError('math domain error')
+       
+            # try:
+            #     return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p))) + 0.5) - ind.asset
+            # except:
+            #     warnings.warn('VI Error, for p: ' + str(p))
+            #     return (LeverageVI * ind.wealth / p) * (0.5) - ind.asset
 
         elif ind.type == "nt":
-            # return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * ((ind[0] * ind.process) - p)) + 0.5) - ind.asset
-            
             try:
-
-                # return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - math.log2(p)) + 0.5)) - ind.asset
-                return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - math.log2(p))) + 0.5) - ind.asset
-            
+                return (LeverageNT * ind.wealth / p) * np.tanh(math.log2(ind[0] * ind.process) - np.log2(p)) - ind.asset
             except:
-                warnings.warn('NT Error, for p: ' + str(p))
-                # raise ValueError('NT Error, for p: ' + str(p))
-                return (LeverageNT * ind.wealth / p) * (0.5) - ind.asset
-                # return 0'''
+                print(p)
+                print(ind[0])
+                print(ind.process)
+                print(math.log2(ind[0] * ind.process) - np.log2(p))
+                raise ValueError('math domain error')
+            # try:
+            #     return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - math.log2(p))) + 0.5) - ind.asset
+            # except:
+            #     warnings.warn('NT Error, for p: ' + str(p))
+            #     return (LeverageNT * ind.wealth / p) * (0.5) - ind.asset
                 
 
     # Assign this function to be the agent's edf
@@ -640,47 +644,57 @@ def report_tf_stocks(pop, price):
 
 
 
-def report_nt_return(pop):
-    num = 0
-    returns = np.nan
-    sum_returns = 0
-    for ind in pop:
-        if ind.type == 'nt' and ind.prev_wealth != 0:
-            num += 1
-            sum_returns += ind.wealth / ind.prev_wealth
-    if num != 0:
-        returns = sum_returns / num - 1
-    return returns
+# def report_nt_return(pop):
+#     num = 0
+#     returns = np.nan
+#     sum_returns = 0
+#     for ind in pop:
+#         if ind.type == 'nt' and ind.prev_wealth != 0:
+#             num += 1
+#             sum_returns += ind.wealth / ind.prev_wealth
+#     if num != 0:
+#         returns = sum_returns / num - 1
+#     return returns
 
-def report_vi_return(pop):
-    num = 0
-    returns = np.nan
-    sum_returns = 0
-    for ind in pop:
-        if ind.type == 'vi' and ind.prev_wealth != 0:
-            num += 1
-            sum_returns += ind.wealth / ind.prev_wealth
-    if num != 0:
-        returns = sum_returns / num - 1
-    return returns
+# def report_vi_return(pop):
+#     num = 0
+#     returns = np.nan
+#     sum_returns = 0
+#     for ind in pop:
+#         if ind.type == 'vi' and ind.prev_wealth != 0:
+#             num += 1
+#             sum_returns += ind.wealth / ind.prev_wealth
+#     if num != 0:
+#         returns = sum_returns / num - 1
+#     return returns
 
-def report_tf_return(pop):
-    num = 0
-    returns = np.nan
-    sum_returns = 0
-    for ind in pop:
-        if ind.type == 'tf' and ind.prev_wealth != 0:
-            num += 1
-            sum_returns += ind.wealth / ind.prev_wealth
-    if num != 0:
-        returns = sum_returns / num - 1
-    return returns
+# def report_tf_return(pop):
+#     num = 0
+#     returns = np.nan
+#     sum_returns = 0
+#     for ind in pop:
+#         if ind.type == 'tf' and ind.prev_wealth != 0:
+#             num += 1
+#             sum_returns += ind.wealth / ind.prev_wealth
+#     if num != 0:
+#         returns = sum_returns / num - 1
+#     return returns
 
+def ReportReturn(pop, strat):
+    num, Total = 0,0
+    result = np.nan
+    for ind in pop:
+        if ind.type == strat and ind.prev_wealth != 0:
+            num += 1
+            Total += ind.DailyReturn
+    if num != 0:
+        result = Total / num
+    return result
         
 def ComputeReturn(pop):
     for ind in pop:
         if ind.prev_wealth != 0:
-            ind.DailyReturn = (ind.wealth / ind.prev_wealth) - 1
+            ind.DailyReturn = math.log(ind.wealth / ind.prev_wealth)
         else:
             ind.DailyReturn = np.nan
 

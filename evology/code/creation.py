@@ -26,7 +26,7 @@ creator.create("ind_tf", list, typecode = 'd', fitness=creator.fitness_strategy,
     profit = 0, 
     prev_wealth = 0, 
     DailyReturn = 0,
-    leverage = LeverageNT)
+    leverage = LeverageTF)
 
 creator.create("ind_vi", list, typecode = 'd', fitness=creator.fitness_strategy, 
     wealth = 0, 
@@ -56,14 +56,13 @@ creator.create("ind_nt", list, typecode = 'd', fitness=creator.fitness_strategy,
     tsf = None, 
     tsv = 0, 
     edf = None, 
-    # MonWealth = np.zeros((1, 21)),
     edv = 0, 
     process = 1, 
     ema = 0, 
     profit = 0, 
     prev_wealth = 0, 
     DailyReturn = 0,
-    leverage = LeverageTF)
+    leverage = LeverageNT)
 
 # TODO: individual_ga is a list, individual_gp will be a gp.primitiveTree.
 # TODO: add the procedure for larger strategy space. Maybe a mode to select the 

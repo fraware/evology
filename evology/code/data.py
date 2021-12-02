@@ -87,7 +87,7 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 23] = bs.report_nt_pnl(pop)
         results[current, 24] = bs.report_nt_signal(pop)
         results[current, 25] = bs.report_nt_stocks(pop, current_price)
-        results[current, 26] = bs.report_nt_return(pop)
+        results[current, 26] = bs.ReportReturn(pop, 'nt')
 
         ''' Value investors '''
         results[current, 27] = bs.report_vi_cash(pop)
@@ -97,7 +97,7 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 31] = bs.report_vi_pnl(pop)
         results[current, 32] = bs.report_vi_signal(pop)
         results[current, 33] = bs.report_vi_stocks(pop, current_price)
-        results[current, 34] = bs.report_vi_return(pop)
+        results[current, 34] = bs.ReportReturn(pop, 'vi')
 
         ''' Trend followers '''
         results[current, 35] = bs.report_tf_cash(pop)
@@ -107,7 +107,7 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 39] = bs.report_tf_pnl(pop)
         results[current, 40] = bs.report_tf_signal(pop, price_history)
         results[current, 41] = bs.report_tf_stocks(pop, current_price)
-        results[current, 42] = bs.report_tf_return(pop)
+        results[current, 42] = bs.ReportReturn(pop, 'tf')
 
         ''' Additional measures '''
         results[current, 43] = ComputeAvgReturn(results, current, pop)
