@@ -8,6 +8,7 @@ import random
 import numpy as np
 random.seed = random.random()
 from parameters import *
+import traceback
 
 # main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 
@@ -25,6 +26,7 @@ def learning_runs(repetitions, time, agents):
             went_smoothly = False
             print('Process ' + str(i) + ' encoutered an exception.')
             print(str(e))
+            traceback.print_exc()
             break
         i += 1
     return went_smoothly
@@ -47,6 +49,7 @@ def learning_runs_reset(repetitions, time, agents):
             went_smoothly = False
             print('Process ' + str(i) + ' encoutered an exception.')
             print(str(e))
+            traceback.print_exc()
             break
         i += 1
     return went_smoothly
@@ -70,6 +73,7 @@ def nolearning_runs(repetitions, time, agents):
             went_smoothly = False
             print('Process ' + str(i) + ' encoutered an exception.')
             print(str(e))
+            traceback.print_exc()
             break
         i += 1
     return went_smoothly
@@ -95,6 +99,7 @@ def nolearning_runs_reset(repetitions, time, agents):
             went_smoothly = False
             print('Process ' + str(i) + ' encoutered an exception.')
             print(str(e))
+            traceback.print_exc()
             break
         i += 1
     return went_smoothly
