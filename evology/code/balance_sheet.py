@@ -63,6 +63,7 @@ def determine_tsv_proc(mode, pop, price_history):
         for ind in pop:
             if ind.type == "tf":   
                 ind.tsv = tf_basic
+                # ind.tsv = price_history[-1]
             if ind.type == "nt":
                 # ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
                 ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
@@ -75,8 +76,10 @@ def determine_tsv_proc(mode, pop, price_history):
                 if len(price_history) >= ind[0]:
                     ind.tsv = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
                     # ind.tsv = price_history[-1] - price_history[-ind[0]]
+                    # ind.tsv = price_history[-1]
                 elif len(price_history) < ind[0]:
                     ind.tsv = 0
+                    # ind.tsv = InitialPrice
             if ind.type == "nt":
                 # ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
                 ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
@@ -102,6 +105,7 @@ def determine_edf(pop):
     def edf(ind, p):
         if ind.type == "tf":
             return (LeverageTF * ind.wealth / p) * np.tanh(ind.tsv) - ind.asset
+            # return (LeverageTF * ind.wealth / p) * np.tanh(np.log2(p / ind.tsv)) - ind.asset
 
 
             
