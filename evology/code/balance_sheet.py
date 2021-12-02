@@ -697,7 +697,7 @@ def ReportReturn(pop, strat):
         
 def ComputeReturn(pop):
     for ind in pop:
-        if ind.prev_wealth != 0:
+        if ind.prev_wealth > 0:
             ind.DailyReturn = math.log(ind.wealth / ind.prev_wealth)
         else:
             ind.DailyReturn = np.nan

@@ -11,6 +11,8 @@ wealth_coordinates = [1/3, 1/3, 1/3]
 # wealth_coordinates = [0.18276920410580527, 0.08369636854672699, 0.7335344273474677]
 
 wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
+wealth_coordinates = [0.31476316799528176, 0.48832755570430747, 0.19690927630041072]
+
 print(wealth_coordinates)
 
 def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, reset_wealth):
@@ -23,7 +25,7 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
         df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     return df
 
-df = run(10, 0, 50000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
+df = run(100, 2, 20000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
 df.to_csv("evology/data/run_data.csv")
 
 
