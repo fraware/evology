@@ -83,6 +83,20 @@ def determine_tsv_proc(mode, pop, price_history):
             if ind.type == "nt":
                 # ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
                 ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
+                if ind.process < 0:
+                    warnings.warn('Negative process value for NT')
+    # ''' making VI trade absed on previous price '''
+    # for ind in pop:
+    #     if ind.type == 'vi':
+    #         if len(price_history) > 1:
+    #             ind.tsv = math.log2(ind[0]) - math.log2(price_history[-1])
+    #         else:
+    #             ind.tsv =  math.log2(ind[0]) - math.log2(InitialPrice)
+    #     if ind.type == 'nt':
+    #         if len(price_history) > 1:
+    #             ind.tsv = math.log2(ind[0] * ind.process) - math.log2(price_history[-1])
+    #         else:
+    #             ind.tsv = math.log2(ind[0] * ind.process) - math.log2(InitialPrice)
 
 
 def update_fval(pop, extended_dividend_history):
@@ -104,7 +118,7 @@ def update_fval(pop, extended_dividend_history):
 def determine_edf(pop):
     def edf(ind, p):
         if ind.type == "tf":
-            return (LeverageTF * ind.wealth / p) * np.tanh(ind.tsv) - ind.asset
+            return (LeverageTF * ind.wealth / p) * np.tanh(SCALE_TF * ind.tsv) - ind.asset
             # return (LeverageTF * ind.wealth / p) * np.tanh(np.log2(p / ind.tsv)) - ind.asset
 
 
@@ -117,8 +131,9 @@ def determine_edf(pop):
                 
                 
         elif ind.type == "vi":
+            # return (LeverageVI * ind.wealth / p) * np.tanh(ind.tsv) - ind.asset
             try:
-                return (LeverageVI * ind.wealth / p) * np.tanh(math.log2(ind[0]) - np.log2(p)) - ind.asset
+                return (LeverageVI * ind.wealth / p) * np.tanh(SCALE_VI * (math.log2(ind[0]) - np.log2(p))) - ind.asset
             except:
                 print(p)
                 print(ind[0])
@@ -132,14 +147,19 @@ def determine_edf(pop):
             #     return (LeverageVI * ind.wealth / p) * (0.5) - ind.asset
 
         elif ind.type == "nt":
+            # return (LeverageNT * ind.wealth / p) * np.tanh(ind.tsv) - ind.asset
+
             try:
-                return (LeverageNT * ind.wealth / p) * np.tanh(math.log2(ind[0] * ind.process) - np.log2(p)) - ind.asset
+                return (LeverageNT * ind.wealth / p) * np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - np.log2(p))) - ind.asset
             except:
+                print('p, ind, indproc, ind . indproc, log2 of it, math log of it - log p')
                 print(p)
                 print(ind[0])
                 print(ind.process)
+                print(ind[0] * ind.process)
+                print(np.log2(ind[0] * ind.process))
                 print(math.log2(ind[0] * ind.process) - np.log2(p))
-                raise ValueError('math domain error')
+                raise ValueError('math domain error in nt edf')
             # try:
             #     return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - math.log2(p))) + 0.5) - ind.asset
             # except:

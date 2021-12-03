@@ -18,8 +18,8 @@ PROBA_SELECTION = 1/(252 * 2)
 ''' STRATEGY PARAMETERS '''
 # General parameters
 
-LeverageNT, LeverageVI, LeverageTF = 1,1,1 #2/3, 3, 2/3 # 1, 1, 1 #1, 8, 1
-SCALE_NT, SCALE_VI, SCALE_TF = 1,1,1# 5, 3, 4 #1, 1, 1 #5, 10, 4
+LeverageNT, LeverageVI, LeverageTF = 1,20,0.5 #2/3, 3, 2/3 # 1, 1, 1 #1, 8, 1
+SCALE_NT, SCALE_VI, SCALE_TF = 1,20,1# 5, 3, 4 #1, 1, 1 #5, 10, 4
 ATC_TF = 1 #(1 / DIVIDEND_AUTOCORRELATION)
 
 GAMMA_NT = 0.2 * np.sqrt(1/252)
