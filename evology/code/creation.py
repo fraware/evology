@@ -129,13 +129,17 @@ def CreatePop(n, WealthCoords, price):
             pop.append(toolbox.gen_tf_ind())
             NumTF += 1
 
-    PcNTCash = NTCash / NumNT
-    PcVICash = VICash / NumVI
-    PcTFCash = TFCash / NumTF
+    if NumNT != 0:
+        PcNTCash = NTCash / NumNT
+        PcNTAsset = NTAsset / NumNT
 
-    PcNTAsset = NTAsset / NumNT
-    PcVIAsset = VIAsset / NumVI
-    PcTFAsset = TFAsset / NumTF
+    if NumVI != 0:
+        PcVICash = VICash / NumVI
+        PcVIAsset = VIAsset / NumVI
+
+    if NumTF != 0:
+        PcTFCash = TFCash / NumTF
+        PcTFAsset = TFAsset / NumTF
 
     #TODO:  We may have to change what ind[0] means for VI/NT when opening to residual rates of return.
 
@@ -154,8 +158,6 @@ def CreatePop(n, WealthCoords, price):
             ind[0] = 2
             ind.cash = PcTFCash 
             ind.asset = PcTFAsset
-        # ind.prev_wealth = ind.cash + ind.asset * price 
-        # ind.wealth = ind.cash + ind.asset * price - ind.loan
 
 
     ''' optional bit just to check 
