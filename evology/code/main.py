@@ -15,9 +15,9 @@ random.seed(random.random())
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
     # Initialise important variables and dataframe to store results
-    ReturnsNT, ReturnsVI, ReturnsTF = np.zeros((MAX_GENERATIONS - SHIELD_DURATION, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - SHIELD_DURATION, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - SHIELD_DURATION, POPULATION_SIZE))
+    ReturnsNT, ReturnsVI, ReturnsTF = np.zeros((MAX_GENERATIONS - data.Barr, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - data.Barr, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - data.Barr, POPULATION_SIZE))
     generation, current_price, dividend, spoils = 0, InitialPrice, INITIAL_DIVIDEND, 0
-    results = np.zeros((MAX_GENERATIONS - SHIELD_DURATION, data.variables))
+    results = np.zeros((MAX_GENERATIONS - data.Barr, data.variables))
     price_history, dividend_history = [], []
     extended_dividend_history = mk.dividend_series(1*252)
 

@@ -30,8 +30,10 @@ columns = [
 
     # TODO: add monthly returns back just as exponentiation of daily (because we would not track funds for this)
 ]
-
 variables = len(columns)
+
+''' We only record results after a year to avoid transient period biases. '''
+Barr = max(SHIELD_DURATION, 252)
 
 def record_results(results, generation, current_price, mismatch, dividend,
     random_dividend, volume, replacements, pop, price_history, spoils, asset_supply,
@@ -39,10 +41,10 @@ def record_results(results, generation, current_price, mismatch, dividend,
     ReturnsNT, ReturnsVI, ReturnsTF
     ):
 
-    if generation >= SHIELD_DURATION:
+    if generation >= Barr:
         starttime = timeit.default_timer()
 
-        current = generation - SHIELD_DURATION
+        current = generation - Barr
 
         DailyNTReturns = FillList(GetDayReturn(pop, 'nt'), len(pop))
         ReturnsNT[current, :] = DailyNTReturns
