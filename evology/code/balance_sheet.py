@@ -719,6 +719,8 @@ def ComputeReturn(pop):
     for ind in pop:
         if ind.prev_wealth < 0:
             warnings.warn('Negative previous wealth.')
+        if ind.wealth < 0:
+            warnings.warn('Negative current wealth.')
         if ind.prev_wealth > 0:
             ind.DailyReturn = np.log(ind.wealth / ind.prev_wealth)
         else:

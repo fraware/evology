@@ -104,12 +104,20 @@ def CreatePop(n, WealthCoords, price):
 
     # Draw 
     pop = []
-    pop.append(toolbox.gen_nt_ind())
-    pop.append(toolbox.gen_vi_ind())
-    pop.append(toolbox.gen_tf_ind())
-    NumNT, NumVI, NumTF = 1, 1, 1
 
-    for i in range(n-3):
+    NumNT, NumVI, NumTF = 0, 0, 0
+    if WealthCoords[0] != 0:
+        pop.append(toolbox.gen_nt_ind())
+        NumNT += 1
+
+    if WealthCoords[1] != 0:
+        pop.append(toolbox.gen_vi_ind())
+        NumVI += 1
+    if WealthCoords[2] != 0:
+        pop.append(toolbox.gen_tf_ind())
+        NumTF += 1
+
+    for i in range(n- (NumNT + NumVI + NumTF)):
         rd = random.random()
         if rd <= ShareNT:
             pop.append(toolbox.gen_nt_ind())
