@@ -2,12 +2,17 @@
 import balance_sheet as bs
 import ga as ga
 import timeit
-from parameters import SHIELD_DURATION
+from parameters import *
 import esl_market_clearing as esl_mc
 import market as mk
 import shield as sh
 import creation as cr
 from scipy import optimize
+import data
+import pandas as pd
+import random
+from tqdm import tqdm
+random.seed(random.random())
 
 
 

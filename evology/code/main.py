@@ -1,17 +1,5 @@
 #!/usr/bin/env python3
-from parameters import *
-import pandas as pd
-import balance_sheet as bs
-import ga as ga
-import data
-import random
-import market as mk
-from tqdm import tqdm
-import esl_market_clearing as esl_mc
-import creation as cr
-import timeit
 from steps import *
-random.seed(random.random())
 
 def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
     # Initialise important variables and dataframe to store results
