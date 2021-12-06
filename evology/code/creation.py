@@ -92,7 +92,9 @@ toolbox.register("gen_rd_ind", gen_rd_ind)
 def CreatePop(n, WealthCoords, price):
 
     if n < 3:
-        raise ValueError('Cannot create diverse population with less than 3 agents.')
+        raise ValueError('Cannot create diverse population with less than 3 agents. ')
+    if sum(WealthCoords) > 1:
+        raise ValueError('Sum of wealth coordinates is higher than 1. ')
 
     # Determine total and strategy assets and cash
     TotalAsset, TotalCash = n * RefAssets, n * RefCash
@@ -109,7 +111,6 @@ def CreatePop(n, WealthCoords, price):
     if WealthCoords[0] != 0:
         pop.append(toolbox.gen_nt_ind())
         NumNT += 1
-
     if WealthCoords[1] != 0:
         pop.append(toolbox.gen_vi_ind())
         NumVI += 1
@@ -125,7 +126,7 @@ def CreatePop(n, WealthCoords, price):
         elif rd > ShareNT and rd <= ShareNT + ShareVI:
             pop.append(toolbox.gen_vi_ind())
             NumVI += 1
-        elif rd > ShareNT + ShareVI and rd <= ShareTF + ShareVI + ShareNT:
+        elif rd > ShareNT + ShareVI:
             pop.append(toolbox.gen_tf_ind())
             NumTF += 1
 
@@ -143,8 +144,7 @@ def CreatePop(n, WealthCoords, price):
 
     #TODO:  We may have to change what ind[0] means for VI/NT when opening to residual rates of return.
 
-    # We adjust agent cash asset prev_wealth wrt their strategy.
-    # We stay in the small strategy space and adjust agent strategies.
+    # TODO: We stay in the small strategy space and adjust agent strategies.
     for ind in pop:
         if ind.type == 'nt':
             ind[0] = 100
