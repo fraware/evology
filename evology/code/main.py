@@ -8,16 +8,14 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE,
     results = np.zeros((MAX_GENERATIONS - data.Barr, data.variables))
     price_history, dividend_history = [], []
 
-    pop, asset_supply = cr.CreatePop(POPULATION_SIZE, wealth_coordinates, CurrentPrice)
+    pop, asset_supply = cr.CreatePop(POPULATION_SIZE, wealth_coordinates)
     bs.calculate_wealth(pop, CurrentPrice)
     bs.UpdatePrevWealth(pop)
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display, miniters = 100, mininterval=0.5):
 
-        # print('Price at gen ' +str(generation) + str(' is ') + str(CurrentPrice))
-
         # Population reset
-        pop = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth, CurrentPrice)
+        pop = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth)
 
         # Hypermutation
         pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, CurrentPrice, generation, spoils, wealth_coordinates) # Replace insolvent agents     

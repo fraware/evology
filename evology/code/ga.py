@@ -9,6 +9,7 @@ import balance_sheet as bs
 import timeit
 import warnings
 
+'''
 def adjust_mode(pop, mode):
     if mode == "between":
         for ind in pop:
@@ -18,7 +19,7 @@ def adjust_mode(pop, mode):
                 ind[0] = 100
             if ind.type == "nt":
                 ind[0] = 100
-    return pop
+    return pop'''
 
 def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, wealth_coordinates):
 
@@ -118,7 +119,6 @@ toolbox.register("feasible_mutation", feasible_mutation)
 toolbox.register("mutate", toolbox.feasible_mutation)
 
 def random_decimal(low, high):
-    # number = float(random.randint(low*1000, high*1000))/1000
     global number
     if low >= 0 and high >= 0:
         number = float(random.randint(round(low*1000),round(high*1000))/1000)
@@ -157,11 +157,8 @@ def strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordin
             if cum_proba[i] > 1.0001:
                 raise ValueError('Cum proba > 1 ' + str(cum_proba))
             i += 1
-
         if sum(cum_proba) == 0:
             raise ValueError('Sum cumproba = 0')
-
-        # print(cum_proba)
 
         for i in range(len(pop)):
             if random.random() < MUTATION_RATE:

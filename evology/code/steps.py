@@ -15,6 +15,15 @@ from tqdm import tqdm
 random.seed(random.random())
 
 
+def ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE):
+    starttime = timeit.default_timer()
+    if generation > SHIELD_DURATION:
+        ga.compute_fitness(pop)
+        pop = ga.strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates)
+    timeC = timeit.default_timer() - starttime
+    return pop, timeC
+
+
 def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth):
     starttime = timeit.default_timer()
     bs.calculate_wealth(pop, current_price) # Compute agents' wealth
@@ -24,13 +33,6 @@ def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION
     timeA = timeit.default_timer() - starttime
     return pop, timeA
 
-def ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE):
-    starttime = timeit.default_timer()
-    if generation > SHIELD_DURATION:
-        ga.compute_fitness(pop)
-        pop = ga.strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates)
-    timeC = timeit.default_timer() - starttime
-    return pop, timeC
 
 def decision_updates(pop, mode, price_history, dividend_history):
     starttime = timeit.default_timer()
