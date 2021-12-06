@@ -83,10 +83,6 @@ def determine_multiplier(pop, spoils, ToLiquidate):
 
 
 def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
-
-    # print('Pre liquidation pop ownership: ' + str(bs.count_pop_long_assets(pop)))
-
-
     # Determine adjustements to edv if we have some mismatch
     multiplier_buy, multiplier_sell = determine_multiplier(pop, spoils, ToLiquidate)
     volume = 0
@@ -111,15 +107,12 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
         
 
     # Record that we liquidated some spoils
-    
     if spoils > 0:
         spoils -= ToLiquidate * multiplier_sell
     if spoils < 0:
         spoils += ToLiquidate * multiplier_buy
-    # print('Post liquidation spoils ' + str(spoils))
-    # print('Post liquidation pop ownership: ' + str(bs.count_pop_long_assets(pop)))
 
-    if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 0.001 * asset_supply:
+    if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 0.01 * asset_supply:
         # If we violate the asset supply constraint by more than 0.1%, raise an error.
         if abs(bs.count_long_assets(pop, spoils) - asset_supply) >= 0.01 * asset_supply:
             print('Spoils ' + str(spoils))
@@ -129,9 +122,6 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
 
         # If the violation of the asset supply is minor, correct the rounding error.
     if abs(bs.count_long_assets(pop, spoils) - asset_supply) < 0.01 * asset_supply:  
-        # print('Rounding error correction for AS')
-        # print(bs.count_long_assets(pop, spoils))
-        # print(asset_supply)
         SupplyCorrectionRatio = (asset_supply / bs.count_long_assets(pop, spoils))
         for ind in pop:
             previous = ind.asset

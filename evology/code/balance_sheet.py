@@ -11,37 +11,25 @@ import timeit
 
 def clear_debt(pop, price):
     for ind in pop:
-        # Attempt to clear debt
         if ind.loan > 0: # If the agent has outstanding debt:
             if ind.cash >= ind.loan + 100 * price: # If the agent has enough cash:
                 ind.loan = 0
                 ind.cash -= ind.loan
-                # print("Debt clear succesful for " + str(ind.type))
             if ind.cash < ind.loan + 100 * price : # If the agent does not have enough cash:
                 ind.loan -= ind.cash - 100 * price
                 ind.cash = 100 * price
-                # print("Debt clear unsuccesful for " + str(ind.type))
     return ind
 
 def update_margin(pop, current_price):
     for ind in pop:
-        # If we have a short position, update the margin
+        ind.cash += ind.margin
+        ind.margin = 0
         if ind.asset < 0:
-            margin_objective = abs(ind.asset) * current_price # Margin amount to cover short position at current price.
-            if margin_objective > ind.margin: # If our current margin is not enough:
-                ind.cash -= margin_objective - ind.margin 
-                ind.margin = margin_objective
-                if ind.cash < 0:
-                    ind.loan += abs(ind.cash)
-                    ind.cash = 0
-            # If our margin is too high, gain the excedent as cash.
-            elif margin_objective < ind.margin:
-                ind.cash += ind.margin - margin_objective
-                ind.margin = margin_objective
-        if ind.asset >= 0 and ind.margin > 0:
-            ind.cash += ind.margin
-            ind.margin = 0
-
+            ind.margin += ind.asset * current_price
+            ind.cash -= ind.asset * current_price
+        if ind.cash < 0:
+            ind.loan += abs(ind.cash)
+            ind.cash = 0
     return ind
 
 def UpdatePrevWealth(pop):
@@ -52,54 +40,21 @@ def calculate_wealth(pop, current_price):
     for ind in pop:
         ind.wealth = ind.cash + ind.asset * current_price - ind.loan
 
-def determine_tsv_proc(mode, pop, price_history):
-    # For TFs to have a TSV before determining their edf.
-    if mode == 'between':
-        if len(price_history) >= 2:
-            tf_basic = np.log2(price_history[-1]) - np.log2(price_history[-2])
-            # tf_basic = price_history[-1] - price_history[-2]
-        else: 
-            tf_basic = 0
-        for ind in pop:
-            if ind.type == "tf":   
-                ind.tsv = tf_basic
-                # ind.tsv = price_history[-1]
-            if ind.type == "nt":
-                # ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
-                ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
+def DetermineTsvProc(mode, pop, price_history):
+    for ind in pop:
+        if ind.type == "tf":
+            if len(price_history) >= ind[0]:
+                ind.tsv = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
+            elif len(price_history) < ind[0]:
+                ind.tsv = 0
+        if ind.type == "nt":
+            ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * random.normalvariate(0,1)
+            if ind.process < 0:
+                warnings.warn('Negative process value for NT')
 
 
 
-    else:
-        for ind in pop:
-            if ind.type == "tf":
-                if len(price_history) >= ind[0]:
-                    ind.tsv = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
-                    # ind.tsv = price_history[-1] - price_history[-ind[0]]
-                    # ind.tsv = price_history[-1]
-                elif len(price_history) < ind[0]:
-                    ind.tsv = 0
-                    # ind.tsv = InitialPrice
-            if ind.type == "nt":
-                # ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(abs(ind.process))) + GAMMA_NT * random.normalvariate(0,1))
-                ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * ind.process * random.normalvariate(0,1)
-                if ind.process < 0:
-                    warnings.warn('Negative process value for NT')
-    # ''' making VI trade absed on previous price '''
-    # for ind in pop:
-    #     if ind.type == 'vi':
-    #         if len(price_history) > 1:
-    #             ind.tsv = math.log2(ind[0]) - math.log2(price_history[-1])
-    #         else:
-    #             ind.tsv =  math.log2(ind[0]) - math.log2(InitialPrice)
-    #     if ind.type == 'nt':
-    #         if len(price_history) > 1:
-    #             ind.tsv = math.log2(ind[0] * ind.process) - math.log2(price_history[-1])
-    #         else:
-    #             ind.tsv = math.log2(ind[0] * ind.process) - math.log2(InitialPrice)
-
-
-def update_fval(pop, dividend_history):
+def UpdateFval(pop, dividend_history):
     estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
 
     if len(dividend_history) >= 1:
@@ -118,23 +73,12 @@ def update_fval(pop, dividend_history):
     return pop
 
 
-def determine_edf(pop):
+def DetermineEDF(pop):
     def edf(ind, p):
         if ind.type == "tf":
             return (LeverageTF * ind.wealth / p) * np.tanh(SCALE_TF * ind.tsv) - ind.asset
-            # return (LeverageTF * ind.wealth / p) * np.tanh(np.log2(p / ind.tsv)) - ind.asset
-
-
-            
-            # try:
-            #     return (LeverageTF * ind.wealth / p) * (np.tanh(SCALE_TF * ATC_TF * ind.tsv) + 0.5) - ind.asset
-            # except: 
-            #     warnings.warn('TF Error, for p: ' + str(p))
-            #     return (LeverageTF * ind.wealth / p) * (np.tanh(0.5)) - ind.asset
-                
                 
         elif ind.type == "vi":
-            # return (LeverageVI * ind.wealth / p) * np.tanh(ind.tsv) - ind.asset
             try:
                 return (LeverageVI * ind.wealth / p) * np.tanh(SCALE_VI * (math.log2(ind[0]) - np.log2(p))) - ind.asset
             except:
@@ -142,18 +86,10 @@ def determine_edf(pop):
                 print(ind[0])
                 print(math.log2(ind[0]) - math.log2(p))
                 raise ValueError('math domain error')
-       
-            # try:
-            #     return (LeverageVI * ind.wealth / p) * (np.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p))) + 0.5) - ind.asset
-            # except:
-            #     warnings.warn('VI Error, for p: ' + str(p))
-            #     return (LeverageVI * ind.wealth / p) * (0.5) - ind.asset
 
         elif ind.type == "nt":
-            # return (LeverageNT * ind.wealth / p) * np.tanh(ind.tsv) - ind.asset
-
             try:
-                return (LeverageNT * ind.wealth / p) * np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - np.log2(p))) - ind.asset
+                return (LeverageNT * ind.wealth / p) * np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - np.log2(p))) - ind.asset
             except:
                 print('p, ind, indproc, ind . indproc, log2 of it, math log of it - log p')
                 print(p)
@@ -163,12 +99,6 @@ def determine_edf(pop):
                 print(np.log2(ind[0] * ind.process))
                 print(math.log2(ind[0] * ind.process) - np.log2(p))
                 raise ValueError('math domain error in nt edf')
-            # try:
-            #     return (LeverageNT * ind.wealth / p) * (np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - math.log2(p))) + 0.5) - ind.asset
-            # except:
-            #     warnings.warn('NT Error, for p: ' + str(p))
-            #     return (LeverageNT * ind.wealth / p) * (0.5) - ind.asset
-                
 
     # Assign this function to be the agent's edf
     for ind in pop:
@@ -181,12 +111,6 @@ def calculate_edv(pop, price):
         ind.edv =  ind.edf(ind, price)
         total_edv += ind.edv
     return pop, total_edv
-
-# def calculate_total_edv(pop):
-#     total = 0
-#     for ind in pop:
-#         total += ind.edv
-#     return total
 
 def count_pop_long_assets(pop):
     count = 0
@@ -725,7 +649,7 @@ def ComputeReturn(pop):
         if ind.wealth < 0:
             warnings.warn('Negative current wealth.')
         if ind.prev_wealth > 0:
-            ind.DailyReturn = np.log(ind.wealth / ind.prev_wealth)
+            ind.DailyReturn = (ind.wealth / ind.prev_wealth) - 1
         else:
             ind.DailyReturn = np.nan
 
