@@ -56,7 +56,7 @@ def record_results(results, generation, current_price, mismatch, dividend,
         ReturnsTF[current, :] = DailyTFReturns
 
         ''' Global variables '''
-        results[current, 0] = generation - SHIELD_DURATION 
+        results[current, 0] = generation - Barr 
         results[current, 1] = current_price
         results[current, 2] = mismatch 
         results[current, 3] = dividend

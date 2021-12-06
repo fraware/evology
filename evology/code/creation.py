@@ -90,7 +90,7 @@ def CreatePop(n, WealthCoords):
 
     if n < 3:
         raise ValueError('Cannot create diverse population with less than 3 agents. ')
-    if sum(WealthCoords) > 1.001:
+    if sum(WealthCoords) > 1.001 or sum(WealthCoords) < 0.999:
         raise ValueError('Sum of wealth coordinates is higher than 1. ')
 
     # Determine total and strategy assets and cash
