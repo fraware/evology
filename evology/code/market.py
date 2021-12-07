@@ -113,15 +113,15 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
         spoils += ToLiquidate * multiplier_buy
 
     if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 0.01 * asset_supply:
-        # If we violate the asset supply constraint by more than 0.1%, raise an error.
+        # If we violate the asset supply constraint by more than 1%, raise an error.
         if abs(bs.count_long_assets(pop, spoils) - asset_supply) >= 0.01 * asset_supply:
             print('Spoils ' + str(spoils))
             print('ToLiquidate ' + str(ToLiquidate))
             print('Pop ownership ' + str(bs.count_pop_long_assets(pop)))
             raise ValueError('Asset supply cst violated ' +str(bs.count_long_assets(pop, spoils)) + '/' + str(asset_supply))
 
-        # If the violation of the asset supply is minor, correct the rounding error.
-    if abs(bs.count_long_assets(pop, spoils) - asset_supply) < 0.01 * asset_supply:  
+        # If the violation of the asset supply is minor (less than 1%), correct the rounding error.
+    if abs(bs.count_long_assets(pop, spoils) - asset_supply) <= 0.01 * asset_supply:  
         SupplyCorrectionRatio = (asset_supply / bs.count_long_assets(pop, spoils))
         for ind in pop:
             previous = ind.asset
@@ -129,7 +129,8 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
             if ind.asset != previous * SupplyCorrectionRatio:
                 warnings.warn('Previous asset = new ind.asset ' + str(previous) + '/' + str(ind.asset) + '/' + str(SupplyCorrectionRatio) + '/' + str(previous * SupplyCorrectionRatio))
 
-        if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 1:
+        # If the resulting violation is still superior to 0.1% after rounding correction, raise an error.
+        if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 0.001 * asset_supply:
             print(abs(bs.count_long_assets(pop, spoils) - asset_supply))
             print('---')
             for ind in pop:
