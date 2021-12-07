@@ -1,7 +1,1 @@
-print('Maartens formulation TF NT VI')
-# TF = (np.nanprod(df['TF_DayReturns']) - 1) ** (1/len(df))
-# print(TF)
-# TF = (np.nanprod(df['NT_DayReturns']) - 1) ** (1/len(df))
-# print(TF)
-# TF = (np.nanprod(df['VI_DayReturns']) - 1) ** (1/len(df))
-# print(TF)
+SHIELD_DURATION

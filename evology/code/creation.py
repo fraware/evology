@@ -8,9 +8,19 @@ import random
 toolbox = base.Toolbox()
 from parameters import *
 
+def DrawReturnRate(strat):
+    if strat == 'vi':
+        rate = random.uniform(MIN_RR_VI, MAX_RR_VI) / 100
+    if strat == 'nt':
+        rate = random.uniform(MIN_RR_NT, MAX_RR_NT) / 100
+    else:
+        rate = random.uniform(MIN_RR_VI, MAX_RR_VI) / 100
+    return rate
+
 creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 
 creator.create("ind_tf", list, typecode = 'd', fitness=creator.fitness_strategy, 
+    strategy = 0,
     wealth = 0, 
     type = "tf", 
     cash = 0, 
@@ -28,6 +38,7 @@ creator.create("ind_tf", list, typecode = 'd', fitness=creator.fitness_strategy,
     leverage = LeverageTF)
 
 creator.create("ind_vi", list, typecode = 'd', fitness=creator.fitness_strategy, 
+    strategy = 0,
     wealth = 0, 
     type = "vi", 
     cash = 0, 
@@ -45,6 +56,7 @@ creator.create("ind_vi", list, typecode = 'd', fitness=creator.fitness_strategy,
     leverage = LeverageVI)
 
 creator.create("ind_nt", list, typecode = 'd', fitness=creator.fitness_strategy, 
+    strategy = 0,
     wealth = 0, 
     type = "nt", 
     cash = 0, 
@@ -62,16 +74,14 @@ creator.create("ind_nt", list, typecode = 'd', fitness=creator.fitness_strategy,
     leverage = LeverageNT)
 
 # TODO: individual_ga is a list, individual_gp will be a gp.primitiveTree.
-# TODO: add the procedure for larger strategy space. Maybe a mode to select the 
-# Tight or Expanded strategy space. 
 
-toolbox.register("tf", random.randint, MIN_TIME_HORIZON, MAX_TIME_HORIZON)
+toolbox.register("tf", random.randint, MIN_THETA, MAX_THETA)
 toolbox.register("gen_tf_ind", tools.initCycle, creator.ind_tf, (toolbox.tf,), n=1)
 
-toolbox.register("vi", random.randint, MIN_VALUATION_VI, MAX_VALUATION_VI)
+toolbox.register("vi", random.randint, 100, 100)
 toolbox.register("gen_vi_ind", tools.initCycle, creator.ind_vi, (toolbox.vi,), n=1)
 
-toolbox.register("nt", random.randint, MIN_VALUATION_NT, MAX_VALUATION_NT)
+toolbox.register("nt", random.randint, 100, 100)
 toolbox.register("gen_nt_ind", tools.initCycle, creator.ind_nt, (toolbox.nt,), n=1)
 
 def gen_rd_ind(Coords):
@@ -86,7 +96,7 @@ def gen_rd_ind(Coords):
 toolbox.register("gen_rd_ind", gen_rd_ind)
 
 
-def CreatePop(n, WealthCoords):
+def CreatePop(n, space, WealthCoords):
 
     if n < 3:
         raise ValueError('Cannot create diverse population with less than 3 agents. ')
@@ -139,29 +149,48 @@ def CreatePop(n, WealthCoords):
         PcTFCash = TFCash / NumTF
         PcTFAsset = TFAsset / NumTF
 
-    #TODO:  We may have to change what ind[0] means for VI/NT when opening to residual rates of return.
+    if space == 'scholl':
+        for ind in pop:
+            if ind.type == 'nt':
+                ind.strategy = 0.01
+                ind[0] = 100
+            if ind.type == 'vi':
+                ind.strategy = 0.01
+                ind[0] = 100
+            if ind.type == 'tf':
+                ind.strategy = 0.01
+                ind[0] = 2
 
-    # TODO: We stay in the small strategy space and adjust agent strategies.
+    if space == 'extended':
+        for ind in pop:
+            if ind.type == 'nt':
+                ind.strategy = DrawReturnRate('nt')
+                ind[0] = 100
+            if ind.type == 'vi':
+                ind.strategy = DrawReturnRate('vi')
+                ind[0] = 100
+            if ind.type == 'tf':
+                ind.strategy = DrawReturnRate('tf')
+
     for ind in pop:
         if ind.type == 'nt':
-            ind[0] = 100
             ind.cash = PcNTCash 
             ind.asset = PcNTAsset
         if ind.type == 'vi':
-            ind[0] = 100
             ind.cash = PcVICash 
             ind.asset = PcVIAsset
         if ind.type == 'tf':
-            ind[0] = 2
             ind.cash = PcTFCash 
             ind.asset = PcTFAsset
 
+    
+
     return pop, TotalAsset
 
-def WealthReset(pop, WealthCoords, generation, ResetWealth):
+def WealthReset(pop, space, WealthCoords, generation, ResetWealth):
     if generation > 1 and generation <= SHIELD_DURATION:
-        pop, asset_supply = CreatePop(len(pop), WealthCoords)
+        pop, asset_supply = CreatePop(len(pop), space, WealthCoords)
     else: 
         if ResetWealth == True:
-            pop, asset_supply = CreatePop(len(pop), WealthCoords)
+            pop, asset_supply = CreatePop(len(pop), space, WealthCoords)
     return pop

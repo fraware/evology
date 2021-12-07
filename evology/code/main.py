@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 from steps import *
 
-def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
+def main(mode, space, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
     # Initialise important variables and dataframe to store results
     ReturnsNT, ReturnsVI, ReturnsTF = np.zeros((MAX_GENERATIONS - data.Barr, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - data.Barr, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - data.Barr, POPULATION_SIZE))
     generation, CurrentPrice, dividend, spoils = 0, InitialPrice, INITIAL_DIVIDEND, 0
     results = np.zeros((MAX_GENERATIONS - data.Barr, data.variables))
     price_history, dividend_history = [], []
 
-    pop, asset_supply = cr.CreatePop(POPULATION_SIZE, wealth_coordinates)
+    pop, asset_supply = cr.CreatePop(POPULATION_SIZE, space, wealth_coordinates)
     bs.calculate_wealth(pop, CurrentPrice)
     bs.UpdatePrevWealth(pop)
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display, miniters = 100, mininterval=0.5):
 
         # Population reset
-        pop = cr.WealthReset(pop, wealth_coordinates, generation, reset_wealth)
+        pop = cr.WealthReset(pop, space, wealth_coordinates, generation, reset_wealth)
 
         # Hypermutation
         pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, CurrentPrice, generation, spoils, wealth_coordinates) # Replace insolvent agents     
@@ -47,4 +47,4 @@ def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE,
 
     df = pd.DataFrame(results, columns = data.columns)
     
-    return df
+    return df, pop

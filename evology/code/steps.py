@@ -11,6 +11,9 @@ import data
 import pandas as pd
 import random
 from tqdm import tqdm
+import warnings
+import matplotlib 
+import matplotlib.pyplot as plt
 random.seed(random.random())
 
 
@@ -35,6 +38,7 @@ def marketClearing(pop, current_price, price_history, spoils):
     starttime = timeit.default_timer()
 
     eslmc = True
+    Initial = current_price
 
     if eslmc == True:
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
@@ -42,6 +46,24 @@ def marketClearing(pop, current_price, price_history, spoils):
     elif eslmc == False:
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
+
+    if current_price == Initial:
+        warnings.warn('Same price as before.')
+    #     print(ed_functions[0](0, Initial))
+    # x = np.linspace(0,Initial*10,1000)
+    # y = ed_functions[0](0,x)
+    # fig = plt.figure()
+    # ax = fig.add_subplot(1, 1, 1)
+    # plt.plot(x,y, 'r')
+    # plt.show()
+    #     plt.plot(price_history)
+    #     plt.show()
+    #     print('---')
+    #     for ind in pop:
+    #         print(ind.type)
+    #         print(ind.tsv)
+    #         print(ind.edf(ind, current_price))
+    #     raise ValueError('Price before and after market clearing are identical.')
     
     bs.calculate_tsv(pop, current_price, price_history)
     price_history.append(current_price)       
@@ -66,7 +88,6 @@ def update_wealth(pop, current_price, generation, wealth_coordinates, POPULATION
     bs.calculate_wealth(pop, current_price) # Compute agents' wealth
     bs.update_profit(pop)
     bs.ComputeReturn(pop)
-    # sh.WealthReset(pop, wealth_coordinates, generation, reset_wealth, current_price)
     timeA = timeit.default_timer() - starttime
     return pop, timeA
 

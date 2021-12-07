@@ -33,7 +33,7 @@ columns = [
 variables = len(columns)
 
 ''' We only record results after a year to avoid transient period biases. '''
-Barr = max(SHIELD_DURATION, 252)
+Barr = max(SHIELD_DURATION, ShieldResults)
 
 def record_results(results, generation, current_price, mismatch, dividend,
     random_dividend, volume, replacements, pop, price_history, spoils, asset_supply,

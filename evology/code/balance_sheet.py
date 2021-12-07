@@ -48,7 +48,7 @@ def DetermineTsvProc(mode, pop, price_history):
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
         if ind.type == "nt":
-            ind.process = ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * random.normalvariate(0,1)
+            ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * random.normalvariate(0,1))
             if ind.process < 0:
                 warnings.warn('Negative process value for NT')
 
@@ -57,17 +57,18 @@ def DetermineTsvProc(mode, pop, price_history):
 def UpdateFval(pop, dividend_history):
     estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
 
-    if len(dividend_history) >= 1:
-        numerator = (1 + estimated_daily_div_growth) * dividend_history[-1]
-    elif len(dividend_history) < 1:
-        numerator = (1 + estimated_daily_div_growth) * INITIAL_DIVIDEND
-    denuminator = (1 + EQUITY_COST - DIVIDEND_GROWTH_RATE_G) ** (1/252) - 1
-    fval = numerator / denuminator
-
-    if fval < 0:
-        warnings.warn('Negative fval found in update_fval')
-
     for ind in pop: 
+        if len(dividend_history) >= 1:
+            numerator = (1 + estimated_daily_div_growth) * dividend_history[-1]
+        elif len(dividend_history) < 1:
+            numerator = (1 + estimated_daily_div_growth) * INITIAL_DIVIDEND
+
+        denuminator = (1 + (AnnualInterestRate + ind.strategy) - DIVIDEND_GROWTH_RATE_G) ** (1/252) - 1
+        fval = numerator / denuminator
+
+        if fval < 0:
+            warnings.warn('Negative fval found in update_fval.')
+    
         if ind.type == 'vi' or ind.type == 'nt':
             ind[0] = fval
     return pop
@@ -89,7 +90,7 @@ def DetermineEDF(pop):
 
         elif ind.type == "nt":
             try:
-                return (LeverageNT * ind.wealth / p) * np.tanh(SCALE_NT * (math.log2(ind[0] * abs(ind.process)) - np.log2(p))) - ind.asset
+                return (LeverageNT * ind.wealth / p) * np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - np.log2(p))) - ind.asset
             except:
                 print('p, ind, indproc, ind . indproc, log2 of it, math log of it - log p')
                 print(p)
@@ -371,7 +372,8 @@ def agg_ed_esl(pop, spoils):
     def big_edf(asset_key, price):
         result = ToLiquidate
         for ind in pop:
-            result += ind.edf(ind, price)
+            if ind.edf(ind, 1) != np.nan:
+                result += ind.edf(ind, price)
         return result
     functions.append(big_edf)
     return functions, ToLiquidate
