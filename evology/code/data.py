@@ -26,23 +26,41 @@ columns = [
     # Run time data
     'TimeA', 'TimeB', 'TimeC', 'TimeD', 'TimeE', 'TimeF', 'TimeG', 'TotalTime',
     # More measures
-    'PerSpoils', 'NT_MonReturns', 'VI_MonReturns', 'TF_MonReturns', 'AvgMonReturn'
-]
+    'PerSpoils', 'NT_DayReturns', 'VI_DayReturns', 'TF_DayReturns', 'AvgDayReturn', 
+    # Measures of adaptation
+    'CountSelected', 'CountMutated', 'CountCrossed', 'TowardsNT', 'TowardsVI', 'TowardsTF', 'FromNT', 'FromVI', 'FromTF'
 
+
+    # TODO: add monthly returns back just as exponentiation of daily (because we would not track funds for this)
+]
 variables = len(columns)
+
+''' We only record results after a year to avoid transient period biases. '''
+Barr = max(SHIELD_DURATION, ShieldResults)
 
 def record_results(results, generation, current_price, mismatch, dividend,
     random_dividend, volume, replacements, pop, price_history, spoils, asset_supply,
-    timeA, timeB, timeC, timeD, timeE, timeF
+    timeA, timeB, timeC, timeD, timeE, timeF,
+    ReturnsNT, ReturnsVI, ReturnsTF,
+    CountSelected, CountMutated, CountCrossed, StratFlow
     ):
 
-    if generation >= SHIELD_DURATION:
+    if generation >= Barr:
         starttime = timeit.default_timer()
 
-        current = generation - SHIELD_DURATION
+        current = generation - Barr
+
+        DailyNTReturns = FillList(GetDayReturn(pop, 'nt'), len(pop))
+        ReturnsNT[current, :] = DailyNTReturns
+
+        DailyVIReturns = FillList(GetDayReturn(pop, 'vi'), len(pop))
+        ReturnsVI[current, :] = DailyVIReturns
+
+        DailyTFReturns = FillList(GetDayReturn(pop, 'tf'), len(pop))
+        ReturnsTF[current, :] = DailyTFReturns
 
         ''' Global variables '''
-        results[current, 0] = generation - SHIELD_DURATION 
+        results[current, 0] = generation - Barr 
         results[current, 1] = current_price
         results[current, 2] = mismatch 
         results[current, 3] = dividend
@@ -75,7 +93,7 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 23] = bs.report_nt_pnl(pop)
         results[current, 24] = bs.report_nt_signal(pop)
         results[current, 25] = bs.report_nt_stocks(pop, current_price)
-        results[current, 26] = bs.report_nt_return(pop)
+        results[current, 26] = bs.ReportReturn(pop, 'nt')
 
         ''' Value investors '''
         results[current, 27] = bs.report_vi_cash(pop)
@@ -85,7 +103,7 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 31] = bs.report_vi_pnl(pop)
         results[current, 32] = bs.report_vi_signal(pop)
         results[current, 33] = bs.report_vi_stocks(pop, current_price)
-        results[current, 34] = bs.report_vi_return(pop)
+        results[current, 34] = bs.ReportReturn(pop, 'vi')
 
         ''' Trend followers '''
         results[current, 35] = bs.report_tf_cash(pop)
@@ -95,7 +113,7 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 39] = bs.report_tf_pnl(pop)
         results[current, 40] = bs.report_tf_signal(pop, price_history)
         results[current, 41] = bs.report_tf_stocks(pop, current_price)
-        results[current, 42] = bs.report_tf_return(pop)
+        results[current, 42] = bs.ReportReturn(pop, 'tf')
 
         ''' Additional measures '''
         results[current, 43] = ComputeAvgReturn(results, current, pop)
@@ -114,13 +132,38 @@ def record_results(results, generation, current_price, mismatch, dividend,
 
         ''' More measures '''
         results[current, 53] = abs(100 * spoils / asset_supply)
-        results[current, 54] = bs.ReportNTMonReturn(pop)
-        results[current, 55] = bs.ReportVIMonReturn(pop)
-        results[current, 56] = bs.ReportTFMonReturn(pop)
-        results[current, 57] = ComputeAvgMonReturn(results, current, pop)
+        results[current, 54] = np.nanmean(DailyNTReturns) 
+        results[current, 55] = np.nanmean(DailyVIReturns) 
+        results[current, 56] = np.nanmean(DailyTFReturns) 
+        results[current, 57] = (results[current, 54] + results[current, 55] + results[current, 56]) / 3
+
+        ''' Measures of adaptation '''
+        results[current, 58] = CountSelected
+        results[current, 59] = CountMutated
+        results[current, 60] = CountCrossed
+        results[current, 61] = StratFlow[0]
+        results[current, 62] = StratFlow[1]
+        results[current, 63] = StratFlow[2]
+        results[current, 64] = StratFlow[3]
+        results[current, 65] = StratFlow[4]
+        results[current, 66] = StratFlow[5]
 
 
-    return results
+
+
+    return results, ReturnsNT, ReturnsVI, ReturnsTF
+
+def GetDayReturn(pop, strat):
+    lis = []
+    for ind in pop:
+        if ind.type == strat:
+            lis.append(ind.DailyReturn)
+    return lis
+
+def FillList(lis, n):
+    while len(lis) < n:
+        lis.append(np.nan)
+    return lis
 
 def ComputeAvgReturn(results, generation, pop):
     AvgReturn = (results[generation, 10] * results[generation, 26] + results[generation, 11] * results[generation, 34] + results[generation, 12] * results[generation, 42]) / len(pop)

@@ -1,3 +1,4 @@
+import warnings
 import esl
 from esl.economics.markets.walras import excess_demand_model, differentiable_order_message
 from esl.law import property
@@ -6,6 +7,11 @@ from esl.economics.markets import quote
 from esl.economics import price
 from esl.economics import currencies
 import numpy as np
+import random
+import matplotlib
+import matplotlib.pyplot as plt
+
+from parameters import InitialPrice
 
 def solve(my_excess_demand_functions: list, current_price):
 
@@ -46,3 +52,23 @@ def solve(my_excess_demand_functions: list, current_price):
   del initial_price
   return prices
 
+def CircuitClearing(ed_functions, current_price):
+
+  Initial = current_price
+
+  ClearingPrice = float(solve(ed_functions, current_price)[0])
+
+  Circuit = False
+
+  if Circuit == True: 
+    LimitBelow = current_price * 0.5
+    LimitUp = current_price * 2
+
+    if ClearingPrice > LimitUp:
+      ClearingPrice = LimitUp
+    if ClearingPrice < LimitBelow:
+      ClearingPrice = LimitBelow
+
+
+
+  return ClearingPrice

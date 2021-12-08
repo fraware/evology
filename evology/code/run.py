@@ -1,32 +1,71 @@
 #!/usr/bin/env python3
 from main import *
-import pandas as pd
-import random
+# import pandas as pd
+# import random
 from parameters import *
 
 RANDOM_SEED = random.random()
 wealth_coordinates = [1/3, 1/3, 1/3]
-
+wealth_coordinates = [0.02319459484404431, 0.20975932194467775, 0.767046083211278]
 # wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
-print(wealth_coordinates)
 
-# def main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE, wealth_coordinates, tqdm_display):
+print(wealth_coordinates)
 
 def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, reset_wealth):
 
     if learning_mode == 0:
-        df = main("static", TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
+        df,pop = main("static", 'scholl', TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 1:
-        df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
+        df,pop = main("between", 'scholl', TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 2:
-        df = main("between", TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
-    return df
+        df,pop = main("between", 'scholl', TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
+    if learning_mode == 3:
+        df,pop = main("static", 'extended', TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
+    if learning_mode == 4:
+        df,pop = main("between", 'extended', TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
 
-df = run(100, 2, 2000, wealth_coordinates, tqdm_display=False, reset_wealth=True)
+    return df, pop
 
+df,pop = run(50, 2, 253, wealth_coordinates, tqdm_display=False, reset_wealth=True)
 df.to_csv("evology/data/run_data.csv")
-# print(df)
+
+print(df)
 
 
 
+# print('Arithmetic average TF NT VI')
+# TF = np.nanmean(df['TF_DayReturns'])
+# print(TF)
+# TF = np.nanmean(df['NT_DayReturns'])
+# print(TF)
+# TF = np.nanmean(df['VI_DayReturns'])
+# print(TF)
 
+
+
+# TF_strat = []
+# VI_strat = []
+# NT_strat = []
+
+# for ind in pop:
+#     if ind.type == 'tf':
+#         TF_strat.append(ind[0])
+#     if ind.type == 'vi': 
+#         VI_strat.append(ind.strategy)
+#     if ind.type == 'nt':
+#         NT_strat.append(ind.strategy)
+
+# plt.hist(TF_strat)
+# plt.show()
+# plt.hist(VI_strat)
+# plt.show()
+# plt.hist(NT_strat)
+# plt.show()
+
+# for ind in pop:
+#     print(ind.type)
+#     print(ind[0])
+#     print(ind.tsv)
+#     print(ind.edv)
+#     print('-')
+    
