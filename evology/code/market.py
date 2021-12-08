@@ -123,16 +123,17 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
         # If the violation of the asset supply is minor (less than 1%), correct the rounding error.
     if abs(bs.count_long_assets(pop, spoils) - asset_supply) <= 0.01 * asset_supply:  
         SupplyCorrectionRatio = (asset_supply / bs.count_long_assets(pop, spoils))
+        spoils = spoils * SupplyCorrectionRatio
         for ind in pop:
             # previous = ind.asset
-            if ind.asset > 0:
-                ind.asset = SupplyCorrectionRatio * ind.asset
-            if ind.asset < 0:
-                ind.asset = (1/SupplyCorrectionRatio) * ind.asset
-            if spoils > 0:
-                spoils = spoils * SupplyCorrectionRatio
-            if spoils < 0:
-                spoils = spoils * (1/SupplyCorrectionRatio)
+            # if ind.asset > 0:
+            ind.asset = SupplyCorrectionRatio * ind.asset
+            # if ind.asset < 0:
+            #     ind.asset = (1/SupplyCorrectionRatio) * ind.asset
+            # if spoils > 0:
+            
+            # if spoils < 0:
+            #     spoils = spoils * (1/SupplyCorrectionRatio)
             # if ind.asset != previous * SupplyCorrectionRatio:
             #     warnings.warn('Previous asset = new ind.asset ' + str(previous) + '/' + str(ind.asset) + '/' + str(SupplyCorrectionRatio) + '/' + str(previous * SupplyCorrectionRatio))
 
