@@ -101,7 +101,10 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
                     half = toolbox.gen_tf_ind()
 
                 # Copy fund MaxFund intangible characteristics
-                # TSV, EDF, EDV do not matter as they will be updated.
+                # TSV, EDF, EDV are totally reset.
+                half.tsv = 0
+                half.edf = None
+                half.edv = 0
                 half.strategy = pop[MaxFund].strategy
                 half.process = pop[MaxFund].process
                 half.ema = pop[MaxFund].ema

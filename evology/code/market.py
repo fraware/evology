@@ -135,7 +135,7 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
             print('---')
             for ind in pop:
                 print(ind.asset)
-            raise ValueError('Rounding violation of asset supply was not succesfully corrected. ' + str(SupplyCorrectionRatio) + '//' + str(bs.count_long_assets(pop, spoils)) + '//' + str(asset_supply))
+            raise ValueError('Rounding violation of asset supply was not succesfully corrected. ' + str(SupplyCorrectionRatio) + '//' + str(bs.count_long_assets(pop, spoils)) + '//' + str(asset_supply) + '//' + str(spoils))
 
 
     return pop, volume, spoils
