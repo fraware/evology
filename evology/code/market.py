@@ -40,7 +40,7 @@ def determine_multiplier(pop, spoils, ToLiquidate):
             total_sell += abs(ind.edv)
 
     if spoils > 0:
-        total_sell += ToLiquidate
+        total_sell += abs(ToLiquidate)
     if spoils < 0:
         total_buy += ToLiquidate
 
