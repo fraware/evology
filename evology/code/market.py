@@ -79,6 +79,11 @@ def determine_multiplier(pop, spoils, ToLiquidate):
     if multiplier_sell < 0:
         raise ValueError('Multiplier Sell is negative')
 
+    if total_buy * multiplier_buy != total_sell * multiplier_sell:
+        print(total_buy * multiplier_buy)
+        print(total_sell * multiplier_sell)
+        raise ValueError('Total buy * Mul is different from Total sell * Mul')
+
     return multiplier_buy, multiplier_sell
 
 
@@ -86,6 +91,8 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
     # Determine adjustements to edv if we have some mismatch
     multiplier_buy, multiplier_sell = determine_multiplier(pop, spoils, ToLiquidate)
     volume = 0
+
+
 
     for ind in pop:
         amount = 0
