@@ -125,7 +125,10 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
         SupplyCorrectionRatio = (asset_supply / bs.count_long_assets(pop, spoils))
         for ind in pop:
             previous = ind.asset
-            ind.asset = SupplyCorrectionRatio * ind.asset
+            if ind.asset > 0:
+                ind.asset = SupplyCorrectionRatio * ind.asset
+            if ind.asset < 0:
+                ind.asset = (1/SupplyCorrectionRatio) * ind.asset
             if ind.asset != previous * SupplyCorrectionRatio:
                 warnings.warn('Previous asset = new ind.asset ' + str(previous) + '/' + str(ind.asset) + '/' + str(SupplyCorrectionRatio) + '/' + str(previous * SupplyCorrectionRatio))
 
