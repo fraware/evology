@@ -6,7 +6,7 @@ from parameters import *
 
 RANDOM_SEED = random.random()
 wealth_coordinates = [1/3, 1/3, 1/3]
-wealth_coordinates = [0.576141587840188, 0.3977201783962604, 0.026138233763551864]
+wealth_coordinates = [0.5818129359010346, 0.19708322475659765, 0.22110383934236777]
 # wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
 
 print(wealth_coordinates)

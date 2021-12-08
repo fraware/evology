@@ -127,6 +127,11 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
     if len(pop) != InitialPopSize:
         raise ValueError('After replace and split, population size changed. ' + str(len(pop)))
 
+    # Check that we did not leave anyone with a negative wealth
+    for ind in pop:
+        if ind.wealth < 0:
+            raise ValueError('Insolvent funds after hypermutation.')
+
     timeB = timeit.default_timer() - starttime
     return pop, round_replacements, spoils, timeB
 

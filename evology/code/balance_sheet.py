@@ -646,8 +646,8 @@ def ReportReturn(pop, strat):
         
 def ComputeReturn(pop):
     for ind in pop:
-        if ind.prev_wealth < 0:
-            raise ValueError('Negative previous wealth.')
+        # if ind.prev_wealth < 0:
+        #     raise ValueError('Negative previous wealth.')
         # if ind.wealth < 0:
         #     warnings.warn('Negative current wealth.')
         #     print(ind)
