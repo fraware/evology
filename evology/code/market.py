@@ -115,9 +115,14 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
 
     # Record that we liquidated some spoils
     if spoils > 0:
-        spoils -= ToLiquidate * multiplier_sell
+        # Spoils are positive. We wanted to sell some shares. TL is negative. 
+        # Ex: from spoils 1000, we sold 100 (TL = -100) for mul = 1. New spoils is 1000 - 100 = 900.
+        spoils += ToLiquidate * multiplier_sell
     if spoils < 0:
+        # Spoils are negative. We wanted to buy back some shares. TL is positive. 
+        # Ex: from spoils -1000, we bought 100 (TL = 100) for mul=1. New spoils is -1000 + 100 = -900.
         spoils += ToLiquidate * multiplier_buy
+        # Isn't that a minus sign here instead?
 
     if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 0.01 * asset_supply:
         # If we violate the asset supply constraint by more than 1%, raise an error.
