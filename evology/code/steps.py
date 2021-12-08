@@ -17,13 +17,16 @@ import matplotlib.pyplot as plt
 random.seed(random.random())
 
 
-def ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE):
+def ga_evolution(pop, mode, space, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE):
     starttime = timeit.default_timer()
     if generation > SHIELD_DURATION:
         ga.compute_fitness(pop)
-        pop = ga.strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates)
+        pop, CountSelected, CountMutated, CountCrossed, StratFlow = ga.strategy_evolution(mode, space, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates, generation)
+    else:
+        CountSelected, CountMutated, CountCrossed = 0,0,0
+        StratFlow = 6 * [0]
     timeC = timeit.default_timer() - starttime
-    return pop, timeC
+    return pop, timeC, CountSelected, CountMutated, CountCrossed, StratFlow
 
 def decision_updates(pop, mode, price_history, dividend_history):
     starttime = timeit.default_timer()

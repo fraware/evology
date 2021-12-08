@@ -647,9 +647,13 @@ def ReportReturn(pop, strat):
 def ComputeReturn(pop):
     for ind in pop:
         if ind.prev_wealth < 0:
-            warnings.warn('Negative previous wealth.')
-        if ind.wealth < 0:
-            warnings.warn('Negative current wealth.')
+            raise ValueError('Negative previous wealth.')
+        # if ind.wealth < 0:
+        #     warnings.warn('Negative current wealth.')
+        #     print(ind)
+        #     print(ind.type)
+        #     print(ind.wealth)
+        #     raise ValueError('Negative current wealth.')
         if ind.prev_wealth > 0:
             ind.DailyReturn = (ind.wealth / ind.prev_wealth) - 1
         else:

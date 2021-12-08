@@ -59,6 +59,72 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
             print('Bailed out today (' + str(ReplacedCount) + ').')
 
     '''
+
+    ''' 
+    Bailing out: helps funds who performed poorly, distrubs wealth shares, returns and the nature of interactions 
+        (losing could lead to winning the bailout money!)
+    Simple replacement: leads to inject new wealth in the system, disturb wealth shares as it weakens the 
+        relative wealth of surviving funds
+    Simple removal: no bias on wealth shares or the quantity of wealth in circulation ; but it may lead in situations
+        where the population size shreds up to 1, or situations of hyperconcentration of wealth that are neither realistic
+        not desirable for the robustness of results. 
+
+    Our suggestion: simple removal of the insolvent fund AND the wealthiest fund splits in half. IN this way, we have no 
+        bias on the wealth shares, the returns of the strategy. In addition, it adds a security against hyperconcentration of wealth.
+        Splitting a fund in half is neutral on market clearing and wealth shares in the population, and maintains its size constant.
+    WARNING: every attribute needs to be divided by half, including the previous wealth.   
+    '''
+    InitialPopSize = len(pop)
+    for i in range(len(pop)):
+        if pop[i].wealth < 0: # The fund is insolvent and we will remove it.
+            round_replacements += 1
+            del pop[i] # We suppress the fund.
+
+            # Determine who is the wealthiest fund
+            MaxWealth = 0
+            MaxFund = 999
+            for j in range(len(pop)):
+                if pop[j].wealth > MaxWealth:
+                    MaxFund = j
+            
+            # Wealthiest fund is fund index MaxFund. Create two halfs of fund, sharing the attributes.
+            for k in range(2):
+                # Create a fund of the correct strategy
+                if pop[MaxFund].type == 'nt':
+                    half = toolbox.gen_nt_ind()
+                if pop[MaxFund].type == 'vi':
+                    half = toolbox.gen_vi_ind()
+                if pop[MaxFund].type == 'tf':
+                    half = toolbox.gen_tf_ind()
+
+                # Copy fund MaxFund intangible characteristics
+                # TSV, EDF, EDV do not matter as they will be updated.
+                half.strategy = pop[MaxFund].strategy
+                half.process = pop[MaxFund].process
+                half.ema = pop[MaxFund].ema
+                half.fitness = pop[MaxFund].fitness
+                half[0] = pop[MaxFund][0]
+
+                # Copy fund j characteristics to be divided
+                half.prev_wealth = pop[MaxFund].prev_wealth / 2
+                half.wealth = pop[MaxFund].wealth / 2
+                half.cash = pop[MaxFund].cash / 2
+                half.loan = pop[MaxFund].loan / 2
+                half.asset = pop[MaxFund].asset / 2
+                half.margin = pop[MaxFund].margin / 2
+                half.profit = pop[MaxFund].profit / 2
+            
+                # Add the half copy to the population
+                pop.append(half)
+            
+            # We have appended the two half-copies of j. We remove j.
+            del pop[MaxFund]
+    
+
+    # Check that the new population size is unchanged.
+    if len(pop) != InitialPopSize:
+        raise ValueError('After replace and split, population size changed. ' + str(len(pop)))
+
     timeB = timeit.default_timer() - starttime
     return pop, round_replacements, spoils, timeB
 
@@ -93,23 +159,23 @@ def mutate_both_ways(ind):
 def feasible_mutation(ind, MUTATION_RATE):
     if random.random() < MUTATION_RATE:
         if ind.type == "tf":
-            if ind[0] == MAX_TIME_HORIZON: #we can only mutate lower
+            if ind[0] == MAX_THETA: #we can only mutate lower
                 ind[0] -= 1
-            elif ind[0] == MIN_TIME_HORIZON: #we can only mutate higher
+            elif ind[0] == MIN_THETA: #we can only mutate higher
                 ind[0] += 1
             else: 
                 mutate_both_ways(ind) # we can mutate lower or higher
         if ind.type == "vi":
-            if ind[0] == MAX_VALUATION_VI: #we can only mutate lower
+            if ind[0] == MAX_RR_VI: #we can only mutate lower
                 ind[0] -= 1
-            elif ind[0] == MIN_VALUATION_VI: #we can only mutate higher
+            elif ind[0] == MIN_RR_VI: #we can only mutate higher
                 ind[0] += 1
             else: 
                 mutate_both_ways(ind) # we can mutate lower or higher
         if ind.type == "nt":
-            if ind[0] == MAX_VALUATION_NT: #we can only mutate lower
+            if ind[0] == MAX_RR_NT: #we can only mutate lower
                 ind[0] -= 1
-            elif ind[0] == MIN_VALUATION_NT: #we can only mutate higher
+            elif ind[0] == MIN_RR_NT: #we can only mutate higher
                 ind[0] += 1
             else: 
                 mutate_both_ways(ind) # we can mutate lower or higher
@@ -126,50 +192,84 @@ def random_decimal(low, high):
         number = - float(random.randint(round(-low*1000),round(-high*1000))/1000)
     return number
 
-
 def selRandom(individuals, k):
     return [random.choice(individuals) for i in range(k)]
 
-def strategy_evolution(mode, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates):
+def strategy_evolution(mode, space, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates, generation):
+
+    CountSelected = 0
+    CountMutated = 0
+    CountCrossed = 0
+    TowardsNT = 0
+    TowardsVI = 0
+    TowardsTF = 0
+    FromNT = 0
+    FromVI = 0
+    FromTF = 0
     
     if mode == 'between':
-        # Individuals can select & imitate, and switch
 
-        # Selection
-        for i in range(len(pop)):
-            if random.random() < PROBA_SELECTION: # Social learning
-                # Create the tournament and get the winner
-                aspirants = selRandom(pop, TOURNAMENT_SIZE-1) 
-                aspirants.append(pop[i])
-                winner = max(aspirants, key=attrgetter("fitness"))
+        if space == 'scholl':
+            # Individuals can select & imitate, and switch
 
-                # Imitate the winner's type and strategy
-                pop[i].type = winner.type
-                pop[i][0] = winner[0]
-        
-        # Mutation
-        types = ['nt', 'vi', 'tf']
-        cum_proba = [0, 0, 0]
-        cum_proba[0] = wealth_coordinates[0]
-        i = 1
-        while i < len(wealth_coordinates):
-            cum_proba[i] = cum_proba[i-1] + wealth_coordinates[i]
-            if cum_proba[i] > 1.0001:
-                raise ValueError('Cum proba > 1 ' + str(cum_proba))
-            i += 1
-        if sum(cum_proba) == 0:
-            raise ValueError('Sum cumproba = 0')
+            # Selection
+            for i in range(len(pop)):
+                if random.random() < PROBA_SELECTION: # Social learning
+                    # Create the tournament and get the winner
+                    aspirants = selRandom(pop, TOURNAMENT_SIZE-1) 
+                    aspirants.append(pop[i])
+                    winner = max(aspirants, key=attrgetter("fitness"))
 
-        for i in range(len(pop)):
-            if random.random() < MUTATION_RATE:
-                # Change type totally randomly 
-                n = random.random()
-                ty = 0
-                while cum_proba[ty] < n:
-                    ty += 1
-                pop[i].type = types[ty]
-                if pop[i].type =='tf':
-                    pop[i][0] = 2
-                elif pop[i].type == 'nt' or pop[i].type == 'vi':
-                    pop[i][0] = 100
-    return pop
+                    # Imitate the winner's type and strategy
+                    if pop[i].type != winner.type:
+                        CountSelected += 1
+                        #TODO: Collect data on the types being adopted / discarded?
+                        if pop[i].type == 'nt':
+                            FromNT += 1
+                        if pop[i].type == 'vi':
+                            FromVI += 1
+                        if pop[i].type == 'tf':
+                            FromTF += 1
+                        if winner.type == 'nt':
+                            TowardsNT += 1
+                        if winner.type == 'vi':
+                            TowardsVI += 1
+                        if winner.type == 'tf':
+                            TowardsTF += 1
+                        
+                        # warnings.warn('Ind ' + str(pop[i].type) + ' switched to ' + str(winner.type) + ' at time ' + str(generation))
+                    pop[i].type = winner.type
+                    pop[i][0] = winner[0]
+            
+            # Mutation
+            types = ['nt', 'vi', 'tf']
+            cum_proba = [0, 0, 0]
+            cum_proba[0] = wealth_coordinates[0]
+            i = 1
+            while i < len(wealth_coordinates):
+                cum_proba[i] = cum_proba[i-1] + wealth_coordinates[i]
+                if cum_proba[i] > 1.0001:
+                    raise ValueError('Cum proba > 1 ' + str(cum_proba))
+                i += 1
+            if sum(cum_proba) == 0:
+                raise ValueError('Sum cumproba = 0')
+
+            for i in range(len(pop)):
+                if random.random() < MUTATION_RATE:
+                    CountMutated += 1
+                    # Change type totally randomly 
+                    n = random.random()
+                    ty = 0
+                    while cum_proba[ty] < n:
+                        ty += 1
+                    pop[i].type = types[ty]
+                    if pop[i].type =='tf':
+                        pop[i][0] = 2
+                    elif pop[i].type == 'nt' or pop[i].type == 'vi':
+                        pop[i][0] = 100
+
+        if space == 'extended':
+            raise ValueError('Strategy evolution for extended space is not yet implemented.')
+    StratFlow = [TowardsNT,TowardsVI,TowardsTF, FromNT,FromVI,FromTF]
+
+    return pop, CountSelected, CountMutated, CountCrossed, StratFlow

@@ -21,7 +21,8 @@ def main(mode, space, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATIO
         pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, CurrentPrice, generation, spoils, wealth_coordinates) # Replace insolvent agents     
         
         # Strategy evolution
-        pop, timeC = ga_evolution(pop, mode, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
+        pop, timeC,CountSelected, CountMutated, CountCrossed, StratFlow = ga_evolution(pop, mode, space, 
+            generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
 
         # Calculate wealth and previous wealth
         bs.calculate_wealth(pop, CurrentPrice)
@@ -43,7 +44,8 @@ def main(mode, space, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATIO
         # Record results
         results, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(results, generation, CurrentPrice, mismatch, 
         dividend, random_dividend, volume, replacements, pop, price_history, spoils, 
-        asset_supply, timeA, timeB, timeC, timeD, timeE, timeF, ReturnsNT, ReturnsVI, ReturnsTF)
+        asset_supply, timeA, timeB, timeC, timeD, timeE, timeF, ReturnsNT, ReturnsVI, ReturnsTF,
+        CountSelected, CountMutated, CountCrossed, StratFlow)
 
     df = pd.DataFrame(results, columns = data.columns)
     

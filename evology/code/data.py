@@ -26,7 +26,10 @@ columns = [
     # Run time data
     'TimeA', 'TimeB', 'TimeC', 'TimeD', 'TimeE', 'TimeF', 'TimeG', 'TotalTime',
     # More measures
-    'PerSpoils', 'NT_DayReturns', 'VI_DayReturns', 'TF_DayReturns', 'AvgDayReturn'
+    'PerSpoils', 'NT_DayReturns', 'VI_DayReturns', 'TF_DayReturns', 'AvgDayReturn', 
+    # Measures of adaptation
+    'CountSelected', 'CountMutated', 'CountCrossed', 'TowardsNT', 'TowardsVI', 'TowardsTF', 'FromNT', 'FromVI', 'FromTF'
+
 
     # TODO: add monthly returns back just as exponentiation of daily (because we would not track funds for this)
 ]
@@ -38,7 +41,8 @@ Barr = max(SHIELD_DURATION, ShieldResults)
 def record_results(results, generation, current_price, mismatch, dividend,
     random_dividend, volume, replacements, pop, price_history, spoils, asset_supply,
     timeA, timeB, timeC, timeD, timeE, timeF,
-    ReturnsNT, ReturnsVI, ReturnsTF
+    ReturnsNT, ReturnsVI, ReturnsTF,
+    CountSelected, CountMutated, CountCrossed, StratFlow
     ):
 
     if generation >= Barr:
@@ -133,6 +137,16 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 56] = np.nanmean(DailyTFReturns) 
         results[current, 57] = (results[current, 54] + results[current, 55] + results[current, 56]) / 3
 
+        ''' Measures of adaptation '''
+        results[current, 58] = CountSelected
+        results[current, 59] = CountMutated
+        results[current, 60] = CountCrossed
+        results[current, 61] = StratFlow[0]
+        results[current, 62] = StratFlow[1]
+        results[current, 63] = StratFlow[2]
+        results[current, 64] = StratFlow[3]
+        results[current, 65] = StratFlow[4]
+        results[current, 66] = StratFlow[5]
 
 
 
