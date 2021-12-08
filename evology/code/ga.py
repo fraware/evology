@@ -75,7 +75,8 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
     WARNING: every attribute needs to be divided by half, including the previous wealth.   
     '''
     InitialPopSize = len(pop)
-    for i in range(len(pop)):
+    i = 0
+    while i < len(pop):
         if pop[i].wealth < 0: # The fund is insolvent and we will remove it.
             round_replacements += 1
             # Mandate an administrator to liquidate the insolvent fund shares
@@ -121,6 +122,9 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
             
             # We have appended the two half-copies of j. We remove j.
             del pop[MaxFund]
+            i = 0
+        if pop[i].wealth >= 0:
+            i += 1
     
 
     # Check that the new population size is unchanged.
