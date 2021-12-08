@@ -50,7 +50,7 @@ def determine_multiplier(pop, spoils, ToLiquidate):
         order_ratio = 0
 
     if order_ratio < 0:
-            raise ValueError('Negative order ratio (total sell/buy): ' + str(total_sell) + str(total_buy))
+            raise ValueError('Negative order ratio (total sell/buy): ' + str(total_sell) + '/' + str(total_buy) + '/' + str(ToLiquidate))
 
 
     if order_ratio == 0: #either noone buys, or no one sells
