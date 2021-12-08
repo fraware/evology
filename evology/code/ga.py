@@ -78,6 +78,8 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
     for i in range(len(pop)):
         if pop[i].wealth < 0: # The fund is insolvent and we will remove it.
             round_replacements += 1
+            # Mandate an administrator to liquidate the insolvent fund shares
+            spoils += pop[i].asset
             del pop[i] # We suppress the fund.
 
             # Determine who is the wealthiest fund
