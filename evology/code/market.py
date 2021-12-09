@@ -79,7 +79,7 @@ def determine_multiplier(pop, spoils, ToLiquidate):
     if multiplier_sell < 0:
         raise ValueError('Multiplier Sell is negative')
 
-    if abs(total_buy * multiplier_buy - total_sell * multiplier_sell) >= 1:
+    if abs(total_buy * multiplier_buy - total_sell * multiplier_sell) >= (0.01 * total_buy * multiplier_buy):
         print(total_buy * multiplier_buy)
         print(total_sell * multiplier_sell)
         raise ValueError('Total buy * Mul is different from Total sell * Mul by more than 1 (abs difference)')
