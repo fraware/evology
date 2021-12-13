@@ -79,9 +79,9 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 13] = bs.mean_nt(pop)
         results[current, 14] = bs.mean_vi(pop)
         results[current, 15] = bs.mean_tf(pop)
-        results[current, 16] = bs.wealth_share_nt(pop)
-        results[current, 17] = bs.wealth_share_vi(pop)
-        results[current, 18] = bs.wealth_share_tf(pop)
+        results[current, 16] = bs.WealthShare(pop, 'nt') 
+        results[current, 17] = bs.WealthShare(pop, 'vi') 
+        results[current, 18] = bs.WealthShare(pop, 'tf') 
         
 
 

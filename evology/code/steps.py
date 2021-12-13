@@ -41,7 +41,7 @@ def marketClearing(pop, current_price, price_history, spoils):
     starttime = timeit.default_timer()
 
     eslmc = True
-    Initial = current_price
+    # Initial = current_price
 
     if eslmc == True:
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
@@ -50,8 +50,8 @@ def marketClearing(pop, current_price, price_history, spoils):
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
 
-    if current_price == Initial:
-        warnings.warn('Same price as before.')
+    # if current_price == Initial:
+    #     warnings.warn('Same price as before.')
     #     print(ed_functions[0](0, Initial))
     # x = np.linspace(0,Initial*10,1000)
     # y = ed_functions[0](0,x)
