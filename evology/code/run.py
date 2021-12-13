@@ -4,7 +4,7 @@ from parameters import *
 
 RANDOM_SEED = random.random()
 wealth_coordinates = [1/3, 1/3, 1/3]
-# wealth_coordinates = [0.02319459484404431, 0.20975932194467775, 0.767046083211278]
+wealth_coordinates = [0.2646631077422079, 0.17726102645095207, 0.55807586580684]
 wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
 
 print(wealth_coordinates)
@@ -24,7 +24,7 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
 
     return df, pop
 
-df,pop = run(50, 2, 252 * 10, wealth_coordinates, tqdm_display=False, reset_wealth=True)
+df,pop = run(30, 3, 252 * 10, wealth_coordinates, tqdm_display=False, reset_wealth=False)
 df.to_csv("evology/data/run_data.csv")
 
 print(df)
