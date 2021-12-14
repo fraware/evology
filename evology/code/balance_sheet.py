@@ -80,26 +80,31 @@ def DetermineEDF(pop):
             return (LeverageTF * ind.wealth / p) * np.tanh(SCALE_TF * ind.tsv) - ind.asset
                 
         elif ind.type == "vi":
-            try:
-                return (LeverageVI * ind.wealth / p) * np.tanh(SCALE_VI * (math.log2(ind[0]) - np.log2(p))) - ind.asset
-            except:
-                print(p)
-                print(ind[0])
-                print(math.log2(ind[0]) - math.log2(p))
-                raise ValueError('math domain error')
+            return (LeverageVI * ind.wealth / p) * np.tanh((5/ind[0]) * (ind[0] - p)) - ind.asset
+
+            # try:
+            #     return (LeverageVI * ind.wealth / p) * np.tanh(SCALE_VI * (math.log2(ind[0]) - np.log2(p))) - ind.asset
+            # except RuntimeWarning:
+            #     print(p)
+            #     print('Runtime warning for VI today.')
+            # except ValueError:
+            #     print(ind[0])
+            #     print(math.log2(ind[0]) - math.log2(p))
+            #     raise ValueError('math domain error')
 
         elif ind.type == "nt":
-            try:
-                return (LeverageNT * ind.wealth / p) * np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - np.log2(p))) - ind.asset
-            except:
-                print('p, ind, indproc, ind . indproc, log2 of it, math log of it - log p')
-                print(p)
-                print(ind[0])
-                print(ind.process)
-                print(ind[0] * ind.process)
-                print(np.log2(ind[0] * ind.process))
-                print(math.log2(ind[0] * ind.process) - np.log2(p))
-                raise ValueError('math domain error in nt edf')
+            return (LeverageNT * ind.wealth / p) * np.tanh((5/(ind[0] * ind.process)) * (ind[0] * ind.process - p)) - ind.asset
+            # try:
+            #     return (LeverageNT * ind.wealth / p) * np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - np.log2(p))) - ind.asset
+            # except:
+            #     print('p, ind, indproc, ind . indproc, log2 of it, math log of it - log p')
+            #     print(p)
+            #     print(ind[0])
+            #     print(ind.process)
+            #     print(ind[0] * ind.process)
+            #     print(np.log2(ind[0] * ind.process))
+            #     print(math.log2(ind[0] * ind.process) - np.log2(p))
+            #     raise ValueError('math domain error in nt edf')
 
     # Assign this function to be the agent's edf
     for ind in pop:
@@ -212,9 +217,11 @@ def calculate_tsv(pop, price, price_history):
 
     for ind in pop:
         if ind.type == 'vi':
-            ind.tsv = np.log2(ind[0]) - np.log2(price)
+            # ind.tsv = np.log2(ind[0]) - np.log2(price)
+            ind.tsv = (5/ind[0]) * (ind[0] - price)
         if ind.type == 'nt':
-            ind.tsv = np.log2(ind[0] * abs(ind.process)) - np.log2(price)
+            # ind.tsv = np.log2(ind[0] * abs(ind.process)) - np.log2(price)
+            ind.tsv = (5/(ind[0] * ind.process)) * (ind[0] * ind.process - price)
     return ind
 
 
