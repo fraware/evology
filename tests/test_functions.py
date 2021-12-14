@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-print(sys.version)
 sys.path.append('./evology/code/')
 from main import *
 import random
@@ -9,8 +8,6 @@ import numpy as np
 random.seed = random.random()
 from parameters import *
 import traceback
-
-# main(mode, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, CROSSOVER_RATE, MUTATION_RATE):
 
 def learning_runs(repetitions, time, agents):
     went_smoothly = True
@@ -21,7 +18,6 @@ def learning_runs(repetitions, time, agents):
         try: 
             df,pop = main("between", 'scholl', 'esl', False, time, PROBA_SELECTION, agents, MUTATION_RATE, wealth_coordinates, tqdm_display=True, reset_wealth = False)
 
-            # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
             went_smoothly = False
             print('Process ' + str(i) + ' encoutered an exception.')
@@ -44,7 +40,6 @@ def learning_runs_reset(repetitions, time, agents):
         try: 
             df,pop = main("between", 'scholl', 'esl', False, time, PROBA_SELECTION, agents, MUTATION_RATE, wealth_coordinates, tqdm_display=True, reset_wealth = True)
 
-            # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
             went_smoothly = False
             print('Process ' + str(i) + ' encoutered an exception.')
@@ -68,7 +63,6 @@ def nolearning_runs(repetitions, time, agents):
             print(wealth_coordinates)
             df,pop = main("static", 'scholl', 'esl', False, time, 0, agents, 0, wealth_coordinates, tqdm_display=True, reset_wealth = False)
 
-            # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
             went_smoothly = False
             print('Process ' + str(i) + ' encoutered an exception.')
@@ -94,7 +88,6 @@ def nolearning_runs_reset(repetitions, time, agents):
             print(wealth_coordinates)
             df,pop = main("static", 'scholl', 'esl', False, time, 0, agents, 0, wealth_coordinates, tqdm_display=True, reset_wealth = True)
 
-            # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
             went_smoothly = False
             print('Process ' + str(i) + ' encoutered an exception.')
