@@ -53,7 +53,13 @@ def marketClearing(pop, current_price, price_history, spoils):
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         # print('bs_agg_ed ' + str(timeit.default_timer() - starttime1))
         # starttime1 = timeit.default_timer()
-        current_price = optimize.newton(ed_functions[0], current_price, tol = 10_000, maxiter = 1000)
+        if ed_functions[0](1) == np.nan:
+            raise ValueError('Aggregate ED function at 1 equals NaN.')
+        try: 
+            current_price = optimize.newton(ed_functions[0], current_price, tol = 10_000, maxiter = 1000, disp=True)
+        except: 
+            ''' Current price stays the same if the algorithm has not converged '''
+            pass
         # current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
         # print('Newton method with tol and maxiter ' + str(timeit.default_timer() - starttime1))
     # starttime1 = timeit.default_timer()
