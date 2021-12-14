@@ -40,7 +40,6 @@ def decision_updates(pop, mode, price_history, dividend_history):
 def marketClearing(pop, current_price, price_history, spoils):
     starttime = timeit.default_timer()
     eslmc = False
-    newton = True
     if eslmc == True:
         # starttime1 = timeit.default_timer()
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
@@ -48,15 +47,17 @@ def marketClearing(pop, current_price, price_history, spoils):
         # starttime1 = timeit.default_timer()
         current_price = esl_mc.CircuitClearing(ed_functions, current_price)    
         # print('Circuit Clearing MC ' + str(timeit.default_timer() - starttime1))
-    elif eslmc == False and newton == True:
+    elif eslmc == False:
         # starttime1 = timeit.default_timer()
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         # print('bs_agg_ed ' + str(timeit.default_timer() - starttime1))
         # starttime1 = timeit.default_timer()
-        if ed_functions[0](1) == np.nan:
-            raise ValueError('Aggregate ED function at 1 equals NaN.')
+
+        # if ed_functions[0](1) == np.nan:
+        #     raise ValueError('Aggregate ED function at 1 equals NaN.')
+
         try: 
-            current_price = optimize.newton(ed_functions[0], current_price, tol = 10_000, maxiter = 1000, disp=True)
+            current_price = optimize.newton(ed_functions[0], current_price, tol = 20_000, maxiter = 1000)
             current_price = max(current_price, 0.01)
         except: 
             ''' Current price stays the same if the algorithm has not converged '''
