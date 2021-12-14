@@ -37,43 +37,29 @@ def decision_updates(pop, mode, price_history, dividend_history):
     return pop, timeD
 
 
-def marketClearing(pop, current_price, price_history, spoils):
+def marketClearing(pop, current_price, price_history, spoils, solver, circuit):
     starttime = timeit.default_timer()
-    eslmc = True
-    if eslmc == True:
-        # starttime1 = timeit.default_timer()
+    if solver == 'esl':
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
-        # print('bs_agg_ed ' + str(timeit.default_timer() - starttime1))
-        # starttime1 = timeit.default_timer()
-        current_price = esl_mc.CircuitClearing(ed_functions, current_price)    
-        # print('Circuit Clearing MC ' + str(timeit.default_timer() - starttime1))
-    elif eslmc == False:
-        # starttime1 = timeit.default_timer()
+        current_price = esl_mc.CircuitClearing(ed_functions, current_price, circuit)    
+    elif solver == 'newton':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
-        # print('bs_agg_ed ' + str(timeit.default_timer() - starttime1))
-        # starttime1 = timeit.default_timer()
-
-        # if ed_functions[0](1) == np.nan:
-        #     raise ValueError('Aggregate ED function at 1 equals NaN.')
-
         try: 
             current_price = optimize.newton(ed_functions[0], current_price, tol = 20_000, maxiter = 1000)
             current_price = max(current_price, 0.01)
         except: 
             ''' Current price stays the same if the algorithm has not converged '''
             pass
-        # current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
-        # print('Newton method with tol and maxiter ' + str(timeit.default_timer() - starttime1))
-    # starttime1 = timeit.default_timer()
+    elif solver == 'brentq':
+        ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
+        current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
+    else:
+        raise ValueError('No solver was selected. Available options: esl, newton, brentq')
     bs.calculate_tsv(pop, current_price, price_history)
-    # print('Calc TSV ' + str(timeit.default_timer() - starttime1))
-    # starttime1 = timeit.default_timer()
     price_history.append(current_price)       
     pop, mismatch = bs.calculate_edv(pop, current_price)
-    # print('Price append and calc edv ' + str(timeit.default_timer() - starttime1))
     timeE = timeit.default_timer() - starttime
     return pop, mismatch, current_price, price_history, ToLiquidate, timeE
-
 
 def marketActivity(pop, current_price, asset_supply, dividend, dividend_history, spoils, ToLiquidate):
     starttime = timeit.default_timer()

@@ -9,18 +9,20 @@ wealth_coordinates = [1/3, 1/3, 1/3]
 
 print(wealth_coordinates)
 
+# main(mode, space, solver, circuit, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
+
 def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, reset_wealth):
 
     if learning_mode == 0:
-        df,pop = main("static", 'scholl', TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
+        df,pop = main("static", 'scholl', 'esl', False, TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 1:
-        df,pop = main("between", 'scholl', TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
+        df,pop = main("between", 'scholl', 'esl', False, TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 2:
-        df,pop = main("between", 'scholl', TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
+        df,pop = main("between", 'scholl', 'esl', False, TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 3:
-        df,pop = main("static", 'extended', TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
+        df,pop = main("static", 'extended', 'esl', False, TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 4:
-        df,pop = main("between", 'extended', TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
+        df,pop = main("between", 'extended', 'esl', False, TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
 
     return df, pop
 

@@ -19,7 +19,7 @@ def learning_runs(repetitions, time, agents):
         wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
         print(wealth_coordinates)
         try: 
-            df,pop = main("between", 'scholl', time, PROBA_SELECTION, agents, MUTATION_RATE, wealth_coordinates, tqdm_display=True, reset_wealth = False)
+            df,pop = main("between", 'scholl', 'esl', False, time, PROBA_SELECTION, agents, MUTATION_RATE, wealth_coordinates, tqdm_display=True, reset_wealth = False)
 
             # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
@@ -42,7 +42,7 @@ def learning_runs_reset(repetitions, time, agents):
         wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
         print(wealth_coordinates)
         try: 
-            df,pop = main("between", 'scholl', time, PROBA_SELECTION, agents, MUTATION_RATE, wealth_coordinates, tqdm_display=True, reset_wealth = True)
+            df,pop = main("between", 'scholl', 'esl', False, time, PROBA_SELECTION, agents, MUTATION_RATE, wealth_coordinates, tqdm_display=True, reset_wealth = True)
 
             # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
@@ -66,7 +66,7 @@ def nolearning_runs(repetitions, time, agents):
         try: 
             wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
             print(wealth_coordinates)
-            df,pop = main("static", 'scholl', time, 0, agents, 0, wealth_coordinates, tqdm_display=True, reset_wealth = False)
+            df,pop = main("static", 'scholl', 'esl', False, time, 0, agents, 0, wealth_coordinates, tqdm_display=True, reset_wealth = False)
 
             # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
@@ -92,7 +92,7 @@ def nolearning_runs_reset(repetitions, time, agents):
         try: 
             wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
             print(wealth_coordinates)
-            df,pop = main("static", 'scholl', time, 0, agents, 0, wealth_coordinates, tqdm_display=True, reset_wealth = True)
+            df,pop = main("static", 'scholl', 'esl', False, time, 0, agents, 0, wealth_coordinates, tqdm_display=True, reset_wealth = True)
 
             # print('Process ' + str(i) + ' ran succesfully.')
         except Exception as e: 
