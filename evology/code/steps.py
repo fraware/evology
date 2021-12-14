@@ -57,6 +57,7 @@ def marketClearing(pop, current_price, price_history, spoils):
             raise ValueError('Aggregate ED function at 1 equals NaN.')
         try: 
             current_price = optimize.newton(ed_functions[0], current_price, tol = 10_000, maxiter = 1000, disp=True)
+            current_price = max(current_price, 0.01)
         except: 
             ''' Current price stays the same if the algorithm has not converged '''
             pass
