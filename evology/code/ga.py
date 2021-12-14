@@ -90,7 +90,7 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
                 if pop[j].wealth >= MaxWealth:
                     MaxFund = j
             if MaxFund > len(pop):
-                raise ValueError('MaxFund is higher than len pop ' + str(MaxFund) + '/' + str(len(pop) + '/' + str(MaxWealth)))
+                raise ValueError('MaxFund is higher than len pop ' + str(MaxFund) + '/' + str(len(pop)) + '/' + str(MaxWealth))
             
             # Wealthiest fund is fund index MaxFund. Create two halfs of fund, sharing the attributes.
             for k in range(2):
