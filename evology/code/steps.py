@@ -39,7 +39,7 @@ def decision_updates(pop, mode, price_history, dividend_history):
 
 def marketClearing(pop, current_price, price_history, spoils):
     starttime = timeit.default_timer()
-    eslmc = False
+    eslmc = True
     if eslmc == True:
         # starttime1 = timeit.default_timer()
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
