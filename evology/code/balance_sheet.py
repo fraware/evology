@@ -373,7 +373,8 @@ def agg_ed(pop, spoils):
     def big_edf(price):
         result = ToLiquidate
         for ind in pop:
-            result += ind.edf(ind, price)
+            if ind.edf(ind, 1) != np.nan:
+                result += ind.edf(ind, price)
         return result
     functions.append(big_edf)
     return functions, ToLiquidate

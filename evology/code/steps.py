@@ -39,38 +39,30 @@ def decision_updates(pop, mode, price_history, dividend_history):
 
 def marketClearing(pop, current_price, price_history, spoils):
     starttime = timeit.default_timer()
-
-    eslmc = True
-    # Initial = current_price
-
+    eslmc = False
+    newton = True
     if eslmc == True:
+        # starttime1 = timeit.default_timer()
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
+        # print('bs_agg_ed ' + str(timeit.default_timer() - starttime1))
+        # starttime1 = timeit.default_timer()
         current_price = esl_mc.CircuitClearing(ed_functions, current_price)    
-    elif eslmc == False:
+        # print('Circuit Clearing MC ' + str(timeit.default_timer() - starttime1))
+    elif eslmc == False and newton == True:
+        # starttime1 = timeit.default_timer()
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
-        current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
-
-    # if current_price == Initial:
-    #     warnings.warn('Same price as before.')
-    #     print(ed_functions[0](0, Initial))
-    # x = np.linspace(0,Initial*10,1000)
-    # y = ed_functions[0](0,x)
-    # fig = plt.figure()
-    # ax = fig.add_subplot(1, 1, 1)
-    # plt.plot(x,y, 'r')
-    # plt.show()
-    #     plt.plot(price_history)
-    #     plt.show()
-    #     print('---')
-    #     for ind in pop:
-    #         print(ind.type)
-    #         print(ind.tsv)
-    #         print(ind.edf(ind, current_price))
-    #     raise ValueError('Price before and after market clearing are identical.')
-    
+        # print('bs_agg_ed ' + str(timeit.default_timer() - starttime1))
+        # starttime1 = timeit.default_timer()
+        current_price = optimize.newton(ed_functions[0], current_price, tol = 10_000, maxiter = 1000)
+        # current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
+        # print('Newton method with tol and maxiter ' + str(timeit.default_timer() - starttime1))
+    # starttime1 = timeit.default_timer()
     bs.calculate_tsv(pop, current_price, price_history)
+    # print('Calc TSV ' + str(timeit.default_timer() - starttime1))
+    # starttime1 = timeit.default_timer()
     price_history.append(current_price)       
     pop, mismatch = bs.calculate_edv(pop, current_price)
+    # print('Price append and calc edv ' + str(timeit.default_timer() - starttime1))
     timeE = timeit.default_timer() - starttime
     return pop, mismatch, current_price, price_history, ToLiquidate, timeE
 

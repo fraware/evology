@@ -54,7 +54,7 @@ def solve(my_excess_demand_functions: list, current_price):
 
 def CircuitClearing(ed_functions, current_price):
 
-  Initial = current_price
+  # Initial = current_price
 
   ClearingPrice = float(solve(ed_functions, current_price)[0])
 
