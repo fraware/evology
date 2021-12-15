@@ -329,8 +329,7 @@ def agg_ed(pop, spoils):
     def big_edf(price):
         result = ToLiquidate
         for ind in pop:
-            if ind.edf(ind, 1) != np.nan:
-                result += ind.edf(ind, price)
+            result += ind.edf(ind, price)
         return result
     functions.append(big_edf)
     return functions, ToLiquidate
@@ -350,8 +349,7 @@ def agg_ed_esl(pop, spoils):
     def big_edf(asset_key, price):
         result = ToLiquidate
         for ind in pop:
-            if ind.edf(ind, 1) != np.nan:
-                result += ind.edf(ind, price)
+            result += ind.edf(ind, price)
         return result
     functions.append(big_edf)
     return functions, ToLiquidate
