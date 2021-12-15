@@ -45,7 +45,7 @@ def marketClearing(pop, current_price, price_history, spoils, solver, circuit):
     elif solver == 'newton':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         try: 
-            current_price = optimize.newton(ed_functions[0], current_price, tol = 0.1, maxiter = 1000)
+            current_price = optimize.newton(func=ed_functions[0], x0 = current_price, tol = 0.1, maxiter = 1000)
             # current_price = max(current_price, 0.01)
         except: 
             ''' Current price stays the same if the algorithm has not converged '''

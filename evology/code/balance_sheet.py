@@ -354,6 +354,18 @@ def agg_ed_esl(pop, spoils):
     functions.append(big_edf)
     return functions, ToLiquidate
 
+# def AggEdDerivative(pop):
+#     def derivative(price):
+#         result  = 0
+#         for ind in pop:
+#             if ind.type == 'vi':
+#                 result += (ind.leverage * ind.wealth) * ( (-1/price**2) * np.tanh(5 * (ind[0] - price) / ind[0]) + (5/(ind[0]*price) * (1 - np.tanh(price) ** 2)))
+#             if ind.type == 'nt':
+#                 result += (ind.leverage * ind.wealth) * ( (-1/price**2) * np.tanh(5 * ((ind[0] * ind.process) - price) / (ind[0] * ind.process)) + (5/((ind[0] * ind.process)*price) * (1 - np.tanh(price) ** 2)))
+#             if ind.type == 'tf':
+#                 result -= (ind.leverage * ind.wealth * np.tanh(ind.tsv)) / (price ** 2)
+#         return result
+#     return derivative
 
 def report_nt_cash(pop):
     total = 0
