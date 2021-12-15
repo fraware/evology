@@ -14,7 +14,7 @@ print(wealth_coordinates)
 def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, reset_wealth):
 
     if learning_mode == 0:
-        df,pop = main("static", 'scholl', 'esl', False, TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
+        df,pop = main("static", 'scholl', 'newton', False, TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 1:
         df,pop = main("between", 'scholl', 'esl', False, TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 2:
