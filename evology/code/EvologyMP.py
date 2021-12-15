@@ -1,49 +1,69 @@
+import concurrent.futures
+from typing import Final
+from main import *
+import time
+import warnings
+warnings.filterwarnings("ignore")
+from main import main as evology
+# df,pop = evology("static", 'scholl', 'newton', False, 75, 0, 3, 0, [1/3, 1/3, 1/3], True, False)
+
+def do_something():
+	df,pop = evology("static", 'scholl', 'newton', False, 1000, 0, 10, 0, [1/3, 1/3, 1/3], True, False)
+	return df['WShare_NT'].iloc[-1]
+	# return random.randint(0,10)
+
+# print(do_something())
+
+reps = 10
+
+def main():
+	reps = 10
+	FinalResults = []
+	# with concurrent.futures.ProcessPoolExecutor() as executor:
+	with concurrent.futures.ProcessPoolExecutor() as executor:
+
+		results = [executor.submit(do_something) for _ in range(reps)]
+
+	for f in concurrent.futures.as_completed(results):
+		# print(f.result())
+		FinalResults.append(f.result())
+	# print(type(results))
+	del executor
+	return FinalResults
+
 import multiprocessing as mp
-# print(f"Number of cpu: {mp.cpu_count()}")
+
+def main(): 
+	reps = 10
+	FinalResults = []
+	processes = []
+	for _ in range(10):
+		p = mp.Process(target=do_something)
+		p.start()
+		processes.append(p)
+	for process in processes:
+		process.join()
+		FinalResults.append(queue.get())
+	return FinalResults
+	
+
+start = time.perf_counter()
+if __name__ == '__main__':
+	print(main())
+finish = time.perf_counter()
+print(f'Multiprocessing Finished in {round(finish-start, 2)} second(s)')
+
+def no_mp(reps):
+	results = []
+	for i in range(reps):
+		# results.append(random.randint(0,10))
+		results.append(do_something())
+	return results
+
+start = time.perf_counter()
+no_mp(reps)
+finish = time.perf_counter()
+print(f'Enumeration Finished in {round(finish-start, 2)} second(s)')
 
 
-
-import multiprocessing
-
-def square_list(mylist, result, square_sum):
-	"""
-	function to square a given list
-	"""
-	# append squares of mylist to result array
-	for idx, num in enumerate(mylist):
-		result[idx] = num * num
-
-	# square_sum value
-	square_sum.value = sum(result)
-
-	# print result Array
-	print("Result(in process p1): {}".format(result[:]))
-
-	# print square_sum Value
-	print("Sum of squares(in process p1): {}".format(square_sum.value))
-
-if __name__ == "__main__":
-	# input list
-	mylist = [1,2,3,4]
-
-	# creating Array of int data type with space for 4 integers
-	result = multiprocessing.Array('i', 4)
-
-	# creating Value of int data type
-	square_sum = multiprocessing.Value('i')
-
-	# creating new process
-	p1 = multiprocessing.Process(target=square_list, args=(mylist, result, square_sum))
-
-	# starting process
-	p1.start()
-
-	# wait until the process is finished
-	p1.join()
-
-	# print result array
-	print("Result(in main program): {}".format(result[:]))
-
-	# print square_sum Value
-	print("Sum of squares(in main program): {}".format(square_sum.value))
 
