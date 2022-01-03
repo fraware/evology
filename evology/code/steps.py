@@ -37,43 +37,29 @@ def decision_updates(pop, mode, price_history, dividend_history):
     return pop, timeD
 
 
-def marketClearing(pop, current_price, price_history, spoils):
+def marketClearing(pop, current_price, price_history, spoils, solver, circuit):
     starttime = timeit.default_timer()
-
-    eslmc = True
-    # Initial = current_price
-
-    if eslmc == True:
+    if solver == 'esl':
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
-        current_price = esl_mc.CircuitClearing(ed_functions, current_price)    
-    elif eslmc == False:
+        current_price = esl_mc.CircuitClearing(ed_functions, current_price, circuit)    
+    elif solver == 'newton':
+        ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
+        try: 
+            current_price = optimize.newton(func=ed_functions[0], x0 = current_price, tol = 0.5, maxiter = 1000)
+            # current_price = max(current_price, 0.01)
+        except: 
+            ''' Current price stays the same if the algorithm has not converged '''
+            pass
+    elif solver == 'brentq':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
-
-    # if current_price == Initial:
-    #     warnings.warn('Same price as before.')
-    #     print(ed_functions[0](0, Initial))
-    # x = np.linspace(0,Initial*10,1000)
-    # y = ed_functions[0](0,x)
-    # fig = plt.figure()
-    # ax = fig.add_subplot(1, 1, 1)
-    # plt.plot(x,y, 'r')
-    # plt.show()
-    #     plt.plot(price_history)
-    #     plt.show()
-    #     print('---')
-    #     for ind in pop:
-    #         print(ind.type)
-    #         print(ind.tsv)
-    #         print(ind.edf(ind, current_price))
-    #     raise ValueError('Price before and after market clearing are identical.')
-    
+    else:
+        raise ValueError('No solver was selected. Available options: esl, newton, brentq')
     bs.calculate_tsv(pop, current_price, price_history)
     price_history.append(current_price)       
     pop, mismatch = bs.calculate_edv(pop, current_price)
     timeE = timeit.default_timer() - starttime
     return pop, mismatch, current_price, price_history, ToLiquidate, timeE
-
 
 def marketActivity(pop, current_price, asset_supply, dividend, dividend_history, spoils, ToLiquidate):
     starttime = timeit.default_timer()

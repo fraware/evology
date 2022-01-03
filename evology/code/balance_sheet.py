@@ -80,26 +80,31 @@ def DetermineEDF(pop):
             return (LeverageTF * ind.wealth / p) * np.tanh(SCALE_TF * ind.tsv) - ind.asset
                 
         elif ind.type == "vi":
-            try:
-                return (LeverageVI * ind.wealth / p) * np.tanh(SCALE_VI * (math.log2(ind[0]) - np.log2(p))) - ind.asset
-            except:
-                print(p)
-                print(ind[0])
-                print(math.log2(ind[0]) - math.log2(p))
-                raise ValueError('math domain error')
+            return (LeverageVI * ind.wealth / p) * np.tanh((5/ind[0]) * (ind[0] - p)) - ind.asset
+
+            # try:
+            #     return (LeverageVI * ind.wealth / p) * np.tanh(SCALE_VI * (math.log2(ind[0]) - np.log2(p))) - ind.asset
+            # except RuntimeWarning:
+            #     print(p)
+            #     print('Runtime warning for VI today.')
+            # except ValueError:
+            #     print(ind[0])
+            #     print(math.log2(ind[0]) - math.log2(p))
+            #     raise ValueError('math domain error')
 
         elif ind.type == "nt":
-            try:
-                return (LeverageNT * ind.wealth / p) * np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - np.log2(p))) - ind.asset
-            except:
-                print('p, ind, indproc, ind . indproc, log2 of it, math log of it - log p')
-                print(p)
-                print(ind[0])
-                print(ind.process)
-                print(ind[0] * ind.process)
-                print(np.log2(ind[0] * ind.process))
-                print(math.log2(ind[0] * ind.process) - np.log2(p))
-                raise ValueError('math domain error in nt edf')
+            return (LeverageNT * ind.wealth / p) * np.tanh((5/(ind[0] * ind.process)) * (ind[0] * ind.process - p)) - ind.asset
+            # try:
+            #     return (LeverageNT * ind.wealth / p) * np.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - np.log2(p))) - ind.asset
+            # except:
+            #     print('p, ind, indproc, ind . indproc, log2 of it, math log of it - log p')
+            #     print(p)
+            #     print(ind[0])
+            #     print(ind.process)
+            #     print(ind[0] * ind.process)
+            #     print(np.log2(ind[0] * ind.process))
+            #     print(math.log2(ind[0] * ind.process) - np.log2(p))
+            #     raise ValueError('math domain error in nt edf')
 
     # Assign this function to be the agent's edf
     for ind in pop:
@@ -212,9 +217,11 @@ def calculate_tsv(pop, price, price_history):
 
     for ind in pop:
         if ind.type == 'vi':
-            ind.tsv = np.log2(ind[0]) - np.log2(price)
+            # ind.tsv = np.log2(ind[0]) - np.log2(price)
+            ind.tsv = (5/ind[0]) * (ind[0] - price)
         if ind.type == 'nt':
-            ind.tsv = np.log2(ind[0] * abs(ind.process)) - np.log2(price)
+            # ind.tsv = np.log2(ind[0] * abs(ind.process)) - np.log2(price)
+            ind.tsv = (5/(ind[0] * ind.process)) * (ind[0] * ind.process - price)
     return ind
 
 
@@ -306,57 +313,6 @@ def WealthShare(pop, strat):
         Share = 100 * StratWealth / TotalW
     return Share 
 
-# def wealth_share_tf(pop):
-#     wealth_tf = 0
-#     for ind in pop:
-#         if ind.type == "tf" and ind.wealth > 0:
-#             wealth_tf += ind.wealth
-
-#     if 100 * wealth_tf / total_wealth(pop) > 100.01:
-#         for ind in pop:
-#             print(ind.type)
-#             print(ind.wealth)
-#         print(100 * wealth_tf / total_wealth(pop))
-#         print(total_wealth(pop))
-#         raise ValueError("Wealth share TF superior to 100" + str(wealth_tf) + " // " + str(total_wealth(pop)))
-  
-#     if 100 * wealth_tf / total_wealth(pop) < -0.01:
-#         raise ValueError("Wealth share TF negative" + str(wealth_tf) + " // " + str(total_wealth(pop)))
-#     return 100 * wealth_tf / total_wealth(pop)
-
-# def wealth_share_vi(pop):
-#     wealth_vi = 0
-#     for ind in pop:
-#         if ind.type == "vi" and ind.wealth > 0:
-#             wealth_vi += ind.wealth
-#     if 100 * wealth_vi / total_wealth(pop) > 100.01:
-#         for ind in pop:
-#             print(ind.type)
-#             print(ind.wealth)
-#         print(100 * wealth_vi / total_wealth(pop))
-#         print(total_wealth(pop))
-#         raise ValueError("Wealth share VI superior to 100" + str(wealth_vi) + " // " + str(total_wealth(pop)))
-#     if 100 * wealth_vi / total_wealth(pop) < -0.01:
-#         raise ValueError("Wealth share VI negative" + str(wealth_vi) + " // " + str(total_wealth(pop)))
-
-#     return 100 * wealth_vi / total_wealth(pop)
-
-# def wealth_share_nt(pop):
-#     wealth_nt = 0
-#     for ind in pop:
-#         if ind.type == "nt" and ind.wealth > 0:
-#             wealth_nt += ind.wealth
-
-#     if 100 * wealth_nt / total_wealth(pop) > 100.01:
-#         for ind in pop:
-#             print(ind.type)
-#             print(ind.wealth)
-#         print(100 * wealth_nt / total_wealth(pop))
-#         print(total_wealth(pop))
-#         raise ValueError("Wealth share NT superior to 100" + str(wealth_nt) + " // " + str(total_wealth(pop)))
-#     if 100 * wealth_nt / total_wealth(pop) < -0.01:
-#         raise ValueError("Wealth share NT negative" + str(wealth_nt) + " // " + str(total_wealth(pop)))
-#     return 100 * wealth_nt / total_wealth(pop)
 
 
 def agg_ed(pop, spoils): 
@@ -393,12 +349,23 @@ def agg_ed_esl(pop, spoils):
     def big_edf(asset_key, price):
         result = ToLiquidate
         for ind in pop:
-            if ind.edf(ind, 1) != np.nan:
-                result += ind.edf(ind, price)
+            result += ind.edf(ind, price)
         return result
     functions.append(big_edf)
     return functions, ToLiquidate
 
+# def AggEdDerivative(pop):
+#     def derivative(price):
+#         result  = 0
+#         for ind in pop:
+#             if ind.type == 'vi':
+#                 result += (ind.leverage * ind.wealth) * ( (-1/price**2) * np.tanh(5 * (ind[0] - price) / ind[0]) + (5/(ind[0]*price) * (1 - np.tanh(price) ** 2)))
+#             if ind.type == 'nt':
+#                 result += (ind.leverage * ind.wealth) * ( (-1/price**2) * np.tanh(5 * ((ind[0] * ind.process) - price) / (ind[0] * ind.process)) + (5/((ind[0] * ind.process)*price) * (1 - np.tanh(price) ** 2)))
+#             if ind.type == 'tf':
+#                 result -= (ind.leverage * ind.wealth * np.tanh(ind.tsv)) / (price ** 2)
+#         return result
+#     return derivative
 
 def report_nt_cash(pop):
     total = 0
@@ -616,44 +583,6 @@ def report_tf_stocks(pop, price):
         cash = total / num
     return cash
 
-
-
-# def report_nt_return(pop):
-#     num = 0
-#     returns = np.nan
-#     sum_returns = 0
-#     for ind in pop:
-#         if ind.type == 'nt' and ind.prev_wealth != 0:
-#             num += 1
-#             sum_returns += ind.wealth / ind.prev_wealth
-#     if num != 0:
-#         returns = sum_returns / num - 1
-#     return returns
-
-# def report_vi_return(pop):
-#     num = 0
-#     returns = np.nan
-#     sum_returns = 0
-#     for ind in pop:
-#         if ind.type == 'vi' and ind.prev_wealth != 0:
-#             num += 1
-#             sum_returns += ind.wealth / ind.prev_wealth
-#     if num != 0:
-#         returns = sum_returns / num - 1
-#     return returns
-
-# def report_tf_return(pop):
-#     num = 0
-#     returns = np.nan
-#     sum_returns = 0
-#     for ind in pop:
-#         if ind.type == 'tf' and ind.prev_wealth != 0:
-#             num += 1
-#             sum_returns += ind.wealth / ind.prev_wealth
-#     if num != 0:
-#         returns = sum_returns / num - 1
-#     return returns
-
 def ReportReturn(pop, strat):
     num, Total = 0,0
     result = np.nan
@@ -667,14 +596,6 @@ def ReportReturn(pop, strat):
         
 def ComputeReturn(pop):
     for ind in pop:
-        # if ind.prev_wealth < 0:
-        #     raise ValueError('Negative previous wealth.')
-        # if ind.wealth < 0:
-        #     warnings.warn('Negative current wealth.')
-        #     print(ind)
-        #     print(ind.type)
-        #     print(ind.wealth)
-        #     raise ValueError('Negative current wealth.')
         if ind.prev_wealth > 0:
             ind.DailyReturn = (ind.wealth / ind.prev_wealth) - 1
         else:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from steps import *
 
-def main(mode, space, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
+def main(mode, space, solver, circuit, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
     # Initialise important variables and dataframe to store results
     ReturnsNT, ReturnsVI, ReturnsTF = np.zeros((MAX_GENERATIONS - data.Barr, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - data.Barr, POPULATION_SIZE)), np.zeros((MAX_GENERATIONS - data.Barr, POPULATION_SIZE))
     generation, CurrentPrice, dividend, spoils = 0, InitialPrice, INITIAL_DIVIDEND, 0
@@ -32,7 +32,7 @@ def main(mode, space, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATIO
         pop, timeD  = decision_updates(pop, mode, price_history, dividend_history)
 
         # Market clearing 
-        pop, mismatch, CurrentPrice, price_history, ToLiquidate, timeE = marketClearing(pop, CurrentPrice, price_history, spoils)
+        pop, mismatch, CurrentPrice, price_history, ToLiquidate, timeE = marketClearing(pop, CurrentPrice, price_history, spoils, solver, circuit)
 
         # Market execution
         pop, volume, dividend, random_dividend, dividend_history, spoils, timeF = marketActivity(pop, 
