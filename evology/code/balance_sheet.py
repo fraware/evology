@@ -75,12 +75,11 @@ def UpdateFval(pop, dividend_history):
 
 
 def DetermineEDF(pop):
-    def edf(ind, p):
+    for ind in pop:
         if ind.type == "tf":
-            return (LeverageTF * ind.wealth / p) * math.tanh(SCALE_TF * ind.tsv) - ind.asset
-                
+            ind.edf = lambda ind, p: (LeverageTF * ind.wealth / p) * math.tanh(SCALE_TF * ind.tsv) - ind.asset
         elif ind.type == "vi":
-            return (LeverageVI * ind.wealth / p) * math.tanh((5/ind[0]) * (ind[0] - p)) - ind.asset
+            ind.edf = lambda ind, p: (LeverageVI * ind.wealth / p) * math.tanh((5/ind[0]) * (ind[0] - p)) - ind.asset
 
             # try:
             #     return (LeverageVI * ind.wealth / p) * math.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p))) - ind.asset
@@ -91,9 +90,8 @@ def DetermineEDF(pop):
             #     print(ind[0])
             #     print(math.log2(ind[0]) - math.log2(p))
             #     raise ValueError('math domain error')
-
         elif ind.type == "nt":
-            return (LeverageNT * ind.wealth / p) * math.tanh((5/(ind[0] * ind.process)) * (ind[0] * ind.process - p)) - ind.asset
+            ind.edf = lambda ind, p: (LeverageNT * ind.wealth / p) * math.tanh((5/(ind[0] * ind.process)) * (ind[0] * ind.process - p)) - ind.asset
             # try:
             #     return (LeverageNT * ind.wealth / p) * math.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - math.log2(p))) - ind.asset
             # except:
@@ -105,10 +103,10 @@ def DetermineEDF(pop):
             #     print(math.log2(ind[0] * ind.process))
             #     print(math.log2(ind[0] * ind.process) - math.log2(p))
             #     raise ValueError('math domain error in nt edf')
+        else:
+            raise Exception(f"Unexpected ind type: {ind.type}")
 
     # Assign this function to be the agent's edf
-    for ind in pop:
-        ind.edf = edf
     return pop 
 
 def calculate_edv(pop, price):
