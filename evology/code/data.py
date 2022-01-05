@@ -146,9 +146,9 @@ def ResultsProcess(pop, spoils, price):
     WSVI = WSVI_
     WSTF = WSTF_
     if abs(100 - (WSNT + WSVI + WSTF)) > 1:
-        raise ValueError('Sum of wealth shares superior to 100. ' + str(WSNT + WSVI + WSTF)) 
+        raise ValueError('Sum of wealth shares superior to 100. ' + str([WSNT + WSVI + WSTF])) 
     if WSNT < 0 or WSNT < 0 or WSNT < 0:
-        raise ValueError("Negative wealth share. " + str(WSNT,WSVI,WSTF))
+        raise ValueError("Negative wealth share. " + str([WSNT,WSVI,WSTF]))
 
     ListOutput = [LongAssets, ShortAssets,
         NTcount, VIcount, TFcount, MeanNT, MeanVI, MeanTF, 
