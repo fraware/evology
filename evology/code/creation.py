@@ -8,6 +8,7 @@ import random
 toolbox = base.Toolbox()
 from parameters import *
 
+
 def DrawReturnRate(strat):
     if strat == 'vi':
         rate = random.uniform(MIN_RR_VI, MAX_RR_VI) / 1000
