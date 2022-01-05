@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import numpy as np
 
-RANDOM_SEED = 9 
 tqdm_display = False
 
 ''' STRATEGY DISTRIBUTIONS '''

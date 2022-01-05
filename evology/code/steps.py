@@ -14,7 +14,7 @@ from tqdm import tqdm
 import warnings
 import matplotlib 
 import matplotlib.pyplot as plt
-random.seed(random.random())
+# random.seed(random.random())
 
 
 def ga_evolution(pop, mode, space, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE):
