@@ -3,11 +3,9 @@ import numpy as np
 from numpy.core.fromnumeric import mean
 from parameters import *
 from market import *
-import inspect
 import math
 import warnings
 import random
-import timeit
 
 def clear_debt(pop, price):
     for ind in pop:
@@ -68,7 +66,7 @@ def UpdateFval(pop, dividend_history):
 
         if fval < 0:
             warnings.warn('Negative fval found in update_fval.')
-    
+
         if ind.type == 'vi' or ind.type == 'nt':
             ind[0] = fval
     return pop
@@ -80,33 +78,10 @@ def DetermineEDF(pop):
             ind.edf = lambda ind, p: (LeverageTF * ind.wealth / p) * math.tanh(SCALE_TF * ind.tsv) - ind.asset
         elif ind.type == "vi":
             ind.edf = lambda ind, p: (LeverageVI * ind.wealth / p) * math.tanh((5/ind[0]) * (ind[0] - p)) - ind.asset
-
-            # try:
-            #     return (LeverageVI * ind.wealth / p) * math.tanh(SCALE_VI * (math.log2(ind[0]) - math.log2(p))) - ind.asset
-            # except RuntimeWarning:
-            #     print(p)
-            #     print('Runtime warning for VI today.')
-            # except ValueError:
-            #     print(ind[0])
-            #     print(math.log2(ind[0]) - math.log2(p))
-            #     raise ValueError('math domain error')
         elif ind.type == "nt":
             ind.edf = lambda ind, p: (LeverageNT * ind.wealth / p) * math.tanh((5/(ind[0] * ind.process)) * (ind[0] * ind.process - p)) - ind.asset
-            # try:
-            #     return (LeverageNT * ind.wealth / p) * math.tanh(SCALE_NT * (math.log2(ind[0] * ind.process) - math.log2(p))) - ind.asset
-            # except:
-            #     print('p, ind, indproc, ind . indproc, log2 of it, math log of it - log p')
-            #     print(p)
-            #     print(ind[0])
-            #     print(ind.process)
-            #     print(ind[0] * ind.process)
-            #     print(math.log2(ind[0] * ind.process))
-            #     print(math.log2(ind[0] * ind.process) - math.log2(p))
-            #     raise ValueError('math domain error in nt edf')
         else:
             raise Exception(f"Unexpected ind type: {ind.type}")
-
-    # Assign this function to be the agent's edf
     return pop 
 
 def calculate_edv(pop, price):
@@ -168,45 +143,6 @@ def agent_report(ind):
         print("VI agent - " + str(round(ind[0],2)) + ", Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(round(ind.tsv,2)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) )# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
     if ind.type == "nt":
         print("NT agent - " + str(round(ind[0],2)) + ", Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(round(ind.tsv,2)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) + ', Process: ' + str(round(ind.process,2)))# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
-  
-def report_nt_signal(pop):
-    fval = 0
-    num = 0
-    fval_round = 0
-    for ind in pop:
-        if ind.type == "nt":
-            fval += ind[0] * ind.process
-            if fval < 0:
-                warnings.warn('Negative NT signal')
-            num += 1
-    if num != 0:
-        fval_round = fval/num
-    return fval_round
-
-def report_vi_signal(pop):
-    fval = 0
-    num = 0
-    fval_round = 0
-    for ind in pop:
-        if ind.type == "vi":
-            fval += ind[0]
-            num += 1
-    if num != 0:
-        fval_round = fval/num
-    return fval_round
-
-def report_tf_signal(pop, price_history):
-    fval = 0
-    num = 0
-    fval_round = 0
-
-    for ind in pop:
-        if len(price_history) > ind[0] and ind.type == 'tf':
-            fval += (price_history[-1] / price_history[-ind[0]]) - 1
-            num += 1
-    if num != 0:
-        fval_round = fval/num
-    return fval_round
 
 def calculate_tsv(pop, price, price_history):
 
@@ -224,71 +160,6 @@ def calculate_tsv(pop, price, price_history):
 
 
 
-def count_tf(pop):
-    count = 0
-    for ind in pop:
-        if ind.type == "tf":
-            count += 1
-    return count
-
-
-def count_vi(pop):
-    count = 0
-    for ind in pop:
-        if ind.type == "vi":
-            count += 1
-    return count
-
-
-def count_nt(pop):
-    count = 0
-    for ind in pop:
-        if ind.type == "nt":
-            count += 1
-    return count
-
-def mean_tf(pop):
-    total = 0
-    mean = 0
-    result = 0
-    for ind in pop:
-        if ind.type == "tf":
-            total += 1
-            mean += ind[0]
-    if total != 0:
-        result = mean/total
-    return result
-
-def mean_vi(pop):
-    total = 0
-    mean = 0
-    result = 0
-    for ind in pop:
-        if ind.type == "vi":
-            total += 1
-            mean += ind[0]
-    if total != 0:
-        result = mean/total
-    return result
-
-def mean_nt(pop):
-    total = 0
-    mean = 0
-    result = 0
-    for ind in pop:
-        if ind.type == "nt":
-            total += 1
-            mean += ind[0]
-    if total != 0:
-        result = mean/total
-    return result
-
-# def total_wealth(pop):
-#     wealth = 0
-#     for ind in pop:
-#         if ind.wealth > 0:
-#             wealth += ind.wealth
-#     return wealth
 
 def TotalWealth(pop):
     Wealth = 0
@@ -296,20 +167,6 @@ def TotalWealth(pop):
         if ind.wealth > 0:
             Wealth += ind.wealth
     return Wealth
-
-def WealthShare(pop, strat):
-    TotalW = TotalWealth(pop)
-    StratWealth = 0
-    for ind in pop:
-        if ind.type == strat and ind.wealth > 0:
-            StratWealth += ind.wealth
-    if StratWealth < 0:
-        raise ValueError('Negative Strat wealth for type ' + str(strat))
-    if TotalW == 0:
-        Share = 0
-    else:
-        Share = 100 * StratWealth / TotalW
-    return Share 
 
 
 def agg_ed(pop, spoils): 
@@ -351,245 +208,6 @@ def agg_ed_esl(pop, spoils):
     functions.append(big_edf)
     return functions, ToLiquidate
 
-# def AggEdDerivative(pop):
-#     def derivative(price):
-#         result  = 0
-#         for ind in pop:
-#             if ind.type == 'vi':
-#                 result += (ind.leverage * ind.wealth) * ( (-1/price**2) * np.tanh(5 * (ind[0] - price) / ind[0]) + (5/(ind[0]*price) * (1 - np.tanh(price) ** 2)))
-#             if ind.type == 'nt':
-#                 result += (ind.leverage * ind.wealth) * ( (-1/price**2) * np.tanh(5 * ((ind[0] * ind.process) - price) / (ind[0] * ind.process)) + (5/((ind[0] * ind.process)*price) * (1 - np.tanh(price) ** 2)))
-#             if ind.type == 'tf':
-#                 result -= (ind.leverage * ind.wealth * np.tanh(ind.tsv)) / (price ** 2)
-#         return result
-#     return derivative
-
-def report_nt_cash(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'nt':
-            num += 1
-            total += ind.cash
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_vi_cash(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'vi':
-            num += 1
-            total += ind.cash
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_tf_cash(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'tf':
-            num += 1
-            total += ind.cash
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_nt_lending(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'nt':
-            num += 1
-            total += ind.margin
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_vi_lending(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'vi':
-            num += 1
-            total += ind.margin
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_tf_lending(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'tf':
-            num += 1
-            total += ind.margin
-    if num != 0:
-        cash = total / num
-    return cash
-    
-def report_nt_loan(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'nt':
-            num += 1
-            total += ind.loan
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_vi_loan(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'vi':
-            num += 1
-            total += ind.loan
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_tf_loan(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'tf':
-            num += 1
-            total += ind.loan
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_nt_nav(pop, price):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'nt' and ind.wealth > 0:
-            num += 1
-            total += ind.wealth
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_vi_nav(pop, price):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'vi' and ind.wealth > 0:
-            num += 1
-            total += ind.wealth
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_tf_nav(pop, price):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'tf' and ind.wealth > 0:
-            num += 1
-            total += ind.wealth
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_nt_pnl(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'nt':
-            num += 1
-            total += ind.profit
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_vi_pnl(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'vi':
-            num += 1
-            total += ind.profit
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_tf_pnl(pop):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'tf':
-            num += 1
-            total += ind.profit
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_nt_stocks(pop, price):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'nt' and ind.asset > 0:
-            num += 1
-            total += ind.asset * price
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_vi_stocks(pop, price):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'vi' and ind.asset > 0:
-            num += 1
-            total += ind.asset * price
-    if num != 0:
-        cash = total / num
-    return cash
-
-def report_tf_stocks(pop, price):
-    total = 0
-    num = 0
-    cash = 0
-    for ind in pop:
-        if ind.type == 'tf' and ind.asset > 0:
-            num += 1
-            total += ind.asset * price
-    if num != 0:
-        cash = total / num
-    return cash
-
-def ReportReturn(pop, strat):
-    num, Total = 0,0
-    result = np.nan
-    for ind in pop:
-        if ind.type == strat and ind.prev_wealth != 0:
-            num += 1
-            Total += ind.DailyReturn
-    if num != 0:
-        result = Total / num
-    return result
         
 def ComputeReturn(pop):
     for ind in pop:
@@ -617,13 +235,6 @@ def report_types(pop):
             num_nt += 1
     print("TF: " + str(num_tf) + ', VI: ' + str(num_vi) + ', NT: ' + str(num_nt)) 
 
-def report_negW(pop):
-    count_neg = 0
-    for ind in pop:
-        if ind.wealth <= 0:
-            count_neg += 1
-    prop = 100 * count_neg / len(pop)
-    return prop
 
 def GetWealth(pop, strat):
     TotalWealth = 0
