@@ -11,11 +11,11 @@ from parameters import *
 
 def DrawReturnRate(strat):
     if strat == 'vi':
-        rate = random.uniform(MIN_RR_VI, MAX_RR_VI) / 1000
+        rate = np.random.uniform(MIN_RR_VI, MAX_RR_VI) / 1000
     if strat == 'nt':
-        rate = random.uniform(MIN_RR_NT, MAX_RR_NT) / 1000
+        rate = np.random.uniform(MIN_RR_NT, MAX_RR_NT) / 1000
     else:
-        rate = random.uniform(MIN_RR_VI, MAX_RR_VI) / 1000
+        rate = np.random.uniform(MIN_RR_TF, MAX_RR_TF) / 1000
     return rate
 
 creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
@@ -76,17 +76,17 @@ creator.create("ind_nt", list, typecode = 'd', fitness=creator.fitness_strategy,
 
 # TODO: individual_ga is a list, individual_gp will be a gp.primitiveTree.
 
-toolbox.register("tf", random.randint, MIN_THETA, MAX_THETA)
+toolbox.register("tf", np.random.randint, MIN_THETA, MAX_THETA+1)
 toolbox.register("gen_tf_ind", tools.initCycle, creator.ind_tf, (toolbox.tf,), n=1)
 
-toolbox.register("vi", random.randint, 100, 100)
+toolbox.register("vi", np.random.randint, 100, 100+1)
 toolbox.register("gen_vi_ind", tools.initCycle, creator.ind_vi, (toolbox.vi,), n=1)
 
-toolbox.register("nt", random.randint, 100, 100)
+toolbox.register("nt", np.random.randint, 100, 100+1)
 toolbox.register("gen_nt_ind", tools.initCycle, creator.ind_nt, (toolbox.nt,), n=1)
 
 def gen_rd_ind(Coords):
-    rd = random.random()
+    rd = np.random.random()
     if rd <= Coords[0]:
         return toolbox.gen_nt_ind()
     elif rd > Coords[0] and rd <= Coords[0] + Coords[1]:
@@ -127,7 +127,7 @@ def CreatePop(n, space, WealthCoords):
         NumTF += 1
 
     for i in range(n- (NumNT + NumVI + NumTF)):
-        rd = random.random()
+        rd = np.random.random()
         if rd <= ShareNT:
             pop.append(toolbox.gen_nt_ind())
             NumNT += 1

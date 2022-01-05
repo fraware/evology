@@ -3,11 +3,8 @@ import numpy as np
 from numpy.core.fromnumeric import mean
 from parameters import *
 from market import *
-import inspect
 import math
 import warnings
-import random
-import timeit
 
 def clear_debt(pop, price):
     for ind in pop:
@@ -48,7 +45,7 @@ def DetermineTsvProc(mode, pop, price_history):
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
         if ind.type == "nt":
-            ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * random.normalvariate(0,1))
+            ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * np.random.normal(0,1))
             if ind.process < 0:
                 warnings.warn('Negative process value for NT')
 
@@ -105,8 +102,6 @@ def DetermineEDF(pop):
             #     raise ValueError('math domain error in nt edf')
         else:
             raise Exception(f"Unexpected ind type: {ind.type}")
-
-    # Assign this function to be the agent's edf
     return pop 
 
 def calculate_edv(pop, price):
