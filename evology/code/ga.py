@@ -208,9 +208,11 @@ def random_decimal(low, high):
         number = - float(np.random.randint(round(-low*1000),round((-high-1)*1000))/1000)
     return number
 
-def selRandom(individuals, k):
-''' warning this should use np.random if we want to use it'''
-    return [random.choice(individuals) for i in range(k)]
+def selRandom(pop, k):
+    aspirants = np.random.choice(np.array(pop).flatten(), size=k)
+    if len(aspirants) != k:
+        raise ValueError('Length of aspirants after selRandom does not match intended tournament size. ' + str(k) + ',' + str(len(aspirants)))
+    return aspirants
 
 def strategy_evolution(mode, space, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates, generation):
 
@@ -233,9 +235,11 @@ def strategy_evolution(mode, space, pop, PROBA_SELECTION, MUTATION_RATE, wealth_
             for i in range(len(pop)):
                 if np.random.random() < PROBA_SELECTION: # Social learning
                     # Create the tournament and get the winner
-                    aspirants = selRandom(pop, TOURNAMENT_SIZE-1) 
-                    aspirants.append(pop[i])
-                    winner = max(aspirants, key=attrgetter("fitness"))
+                    # aspirants = selRandom(pop, TOURNAMENT_SIZE-1) 
+                    # print(aspirants)
+                    # aspirant = np.append(aspirants,pop[i])
+                    # print(aspirants)
+                    winner = max(pop, key=attrgetter("fitness"))
 
                     # Imitate the winner's type and strategy
                     if pop[i].type != winner.type:
