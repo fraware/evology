@@ -108,6 +108,7 @@ def ResultsProcess(pop, spoils, price):
         NTstocks = NTstocks / NTcount
         NTreturn = NTreturn / NTcount
         NTsignal = NTsignal / NTcount
+        MeanNT = MeanNT / NTcount
 
     if VIcount != 0:
         VIcash = VIcash / VIcount
@@ -117,6 +118,7 @@ def ResultsProcess(pop, spoils, price):
         VIpnl = VIpnl / VIcount
         VIstocks = VIstocks / VIcount
         VIreturn = VIreturn / VIcount
+        MeanVI = MeanVI / VIcount
     
     if TFcount != 0:
         TFcash = TFcash / TFcount
@@ -127,15 +129,12 @@ def ResultsProcess(pop, spoils, price):
         TFstocks = TFstocks / TFcount
         NTreturn = TFreturn / TFcount
         NTsignal = NTsignal / NTcount
+        MeanTF = MeanTF / TFcount
 
     if spoils > 0:
         LongAssets += spoils
     if spoils < 0:
         ShortAssets += abs(spoils)
-    
-    MeanNT = MeanNT / NTcount
-    MeanVI = MeanVI / VIcount
-    MeanTF = MeanTF / TFcount
 
     VIsignal = MeanVI
     
