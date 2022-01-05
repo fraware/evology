@@ -5,7 +5,6 @@ from parameters import *
 from market import *
 import math
 import warnings
-import random
 
 def clear_debt(pop, price):
     for ind in pop:
@@ -46,7 +45,7 @@ def DetermineTsvProc(mode, pop, price_history):
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
         if ind.type == "nt":
-            ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * random.normalvariate(0,1))
+            ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * np.random.normal(0,1))
             if ind.process < 0:
                 warnings.warn('Negative process value for NT')
 

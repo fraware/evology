@@ -73,3 +73,6 @@ MAX_RR_VI = 20
 
 MIN_RR_NT = 0
 MAX_RR_NT = 20
+
+MIN_RR_TF = 0
+MAX_RR_TF = 20

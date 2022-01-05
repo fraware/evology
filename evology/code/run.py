@@ -2,7 +2,7 @@
 from main import *
 from parameters import *
 
-np.random.seed(9)
+np.random.seed(8)
 wealth_coordinates = [1/3, 1/3, 1/3]
 wealth_coordinates = [0.3831113500265808, 0.2188745668924277, 0.39801408308099145]
 # wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
@@ -17,7 +17,7 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
     if learning_mode == 0:
         df,pop = main("static", 'scholl', 'esl', False, TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 1:
-        df,pop = main("between", 'scholl', 'esl', False, TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
+        df,pop = main("between", 'scholl', 'newton', False, TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 2:
         df,pop = main("between", 'scholl', 'esl', False, TIME, PROBA_SELECTION, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 3:
@@ -27,7 +27,7 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
 
     return df, pop
 
-df,pop = run(100, 0, 1000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
+df,pop = run(100, 1, 1000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
 df.to_csv("evology/data/run_data.csv")
 print(df)
 

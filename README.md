@@ -6,17 +6,6 @@
 ![No_Learning](https://github.com/aymericvie/evology/actions/workflows/no_learning_runs.yml/badge.svg?branch=master)
 ![Long Runs](https://github.com/aymericvie/evology/actions/workflows/long_runs.yml/badge.svg?branch=master)
 
-##### Testing (dev)
-
-![Learning-dev](https://github.com/aymericvie/evology/actions/workflows/learning_runs.yml/badge.svg?branch=dev)
-![No_Learning-dev](https://github.com/aymericvie/evology/actions/workflows/no_learning_runs.yml/badge.svg?branch=dev)
-![Long Runs-dev](https://github.com/aymericvie/evology/actions/workflows/long_runs.yml/badge.svg?branch=dev)
-
-
-
-
-
-
 ## Description
 
 We implement an artificial stock market with adaptive trading strategies: an evolutionary market ecology. On a simplified market with assets and cash, we apply various learning algorithms (imitation, Genetic Algorithm, Genetic Programming, ...) to model various means of financial learning. We estimate interactions between trading strategies and market convergence dynamics in these adaptive cases.
