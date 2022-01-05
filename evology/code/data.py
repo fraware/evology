@@ -127,8 +127,8 @@ def ResultsProcess(pop, spoils, price):
         TFnav = TFnav / TFcount
         TFpnl = TFpnl / TFcount
         TFstocks = TFstocks / TFcount
-        NTreturn = TFreturn / TFcount
-        NTsignal = NTsignal / NTcount
+        TFreturn = TFreturn / TFcount
+        TFsignal = TFsignal / TFcount
         MeanTF = MeanTF / TFcount
 
     if spoils > 0:
