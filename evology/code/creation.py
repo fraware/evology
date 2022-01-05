@@ -11,11 +11,11 @@ from parameters import *
 
 def DrawReturnRate(strat):
     if strat == 'vi':
-        rate = random.uniform(MIN_RR_VI, MAX_RR_VI) / 1000
+        rate = np.random.uniform(MIN_RR_VI, MAX_RR_VI) / 1000
     if strat == 'nt':
-        rate = random.uniform(MIN_RR_NT, MAX_RR_NT) / 1000
+        rate = np.random.uniform(MIN_RR_NT, MAX_RR_NT) / 1000
     else:
-        rate = random.uniform(MIN_RR_VI, MAX_RR_VI) / 1000
+        rate = np.random.uniform(MIN_RR_TF, MAX_RR_TF) / 1000
     return rate
 
 creator.create("fitness_strategy", base.Fitness, weights=(1.0,))

@@ -105,8 +105,6 @@ def DetermineEDF(pop):
             #     raise ValueError('math domain error in nt edf')
         else:
             raise Exception(f"Unexpected ind type: {ind.type}")
-
-    # Assign this function to be the agent's edf
     return pop 
 
 def calculate_edv(pop, price):
