@@ -3,7 +3,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import warnings
 import balance_sheet as bs
-import random
 import numpy as np
 
 def draw_dividend(dividend):

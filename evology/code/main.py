@@ -43,7 +43,7 @@ def main(mode, space, solver, circuit, MAX_GENERATIONS, PROBA_SELECTION, POPULAT
 
         # Record results
         results, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(results, generation, CurrentPrice, mismatch, 
-        dividend, random_dividend, volume, replacements, pop, price_history, spoils, 
+        dividend, random_dividend, volume, replacements, pop, spoils, 
         asset_supply, timeA, timeB, timeC, timeD, timeE, timeF, ReturnsNT, ReturnsVI, ReturnsTF,
         CountSelected, CountMutated, CountCrossed, StratFlow)
 

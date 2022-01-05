@@ -44,12 +44,7 @@ def marketClearing(pop, current_price, price_history, spoils, solver, circuit):
         current_price = esl_mc.CircuitClearing(ed_functions, current_price, circuit)    
     elif solver == 'newton':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
-        try: 
-            current_price = optimize.newton(func=ed_functions[0], x0 = current_price, tol = 0.5, maxiter = 1000)
-            # current_price = max(current_price, 0.01)
-        except: 
-            ''' Current price stays the same if the algorithm has not converged '''
-            pass
+        current_price = max(optimize.newton(func=ed_functions[0], x0 = current_price, maxiter = 1000), 0.01)
     elif solver == 'brentq':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
