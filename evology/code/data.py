@@ -64,7 +64,8 @@ def ResultsProcess(pop, spoils, price):
             NTlend += ind.margin
             NTloan += ind.loan
             NTnav += ind.wealth #before, we imposed w>0
-            WSNT += ind.wealth
+            if ind.wealth > 0:
+                WSNT += ind.wealth
             NTpnl += ind.profit
             NTsignal += ind[0] * ind.process #already included?
             NTstocks += price * ind.asset
@@ -78,7 +79,8 @@ def ResultsProcess(pop, spoils, price):
             VIlend += ind.margin
             VIloan += ind.loan
             VInav += ind.wealth #before, we imposed w>0
-            WSVI += ind.wealth
+            if ind.wealth > 0:
+                WSVI += ind.wealth
             VIpnl += ind.profit
             # VIsignal += ind[0] #double with MeanVI
             VIstocks += price * ind.asset
@@ -92,7 +94,8 @@ def ResultsProcess(pop, spoils, price):
             TFlend += ind.margin
             TFloan += ind.loan
             TFnav += ind.wealth #before, we imposed w>0
-            WSTF += ind.wealth
+            if ind.wealth > 0:
+                WSTF += ind.wealth
             TFpnl += ind.profit
             TFsignal += ind.tsv
             TFstocks += price * ind.asset
