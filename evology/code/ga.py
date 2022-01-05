@@ -155,11 +155,11 @@ def compute_fitness(pop):
 # Creating our own crossover operator:
 def feasible_crossover(ind1,ind2,CROSSOVER_RATE):
     if ind1.type == ind2.type:
-        if random.random() < CROSSOVER_RATE:
+        if np.random.random() < CROSSOVER_RATE:
             upperb = max(ind1,ind2)[0]
             lowerb = min (ind1,ind2)[0]
-            ind1[0] = random.randint(lowerb,upperb)
-            ind2[0] = random.randint(lowerb,upperb)
+            ind1[0] = np.random.randint(lowerb,upperb+1)
+            ind2[0] = np.random.randint(lowerb,upperb+1)
     return ind1[0], ind2[0]
 
 toolbox.register("feasible_crossover", feasible_crossover)
@@ -167,13 +167,13 @@ toolbox.register("mate", toolbox.feasible_crossover)
 
 # Creating our own mutation operator
 def mutate_both_ways(ind):
-    if random.random() < 0.5:
+    if np.random.random() < 0.5:
         ind[0] -= 1
     else: 
         ind[0] += 1
 
 def feasible_mutation(ind, MUTATION_RATE):
-    if random.random() < MUTATION_RATE:
+    if np.random.random() < MUTATION_RATE:
         if ind.type == "tf":
             if ind[0] == MAX_THETA: #we can only mutate lower
                 ind[0] -= 1
@@ -203,12 +203,13 @@ toolbox.register("mutate", toolbox.feasible_mutation)
 def random_decimal(low, high):
     global number
     if low >= 0 and high >= 0:
-        number = float(random.randint(round(low*1000),round(high*1000))/1000)
+        number = float(np.random.randint(round(low*1000),round((high+1)*1000))/1000)
     if low < 0 and high < 0:
-        number = - float(random.randint(round(-low*1000),round(-high*1000))/1000)
+        number = - float(np.random.randint(round(-low*1000),round((-high-1)*1000))/1000)
     return number
 
 def selRandom(individuals, k):
+''' warning this should use np.random if we want to use it'''
     return [random.choice(individuals) for i in range(k)]
 
 def strategy_evolution(mode, space, pop, PROBA_SELECTION, MUTATION_RATE, wealth_coordinates, generation):
@@ -230,7 +231,7 @@ def strategy_evolution(mode, space, pop, PROBA_SELECTION, MUTATION_RATE, wealth_
 
             # Selection
             for i in range(len(pop)):
-                if random.random() < PROBA_SELECTION: # Social learning
+                if np.random.random() < PROBA_SELECTION: # Social learning
                     # Create the tournament and get the winner
                     aspirants = selRandom(pop, TOURNAMENT_SIZE-1) 
                     aspirants.append(pop[i])
@@ -271,10 +272,10 @@ def strategy_evolution(mode, space, pop, PROBA_SELECTION, MUTATION_RATE, wealth_
                 raise ValueError('Sum cumproba = 0')
 
             for i in range(len(pop)):
-                if random.random() < MUTATION_RATE:
+                if np.random.random() < MUTATION_RATE:
                     CountMutated += 1
                     # Change type totally randomly 
-                    n = random.random()
+                    n = np.random.random()
                     ty = 0
                     while cum_proba[ty] < n:
                         ty += 1
