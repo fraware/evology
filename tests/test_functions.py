@@ -103,3 +103,53 @@ def nolearning_runs_reset(repetitions, time, agents):
 def test_nolearning_reset(repetitions, time, agents):
     went_smoothly = nolearning_runs_reset(repetitions, time, agents)
     assert went_smoothly == True
+
+def det_pop_nolearning(repetitions, time, agents):
+
+    went_smoothly = True
+
+    for _ in range(repetitions):
+        seed = random.randint(0,10)
+        np.random.seed(seed)
+        wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
+        np.random.seed(seed)
+        df,pop = main("between", 'scholl', solver, False, time, 0, agents, 0, wealth_coordinates, tqdm_display=True, reset_wealth = False)
+        np.random.seed(seed)
+        df2,pop2 = main("between", 'scholl', solver, False, time, 0, agents, 0, wealth_coordinates, tqdm_display=True, reset_wealth = False)
+
+        if df['Price'].iloc[-1] != df2['Price'].iloc[-1]:
+            went_smoothly = False
+            print('Price trajectory is not reproducible.')
+        if pop[-1] != pop2[-1]:
+            went_smoothly = False
+            print('Final population is not reproducible.')
+    return went_smoothly
+
+def test_det_pop_nolearning(repetitions, time, agents):
+    went_smoothly = det_pop_nolearning(repetitions, time, agents)
+    assert went_smoothly == True
+
+def det_pop_learning(repetitions, time, agents):
+
+    went_smoothly = True
+
+    for _ in range(repetitions):
+        seed = random.randint(0,10)
+        np.random.seed(seed)
+        wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
+        np.random.seed(seed)
+        df,pop = main("between", 'scholl', solver, False, time, PROBA_SELECTION, agents, MUTATION_RATE, wealth_coordinates, tqdm_display=True, reset_wealth = False)
+        np.random.seed(seed)
+        df2,pop2 = main("between", 'scholl', solver, False, time, PROBA_SELECTION, agents, MUTATION_RATE, wealth_coordinates, tqdm_display=True, reset_wealth = False)
+
+        if df['Price'].iloc[-1] != df2['Price'].iloc[-1]:
+            went_smoothly = False
+            print('Price trajectory is not reproducible.')
+        if pop[-1] != pop2[-1]:
+            went_smoothly = False
+            print('Final population is not reproducible.')
+    return went_smoothly
+
+def test_det_pop_learning(repetitions, time, agents):
+    went_smoothly = det_pop_learning(repetitions, time, agents)
+    assert went_smoothly == True
