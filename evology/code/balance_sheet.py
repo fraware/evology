@@ -41,11 +41,11 @@ def DetermineTsvProc(mode, pop, price_history):
     for ind in pop:
         if ind.type == "tf":
             if len(price_history) >= ind[0]:
-                ind.tsv = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
+                ind.tsv = math.log2(price_history[-1]) - math.log2(price_history[-ind[0]])
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
         if ind.type == "nt":
-            ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * np.random.normal(0,1))
+            ind.process = abs(ind.process + RHO_NT * (math.log2(MU_NT) - math.log2(ind.process)) + GAMMA_NT * np.random.normal(0,1))
             if ind.process < 0:
                 warnings.warn('Negative process value for NT')
 
