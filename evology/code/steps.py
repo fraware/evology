@@ -50,7 +50,7 @@ def marketClearing(pop, current_price, price_history, spoils, solver, circuit):
         current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
     else:
         raise ValueError('No solver was selected. Available options: esl, newton, brentq')
-    bs.CalcTsvVINT(pop, current_price, price_history)
+    bs.CalcTsvVINT(pop, current_price)
     price_history.append(current_price)       
     pop, mismatch = bs.calculate_edv(pop, current_price)
     timeE = timeit.default_timer() - starttime
