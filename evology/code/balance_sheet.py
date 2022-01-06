@@ -1,6 +1,4 @@
-from operator import index
 import numpy as np
-from numpy.core.fromnumeric import mean
 from parameters import *
 from market import *
 import math
