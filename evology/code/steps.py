@@ -48,6 +48,9 @@ def marketClearing(pop, current_price, price_history, spoils, solver, circuit):
     elif solver == 'newton':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         current_price = max(optimize.newton(func=ed_functions[0], x0 = current_price, maxiter = 1000), 0.01)
+    elif solver == 'newton.true':
+        ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
+        current_price = min(max(optimize.newton(func=ed_functions[0], x0 = current_price, maxiter = 1000),0.5*current_price),2*current_price)
     elif solver == 'brentq':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
