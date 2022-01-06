@@ -13,6 +13,7 @@ def main(mode, space, solver, circuit, MAX_GENERATIONS, PROBA_SELECTION, POPULAT
     bs.UpdatePrevWealth(pop)
 
     for generation in tqdm(range(MAX_GENERATIONS), disable=tqdm_display, miniters = 100, mininterval=0.5):
+        print(CurrentPrice)
 
         # Population reset
         pop = cr.WealthReset(pop, space, wealth_coordinates, generation, reset_wealth)

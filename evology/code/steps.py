@@ -41,7 +41,10 @@ def marketClearing(pop, current_price, price_history, spoils, solver, circuit):
     starttime = timeit.default_timer()
     if solver == 'esl':
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
-        current_price = esl_mc.CircuitClearing(ed_functions, current_price, circuit)    
+        current_price = float(esl_mc.solve(ed_functions, current_price)[0])  
+    elif solver == 'esl.true':
+        ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
+        current_price = esl_mc.CircuitClearing(ed_functions, current_price, circuit)  
     elif solver == 'newton':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         current_price = max(optimize.newton(func=ed_functions[0], x0 = current_price, maxiter = 1000), 0.01)
