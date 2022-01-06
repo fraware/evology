@@ -143,17 +143,13 @@ def agent_report(ind):
     if ind.type == "nt":
         print("NT agent - " + str(round(ind[0],2)) + ", Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(round(ind.tsv,2)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) + ', Process: ' + str(round(ind.process,2)))# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
 
-def calculate_tsv(pop, price, price_history):
-
+def CalcTsvVINT(pop, price):
     if price < 0:
-        warnings.warn('Negative price '+ str(price) )
-
+        warnings.warn('Negative price '+ str(price))
     for ind in pop:
         if ind.type == 'vi':
-            # ind.tsv = np.log2(ind[0]) - np.log2(price)
             ind.tsv = (5/ind[0]) * (ind[0] - price)
         if ind.type == 'nt':
-            # ind.tsv = np.log2(ind[0] * abs(ind.process)) - np.log2(price)
             ind.tsv = (5/(ind[0] * ind.process)) * (ind[0] * ind.process - price)
     return ind
 
