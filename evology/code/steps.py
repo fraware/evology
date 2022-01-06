@@ -41,16 +41,22 @@ def marketClearing(pop, current_price, price_history, spoils, solver, circuit):
     starttime = timeit.default_timer()
     if solver == 'esl':
         ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
-        current_price = esl_mc.CircuitClearing(ed_functions, current_price, circuit)    
+        current_price = float(esl_mc.solve(ed_functions, current_price)[0])  
+    elif solver == 'esl.true':
+        ed_functions, ToLiquidate = bs.agg_ed_esl(pop, spoils)
+        current_price = esl_mc.CircuitClearing(ed_functions, current_price, circuit)  
     elif solver == 'newton':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         current_price = max(optimize.newton(func=ed_functions[0], x0 = current_price, maxiter = 1000), 0.01)
+    elif solver == 'newton.true':
+        ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
+        current_price = min(max(optimize.newton(func=ed_functions[0], x0 = current_price, maxiter = 1000),0.5*current_price),2*current_price)
     elif solver == 'brentq':
         ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
         current_price = optimize.brentq(ed_functions[0], 0.5 * current_price, 2 * current_price)
     else:
         raise ValueError('No solver was selected. Available options: esl, newton, brentq')
-    bs.calculate_tsv(pop, current_price, price_history)
+    bs.CalcTsvVINT(pop, current_price)
     price_history.append(current_price)       
     pop, mismatch = bs.calculate_edv(pop, current_price)
     timeE = timeit.default_timer() - starttime

@@ -41,11 +41,11 @@ def DetermineTsvProc(mode, pop, price_history):
     for ind in pop:
         if ind.type == "tf":
             if len(price_history) >= ind[0]:
-                ind.tsv = np.log2(price_history[-1]) - np.log2(price_history[-ind[0]])
+                ind.tsv = math.log2(price_history[-1]) - math.log2(price_history[-ind[0]])
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
         if ind.type == "nt":
-            ind.process = abs(ind.process + RHO_NT * (np.log2(MU_NT) - np.log2(ind.process)) + GAMMA_NT * np.random.normal(0,1))
+            ind.process = abs(ind.process + RHO_NT * (math.log2(MU_NT) - math.log2(ind.process)) + GAMMA_NT * np.random.normal(0,1))
             if ind.process < 0:
                 warnings.warn('Negative process value for NT')
 
@@ -143,17 +143,13 @@ def agent_report(ind):
     if ind.type == "nt":
         print("NT agent - " + str(round(ind[0],2)) + ", Cash " + str(int(ind.cash)) + ", Asset_Long " + str(int(ind.asset)) + ", Wealth " + str(int(ind.wealth)) + ", TS " + str(round(ind.tsv,2)) + ", EV " + str(int(ind.edv)) + ", Margin " + str(int(ind.margin)) + ", Loan " + str(int(ind.loan)) + ', Process: ' + str(round(ind.process,2)))# )#", Profit " + str(int(ind.profit)) + ", Fitness " + str(ind.fitness))
 
-def calculate_tsv(pop, price, price_history):
-
+def CalcTsvVINT(pop, price):
     if price < 0:
-        warnings.warn('Negative price '+ str(price) )
-
+        warnings.warn('Negative price '+ str(price))
     for ind in pop:
         if ind.type == 'vi':
-            # ind.tsv = np.log2(ind[0]) - np.log2(price)
             ind.tsv = (5/ind[0]) * (ind[0] - price)
         if ind.type == 'nt':
-            # ind.tsv = np.log2(ind[0] * abs(ind.process)) - np.log2(price)
             ind.tsv = (5/(ind[0] * ind.process)) * (ind[0] * ind.process - price)
     return ind
 

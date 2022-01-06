@@ -7,10 +7,10 @@ tqdm_display = False
 PROBA_GP = 0
 
 ''' GA parmeters '''
-MUTATION_RATE = 1/(252 * 2) 
+MUTATION_RATE = 1/(252 * 4) 
 CROSSOVER_RATE = 1/21
 TOURNAMENT_SIZE = 5
-PROBA_SELECTION = 1/(252 * 2) 
+PROBA_SELECTION = 1/(252 * 4) 
 
 ''' GP PARAMETERS '''
 
