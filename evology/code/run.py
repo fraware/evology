@@ -2,6 +2,7 @@
 from main import *
 from parameters import *
 
+
 np.random.seed(8)
 wealth_coordinates = [1/3, 1/3, 1/3]
 # wealth_coordinates = [0.20899108903451205, 0.1210376286378561, 0.6699712823276319]
@@ -11,6 +12,7 @@ print(wealth_coordinates)
 
 
 # main(mode, space, solver, circuit, MAX_GENERATIONS, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth):
+
 
 def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, reset_wealth):
 
