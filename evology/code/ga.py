@@ -23,7 +23,6 @@ def adjust_mode(pop, mode):
 
 def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, wealth_coordinates):
 
-    starttime = timeit.default_timer()
     round_replacements = 0
     ''' 
     hyperm = False
@@ -141,8 +140,7 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
         if ind.wealth < 0:
             raise ValueError('Insolvent funds after hypermutation.')
 
-    timeB = timeit.default_timer() - starttime
-    return pop, round_replacements, spoils, timeB
+    return pop, round_replacements, spoils
 
 def compute_fitness(pop):
     for ind in pop:

@@ -28,7 +28,7 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
 
     return df, pop
 
-df,pop = run(100, 1, 10000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
+df,pop = run(100, 1, 1000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
 df.to_csv("evology/data/run_data.csv")
 print(df)
 
