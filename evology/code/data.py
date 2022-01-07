@@ -164,7 +164,6 @@ def ResultsProcess(pop, spoils, price):
 
 def record_results(results, generation, current_price, mismatch, dividend,
     random_dividend, volume, replacements, pop, spoils, asset_supply,
-    timeA, timeB, timeC, timeD, timeE, timeF,
     ReturnsNT, ReturnsVI, ReturnsTF,
     CountSelected, CountMutated, CountCrossed, StratFlow
     ):
@@ -244,15 +243,15 @@ def record_results(results, generation, current_price, mismatch, dividend,
         results[current, 43] = spoils
 
         ''' Run time data '''
-        results[current, 44] = timeA
-        results[current, 45] = timeB
-        results[current, 46] = timeC
-        results[current, 47] = timeD
-        results[current, 48] = timeE
-        results[current, 49] = timeF
-        timeG = timeit.default_timer() - starttime
-        results[current, 50] = timeG
-        results[current, 51] = timeA + timeB + timeC + timeD + timeE + timeF + timeG
+        results[current, 44] = 0 #timeA
+        results[current, 45] = 0 #timeB
+        results[current, 46] = 0 #timeC
+        results[current, 47] = 0 #timeD
+        results[current, 48] = 0 #timeE
+        results[current, 49] = 0 #timeF
+        timeG = 0 #timeit.default_timer() - starttime
+        results[current, 50] = 0 #timeG
+        results[current, 51] = 0 #timeA + timeB + timeC + timeD + timeE + timeF + timeG
 
         ''' More measures '''
         results[current, 52] = abs(100 * spoils / asset_supply)

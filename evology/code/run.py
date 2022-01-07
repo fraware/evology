@@ -2,6 +2,7 @@
 from main import *
 from parameters import *
 
+
 np.random.seed(8)
 wealth_coordinates = [1/3, 1/3, 1/3]
 # wealth_coordinates = [0.20899108903451205, 0.1210376286378561, 0.6699712823276319]
@@ -27,7 +28,7 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
 
     return df, pop
 
-df,pop = run(100, 1, 5000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
+df,pop = run(100, 1, 10000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
 df.to_csv("evology/data/run_data.csv")
 print(df)
 
