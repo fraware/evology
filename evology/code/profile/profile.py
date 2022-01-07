@@ -25,8 +25,7 @@ def main(mode, space, solver, circuit, MAX_GENERATIONS, PROBA_SELECTION, POPULAT
         pop, replacements, spoils= ga.hypermutate(pop, mode, asset_supply, CurrentPrice, generation, spoils, wealth_coordinates) # Replace insolvent agents     
         
         # Strategy evolution
-        pop, CountSelected, CountMutated, CountCrossed, StratFlow = ga_evolution(pop, mode, space, 
-            generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
+        pop, CountSelected, CountMutated, CountCrossed, StratFlow = ga_evolution(pop, mode, space, generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
 
         # Calculate wealth and previous wealth
         bs.calculate_wealth(pop, CurrentPrice)
@@ -39,17 +38,13 @@ def main(mode, space, solver, circuit, MAX_GENERATIONS, PROBA_SELECTION, POPULAT
         pop, mismatch, CurrentPrice, price_history, ToLiquidate= marketClearing(pop, CurrentPrice, price_history, spoils, solver, circuit)
 
         # Market execution
-        pop, volume, dividend, random_dividend, dividend_history, spoils= marketActivity(pop, 
-            CurrentPrice, asset_supply, dividend, dividend_history, spoils, ToLiquidate)
+        pop, volume, dividend, random_dividend, dividend_history, spoils= marketActivity(pop, CurrentPrice, asset_supply, dividend, dividend_history, spoils, ToLiquidate)
         
         # Earnings, compute profits
         pop= update_wealth(pop, CurrentPrice, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
 
         # Record results
-        results, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(results, generation, CurrentPrice, mismatch, 
-        dividend, random_dividend, volume, replacements, pop, spoils, 
-        asset_supply, ReturnsNT, ReturnsVI, ReturnsTF,
-        CountSelected, CountMutated, CountCrossed, StratFlow)
+        results, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(results, generation, CurrentPrice, mismatch, dividend, random_dividend, volume, replacements, pop, spoils, asset_supply, ReturnsNT, ReturnsVI, ReturnsTF, CountSelected, CountMutated, CountCrossed, StratFlow)
 
     df = pd.DataFrame(results, columns = data.columns)
     
