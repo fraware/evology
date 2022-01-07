@@ -28,12 +28,10 @@ def ga_evolution(pop, mode, space, generation, wealth_coordinates, PROBA_SELECTI
     return pop, CountSelected, CountMutated, CountCrossed, StratFlow
 
 def decision_updates(pop, mode, price_history, dividend_history):
-    starttime = timeit.default_timer()
     bs.DetermineTsvProc(mode, pop, price_history)
     bs.UpdateFval(pop, dividend_history)
     bs.DetermineEDF(pop)
-    timeD = timeit.default_timer() - starttime
-    return pop, timeD
+    return pop
 
 
 def marketClearing(pop, current_price, price_history, spoils, solver, circuit):
