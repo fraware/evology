@@ -18,10 +18,10 @@ def main(mode, space, solver, circuit, MAX_GENERATIONS, PROBA_SELECTION, POPULAT
         pop = cr.WealthReset(pop, space, wealth_coordinates, generation, reset_wealth)
 
         # Hypermutation
-        pop, replacements, spoils, timeB = ga.hypermutate(pop, mode, asset_supply, CurrentPrice, generation, spoils, wealth_coordinates) # Replace insolvent agents     
+        pop, replacements, spoils = ga.hypermutate(pop, mode, asset_supply, CurrentPrice, generation, spoils, wealth_coordinates) # Replace insolvent agents     
         
         # Strategy evolution
-        pop, timeC,CountSelected, CountMutated, CountCrossed, StratFlow = ga_evolution(pop, mode, space, 
+        pop, CountSelected, CountMutated, CountCrossed, StratFlow = ga_evolution(pop, mode, space, 
             generation, wealth_coordinates, PROBA_SELECTION, MUTATION_RATE)
 
         # Calculate wealth and previous wealth
@@ -29,22 +29,22 @@ def main(mode, space, solver, circuit, MAX_GENERATIONS, PROBA_SELECTION, POPULAT
         bs.UpdatePrevWealth(pop)
 
         # Market decisions (tsv, proc, edf)
-        pop, timeD  = decision_updates(pop, mode, price_history, dividend_history)
+        pop = decision_updates(pop, mode, price_history, dividend_history)
 
         # Market clearing 
-        pop, mismatch, CurrentPrice, price_history, ToLiquidate, timeE = marketClearing(pop, CurrentPrice, price_history, spoils, solver, circuit)
+        pop, mismatch, CurrentPrice, price_history, ToLiquidate= marketClearing(pop, CurrentPrice, price_history, spoils, solver, circuit)
 
         # Market execution
-        pop, volume, dividend, random_dividend, dividend_history, spoils, timeF = marketActivity(pop, 
+        pop, volume, dividend, random_dividend, dividend_history, spoils = marketActivity(pop, 
             CurrentPrice, asset_supply, dividend, dividend_history, spoils, ToLiquidate)
         
         # Earnings, compute profits
-        pop, timeA = update_wealth(pop, CurrentPrice, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
+        pop = update_wealth(pop, CurrentPrice, generation, wealth_coordinates, POPULATION_SIZE, reset_wealth)
 
         # Record results
         results, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(results, generation, CurrentPrice, mismatch, 
         dividend, random_dividend, volume, replacements, pop, spoils, 
-        asset_supply, timeA, timeB, timeC, timeD, timeE, timeF, ReturnsNT, ReturnsVI, ReturnsTF,
+        asset_supply, ReturnsNT, ReturnsVI, ReturnsTF,
         CountSelected, CountMutated, CountCrossed, StratFlow)
 
     df = pd.DataFrame(results, columns = data.columns)
