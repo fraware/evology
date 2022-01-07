@@ -7,5 +7,6 @@ os.system("pip install pandas")
 os.system("pip install --index-url https://test.pypi.org/simple/ eslpy --force")
 os.system("pip install tqdm")
 os.system("pip install scipy")
+os.system("pip install line_profiler")
 
 os.system("pip freeze > requirements.txt")
