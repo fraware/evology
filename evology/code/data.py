@@ -54,7 +54,7 @@ def ResultsProcess(pop, spoils, price):
 
         if ind.asset > 0:
             LongAssets += ind.asset
-        if ind.asset < 0:
+        elif ind.asset < 0:
             ShortAssets += abs(ind.asset)
 
         if ind.type == 'nt':
@@ -72,7 +72,7 @@ def ResultsProcess(pop, spoils, price):
             if ind.prev_wealth != 0:
                 NTreturn += ind.DailyReturn
 
-        if ind.type == 'vi':
+        elif ind.type == 'vi':
             VIcount += 1
             MeanVI += ind[0]
             VIcash += ind.cash
@@ -87,7 +87,7 @@ def ResultsProcess(pop, spoils, price):
             if ind.prev_wealth != 0:
                 VIreturn += ind.DailyReturn
 
-        if ind.type == 'tf':
+        elif ind.type == 'tf':
             TFcount += 1
             MeanTF += ind[0]
             TFcash += ind.cash
@@ -136,7 +136,7 @@ def ResultsProcess(pop, spoils, price):
 
     if spoils > 0:
         LongAssets += spoils
-    if spoils < 0:
+    elif spoils < 0:
         ShortAssets += abs(spoils)
 
     VIsignal = MeanVI
