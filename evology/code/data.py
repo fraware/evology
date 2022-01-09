@@ -186,93 +186,63 @@ def record_results(results, generation, current_price, mismatch, dividend,
         ReturnsTF[current, :] = DailyTFReturns
 
         ''' Global variables '''
-        results[current, 0] = generation - Barr 
-        results[current, 1] = current_price
-        results[current, 2] = mismatch 
-        results[current, 3] = dividend
-        results[current, 4] = random_dividend
-        results[current, 5] = volume
-        results[current, 6] = replacements
-        results[current, 7] = ListOutput[0]  #bs.count_long_assets(pop, spoils)
-        results[current, 8] = ListOutput[1]  #bs.count_short_assets(pop, spoils)
+        arr = [
+            generation - Barr,
+            current_price,
+            mismatch,
+            dividend,
+            random_dividend,
+            volume,
+            replacements,
+            ListOutput[0],  #bs.count_long_assets(pop, spoils)
+            ListOutput[1],  #bs.count_short_assets(pop, spoils)
+        ]
+
 
 
         ''' General ecology variables '''
-        results[current, 9] = ListOutput[2]  #bs.count_nt(pop)
-        results[current, 10] = ListOutput[3]  #bs.count_vi(pop)
-        results[current, 11] = ListOutput[4]  #bs.count_tf(pop)
-        results[current, 12] = ListOutput[5]  #bs.mean_nt(pop)
-        results[current, 13] = ListOutput[6]  #bs.mean_vi(pop)
-        results[current, 14] = ListOutput[7]  #bs.mean_tf(pop)
-        results[current, 15] = ListOutput[8]  #bs.WealthShare(pop, 'nt') 
-        results[current, 16] = ListOutput[9]  #bs.WealthShare(pop, 'vi') 
-        results[current, 17] = ListOutput[10]  #bs.WealthShare(pop, 'tf') 
-        
+        arr += ListOutput[2:11]
+
         ''' Noise traders '''
-        results[current, 18] = ListOutput[11]  #bs.report_nt_cash(pop)
-        results[current, 19] = ListOutput[12]  #bs.report_nt_lending(pop)
-        results[current, 20] = ListOutput[13]  #bs.report_nt_loan(pop)
-        results[current, 21] = ListOutput[14]  #bs.report_nt_nav(pop, current_price)
-        results[current, 22] = ListOutput[15]  #bs.report_nt_pnl(pop)
-        results[current, 23] = ListOutput[16]  #bs.report_nt_signal(pop)
-        results[current, 24] = ListOutput[17]  #bs.report_nt_stocks(pop, current_price)
-        results[current, 25] = ListOutput[18]  #bs.ReportReturn(pop, 'nt')
+        arr += ListOutput[11:19]
 
         ''' Value investors '''
-        results[current, 26] = ListOutput[19]  #bs.report_vi_cash(pop)
-        results[current, 27] = ListOutput[20]  #bs.report_vi_lending(pop)
-        results[current, 28] = ListOutput[21]  #bs.report_vi_loan(pop)
-        results[current, 29] = ListOutput[22]  #bs.report_vi_nav(pop, current_price)
-        results[current, 30] = ListOutput[23]  #bs.report_vi_pnl(pop)
-        results[current, 31] = ListOutput[24]  #bs.report_vi_signal(pop)
-        results[current, 32] = ListOutput[25]  #bs.report_vi_stocks(pop, current_price)
-        results[current, 33] = ListOutput[26]  #bs.ReportReturn(pop, 'vi')
+        arr += ListOutput[19:27]
 
         ''' Trend followers '''
-        results[current, 34] = ListOutput[27]  #bs.report_tf_cash(pop)
-        results[current, 35] = ListOutput[28]  #bs.report_tf_lending(pop)
-        results[current, 36] = ListOutput[29]  #bs.report_tf_loan(pop)
-        results[current, 37] = ListOutput[30]  #bs.report_tf_nav(pop, current_price)
-        results[current, 38] = ListOutput[31]  #bs.report_tf_pnl(pop)
-        results[current, 39] = ListOutput[32]  #bs.report_tf_signal(pop, price_history)
-        results[current, 40] = ListOutput[33]  #bs.report_tf_stocks(pop, current_price)
-        results[current, 41] = ListOutput[34]  #bs.ReportReturn(pop, 'tf')
+        arr += ListOutput[27:35]
 
         ''' Additional measures '''
-        results[current, 42] = ComputeAvgReturn(results, current, pop)
-        results[current, 43] = spoils
+        arr += [
+            ComputeAvgReturn(results, current, pop),
+            spoils
+        ]
 
         ''' Run time data '''
-        results[current, 44] = 0 #timeA
-        results[current, 45] = 0 #timeB
-        results[current, 46] = 0 #timeC
-        results[current, 47] = 0 #timeD
-        results[current, 48] = 0 #timeE
-        results[current, 49] = 0 #timeF
-        timeG = 0 #timeit.default_timer() - starttime
-        results[current, 50] = 0 #timeG
-        results[current, 51] = 0 #timeA + timeB + timeC + timeD + timeE + timeF + timeG
+        arr += [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ]
 
         ''' More measures '''
-        results[current, 52] = abs(100 * spoils / asset_supply)
-        results[current, 53] = np.nanmean(DailyNTReturns) 
-        results[current, 54] = np.nanmean(DailyVIReturns) 
-        results[current, 55] = np.nanmean(DailyTFReturns) 
-        results[current, 56] = (results[current, 54] + results[current, 55] + results[current, 56]) / 3
+        arr += [
+            abs(100 * spoils / asset_supply),
+            np.nanmean(DailyNTReturns),
+            np.nanmean(DailyVIReturns),
+            np.nanmean(DailyTFReturns),
+            (results[current, 54] + results[current, 55] + results[current, 56]) / 3,
+        ]
 
         ''' Measures of adaptation '''
-        results[current, 57] = CountSelected
-        results[current, 58] = CountMutated
-        results[current, 59] = CountCrossed
-        results[current, 60] = StratFlow[0]
-        results[current, 61] = StratFlow[1]
-        results[current, 62] = StratFlow[2]
-        results[current, 63] = StratFlow[3]
-        results[current, 64] = StratFlow[4]
-        results[current, 65] = StratFlow[5]
-
-
-
+        arr += [CountSelected, CountMutated, CountCrossed]
+        arr += StratFlow
+        results[current, :] = arr
 
     return results, ReturnsNT, ReturnsVI, ReturnsTF
 
