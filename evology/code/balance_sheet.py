@@ -52,12 +52,12 @@ def DetermineTsvProc(mode, pop, price_history):
 def UpdateFval(pop, dividend_history):
     estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
 
-    for ind in pop: 
-        if len(dividend_history) >= 1:
-            numerator = (1 + estimated_daily_div_growth) * dividend_history[-1]
-        elif len(dividend_history) < 1:
-            numerator = (1 + estimated_daily_div_growth) * INITIAL_DIVIDEND
+    if len(dividend_history) >= 1:
+        numerator = (1 + estimated_daily_div_growth) * dividend_history[-1]
+    elif len(dividend_history) < 1:
+        numerator = (1 + estimated_daily_div_growth) * INITIAL_DIVIDEND
 
+    for ind in pop: 
         denuminator = (1 + (AnnualInterestRate + ind.strategy) - DIVIDEND_GROWTH_RATE_G) ** (1/252) - 1
         fval = numerator / denuminator
 
