@@ -36,14 +36,17 @@ def calculate_wealth(pop, current_price):
         ind.wealth = ind.cash + ind.asset * current_price - ind.loan
 
 def DetermineTsvProc(mode, pop, price_history):
-    for ind in pop:
+    # Pre-generate the random number once for all, to reduce Numpy calling
+    # overhead.
+    randoms = np.random.normal(0, 1, len(pop))
+    for count, ind in enumerate(pop):
         if ind.type == "tf":
             if len(price_history) >= ind[0]:
                 ind.tsv = math.log2(price_history[-1]) - math.log2(price_history[-ind[0]])
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
-        if ind.type == "nt":
-            ind.process = abs(ind.process + RHO_NT * (math.log2(MU_NT) - math.log2(ind.process)) + GAMMA_NT * np.random.normal(0,1))
+        elif ind.type == "nt":
+            ind.process = abs(ind.process + RHO_NT * (math.log2(MU_NT) - math.log2(ind.process)) + GAMMA_NT * randoms[count])
             if ind.process < 0:
                 warnings.warn('Negative process value for NT')
 
@@ -52,12 +55,12 @@ def DetermineTsvProc(mode, pop, price_history):
 def UpdateFval(pop, dividend_history):
     estimated_daily_div_growth = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
 
-    for ind in pop: 
-        if len(dividend_history) >= 1:
-            numerator = (1 + estimated_daily_div_growth) * dividend_history[-1]
-        elif len(dividend_history) < 1:
-            numerator = (1 + estimated_daily_div_growth) * INITIAL_DIVIDEND
+    if len(dividend_history) >= 1:
+        numerator = (1 + estimated_daily_div_growth) * dividend_history[-1]
+    elif len(dividend_history) < 1:
+        numerator = (1 + estimated_daily_div_growth) * INITIAL_DIVIDEND
 
+    for ind in pop: 
         denuminator = (1 + (AnnualInterestRate + ind.strategy) - DIVIDEND_GROWTH_RATE_G) ** (1/252) - 1
         fval = numerator / denuminator
 
