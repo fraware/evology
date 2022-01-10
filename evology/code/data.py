@@ -170,7 +170,7 @@ def record_results(results, generation, current_price, mismatch, dividend,
 
     if generation >= Barr:
 
-        ListOutput = ResultsProcess(pop, spoils, price)
+        ListOutput = ResultsProcess(pop, spoils, current_price)
 
         starttime = timeit.default_timer()
 
