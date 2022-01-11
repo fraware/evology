@@ -1,5 +1,6 @@
 import sys
 sys.path.append('./evology/code/')
+sys.path.append('/Users/aymericvie/Documents/GitHub/evology/evology/code')
 from steps import *
 from parameters import *
 import numpy as np
@@ -60,4 +61,10 @@ df,pop = main("between", 'scholl', 'esl.true', False, TIME, PROBA_SELECTION, POP
 
 ''' In command: 
 kernprof -v -l evology/code/profile/profile.py > evology/code/profile/profile.txt
+
+# For cythonized
+cd evology/code
+cythonize -i cythonized.pyx
+chmod +x ./profile/profile.py
+kernprof -v -l profile/profile.py > profile/profile.txt
  ; no need to be in python env first'''
