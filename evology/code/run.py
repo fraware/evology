@@ -25,10 +25,12 @@ def run(POPULATION_SIZE, learning_mode, TIME, wealth_coordinates, tqdm_display, 
         df,pop = main("static", 'extended', 'esl', False, TIME, 0, POPULATION_SIZE, 0, wealth_coordinates, tqdm_display, reset_wealth)
     if learning_mode == 4:
         df,pop = main("between", 'extended', 'esl', False, TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
+    if learning_mode == 11:
+        df,pop = main("between", 'scholl', 'newton', False, TIME, PROBA_SELECTION, POPULATION_SIZE, MUTATION_RATE, wealth_coordinates, tqdm_display, reset_wealth)
 
     return df, pop
 
-df,pop = run(100, 1, 10000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
+df,pop = run(100, 11, 10000, wealth_coordinates, tqdm_display=False, reset_wealth=False)
 df.to_csv("evology/data/run_data.csv")
 print(df)
 
