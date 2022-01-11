@@ -4,6 +4,8 @@ from market import *
 import math
 import warnings
 
+import cythonized
+
 def clear_debt(pop, price):
     for ind in pop:
         if ind.loan > 0: # If the agent has outstanding debt:
@@ -165,6 +167,34 @@ def TotalWealth(pop):
     return Wealth
 
 
+def prepare_for_agg_ed(pop):
+    # This function is used to extract the `ind` attributes in `pop` into
+    # lists, because it is much faster for the Cythonized code to optimize
+    # retrieving array elements than Python objects.
+    types = np.empty(len(pop), int)
+    wealths = np.empty(len(pop), float)
+    assets = np.empty(len(pop), float)
+    tsvs = np.empty(len(pop), float)
+    index_zeros = np.empty(len(pop), float)
+    processes = np.empty(len(pop), float)
+
+    def to_num(t):
+        if t == "tf":
+            return 0
+        elif t == "vi":
+            return 1
+        else:
+            return 2
+
+    for idx, ind in enumerate(pop):
+        types[idx] = to_num(ind.type)
+        wealths[idx] = float(ind.wealth)
+        assets[idx] = float(ind.asset)
+        tsvs[idx] = float(ind.tsv)
+        index_zeros[idx] = ind[0]
+        processes[idx] = float(ind.process)
+    return types, wealths, assets, tsvs, index_zeros, processes
+
 def agg_ed(pop, spoils): 
     functions = []
     ToLiquidate = 0
@@ -176,11 +206,16 @@ def agg_ed(pop, spoils):
     elif spoils < 0:
         ToLiquidate = min(abs(spoils), LIQUIDATION_ORDER_SIZE)
 
+    types, wealths, assets, tsvs, index_zeros, processes = prepare_for_agg_ed(pop)
+
     def big_edf(price):
-        result = ToLiquidate
-        for ind in pop:
-            result += ind.edf(ind, price)
-        return result
+        return cythonized._big_edf(ToLiquidate, SCALE_TF, LeverageTF, LeverageVI, LeverageNT, types, wealths, assets, tsvs, index_zeros, processes, price)
+
+    #def big_edf(price):
+    #    result = ToLiquidate
+    #    for ind in pop:
+    #        result += ind.edf(ind, price)
+    #    return result
     functions.append(big_edf)
     return functions, ToLiquidate
 
@@ -196,11 +231,16 @@ def agg_ed_esl(pop, spoils):
     elif spoils < 0:
         ToLiquidate = min(abs(spoils), LIQUIDATION_ORDER_SIZE)
 
+    types, wealths, assets, tsvs, index_zeros, processes = prepare_for_agg_ed(pop)
+
     def big_edf(asset_key, price):
-        result = ToLiquidate
-        for ind in pop:
-            result += ind.edf(ind, price)
-        return result
+        return cythonized._big_edf(ToLiquidate, SCALE_TF, LeverageTF, LeverageVI, LeverageNT, types, wealths, assets, tsvs, index_zeros, processes, price)
+
+    #def big_edf(asset_key, price):
+    #    result = ToLiquidate
+    #    for ind in pop:
+    #        result += ind.edf(ind, price)
+    #    return result
     functions.append(big_edf)
     return functions, ToLiquidate
 
