@@ -259,6 +259,7 @@ def strategy_evolution(mode, space, pop, PROBA_SELECTION, MUTATION_RATE, wealth_
                         # warnings.warn('Ind ' + str(pop[i].type) + ' switched to ' + str(winner.type) + ' at time ' + str(generation))
                     pop[i].type = winner.type
                     pop[i][0] = winner[0]
+                    pop[i].leverage = winner.leverage
             
             # Mutation
             types = ['nt', 'vi', 'tf']
