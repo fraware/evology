@@ -95,11 +95,14 @@ def hypermutate(pop, mode, asset_supply, current_price, generation, spoils, weal
             for k in range(2):
                 # Create a fund of the correct strategy
                 if pop[MaxFund].type == 'nt':
-                    half = toolbox.gen_nt_ind()
+                    # half = toolbox.gen_nt_ind()
+                    half = IndCreation('nt')
                 if pop[MaxFund].type == 'vi':
-                    half = toolbox.gen_vi_ind()
+                    # half = toolbox.gen_vi_ind()
+                    half = IndCreation('vi')
                 if pop[MaxFund].type == 'tf':
-                    half = toolbox.gen_tf_ind()
+                    # half = toolbox.gen_tf_ind()
+                    half = IndCreation('tf')
 
                 # Copy fund MaxFund intangible characteristics
                 # TSV, EDF, EDV are totally reset.

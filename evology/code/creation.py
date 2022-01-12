@@ -20,10 +20,10 @@ def DrawReturnRate(strat):
 
 creator.create("fitness_strategy", base.Fitness, weights=(1.0,))
 
-creator.create("ind_tf", list, typecode = 'd', fitness=creator.fitness_strategy, 
+creator.create("ind", list, typecode = 'd', fitness=creator.fitness_strategy, 
     strategy = 0,
     wealth = 0, 
-    type = "tf", 
+    type = None, 
     cash = 0, 
     asset = 0, 
     loan = RefLoan, 
@@ -36,66 +36,102 @@ creator.create("ind_tf", list, typecode = 'd', fitness=creator.fitness_strategy,
     profit = 0, 
     prev_wealth = 0, 
     DailyReturn = 0,
-    leverage = LeverageTF)
+    leverage = None)
 
-creator.create("ind_vi", list, typecode = 'd', fitness=creator.fitness_strategy, 
-    strategy = 0,
-    wealth = 0, 
-    type = "vi", 
-    cash = 0, 
-    asset = 0, 
-    loan = RefLoan, 
-    margin = 0, 
-    tsv = 0, 
-    edf = None, 
-    edv = 0, 
-    process = 1, 
-    ema = 0, 
-    profit = 0, 
-    prev_wealth = 0, 
-    DailyReturn = 0,
-    leverage = LeverageVI)
+# creator.create("ind_tf", list, typecode = 'd', fitness=creator.fitness_strategy, 
+#     strategy = 0,
+#     wealth = 0, 
+#     type = "tf", 
+#     cash = 0, 
+#     asset = 0, 
+#     loan = RefLoan, 
+#     margin = 0, 
+#     tsv = 0, 
+#     edf = None, 
+#     edv = 0, 
+#     process = 1, 
+#     ema = 0, 
+#     profit = 0, 
+#     prev_wealth = 0, 
+#     DailyReturn = 0,
+#     leverage = LeverageTF)
 
-creator.create("ind_nt", list, typecode = 'd', fitness=creator.fitness_strategy, 
-    strategy = 0,
-    wealth = 0, 
-    type = "nt", 
-    cash = 0, 
-    asset = 0, 
-    loan = RefLoan, 
-    margin = 0, 
-    tsv = 0, 
-    edf = None, 
-    edv = 0, 
-    process = 1, 
-    ema = 0, 
-    profit = 0, 
-    prev_wealth = 0, 
-    DailyReturn = 0,
-    leverage = LeverageNT)
+# creator.create("ind_vi", list, typecode = 'd', fitness=creator.fitness_strategy, 
+#     strategy = 0,
+#     wealth = 0, 
+#     type = "vi", 
+#     cash = 0, 
+#     asset = 0, 
+#     loan = RefLoan, 
+#     margin = 0, 
+#     tsv = 0, 
+#     edf = None, 
+#     edv = 0, 
+#     process = 1, 
+#     ema = 0, 
+#     profit = 0, 
+#     prev_wealth = 0, 
+#     DailyReturn = 0,
+#     leverage = LeverageVI)
+
+# creator.create("ind_nt", list, typecode = 'd', fitness=creator.fitness_strategy, 
+#     strategy = 0,
+#     wealth = 0, 
+#     type = "nt", 
+#     cash = 0, 
+#     asset = 0, 
+#     loan = RefLoan, 
+#     margin = 0, 
+#     tsv = 0, 
+#     edf = None, 
+#     edv = 0, 
+#     process = 1, 
+#     ema = 0, 
+#     profit = 0, 
+#     prev_wealth = 0, 
+#     DailyReturn = 0,
+#     leverage = LeverageNT)
 
 # TODO: individual_ga is a list, individual_gp will be a gp.primitiveTree.
 
-toolbox.register("tf", np.random.randint, MIN_THETA, MAX_THETA+1)
-toolbox.register("gen_tf_ind", tools.initCycle, creator.ind_tf, (toolbox.tf,), n=1)
+# toolbox.register("tf", np.random.randint, MIN_THETA, MAX_THETA+1)
+# toolbox.register("gen_tf_ind", tools.initCycle, creator.ind_tf, (toolbox.tf,), n=1)
 
-toolbox.register("vi", np.random.randint, 100, 100+1)
-toolbox.register("gen_vi_ind", tools.initCycle, creator.ind_vi, (toolbox.vi,), n=1)
+# toolbox.register("vi", np.random.randint, 100, 100+1)
+# toolbox.register("gen_vi_ind", tools.initCycle, creator.ind_vi, (toolbox.vi,), n=1)
 
-toolbox.register("nt", np.random.randint, 100, 100+1)
-toolbox.register("gen_nt_ind", tools.initCycle, creator.ind_nt, (toolbox.nt,), n=1)
+# toolbox.register("nt", np.random.randint, 100, 100+1)
+# toolbox.register("gen_nt_ind", tools.initCycle, creator.ind_nt, (toolbox.nt,), n=1)
 
-def gen_rd_ind(Coords):
-    rd = np.random.random()
-    if rd <= Coords[0]:
-        return toolbox.gen_nt_ind()
-    elif rd > Coords[0] and rd <= Coords[0] + Coords[1]:
-        return toolbox.gen_vi_ind()
-    elif rd > Coords[0] + Coords[1] and rd <= Coords[2] + Coords[1] + Coords[0]:
-        return toolbox.gen_tf_ind()
+toolbox.register("trader", np.random.randint, 0, 1)
+toolbox.register("gen_ind", tools.initCycle, creator.ind, (toolbox.trader,), n=1)
 
-toolbox.register("gen_rd_ind", gen_rd_ind)
+# def gen_rd_ind(Coords):
+#     rd = np.random.random()
+#     if rd <= Coords[0]:
+#         return toolbox.gen_nt_ind()
+#     elif rd > Coords[0] and rd <= Coords[0] + Coords[1]:
+#         return toolbox.gen_vi_ind()
+#     elif rd > Coords[0] + Coords[1] and rd <= Coords[2] + Coords[1] + Coords[0]:
+#         return toolbox.gen_tf_ind()
 
+# toolbox.register("gen_rd_ind", gen_rd_ind)
+
+def IndCreation(strat):
+    ind = toolbox.gen_ind() 
+    if strat == 'nt':
+        ind.type = 'nt'
+        ind.leverage = LeverageNT
+        # ind[0] = 100
+    if strat == 'vi':
+        ind.type = 'vi'
+        ind.leverage = LeverageVI
+        # ind[0] = 100
+    if strat == 'tf':
+        ind.type = 'tf'
+        ind.leverage = LeverageTF
+        # ind[0] = 2
+    return ind
 
 def CreatePop(n, space, WealthCoords):
 
@@ -117,25 +153,46 @@ def CreatePop(n, space, WealthCoords):
 
     NumNT, NumVI, NumTF = 0, 0, 0
     if WealthCoords[0] != 0:
-        pop.append(toolbox.gen_nt_ind())
+        pop.append(IndCreation('nt'))
+        # ind = toolbox.gen_ind()
+
+        # pop.append(toolbox.gen_nt_ind())
+        # pop.append(ind)
         NumNT += 1
     if WealthCoords[1] != 0:
-        pop.append(toolbox.gen_vi_ind())
+        pop.append(IndCreation('vi'))
+        # ind = toolbox.gen_ind()
+        # ind.type = 'vi'
+        # ind.leverage = LeverageVI
+        # ind[0] = 100
+        # # pop.append(toolbox.gen_nt_ind())
+        # pop.append(ind)
+        # pop.append(toolbox.gen_vi_ind())
         NumVI += 1
     if WealthCoords[2] != 0:
-        pop.append(toolbox.gen_tf_ind())
+        pop.append(IndCreation('tf'))
+        # ind = toolbox.gen_ind()
+        # ind.type = 'tf'
+        # ind.leverage = LeverageTF
+        # ind[0] = 2
+        # # pop.append(toolbox.gen_nt_ind())
+        # pop.append(ind)
+        # pop.append(toolbox.gen_tf_ind())
         NumTF += 1
 
     for i in range(n- (NumNT + NumVI + NumTF)):
         rd = np.random.random()
         if rd <= ShareNT:
-            pop.append(toolbox.gen_nt_ind())
+            # pop.append(toolbox.gen_nt_ind())
+            pop.append(IndCreation('nt'))
             NumNT += 1
         elif rd > ShareNT and rd <= ShareNT + ShareVI:
-            pop.append(toolbox.gen_vi_ind())
+            # pop.append(toolbox.gen_vi_ind())
+            pop.append(IndCreation('vi'))
             NumVI += 1
         elif rd > ShareNT + ShareVI:
-            pop.append(toolbox.gen_tf_ind())
+            # pop.append(toolbox.gen_tf_ind())
+            pop.append(IndCreation('tf'))
             NumTF += 1
 
     if NumNT != 0:
