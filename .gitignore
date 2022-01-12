@@ -1,5 +1,3 @@
-
-*.pyc
 *.DS_Store
 .vscode
 *.csv
@@ -8,3 +6,8 @@
 evology/data/run_data.csv
 evology/data/run_data.csv
 evology/research/TransferStatus/SingleRun_Replic_3ag/data/simulation3ag_15k.csv
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
