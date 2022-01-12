@@ -22,8 +22,6 @@ cpdef _big_edf(
     for i in range(len(types)):
         t = types[i]
         if t == 0:
-            LeverageTF
-            wealths[i]
             result += (LeverageTF * wealths[i] / price) * tanh(SCALE_TF * tsvs[i]) - assets[i]
         elif t == 1:
             result += (LeverageVI * wealths[i] / price) * tanh((5/index_zeros[i]) * (index_zeros[i] - price)) - assets[i]
