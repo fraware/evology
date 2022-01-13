@@ -1,6 +1,8 @@
 *.DS_Store
 .vscode
 *.csv
+*.lprof
+*.py.lprof
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 evology/data/run_data.csv
