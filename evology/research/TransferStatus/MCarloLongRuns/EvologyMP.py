@@ -4,6 +4,7 @@ sys.path.append('evology/code')
 from main import *
 import time
 import pandas
+import random
 from main import main as evology
 
 reps = 100
@@ -11,6 +12,7 @@ iterations = 25000
 agents = 100
 
 def job(iteration):
+	np.random.seed()
 	df,pop = evology("static", 'scholl', 'esl.true', False, iterations, 0, agents, 0, [1/3, 1/3, 1/3], True, False)
 	return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
 
