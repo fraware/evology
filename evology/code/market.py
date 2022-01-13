@@ -5,25 +5,34 @@ import warnings
 import balance_sheet as bs
 import numpy as np
 
+
 def draw_dividend(dividend):
     DIVIDEND_GROWTH_RATE = ((1 + DIVIDEND_GROWTH_RATE_G) ** (1 / TRADING_DAYS)) - 1
     random_dividend = np.random.normal(0, 1)
     if len(random_dividend_history) > DIVIDEND_ATC_TAU:
-        random_dividend = (1 - DIVIDEND_AUTOCORRELATION ** 2) * random_dividend + DIVIDEND_AUTOCORRELATION * random_dividend_history[- 1 - DIVIDEND_ATC_TAU]
-    dividend = abs(dividend + DIVIDEND_GROWTH_RATE * dividend + DIVIDEND_GROWTH_VOLATILITY * dividend * random_dividend)
+        random_dividend = (
+            1 - DIVIDEND_AUTOCORRELATION ** 2
+        ) * random_dividend + DIVIDEND_AUTOCORRELATION * random_dividend_history[
+            -1 - DIVIDEND_ATC_TAU
+        ]
+    dividend = abs(
+        dividend
+        + DIVIDEND_GROWTH_RATE * dividend
+        + DIVIDEND_GROWTH_VOLATILITY * dividend * random_dividend
+    )
     return dividend, random_dividend
+
 
 def dividend_series(horizon):
     history, rdiv_history = [], []
     dividend = INITIAL_DIVIDEND
     history.append(dividend)
     rdiv_history.append(0)
-    for i in range(horizon-1):
+    for i in range(horizon - 1):
         dividend, rdiv = draw_dividend(dividend)
         history.append(dividend)
         rdiv_history.append(rdiv)
     return history, rdiv_history
-
 
 
 def determine_multiplier(pop, spoils, ToLiquidate):
@@ -33,7 +42,7 @@ def determine_multiplier(pop, spoils, ToLiquidate):
 
     for ind in pop:
         if ind.edv > 0:
-            total_buy += (ind.edv)
+            total_buy += ind.edv
         elif ind.edv < 0:
             total_sell += abs(ind.edv)
 
@@ -43,15 +52,21 @@ def determine_multiplier(pop, spoils, ToLiquidate):
         total_buy += ToLiquidate
 
     if total_sell != 0:
-        order_ratio = total_buy / total_sell 
+        order_ratio = total_buy / total_sell
     elif total_sell == 0:
         order_ratio = 0
 
     if order_ratio < 0:
-            raise ValueError('Negative order ratio (total sell/buy): ' + str(total_sell) + '/' + str(total_buy) + '/' + str(ToLiquidate))
+        raise ValueError(
+            "Negative order ratio (total sell/buy): "
+            + str(total_sell)
+            + "/"
+            + str(total_buy)
+            + "/"
+            + str(ToLiquidate)
+        )
 
-
-    if order_ratio == 0: #either noone buys, or no one sells
+    if order_ratio == 0:  # either noone buys, or no one sells
         multiplier_buy = 0
         multiplier_sell = 0
         # No orders will be executed (no supply or no demand)
@@ -59,7 +74,7 @@ def determine_multiplier(pop, spoils, ToLiquidate):
         multiplier_buy = 1
         multiplier_sell = order_ratio
         # Selling will be restricted according to demand
-    elif order_ratio == 1 :
+    elif order_ratio == 1:
         multiplier_buy = 1
         multiplier_sell = 1
         # All orders will be executed (supply =  demand)
@@ -69,19 +84,23 @@ def determine_multiplier(pop, spoils, ToLiquidate):
         # Buying will be restricted according to supply
 
     if multiplier_buy == None:
-        raise ValueError('Multiplier Buy is not defined')
+        raise ValueError("Multiplier Buy is not defined")
     if multiplier_buy < 0:
-        raise ValueError('Multiplier Buy is negative')
+        raise ValueError("Multiplier Buy is negative")
     if multiplier_sell == None:
-        raise ValueError('Multiplier Sell is not defined')
+        raise ValueError("Multiplier Sell is not defined")
     if multiplier_sell < 0:
-        raise ValueError('Multiplier Sell is negative')
+        raise ValueError("Multiplier Sell is negative")
 
     if abs(total_buy * multiplier_buy - total_sell * multiplier_sell) != 0:
-        if abs(total_buy * multiplier_buy - total_sell * multiplier_sell) >= abs(0.01 * ((total_buy * multiplier_buy) + (total_sell * multiplier_sell))):
+        if abs(total_buy * multiplier_buy - total_sell * multiplier_sell) >= abs(
+            0.01 * ((total_buy * multiplier_buy) + (total_sell * multiplier_sell))
+        ):
             print(total_buy * multiplier_buy)
             print(total_sell * multiplier_sell)
-            raise ValueError('Total buy * Mul is different from Total sell * Mul by more than 1 (abs difference)')
+            raise ValueError(
+                "Total buy * Mul is different from Total sell * Mul by more than 1 (abs difference)"
+            )
 
     return multiplier_buy, multiplier_sell
 
@@ -91,18 +110,16 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
     multiplier_buy, multiplier_sell = determine_multiplier(pop, spoils, ToLiquidate)
     volume = 0
 
-
-
     for ind in pop:
         amount = 0
 
         if ind.edv > 0:
             amount = ind.edv * multiplier_buy
-        
+
         if ind.edv < 0:
             amount = ind.edv * multiplier_sell
-            
-        ind.asset += amount 
+
+        ind.asset += amount
         ind.cash -= amount * current_price
         volume += abs(amount)
 
@@ -110,15 +127,14 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
         if ind.cash < 0:
             ind.loan += abs(ind.cash)
             ind.cash = 0
-        
 
     # Record that we liquidated some spoils
     if spoils > 0:
-        # Spoils are positive. We wanted to sell some shares. TL is negative. 
+        # Spoils are positive. We wanted to sell some shares. TL is negative.
         # Ex: from spoils 1000, we sold 100 (TL = -100) for mul = 1. New spoils is 1000 - 100 = 900.
         spoils += ToLiquidate * multiplier_sell
     if spoils < 0:
-        # Spoils are negative. We wanted to buy back some shares. TL is positive. 
+        # Spoils are negative. We wanted to buy back some shares. TL is positive.
         # Ex: from spoils -1000, we bought 100 (TL = 100) for mul=1. New spoils is -1000 + 100 = -900.
         spoils += ToLiquidate * multiplier_buy
         # Isn't that a minus sign here instead?
@@ -126,14 +142,19 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
     if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 0.01 * asset_supply:
         # If we violate the asset supply constraint by more than 1%, raise an error.
         if abs(bs.count_long_assets(pop, spoils) - asset_supply) >= 0.01 * asset_supply:
-            print('Spoils ' + str(spoils))
-            print('ToLiquidate ' + str(ToLiquidate))
-            print('Pop ownership ' + str(bs.count_pop_long_assets(pop)))
-            raise ValueError('Asset supply cst violated ' +str(bs.count_long_assets(pop, spoils)) + '/' + str(asset_supply))
+            print("Spoils " + str(spoils))
+            print("ToLiquidate " + str(ToLiquidate))
+            print("Pop ownership " + str(bs.count_pop_long_assets(pop)))
+            raise ValueError(
+                "Asset supply cst violated "
+                + str(bs.count_long_assets(pop, spoils))
+                + "/"
+                + str(asset_supply)
+            )
 
         # If the violation of the asset supply is minor (less than 1%), correct the rounding error.
-    if abs(bs.count_long_assets(pop, spoils) - asset_supply) <= 0.01 * asset_supply:  
-        SupplyCorrectionRatio = (asset_supply / bs.count_long_assets(pop, spoils))
+    if abs(bs.count_long_assets(pop, spoils) - asset_supply) <= 0.01 * asset_supply:
+        SupplyCorrectionRatio = asset_supply / bs.count_long_assets(pop, spoils)
         spoils = spoils * SupplyCorrectionRatio
         for ind in pop:
             # previous = ind.asset
@@ -142,7 +163,7 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
             # if ind.asset < 0:
             #     ind.asset = (1/SupplyCorrectionRatio) * ind.asset
             # if spoils > 0:
-            
+
             # if spoils < 0:
             #     spoils = spoils * (1/SupplyCorrectionRatio)
             # if ind.asset != previous * SupplyCorrectionRatio:
@@ -151,10 +172,18 @@ def execute_ed(pop, current_price, asset_supply, spoils, ToLiquidate):
         # If the resulting violation is still superior to 0.1% after rounding correction, raise an error.
         if abs(bs.count_long_assets(pop, spoils) - asset_supply) > 0.001 * asset_supply:
             print(abs(bs.count_long_assets(pop, spoils) - asset_supply))
-            print('---')
+            print("---")
             for ind in pop:
                 print(ind.asset)
-            raise ValueError('Rounding violation of asset supply was not succesfully corrected. ' + str(SupplyCorrectionRatio) + '//' + str(bs.count_long_assets(pop, spoils)) + '//' + str(asset_supply) + '//' + str(spoils))
-
+            raise ValueError(
+                "Rounding violation of asset supply was not succesfully corrected. "
+                + str(SupplyCorrectionRatio)
+                + "//"
+                + str(bs.count_long_assets(pop, spoils))
+                + "//"
+                + str(asset_supply)
+                + "//"
+                + str(spoils)
+            )
 
     return pop, volume, spoils

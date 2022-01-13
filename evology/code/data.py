@@ -5,50 +5,126 @@ import balance_sheet as bs
 import timeit
 from parameters import *
 
-columns = [ 
+columns = [
     # Global variables
-    'Gen', 'Price', 'Mismatch', 'Dividends', 'RDividend', 'Volume',
-    'Rep', 'Pos+', 'Pos-', 
+    "Gen",
+    "Price",
+    "Mismatch",
+    "Dividends",
+    "RDividend",
+    "Volume",
+    "Rep",
+    "Pos+",
+    "Pos-",
     # General ecology variables
-    'Num_NT', 'Num_VI', 'Num_TF', 'Mean_NT', 'Mean_VI', 'Mean_TF',
-    'WShare_NT', 'WShare_VI', 'WShare_TF', 
+    "Num_NT",
+    "Num_VI",
+    "Num_TF",
+    "Mean_NT",
+    "Mean_VI",
+    "Mean_TF",
+    "WShare_NT",
+    "WShare_VI",
+    "WShare_TF",
     # Noise traders
-    'NT_cash', 'NT_lending', 'NT_loans', 'NT_nav', 'NT_pnl', 'NT_signal', 
-    'NT_stocks', 'NT_returns',
+    "NT_cash",
+    "NT_lending",
+    "NT_loans",
+    "NT_nav",
+    "NT_pnl",
+    "NT_signal",
+    "NT_stocks",
+    "NT_returns",
     # Value investors
-    'VI_cash', 'VI_lending', 'VI_loans', 'VI_nav', 'VI_pnl', 'VI_signal',
-    'VI_stocks', 'VI_returns',
+    "VI_cash",
+    "VI_lending",
+    "VI_loans",
+    "VI_nav",
+    "VI_pnl",
+    "VI_signal",
+    "VI_stocks",
+    "VI_returns",
     # Trend followers
-    'TF_cash', 'TF_lending', 'TF_loans', 'TF_nav', 'TF_pnl', 'TF_signal',
-    'TF_stocks', 'TF_returns',
+    "TF_cash",
+    "TF_lending",
+    "TF_loans",
+    "TF_nav",
+    "TF_pnl",
+    "TF_signal",
+    "TF_stocks",
+    "TF_returns",
     # Additional measures
-    'MeanReturn', 'Spoils',
+    "MeanReturn",
+    "Spoils",
     # Run time data
-    'TimeA', 'TimeB', 'TimeC', 'TimeD', 'TimeE', 'TimeF', 'TimeG', 'TotalTime',
+    "TimeA",
+    "TimeB",
+    "TimeC",
+    "TimeD",
+    "TimeE",
+    "TimeF",
+    "TimeG",
+    "TotalTime",
     # More measures
-    'PerSpoils', 'NT_DayReturns', 'VI_DayReturns', 'TF_DayReturns', 'AvgDayReturn', 
+    "PerSpoils",
+    "NT_DayReturns",
+    "VI_DayReturns",
+    "TF_DayReturns",
+    "AvgDayReturn",
     # Measures of adaptation
-    'CountSelected', 'CountMutated', 'CountCrossed', 'TowardsNT', 'TowardsVI', 'TowardsTF', 'FromNT', 'FromVI', 'FromTF'
-
-
+    "CountSelected",
+    "CountMutated",
+    "CountCrossed",
+    "TowardsNT",
+    "TowardsVI",
+    "TowardsTF",
+    "FromNT",
+    "FromVI",
+    "FromTF"
     # TODO: add monthly returns back just as exponentiation of daily (because we would not track funds for this)
 ]
 variables = len(columns)
 
-''' We only record results after a year to avoid transient period biases. '''
+""" We only record results after a year to avoid transient period biases. """
 Barr = max(SHIELD_DURATION, ShieldResults)
 
 
 def ResultsProcess(pop, spoils, price):
 
-    LongAssets, ShortAssets = 0,0
-    NTcount, VIcount, TFcount = 0,0,0
-    MeanNT, MeanVI, MeanTF = 0,0,0
-    WSNT, WSVI, WSTF = 0,0,0
-    NTcash, NTlend, NTloan, NTnav, NTpnl, NTsignal, NTstocks, NTreturn = 0,0,0,0,0,0,0,np.nan
-    VIcash, VIlend, VIloan, VInav, VIpnl, VIsignal, VIstocks, VIreturn = 0,0,0,0,0,0,0,np.nan
-    TFcash, TFlend, TFloan, TFnav, TFpnl, TFsignal, TFstocks, TFreturn = 0,0,0,0,0,0,0,np.nan
-
+    LongAssets, ShortAssets = 0, 0
+    NTcount, VIcount, TFcount = 0, 0, 0
+    MeanNT, MeanVI, MeanTF = 0, 0, 0
+    WSNT, WSVI, WSTF = 0, 0, 0
+    NTcash, NTlend, NTloan, NTnav, NTpnl, NTsignal, NTstocks, NTreturn = (
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        np.nan,
+    )
+    VIcash, VIlend, VIloan, VInav, VIpnl, VIsignal, VIstocks, VIreturn = (
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        np.nan,
+    )
+    TFcash, TFlend, TFloan, TFnav, TFpnl, TFsignal, TFstocks, TFreturn = (
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        np.nan,
+    )
 
     for ind in pop:
 
@@ -57,28 +133,28 @@ def ResultsProcess(pop, spoils, price):
         elif ind.asset < 0:
             ShortAssets += abs(ind.asset)
 
-        if ind.type == 'nt':
+        if ind.type == "nt":
             NTcount += 1
             MeanNT += ind[0]
             NTcash += ind.cash
             NTlend += ind.margin
             NTloan += ind.loan
-            NTnav += ind.wealth #before, we imposed w>0
+            NTnav += ind.wealth  # before, we imposed w>0
             if ind.wealth > 0:
                 WSNT += ind.wealth
             NTpnl += ind.profit
-            NTsignal += ind[0] * ind.process #already included?
+            NTsignal += ind[0] * ind.process  # already included?
             NTstocks += price * ind.asset
             if ind.prev_wealth != 0:
                 NTreturn += ind.DailyReturn
 
-        elif ind.type == 'vi':
+        elif ind.type == "vi":
             VIcount += 1
             MeanVI += ind[0]
             VIcash += ind.cash
             VIlend += ind.margin
             VIloan += ind.loan
-            VInav += ind.wealth #before, we imposed w>0
+            VInav += ind.wealth  # before, we imposed w>0
             if ind.wealth > 0:
                 WSVI += ind.wealth
             VIpnl += ind.profit
@@ -87,13 +163,13 @@ def ResultsProcess(pop, spoils, price):
             if ind.prev_wealth != 0:
                 VIreturn += ind.DailyReturn
 
-        elif ind.type == 'tf':
+        elif ind.type == "tf":
             TFcount += 1
             MeanTF += ind[0]
             TFcash += ind.cash
             TFlend += ind.margin
             TFloan += ind.loan
-            TFnav += ind.wealth #before, we imposed w>0
+            TFnav += ind.wealth  # before, we imposed w>0
             if ind.wealth > 0:
                 WSTF += ind.wealth
             TFpnl += ind.profit
@@ -104,7 +180,7 @@ def ResultsProcess(pop, spoils, price):
 
     if NTcount != 0:
         NTcash = NTcash / NTcount
-        NTlend = NTlend / NTcount 
+        NTlend = NTlend / NTcount
         NTloan = NTloan / NTcount
         NTnav = NTnav / NTcount
         NTpnl = NTpnl / NTcount
@@ -115,17 +191,17 @@ def ResultsProcess(pop, spoils, price):
 
     if VIcount != 0:
         VIcash = VIcash / VIcount
-        VIlend = VIlend / VIcount 
+        VIlend = VIlend / VIcount
         VIloan = VIloan / VIcount
         VInav = VInav / VIcount
         VIpnl = VIpnl / VIcount
         VIstocks = VIstocks / VIcount
         VIreturn = VIreturn / VIcount
         MeanVI = MeanVI / VIcount
-    
+
     if TFcount != 0:
         TFcash = TFcash / TFcount
-        TFlend = TFlend / TFcount 
+        TFlend = TFlend / TFcount
         TFloan = TFloan / TFcount
         TFnav = TFnav / TFcount
         TFpnl = TFpnl / TFcount
@@ -140,7 +216,7 @@ def ResultsProcess(pop, spoils, price):
         ShortAssets += abs(spoils)
 
     VIsignal = MeanVI
-    
+
     WSNT_ = (100 * WSNT) / (WSNT + WSVI + WSTF)
     WSVI_ = (100 * WSVI) / (WSNT + WSVI + WSTF)
     WSTF_ = (100 * WSTF) / (WSNT + WSVI + WSTF)
@@ -148,25 +224,73 @@ def ResultsProcess(pop, spoils, price):
     WSVI = WSVI_
     WSTF = WSTF_
     if abs(100 - (WSNT + WSVI + WSTF)) > 1:
-        raise ValueError('Sum of wealth shares superior to 100. ' + str([WSNT + WSVI + WSTF])) 
+        raise ValueError(
+            "Sum of wealth shares superior to 100. " + str([WSNT + WSVI + WSTF])
+        )
     if WSNT < 0 or WSNT < 0 or WSNT < 0:
-        raise ValueError("Negative wealth share. " + str([WSNT,WSVI,WSTF]))
+        raise ValueError("Negative wealth share. " + str([WSNT, WSVI, WSTF]))
 
-    ListOutput = [LongAssets, ShortAssets,
-        NTcount, VIcount, TFcount, MeanNT, MeanVI, MeanTF, 
-        WSNT, WSVI, WSTF,
-        NTcash, NTlend, NTloan, NTnav, NTpnl, NTsignal, NTstocks, NTreturn,
-        VIcash, VIlend, VIloan, VInav, VIpnl, VIsignal, VIstocks, VIreturn,
-        TFcash, TFlend, TFloan, TFnav, TFpnl, TFsignal, TFstocks, TFreturn
-        ]
+    ListOutput = [
+        LongAssets,
+        ShortAssets,
+        NTcount,
+        VIcount,
+        TFcount,
+        MeanNT,
+        MeanVI,
+        MeanTF,
+        WSNT,
+        WSVI,
+        WSTF,
+        NTcash,
+        NTlend,
+        NTloan,
+        NTnav,
+        NTpnl,
+        NTsignal,
+        NTstocks,
+        NTreturn,
+        VIcash,
+        VIlend,
+        VIloan,
+        VInav,
+        VIpnl,
+        VIsignal,
+        VIstocks,
+        VIreturn,
+        TFcash,
+        TFlend,
+        TFloan,
+        TFnav,
+        TFpnl,
+        TFsignal,
+        TFstocks,
+        TFreturn,
+    ]
 
     return ListOutput
 
-def record_results(results, generation, current_price, mismatch, dividend,
-    random_dividend, volume, replacements, pop, spoils, asset_supply,
-    ReturnsNT, ReturnsVI, ReturnsTF,
-    CountSelected, CountMutated, CountCrossed, StratFlow
-    ):
+
+def record_results(
+    results,
+    generation,
+    current_price,
+    mismatch,
+    dividend,
+    random_dividend,
+    volume,
+    replacements,
+    pop,
+    spoils,
+    asset_supply,
+    ReturnsNT,
+    ReturnsVI,
+    ReturnsTF,
+    CountSelected,
+    CountMutated,
+    CountCrossed,
+    StratFlow,
+):
 
     if generation >= Barr:
 
@@ -176,16 +300,16 @@ def record_results(results, generation, current_price, mismatch, dividend,
 
         current = generation - Barr
 
-        DailyNTReturns = FillList(GetDayReturn(pop, 'nt'), len(pop))
+        DailyNTReturns = FillList(GetDayReturn(pop, "nt"), len(pop))
         ReturnsNT[current, :] = DailyNTReturns
 
-        DailyVIReturns = FillList(GetDayReturn(pop, 'vi'), len(pop))
+        DailyVIReturns = FillList(GetDayReturn(pop, "vi"), len(pop))
         ReturnsVI[current, :] = DailyVIReturns
 
-        DailyTFReturns = FillList(GetDayReturn(pop, 'tf'), len(pop))
+        DailyTFReturns = FillList(GetDayReturn(pop, "tf"), len(pop))
         ReturnsTF[current, :] = DailyTFReturns
 
-        ''' Global variables '''
+        """ Global variables """
         arr = [
             generation - Barr,
             current_price,
@@ -194,31 +318,26 @@ def record_results(results, generation, current_price, mismatch, dividend,
             random_dividend,
             volume,
             replacements,
-            ListOutput[0],  #bs.count_long_assets(pop, spoils)
-            ListOutput[1],  #bs.count_short_assets(pop, spoils)
+            ListOutput[0],  # bs.count_long_assets(pop, spoils)
+            ListOutput[1],  # bs.count_short_assets(pop, spoils)
         ]
 
-
-
-        ''' General ecology variables '''
+        """ General ecology variables """
         arr += ListOutput[2:11]
 
-        ''' Noise traders '''
+        """ Noise traders """
         arr += ListOutput[11:19]
 
-        ''' Value investors '''
+        """ Value investors """
         arr += ListOutput[19:27]
 
-        ''' Trend followers '''
+        """ Trend followers """
         arr += ListOutput[27:35]
 
-        ''' Additional measures '''
-        arr += [
-            ComputeAvgReturn(results, current, pop),
-            spoils
-        ]
+        """ Additional measures """
+        arr += [ComputeAvgReturn(results, current, pop), spoils]
 
-        ''' Run time data '''
+        """ Run time data """
         arr += [
             0,
             0,
@@ -230,7 +349,7 @@ def record_results(results, generation, current_price, mismatch, dividend,
             0,
         ]
 
-        ''' More measures '''
+        """ More measures """
         arr += [
             abs(100 * spoils / asset_supply),
             np.nanmean(DailyNTReturns),
@@ -239,12 +358,13 @@ def record_results(results, generation, current_price, mismatch, dividend,
             (results[current, 54] + results[current, 55] + results[current, 56]) / 3,
         ]
 
-        ''' Measures of adaptation '''
+        """ Measures of adaptation """
         arr += [CountSelected, CountMutated, CountCrossed]
         arr += StratFlow
         results[current, :] = arr
 
     return results, ReturnsNT, ReturnsVI, ReturnsTF
+
 
 def GetDayReturn(pop, strat):
     lis = []
@@ -253,18 +373,26 @@ def GetDayReturn(pop, strat):
             lis.append(ind.DailyReturn)
     return lis
 
+
 def FillList(lis, n):
     while len(lis) < n:
         lis.append(np.nan)
     return lis
 
+
 def ComputeAvgReturn(results, generation, pop):
-    AvgReturn = (results[generation, 10] * results[generation, 26] + results[generation, 11] * results[generation, 34] + results[generation, 12] * results[generation, 42]) / len(pop)
+    AvgReturn = (
+        results[generation, 10] * results[generation, 26]
+        + results[generation, 11] * results[generation, 34]
+        + results[generation, 12] * results[generation, 42]
+    ) / len(pop)
     return AvgReturn
+
 
 def ComputeAvgMonReturn(results, generation, pop):
-    AvgReturn = (results[generation, 10] * results[generation, 54] + results[generation, 11] * results[generation, 55] + results[generation, 12] * results[generation, 56]) / len(pop)
+    AvgReturn = (
+        results[generation, 10] * results[generation, 54]
+        + results[generation, 11] * results[generation, 55]
+        + results[generation, 12] * results[generation, 56]
+    ) / len(pop)
     return AvgReturn
-    
-
-
