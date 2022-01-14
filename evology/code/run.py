@@ -94,5 +94,6 @@ def run(
 df, pop = run(
     100, 1, 10000, wealth_coordinates, tqdm_display=False, reset_wealth=False
 )
-df.to_csv("evology/data/run_data.csv")
+# df.to_csv("evology/data/run_data.csv")
+df.to_csv("evology/data/run_data.csv", compression = 'gzip')
 print(df)
