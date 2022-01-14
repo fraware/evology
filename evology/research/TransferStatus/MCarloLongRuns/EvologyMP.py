@@ -11,9 +11,11 @@ reps = 100
 iterations = 25000
 agents = 100
 
+coords = [0.2, 0.4, 0.4]
+
 def job(iteration):
 	np.random.seed()
-	df,pop = evology("static", 'scholl', 'esl.true', False, iterations, 0, agents, 0, [0.2, 0.2, 0.4], True, False)
+	df,pop = evology("static", 'scholl', 'esl.true', False, iterations, 0, agents, 0, coords, True, False)
 	return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
 
 def main():
