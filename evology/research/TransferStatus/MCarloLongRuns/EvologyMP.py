@@ -22,7 +22,7 @@ rate = 1/(252*4)
 def job(iteration):
 	# learning by imitation and mutation
 	np.random.seed()
-	df,pop = evology("static", 'scholl', 'esl.true', False, iterations, rate, agents, rate, coords, True, False)
+	df,pop = evology("between", 'scholl', 'esl.true', False, iterations, rate, agents, rate, coords, True, False)
 	return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
 
 def main():
