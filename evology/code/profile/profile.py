@@ -146,6 +146,7 @@ df, pop = main(
     False,
     0
 )
+print(df)
 
 
 """ In command: 
