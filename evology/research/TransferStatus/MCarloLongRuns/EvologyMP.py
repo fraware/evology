@@ -11,11 +11,18 @@ reps = 100
 iterations = 25000
 agents = 100
 
-coords = [0.2, 0.4, 0.4]
+coords = [1/3, 1/3, 1/3]
 
 def job(iteration):
+	# no learning
 	np.random.seed()
 	df,pop = evology("static", 'scholl', 'esl.true', False, iterations, 0, agents, 0, coords, True, False)
+	return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+rate = 1/(252*4)
+def job(iteration):
+	# learning by imitation and mutation
+	np.random.seed()
+	df,pop = evology("static", 'scholl', 'esl.true', False, iterations, rate, agents, rate, coords, True, False)
 	return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
 
 def main():
