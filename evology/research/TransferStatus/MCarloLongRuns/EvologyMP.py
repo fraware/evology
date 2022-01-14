@@ -13,7 +13,7 @@ agents = 100
 
 def job(iteration):
 	np.random.seed()
-	df,pop = evology("static", 'scholl', 'esl.true', False, iterations, 0, agents, 0, [1/3, 1/3, 1/3], True, False)
+	df,pop = evology("static", 'scholl', 'esl.true', False, iterations, 0, agents, 0, [0.2, 0.2, 0.4], True, False)
 	return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
 
 def main():
