@@ -8,11 +8,11 @@ import numpy as np
 
 
 @profile
+
 def main(
     mode,
     space,
     solver,
-    circuit,
     MAX_GENERATIONS,
     PROBA_SELECTION,
     POPULATION_SIZE,
@@ -20,6 +20,7 @@ def main(
     wealth_coordinates,
     tqdm_display,
     reset_wealth,
+    ReinvestmentRate
 ):
     # Initialise important variables and dataframe to store results
     ReturnsNT, ReturnsVI, ReturnsTF = (
@@ -29,6 +30,7 @@ def main(
     )
     generation, CurrentPrice, dividend, spoils = 0, InitialPrice, INITIAL_DIVIDEND, 0
     results = np.zeros((MAX_GENERATIONS - data.Barr, data.variables))
+    wealth_tracker = np.zeros((MAX_GENERATIONS, POPULATION_SIZE))
     price_history, dividend_history = [], []
 
     pop, asset_supply = cr.CreatePop(POPULATION_SIZE, space, wealth_coordinates)
@@ -73,7 +75,7 @@ def main(
 
         # Market clearing
         pop, mismatch, CurrentPrice, price_history, ToLiquidate = marketClearing(
-            pop, CurrentPrice, price_history, spoils, solver, circuit
+            pop, CurrentPrice, price_history, spoils, solver
         )
 
         # Market execution
@@ -94,19 +96,17 @@ def main(
             ToLiquidate,
         )
 
-        # Earnings, compute profits
+        # Earnings, compute profits, age
         pop = update_wealth(
             pop,
             CurrentPrice,
-            generation,
-            wealth_coordinates,
-            POPULATION_SIZE,
-            reset_wealth,
+            ReinvestmentRate
         )
 
         # Record results
-        results, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(
+        results, wealth_tracker, ReturnsNT, ReturnsVI, ReturnsTF = data.record_results(
             results,
+            wealth_tracker,
             generation,
             CurrentPrice,
             mismatch,
@@ -130,7 +130,6 @@ def main(
 
     return df, pop
 
-
 np.random.seed(8)
 wealth_coordinates = [1 / 3, 1 / 3, 1 / 3]
 TIME, POPSIZE = 10000, 100
@@ -138,14 +137,14 @@ df, pop = main(
     "between",
     "scholl",
     "esl.true",
-    False,
     TIME,
     PROBA_SELECTION,
     POPSIZE,
     MUTATION_RATE,
     wealth_coordinates,
-    tqdm_display,
     False,
+    False,
+    0
 )
 
 
