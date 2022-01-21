@@ -49,6 +49,15 @@ def PathPoints(MCNT, MCVI, MCTF):
         points.append((x,y,z))
     return points
 
+def FinalPoints(MCNT, MCVI, MCTF):
+    points = []
+    for i in range(len(MCNT.columns) - 1):
+        x = MCNT['Rep%s' % i].iloc[-1]
+        y = MCVI['Rep%s' % i].iloc[-1]
+        z = MCTF['Rep%s' % i].iloc[-1]
+        points.append((x,y,z))
+    return points
+
 points1 = PathPoints(MCNT1, MCVI1, MCTF1)
 points2 = PathPoints(MCNT2, MCVI2, MCTF2)
 points3 = PathPoints(MCNT3, MCVI3, MCTF3)
@@ -57,6 +66,15 @@ points5 = PathPoints(MCNT5, MCVI5, MCTF5)
 points6 = PathPoints(MCNT6, MCVI6, MCTF6)
 points7 = PathPoints(MCNT7, MCVI7, MCTF7)
 points8 = PathPoints(MCNT8, MCVI8, MCTF8)
+
+finals1 = FinalPoints(MCNT1, MCVI1, MCTF1)
+finals2 = FinalPoints(MCNT2, MCVI2, MCTF2)
+finals3 = FinalPoints(MCNT3, MCVI3, MCTF3)
+finals4 = FinalPoints(MCNT4, MCVI4, MCTF4)
+finals5 = FinalPoints(MCNT5, MCVI5, MCTF5)
+finals6 = FinalPoints(MCNT6, MCVI6, MCTF6)
+finals7 = FinalPoints(MCNT7, MCVI7, MCTF7)
+finals8 = FinalPoints(MCNT8, MCVI8, MCTF8)
 
 scale = 100
 fontsize = 20
@@ -92,12 +110,28 @@ if platform.system() == 'Darwin':
     path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path1.png'
     plt.savefig(path, dpi=300)
 
+figure, tax = TernaryPlot(scale, finals1, fontsize, 'Config1')
+if platform.system() == 'Linux':
+    path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final1.png'
+    plt.savefig(path, dpi=300)
+if platform.system() == 'Darwin':
+    path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final1.png'
+    plt.savefig(path, dpi=300)
+
 figure, tax = TernaryPlot(scale, points2, fontsize, 'Config2')
 if platform.system() == 'Linux':
     path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path2.png'
     plt.savefig(path, dpi=300)
 if platform.system() == 'Darwin':
     path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path2.png'
+    plt.savefig(path, dpi=300)
+
+figure, tax = TernaryPlot(scale, finals2, fontsize, 'Config2')
+if platform.system() == 'Linux':
+    path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final2.png'
+    plt.savefig(path, dpi=300)
+if platform.system() == 'Darwin':
+    path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final2.png'
     plt.savefig(path, dpi=300)
 
 figure, tax = TernaryPlot(scale, points3, fontsize, 'Config3')
@@ -108,12 +142,28 @@ if platform.system() == 'Darwin':
     path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path3.png'
     plt.savefig(path, dpi=300)
 
+figure, tax = TernaryPlot(scale, finals3, fontsize, 'Config3')
+if platform.system() == 'Linux':
+    path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final3.png'
+    plt.savefig(path, dpi=300)
+if platform.system() == 'Darwin':
+    path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final3.png'
+    plt.savefig(path, dpi=300)
+
 figure, tax = TernaryPlot(scale, points4, fontsize, 'Config4')
 if platform.system() == 'Linux':
     path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path4.png'
     plt.savefig(path, dpi=300)
 if platform.system() == 'Darwin':
     path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path4.png'
+    plt.savefig(path, dpi=300)
+
+figure, tax = TernaryPlot(scale, finals4, fontsize, 'Config4')
+if platform.system() == 'Linux':
+    path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final4.png'
+    plt.savefig(path, dpi=300)
+if platform.system() == 'Darwin':
+    path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final4.png'
     plt.savefig(path, dpi=300)
 
 figure, tax = TernaryPlot(scale, points5, fontsize, 'Config5')
@@ -124,12 +174,28 @@ if platform.system() == 'Darwin':
     path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path5.png'
     plt.savefig(path, dpi=300)
 
+figure, tax = TernaryPlot(scale, finals5, fontsize, 'Config5')
+if platform.system() == 'Linux':
+    path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final5.png'
+    plt.savefig(path, dpi=300)
+if platform.system() == 'Darwin':
+    path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final5.png'
+    plt.savefig(path, dpi=300)
+
 figure, tax = TernaryPlot(scale, points6, fontsize, 'Config6')
 if platform.system() == 'Linux':
     path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path6.png'
     plt.savefig(path, dpi=300)
 if platform.system() == 'Darwin':
     path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path6.png'
+    plt.savefig(path, dpi=300)
+
+figure, tax = TernaryPlot(scale, finals6, fontsize, 'Config6')
+if platform.system() == 'Linux':
+    path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final6.png'
+    plt.savefig(path, dpi=300)
+if platform.system() == 'Darwin':
+    path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final6.png'
     plt.savefig(path, dpi=300)
 
 figure, tax = TernaryPlot(scale, points7, fontsize, 'Config7')
@@ -140,10 +206,26 @@ if platform.system() == 'Darwin':
     path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path7.png'
     plt.savefig(path, dpi=300)
 
+figure, tax = TernaryPlot(scale, finals7, fontsize, 'Config7')
+if platform.system() == 'Linux':
+    path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final7.png'
+    plt.savefig(path, dpi=300)
+if platform.system() == 'Darwin':
+    path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final7.png'
+    plt.savefig(path, dpi=300)
+
 figure, tax = TernaryPlot(scale, points8, fontsize, 'Config8')
 if platform.system() == 'Linux':
     path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path8.png'
     plt.savefig(path, dpi=300)
 if platform.system() == 'Darwin':
     path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Path8.png'
+    plt.savefig(path, dpi=300)
+
+figure, tax = TernaryPlot(scale, finals8, fontsize, 'Config8')
+if platform.system() == 'Linux':
+    path = '/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final8.png'
+    plt.savefig(path, dpi=300)
+if platform.system() == 'Darwin':
+    path = '/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/path_figs/Final8.png'
     plt.savefig(path, dpi=300)
