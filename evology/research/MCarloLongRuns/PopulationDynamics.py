@@ -22,12 +22,15 @@ Coordinates = [1/3, 1/3, 1/3]
 seed = 8
 reps = 50
 
+#COnfig: coords, popsize, time, selection rate, mutation rate, reinvestment rate
 Config1 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 0] # Static
-Config2 = [Coordinates, PopulationSize, TimeHorizon, 0, 1/252, 1/252] # Learning 1Y
-Config3 = [Coordinates, PopulationSize, TimeHorizon, 0, 1/252, 0] # Imitation-only 1Y
-Config4 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 1/252] # Mutation-only 1Y
-Config5 = [Coordinates, PopulationSize, TimeHorizon, 0, 1/(252*2), 1/(252*2)] # Learning 2Y
-Config6 = [Coordinates, PopulationSize, TimeHorizon, 0, 1/(252*3), 1/(252*3)] # Learning 3Y
+Config2 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 1/252, 0] # Learning 1Y
+Config3 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 0, 0] # Imitation-only 1Y
+Config4 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 0] # Mutation-only 1Y
+Config5 = [Coordinates, PopulationSize, TimeHorizon, 1/(252*2), 1/(252*2), 0] # Learning 2Y
+Config6 = [Coordinates, PopulationSize, TimeHorizon, 1/(252*3), 1/(252*3), 0] # Learning 3Y
+Config7 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 0.3] # Reinvestment
+Config8 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 1/252, 0.3] # Reinvestment + Learning 1Y
 
 Config = Config1
 def job1(iteration):
@@ -61,6 +64,18 @@ def job5(iteration):
 
 Config = Config6
 def job6(iteration):
+    np.random.seed()
+    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
+    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+
+Config = Config7
+def job7(iteration):
+    np.random.seed()
+    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
+    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+
+Config = Config8
+def job8(iteration):
     np.random.seed()
     df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
     return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
@@ -103,6 +118,20 @@ def main5():
 def main6():
     p = mp.Pool()
     data = p.map(job6, [i for i in range(reps)])
+    p.close()
+    data = np.array(list(data))
+    return data
+
+def main7():
+    p = mp.Pool()
+    data = p.map(job7, [i for i in range(reps)])
+    p.close()
+    data = np.array(list(data))
+    return data
+
+def main8():
+    p = mp.Pool()
+    data = p.map(job8, [i for i in range(reps)])
     p.close()
     data = np.array(list(data))
     return data
@@ -197,6 +226,36 @@ if __name__ == '__main__':
     dfNT.to_csv("data_config6/MC_NT.csv")
     dfVI.to_csv("data_config6/MC_VI.csv")
     dfTF.to_csv("data_config6/MC_TF.csv")
+
+    data = main7()
+    dfNT = pd.DataFrame()
+    dfVI= pd.DataFrame()
+    dfTF = pd.DataFrame()
+
+    for i in range(reps):
+        name = 'Rep%s' % i
+        dfNT[name] = data[i,0]
+        dfVI[name] = data[i,1]
+        dfTF[name] = data[i,2]
+
+    dfNT.to_csv("data_config7/MC_NT.csv")
+    dfVI.to_csv("data_config7/MC_VI.csv")
+    dfTF.to_csv("data_config7/MC_TF.csv")
+
+    data = main8()
+    dfNT = pd.DataFrame()
+    dfVI= pd.DataFrame()
+    dfTF = pd.DataFrame()
+
+    for i in range(reps):
+        name = 'Rep%s' % i
+        dfNT[name] = data[i,0]
+        dfVI[name] = data[i,1]
+        dfTF[name] = data[i,2]
+
+    dfNT.to_csv("data_config8/MC_NT.csv")
+    dfVI.to_csv("data_config8/MC_VI.csv")
+    dfTF.to_csv("data_config8/MC_TF.csv")
 
 
 
