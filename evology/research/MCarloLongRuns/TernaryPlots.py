@@ -1,4 +1,3 @@
-from msilib.schema import Error
 import sys
 import pandas as pd
 sys.path.insert(0, '/Users/aymericvie/Documents/GitHub/evology/evology/code/')

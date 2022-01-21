@@ -20,7 +20,7 @@ TimeHorizon = 252 * 100 + 3 * 21 # 100 Years + 3 months to compensate early peri
 PopulationSize = 100
 Coordinates = [1/3, 1/3, 1/3]
 seed = 8
-reps = 100
+reps = 150
 
 #COnfig: coords, popsize, time, selection rate, mutation rate, reinvestment rate
 Config1 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 0] # Static
