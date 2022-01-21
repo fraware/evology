@@ -35,8 +35,13 @@ Config8 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 1/252, 0.3] # Reinve
 Config = Config1
 def job1(iteration):
     np.random.seed()
-    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
-    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    try:
+        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, True)
+        return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    except:
+        print('Job 1 failed and passed.')
+        array = np.zeros((TimeHorizon - 3*21))
+        return pd.Series(array), pd.Series(array), pd.Series(array)
 
 Config = Config2
 def job2(iteration):
