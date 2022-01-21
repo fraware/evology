@@ -5,8 +5,6 @@ import pandas as pd
 import numpy as np
 import balance_sheet as bs
 import timeit
-import warnings
-warnings.filterwarnings(action='ignore', message='Mean of empty slice')
 
 from parameters import *
 cimport cythonized
@@ -333,6 +331,19 @@ def record_results(
         DailyTFReturns = FillList(GetDayReturn(pop, "tf"), len(pop))
         ReturnsTF[current, :] = DailyTFReturns
 
+        try:
+            MeanNTReturn = np.nanmean(DailyNTReturns)
+        except RuntimeWarning:
+            MeanNTReturn = np.nan
+        try:
+            MeanVIReturn = np.nanmean(DailyVIReturns)
+        except RuntimeWarning:
+            MeanVIReturn = np.nan
+        try:
+            MeanTFReturn = np.nanmean(DailyTFReturns)
+        except RuntimeWarning:
+            MeanTFReturn = np.nan
+
         wealth_tracker, wamp = TrackWealth(wealth_tracker, pop, generation)
 
         """ Global variables """
@@ -367,9 +378,9 @@ def record_results(
 
         arr += [
             abs(100 * spoils / asset_supply),
-            np.nanmean(DailyNTReturns),
-            np.nanmean(DailyVIReturns),
-            np.nanmean(DailyTFReturns),
+            MeanNTReturn,
+            MeanVIReturn,
+            MeanTFReturn,
             (results[current, 54] + results[current, 55] + results[current, 56]) / 3,
         ]
 
