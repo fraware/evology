@@ -1,3 +1,4 @@
+from msilib.schema import Error
 import sys
 import pandas as pd
 sys.path.insert(0, '/Users/aymericvie/Documents/GitHub/evology/evology/code/')
@@ -6,7 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import platform
 
-
+if platform.system() != 'Linux':
+    raise ValueError('Incorrect OS.')
 
 MCNT1 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_NT.csv")
 MCVI1 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_VI.csv")

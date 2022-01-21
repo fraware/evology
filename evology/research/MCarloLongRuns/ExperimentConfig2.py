@@ -24,8 +24,8 @@ def job(iteration):
             wealth_coordinates = Coordinates, 
             POPULATION_SIZE = PopulationSize, 
             MAX_GENERATIONS = TimeHorizon,
-            PROBA_SELECTION = 0,
-            MUTATION_RATE = 0,
+            PROBA_SELECTION = 1/252,
+            MUTATION_RATE = 1/252,
             ReinvestmentRate = 0,
             tqdm_display = True, 
             reset_wealth = False
@@ -56,6 +56,6 @@ if __name__ == '__main__':
         dfVI[name] = data[i,1]
         dfTF[name] = data[i,2]
 
-    dfNT.to_csv("data_config1/MC_NT.csv")
-    dfVI.to_csv("data_config1/MC_VI.csv")
-    dfTF.to_csv("data_config1/MC_TF.csv")
+    dfNT.to_csv("data_config2/MC_NT.csv")
+    dfVI.to_csv("data_config2/MC_VI.csv")
+    dfTF.to_csv("data_config2/MC_TF.csv")
