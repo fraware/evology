@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import balance_sheet as bs
 import timeit
+import warnings
+warnings.filterwarnings(action='ignore', message='Mean of empty slice')
 
 from parameters import *
 cimport cythonized
@@ -362,6 +364,7 @@ def record_results(
         arr += [ComputeAvgReturn(results, current, pop), spoils]
 
         """ More measures """
+
         arr += [
             abs(100 * spoils / asset_supply),
             np.nanmean(DailyNTReturns),
