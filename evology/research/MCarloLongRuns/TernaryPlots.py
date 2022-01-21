@@ -6,78 +6,39 @@ import numpy as np
 import matplotlib.pyplot as plt
 import platform
 
-print(platform.system())
 
-if platform.system() == 'Linux':
 
-    MCNT1 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_NT.csv")
-    MCVI1 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_VI.csv")
-    MCTF1 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_TF.csv")
+MCNT1 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_NT.csv")
+MCVI1 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_VI.csv")
+MCTF1 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_TF.csv")
 
-    MCNT2 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config2/MC_NT.csv")
-    MCVI2 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config2/MC_VI.csv")
-    MCTF2 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config2/MC_TF.csv")
+MCNT2 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config2/MC_NT.csv")
+MCVI2 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config2/MC_VI.csv")
+MCTF2 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config2/MC_TF.csv")
 
-    MCNT3 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config3/MC_NT.csv")
-    MCVI3 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config3/MC_VI.csv")
-    MCTF3 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config3/MC_TF.csv")
+MCNT3 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config3/MC_NT.csv")
+MCVI3 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config3/MC_VI.csv")
+MCTF3 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config3/MC_TF.csv")
 
-    MCNT4 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config4/MC_NT.csv")
-    MCVI4 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config4/MC_VI.csv")
-    MCTF4 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config4/MC_TF.csv")
+MCNT4 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config4/MC_NT.csv")
+MCVI4 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config4/MC_VI.csv")
+MCTF4 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config4/MC_TF.csv")
 
-    MCNT5 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config5/MC_NT.csv")
-    MCVI5 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config5/MC_VI.csv")
-    MCTF5 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config5/MC_TF.csv")
+MCNT5 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config5/MC_NT.csv")
+MCVI5 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config5/MC_VI.csv")
+MCTF5 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config5/MC_TF.csv")
 
-    MCNT6 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config6/MC_NT.csv")
-    MCVI6 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config6/MC_VI.csv")
-    MCTF6 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config6/MC_TF.csv")
+MCNT6 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config6/MC_NT.csv")
+MCVI6 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config6/MC_VI.csv")
+MCTF6 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config6/MC_TF.csv")
 
-    MCNT7 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config7/MC_NT.csv")
-    MCVI7 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config7/MC_VI.csv")
-    MCTF7 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config7/MC_TF.csv")
+MCNT7 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config7/MC_NT.csv")
+MCVI7 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config7/MC_VI.csv")
+MCTF7 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config7/MC_TF.csv")
 
-    MCNT8 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config8/MC_NT.csv")
-    MCVI8 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config8/MC_VI.csv")
-    MCTF8 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config8/MC_TF.csv")
-
-if platform.system() == 'Darwin':
-
-    MCNT1 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_NT.csv")
-    MCVI1 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_VI.csv")
-    MCTF1 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config1/MC_TF.csv")
-
-    MCNT2 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config2/MC_NT.csv")
-    MCVI2 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config2/MC_VI.csv")
-    MCTF2 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config2/MC_TF.csv")
-
-    MCNT3 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config3/MC_NT.csv")
-    MCVI3 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config3/MC_VI.csv")
-    MCTF3 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config3/MC_TF.csv")
-
-    MCNT4 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config4/MC_NT.csv")
-    MCVI4 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config4/MC_VI.csv")
-    MCTF4 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config4/MC_TF.csv")
-
-    MCNT5 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config5/MC_NT.csv")
-    MCVI5 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config5/MC_VI.csv")
-    MCTF5 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config5/MC_TF.csv")
-
-    MCNT6 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config6/MC_NT.csv")
-    MCVI6 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config6/MC_VI.csv")
-    MCTF6 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config6/MC_TF.csv")
-
-    MCNT7 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config7/MC_NT.csv")
-    MCVI7 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config7/MC_VI.csv")
-    MCTF7 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config7/MC_TF.csv")
-
-    MCNT8 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config8/MC_NT.csv")
-    MCVI8 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config8/MC_VI.csv")
-    MCTF8 = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config8/MC_TF.csv")
-
-else:
-    raise ValueError('System unsupported.')
+MCNT8 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config8/MC_NT.csv")
+MCVI8 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config8/MC_VI.csv")
+MCTF8 = pd.read_csv("/home/vie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data_config8/MC_TF.csv")
 
 def PathPoints(MCNT, MCVI, MCTF):
     points = []
