@@ -32,11 +32,26 @@ Config6 = [Coordinates, PopulationSize, TimeHorizon, 1/(252*3), 1/(252*3), 0] # 
 Config7 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 0.3] # Reinvestment
 Config8 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 1/252, 0.3] # Reinvestment + Learning 1Y
 
+'''
+def main(
+    space,
+    solver,
+    wealth_coordinates,
+    POPULATION_SIZE,
+    MAX_GENERATIONS,
+    PROBA_SELECTION,
+    MUTATION_RATE,
+    ReinvestmentRate,
+    tqdm_display,
+    reset_wealth
+):
+'''
+
 Config = Config1
 def job1(iteration):
     np.random.seed()
     try:
-        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, True)
+        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], True, False)
         return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
     except:
         print('Job 1 failed and passed.')
@@ -46,44 +61,79 @@ def job1(iteration):
 Config = Config2
 def job2(iteration):
     np.random.seed()
-    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
-    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    try:
+        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], True, False)
+        return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    except:
+        print('Job 2 failed and passed.')
+        array = np.zeros((TimeHorizon - 3*21))
+        return pd.Series(array), pd.Series(array), pd.Series(array)
 
 Config = Config3
 def job3(iteration):
     np.random.seed()
-    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
-    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    try:
+        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], True, False)
+        return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    except:
+        print('Job 3 failed and passed.')
+        array = np.zeros((TimeHorizon - 3*21))
+        return pd.Series(array), pd.Series(array), pd.Series(array)
 
 Config = Config4
 def job4(iteration):
     np.random.seed()
-    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
-    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    try:
+        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], True, False)
+        return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    except:
+        print('Job 4 failed and passed.')
+        array = np.zeros((TimeHorizon - 3*21))
+        return pd.Series(array), pd.Series(array), pd.Series(array)
 
 Config = Config5
 def job5(iteration):
     np.random.seed()
-    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
-    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    try:
+        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], True, False)
+        return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    except:
+        print('Job 5 failed and passed.')
+        array = np.zeros((TimeHorizon - 3*21))
+        return pd.Series(array), pd.Series(array), pd.Series(array)
 
 Config = Config6
 def job6(iteration):
     np.random.seed()
-    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
-    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    try:
+        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], True, False)
+        return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    except:
+        print('Job 6 failed and passed.')
+        array = np.zeros((TimeHorizon - 3*21))
+        return pd.Series(array), pd.Series(array), pd.Series(array)
 
 Config = Config7
 def job7(iteration):
     np.random.seed()
-    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
-    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    try:
+        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], True, False)
+        return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    except:
+        print('Job 7 failed and passed.')
+        array = np.zeros((TimeHorizon - 3*21))
+        return pd.Series(array), pd.Series(array), pd.Series(array)
 
 Config = Config8
 def job8(iteration):
     np.random.seed()
-    df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], False, False)
-    return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    try:
+        df,pop = evology('scholl', 'esl.true', Config[0], Config[1], Config[2], Config[3], Config[4], Config[5], True, False)
+        return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
+    except:
+        print('Job 8 failed and passed.')
+        array = np.zeros((TimeHorizon - 3*21))
+        return pd.Series(array), pd.Series(array), pd.Series(array)
 
 def main1():
     p = mp.Pool()
