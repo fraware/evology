@@ -24,9 +24,9 @@ def job(iteration):
             wealth_coordinates = Coordinates, 
             POPULATION_SIZE = PopulationSize, 
             MAX_GENERATIONS = TimeHorizon,
-            PROBA_SELECTION = 1/252,
-            MUTATION_RATE = 1/252,
-            ReinvestmentRate = 0.3,
+            PROBA_SELECTION = 0,
+            MUTATION_RATE = 0,
+            ReinvestmentRate = 0.8,
             tqdm_display = True, 
             reset_wealth = False
             )

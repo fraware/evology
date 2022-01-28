@@ -23,14 +23,14 @@ seed = 8
 reps = 150
 
 #COnfig: coords, popsize, time, selection rate, mutation rate, reinvestment rate
-Config1 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 0] # Static
-Config2 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 1/252, 0] # Learning 1Y
+Config1 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 1] # Static
+Config2 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 1/252, 1] # Learning 1Y
 Config3 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 0, 0] # Imitation-only 1Y
 Config4 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 0] # Mutation-only 1Y
 Config5 = [Coordinates, PopulationSize, TimeHorizon, 1/(252*2), 1/(252*2), 0] # Learning 2Y
 Config6 = [Coordinates, PopulationSize, TimeHorizon, 1/(252*3), 1/(252*3), 0] # Learning 3Y
-Config7 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 0.3] # Reinvestment
-Config8 = [Coordinates, PopulationSize, TimeHorizon, 1/252, 1/252, 0.3] # Reinvestment + Learning 1Y
+Config7 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 1.2] # Reinvestment high
+Config8 = [Coordinates, PopulationSize, TimeHorizon, 0, 0, 0.8] # Reinvestment low
 
 '''
 def main(
