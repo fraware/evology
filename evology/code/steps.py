@@ -111,7 +111,7 @@ def update_wealth(
     return pop
 
 def ApplyInvestment(
-    pop, generation, wealth_tracker, returns_tracker, InvestmentHorizon, InvestmentSupply,
+    pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply,
 ):
     # wealth_tracker = iv.WealthTracking(wealth_tracker, pop, generation)
     # returns_tracker = iv.ReturnTracking(wealth_tracker, returns_tracker, pop, generation)
@@ -119,6 +119,6 @@ def ApplyInvestment(
     #     pop, propSignif = iv.Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply)
     # else:
     #     propSignif = 0
-    wealth_tracker, returns_tracker, pop, propSignif = iv.InvestmentProcedure(pop, generation, wealth_tracker, returns_tracker, InvestmentHorizon, InvestmentSupply)
+    returns_tracker, pop, propSignif = iv.InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply)
 
-    return wealth_tracker, returns_tracker, pop, propSignif
+    return returns_tracker, pop, propSignif

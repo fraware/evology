@@ -8,6 +8,7 @@ import numpy as np
 
 
 @profile
+
 def main(
     space,
     solver,
@@ -100,13 +101,20 @@ def main(
         # Investment
         (
             wealth_tracker, 
+            returns_tracker 
+        ) = data.UpdateWealthReturnTracking(
+            wealth_tracker, 
+            returns_tracker, 
+            pop, 
+            generation
+        )
+        (
             returns_tracker, 
             pop, 
             propSignif
         ) = ApplyInvestment(
             pop, 
             generation, 
-            wealth_tracker, 
             returns_tracker, 
             InvestmentHorizon, 
             InvestmentSupply, 

@@ -475,3 +475,28 @@ def ComputeAvgMonReturn(results, generation, pop):
         + results[generation, 12] * results[generation, 56]
     ) / len(pop)
     return AvgReturn
+
+def UpdateWealthReturnTracking(wealth_tracker, returns_tracker, pop, generation):
+    wealth_tracker = WealthTracking(wealth_tracker, pop, generation)
+    returns_tracker = ReturnTracking(wealth_tracker, returns_tracker, pop, generation)
+    return wealth_tracker, returns_tracker
+
+cdef WealthTracking(wealth_tracker, list pop, int generation):
+    cdef cythonized.Individual ind
+    if generation >= Barr:
+        for i, ind in enumerate(pop):
+            if ind.age > 0:
+                wealth_tracker[generation,i] = ind.wealth 
+            else: 
+                wealth_tracker[generation, i] = np.nan # to mark the replacement in the data  
+    return wealth_tracker
+
+cdef ReturnTracking(wealth_tracker, returns_tracker, list pop, int generation):
+    if generation >= Barr + 1: # Otherwise there won't be a previous_wealth.
+        for i in range(len(pop)):
+            previous_wealth = wealth_tracker[generation - 1, i]
+            if previous_wealth != 0 or previous_wealth != np.nan:
+                returns_tracker[generation, i] = (wealth_tracker[generation, i] - previous_wealth) / previous_wealth
+            else:
+                returns_tracker[generation, i] = np.nan
+    return returns_tracker
