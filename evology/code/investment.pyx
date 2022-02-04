@@ -39,12 +39,12 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
     cdef list TestValues
     cdef double MeanReturns 
     cdef double StdReturns
-    cdef double Sharpe
+    cdef double SharpeAbsolute
     cdef double SESharpe
     cdef double TValue
-    cdef int countSignif
-    cdef double SumTValues
-    cdef double AbsSumTValues
+    cdef int countSignifAbsolute
+    cdef double SumTValuesAbsolute
+    cdef double AbsSumTValuesAbsolute
     cdef cythonized.Individual ind
     cdef double[:, :] ReturnData
     cdef double[:] DataSlice
@@ -62,8 +62,8 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
 
         # For each fund, estimate Sharpe ratio and its significance.
         TestThreshold = stdtrit(InvestmentHorizon, 0.95)
-        TestValues = [0] * len(pop)
-        AbsSumTValues = 0
+        TestValuesAbsolute = [0] * len(pop)
+        AbsSumTValuesAbsolute = 0
 
         for i in range(len(pop)):
             DataSlice = ReturnData[:,i]
@@ -71,35 +71,35 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
             StdReturns = std(DataSlice)
 
             if StdReturns != 0:
-                Sharpe = MeanReturns / StdReturns
+                SharpeAbsolute = MeanReturns / StdReturns
             else:
-                Sharpe = np.nan
+                SharpeAbsolite = np.nan
 
-            if not isnan(Sharpe):
-                SESharpe = sqrt(1 + 0.5 * Sharpe ** 2) / sqrt(InvestmentHorizon)
+            if not isnan(SharpeAbsolute):
+                SESharpe = sqrt(1 + 0.5 * SharpeAbsolute ** 2) / sqrt(InvestmentHorizon)
                 # SESharpe = ((1 + 0.5 * Sharpe ** 2) / InvestmentHorizon) ** 1/2
-                TValue = (Sharpe - INTEREST_RATE) / SESharpe
-                TestValues[i] = TValue
-                AbsSumTValues += abs(TValue)
+                TValueAbsolute = (SharpeAbsolute - INTEREST_RATE) / SESharpe
+                TestValuesAbsolute[i] = TValueAbsolute
+                AbsSumTValuesAbsolute += abs(TValueAbsolute)
             else:
-                TestValues[i] = 0
+                TestValuesAbsolute[i] = 0
 
         # Decide investment ratios and apply the investment.
-        SumTValues = sum(TestValues)
-        countSignif = 0
+        SumTValuesAbsolute = sum(TestValuesAbsolute)
+        countSignifAbsolute = 0
         for i, ind in enumerate(pop):
-            if SumTValues != 0:
-                ind.investment_ratio = (TestValues[i] / SumTValues) 
+            if SumTValuesAbsolute != 0:
+                ind.investment_ratio = (TestValuesAbsolute[i] / SumTValuesAbsolute) 
             else:
                 ind.investment_ratio = 1/len(pop)
             ind.investor_flow = ind.investment_ratio * InvestmentSupply
             ind.cash += ind.investor_flow
-            if TestValues[i] > TestThreshold:
-                countSignif += 1
-        propSignif = 100 * countSignif / len(pop)
-        AvgVal = (AbsSumTValues / len(pop)) / TestThreshold
+            if TestValuesAbsolute[i] > TestThreshold:
+                countSignifAbsolute += 1
+        propSignifAbsolute = 100 * countSignifAbsolute / len(pop)
+        AvgValAbsolute = (AbsSumTValuesAbsolute / len(pop)) / TestThreshold
 
-        return pop, propSignif, AvgVal
+        return pop, propSignifAbsolute, AvgValAbsolute
     else:
         return pop, 0, 0
 
