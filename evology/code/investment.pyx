@@ -26,10 +26,10 @@ cdef double std(double[:] x) nogil:
 
 def InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply):
     if InvestmentHorizon > 0:
-        pop, propSignif = Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply)
+        pop, propSignif, AvgValSignif = Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply)
     else:
-        propSignif = 0
-    return returns_tracker, pop, propSignif
+        propSignif, AvgValSignif = 0, 0
+    return returns_tracker, pop, propSignif, AvgValSignif
 
 
 
@@ -44,6 +44,7 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
     cdef double TValue
     cdef int countSignif
     cdef double SumTValues
+    cdef double AbsSumTValues
     cdef cythonized.Individual ind
     cdef double[:, :] ReturnData
     cdef double[:] DataSlice
@@ -62,6 +63,7 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
         # For each fund, estimate Sharpe ratio and its significance.
         TestThreshold = stdtrit(InvestmentHorizon, 0.95)
         TestValues = [0] * len(pop)
+        AbsSumTValues = 0
 
         for i in range(len(pop)):
             DataSlice = ReturnData[:,i]
@@ -78,6 +80,7 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
                 # SESharpe = ((1 + 0.5 * Sharpe ** 2) / InvestmentHorizon) ** 1/2
                 TValue = (Sharpe - INTEREST_RATE) / SESharpe
                 TestValues[i] = TValue
+                AbsSumTValues += abs(TValue)
             else:
                 TestValues[i] = 0
 
@@ -93,10 +96,11 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
             ind.cash += ind.investor_flow
             if TestValues[i] > TestThreshold:
                 countSignif += 1
-        propSignif = 100 * (countSignif / len(pop))
+        propSignif = 100 * countSignif / len(pop)
+        AvgVal = (AbsSumTValues / len(pop)) / TestThreshold
 
-        return pop, propSignif
+        return pop, propSignif, AvgVal
     else:
-        return pop, 0
+        return pop, 0, 0
 
 

@@ -82,7 +82,10 @@ columns = [
     # Annual return computed over wealth
     "NT_AnnualReturns",
     "VI_AnnualReturns",
-    "TF_AnnualReturns"
+    "TF_AnnualReturns",
+    # Significance
+    "PropSignifInvestment",
+    "AvgSignificance",
 ]
 variables = len(columns)
 
@@ -355,6 +358,8 @@ def record_results(
     CountMutated,
     CountCrossed,
     StratFlow,
+    propSignif,
+    AvgValSignif,
 ):
 
     if generation >= Barr:
@@ -437,6 +442,9 @@ def record_results(
 
         """ Annual returns """
         arr += [wamp_nt, wamp_vi, wamp_tf]
+
+        """ Investment Statistics """
+        arr += [propSignif, AvgValSignif]
 
         # Warning: This must be at the end.
         """ Record results """

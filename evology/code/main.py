@@ -100,10 +100,12 @@ def main(
             pop, 
             generation
         )
+
         (
             returns_tracker, 
             pop, 
-            propSignif
+            propSignif,
+            AvgValSignif
         ) = ApplyInvestment(
             pop, 
             generation, 
@@ -134,6 +136,8 @@ def main(
             CountMutated,
             CountCrossed,
             StratFlow,
+            propSignif,
+            AvgValSignif,
         )
 
     df = pd.DataFrame(results, columns=data.columns)
