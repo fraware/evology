@@ -137,7 +137,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
         if ind.tvalue_cpr >= TestThreshold:
             countSignif += ind.investment_ratio
 
-        print([round(ind.sharpe,2), round(ind.investment_ratio,2), round(ind.tvalue_cpr,2), round(total_tvalue_cpr,2)])
+        # print([round(ind.sharpe,2), round(ind.investment_ratio,2), round(ind.tvalue_cpr,2), round(total_tvalue_cpr,2)])
 
     if round(sum_inv_ratio,3) != 0.0:
         print(sum_inv_ratio)
