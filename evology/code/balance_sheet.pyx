@@ -259,12 +259,14 @@ def ComputeReturn(pop):
             ind.DailyReturn = np.nan
 
 
-def update_profit_reinvestment(pop, ReinvestmentRate):
+def update_profit(pop):
     for ind in pop:
         ind.profit = ind.wealth - ind.prev_wealth
-        ind.cash += ind.profit * (ReinvestmentRate - 1)
 
-
+def ApplyReinvestment(pop, ReinvestmentRate):
+    for ind in pop:
+        ind.cash += (ReinvestmentRate - 1) * ind.profit
+    return pop
 
 def report_types(pop):
     num_tf = 0

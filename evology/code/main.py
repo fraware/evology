@@ -90,7 +90,6 @@ def main(
         pop = update_wealth(
             pop,
             CurrentPrice,
-            ReinvestmentRate,
         )
 
         # Investment
@@ -117,6 +116,7 @@ def main(
             TestThreshold,
             InvestmentIntensity
         )
+        pop = ApplyReinvestment(pop, ReinvestmentRate)
 
         # Record results
         # wealth_tracker = iv.WealthTracking(wealth_tracker, pop, generation)
