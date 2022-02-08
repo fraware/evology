@@ -15,9 +15,9 @@ CROSSOVER_RATE = 1 / 21
 """ STRATEGY PARAMETERS """
 # General parameters
 
-LeverageNT, LeverageVI, LeverageTF = 1, 1, 1  
-SCALE_NT, SCALE_VI, SCALE_TF = np.pi, np.pi, np.pi  
-ATC_TF = 1 
+LeverageNT, LeverageVI, LeverageTF = 1, 1, 1 #1, 8, 1 
+SCALE_NT, SCALE_VI, SCALE_TF = np.pi, np.pi, np.pi #5, 10, 4 
+ATC_TF = 1  
 
 GAMMA_NT = 0.2 * np.sqrt(1 / 252)
 MU_NT = 1

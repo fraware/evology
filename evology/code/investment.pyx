@@ -116,7 +116,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                 total_tvalue_cpr += ind.tvalue_cpr
             if ind.tvalue_cpr < 0:
                 # Apply the exponent Investment Intensity, keeping the negative sign of T value.
-                ind.tvalue_cpr = - abs(ind.tvalue_cpr ** InvestmentIntensity)
+                ind.tvalue_cpr = - abs(abs(ind.tvalue_cpr) ** InvestmentIntensity)
                 total_tvalue_cpr_neg += ind.tvalue_cpr
 
     if isnan(total_tvalue_cpr) == True:

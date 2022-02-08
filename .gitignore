@@ -19,3 +19,4 @@ __pycache__/
 
 # Cython-generated C files
 *.c
+evology/code/build/temp.macosx-10.9-x86_64-3.9/investment-bc8bf362.o.tmp
