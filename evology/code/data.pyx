@@ -84,7 +84,6 @@ columns = [
     "VI_AnnualReturns",
     "TF_AnnualReturns",
     # Significance
-    "PropSignifInvestment",
     "AvgSignificance",
     "NTflows",
     "VIflows",
@@ -370,7 +369,6 @@ def record_results(
     CountMutated,
     CountCrossed,
     StratFlow,
-    propSignif,
     AvgValSignif,
 ):
 
@@ -456,7 +454,7 @@ def record_results(
         arr += [wamp_nt, wamp_vi, wamp_tf]
 
         """ Investment Statistics """
-        arr += [propSignif, AvgValSignif]
+        arr += [AvgValSignif]
 
         arr += ListOutput[35:38]
 

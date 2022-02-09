@@ -120,12 +120,6 @@ def ApplyReinvestment(
 def ApplyInvestment(
     pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity
 ):
-    # wealth_tracker = iv.WealthTracking(wealth_tracker, pop, generation)
-    # returns_tracker = iv.ReturnTracking(wealth_tracker, returns_tracker, pop, generation)
-    # if InvestmentHorizon > 0:
-    #     pop, propSignif = iv.Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply)
-    # else:
-    #     propSignif = 0
-    pop, propSignif, AvgValSignif = iv.InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity)
+    pop, AvgValSignif = iv.InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity)
 
-    return pop, propSignif, AvgValSignif
+    return pop, AvgValSignif

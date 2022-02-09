@@ -115,7 +115,11 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
 
     for ind in pop:
         if isnan(ind.tvalue_cpr) == False:
+
             sum_tvalue_cpr_abs += abs(ind.tvalue_cpr)
+
+
+
             if ind.tvalue_cpr > 0:
                 # Apply the exponent Investment Intensity
                 ind.tvalue_cpr = ind.tvalue_cpr ** InvestmentIntensity
@@ -138,9 +142,6 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                 if ind.investment_ratio > 0:
                     raise ValueError('Investment ratio positive despite negative T statistic value.')
 
-            sum_inv_ratio += ind.investment_ratio
-        if ind.tvalue_cpr >= TestThreshold:
-            countSignif += ind.investment_ratio
 
         # print([round(ind.sharpe,2), round(ind.investment_ratio,2), round(ind.tvalue_cpr,2), round(total_tvalue_cpr,2)])
 
@@ -148,7 +149,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
         print(sum_inv_ratio)
         raise ValueError('Sum of investment ratios is not null.')
 
-    return pop, (100 * countSignif), (sum_tvalue_cpr_abs / (len(pop) * (len(pop) - 1)))
+    return pop, (sum_tvalue_cpr_abs / (len(pop) * (len(pop) - 1)))
 
 cdef DistributionInvestment(list pop, double InvestmentSupply):
     cdef cythonized.Individual ind 
@@ -162,10 +163,10 @@ cdef DistributionInvestment(list pop, double InvestmentSupply):
 
 def InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity):
     if InvestmentHorizon > 0 and generation > Barr + InvestmentHorizon + ShieldInvestment and InvestmentHorizon != 1:
-        pop, propSignif, AvgValSignif = Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply, TestThreshold, InvestmentIntensity)
+        pop, AvgValSignif = Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply, TestThreshold, InvestmentIntensity)
     else:
-        propSignif, AvgValSignif = 0, 0
-    return pop, propSignif, AvgValSignif
+        AvgValSignif = 0
+    return pop, AvgValSignif
 
 
 
@@ -186,10 +187,10 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
         DataSlice = ReturnData[:,i]
         ind = compute_sharpe(ind, DataSlice)
         
-    pop, propSignif, AvgVal = compare_sharpe(pop, ReturnData, InvestmentHorizon, TestThreshold, InvestmentIntensity)
+    pop, AvgVal = compare_sharpe(pop, ReturnData, InvestmentHorizon, TestThreshold, InvestmentIntensity)
 
     pop = DistributionInvestment(pop, InvestmentSupply)
 
-    return pop, propSignif, AvgVal
+    return pop, AvgVal
 
 

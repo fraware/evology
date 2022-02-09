@@ -105,7 +105,6 @@ def main(
 
         (
             pop, 
-            propSignif,
             AvgValSignif
         ) = ApplyInvestment(
             pop, 
@@ -141,7 +140,6 @@ def main(
             CountMutated,
             CountCrossed,
             StratFlow,
-            propSignif,
             AvgValSignif,
         )
 
