@@ -93,8 +93,15 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                     S = mean(DataSlice)
                     S2 = mean(DataSlice2)
                     if isnan(S2) == False:
-                        T = (S - S2) / ((sqrt( ((InvestmentHorizon - 1.0) * (std(DataSlice) ** 2) + (InvestmentHorizon - 1.0) * (std(DataSlice2) ** 2)))/(2.0 * InvestmentHorizon - 2)) * sqrt (2.0 / InvestmentHorizon))
+                        # T test for similar variances (difference in std betw 0.5 and 2)
+                        # T = (S - S2) / ((sqrt( ((InvestmentHorizon - 1.0) * (std(DataSlice) ** 2) + (InvestmentHorizon - 1.0) * (std(DataSlice2) ** 2)))/(2.0 * InvestmentHorizon - 2)) * sqrt (2.0 / InvestmentHorizon))
+                        
+                        # Simple T Test
+                        # T = (S - S2) / sqrt((2/InvestmentHorizon) * ((std(DataSlice) ** 2 + std(DataSlice2) ** 2) / 2))
                         # print([i, j, S, S2, T])
+
+                        # T test for unequal variances (difference in std > 2)
+                        T = (S - S2) / sqrt((std(Dataslice) ** 2 + std(DataSlice2) ** 2) / 2.0 * InvestmentHorizon)
                     
 
                     #if S > S2:
