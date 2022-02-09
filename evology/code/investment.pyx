@@ -72,6 +72,9 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
     cdef double num_test = 0.0
     cdef double num_signif_test = 0.0
 
+    #print("---")
+    #print(TestThreshold)
+
     for i, ind in enumerate(pop):
         if isnan(ind.sharpe) == False:
             ind.tvalue_cpr = 0.0
@@ -90,21 +93,22 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                         # Simple T Test
                         # T = (S - S2) / sqrt((2/InvestmentHorizon) * ((std(DataSlice) ** 2 + std(DataSlice2) ** 2) / 2))
                         # T test for unequal variances (difference in std > 2)
-                        T = (S - S2) / sqrt((std(DataSlice) ** 2 + std(DataSlice2) ** 2) / (InvestmentHorizon))
+                        T = (S - S2) / (sqrt((std(DataSlice) ** 2 + std(DataSlice2) ** 2) / (InvestmentHorizon)))
 
                         ind.tvalue_cpr += T
                         num_test += 1.0
+                        #print(T)
 
                         if abs(T) > abs(TestThreshold):
                             num_signif_test += 1.0
+                            #print("Signif")
+
+    #print(100 * num_signif_test / num_test)
+    #print("----")
 
     for ind in pop:
         if isnan(ind.tvalue_cpr) == False:
-
             sum_tvalue_cpr_abs += abs(ind.tvalue_cpr)
-
-
-
             if ind.tvalue_cpr > 0:
                 # Apply the exponent Investment Intensity
                 ind.tvalue_cpr = ind.tvalue_cpr ** InvestmentIntensity
@@ -127,8 +131,6 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                 if ind.investment_ratio > 0:
                     raise ValueError('Investment ratio positive despite negative T statistic value.')
 
-
-        # Prop signif did not work because it should be much before: ind.tvalue_cpr is cumulative!
         # print([round(ind.sharpe,2), round(ind.investment_ratio,2), round(ind.tvalue_cpr,2), round(total_tvalue_cpr,2)])
 
     if round(sum_inv_ratio,3) != 0.0:
