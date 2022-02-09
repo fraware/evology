@@ -133,7 +133,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                     raise ValueError('Investment ratio positive despite negative T statistic value.')
 
             sum_inv_ratio += ind.investment_ratio
-            sum_tvalue_cpr += ind.tvalue_cpr
+            sum_tvalue_cpr += abs(ind.tvalue_cpr)
         if ind.tvalue_cpr >= TestThreshold:
             countSignif += ind.investment_ratio
 
