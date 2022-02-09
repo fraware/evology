@@ -141,7 +141,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
         print(sum_inv_ratio)
         raise ValueError('Sum of investment ratios is not null.')
 
-    return pop, (100 * countSignif), (sum_tvalue_cpr_abs / len(pop))
+    return pop, (100 * countSignif), (sum_tvalue_cpr_abs / (len(pop) * (len(pop) - 1)))
 
 cdef DistributionInvestment(list pop, double InvestmentSupply):
     cdef cythonized.Individual ind 
