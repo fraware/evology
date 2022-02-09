@@ -85,6 +85,8 @@ columns = [
     "TF_AnnualReturns",
     # Significance
     "AvgSignificance",
+    "AvgNumberDev",
+    "PerSignif",
     "NTflows",
     "VIflows",
     "TFflows",
@@ -371,6 +373,7 @@ def record_results(
     StratFlow,
     AvgValSignif,
     TestThreshold,
+    PerSignif,
 ):
 
     if generation >= Barr:
@@ -455,7 +458,7 @@ def record_results(
         arr += [wamp_nt, wamp_vi, wamp_tf]
 
         """ Investment Statistics """
-        arr += [AvgValSignif - TestThreshold]
+        arr += [AvgValSignif, AvgValSignif - TestThreshold, PerSignif]
 
         arr += ListOutput[35:38]
 

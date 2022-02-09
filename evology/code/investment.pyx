@@ -69,6 +69,8 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
     cdef double countSignif = 0.0
     cdef double sum_tvalue_cpr_abs = 0.0
     cdef double total_tvalue_cpr_neg = 0.0
+    cdef double num_test = 0.0
+    cdef double num_signif_test = 0.0
 
     for i, ind in enumerate(pop):
         if isnan(ind.sharpe) == False:
@@ -78,40 +80,23 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
             ''' Then we compare to other funds with non-NAN Sharpes'''
             for j, ind2 in enumerate(pop):
                 if j != i and isnan(ind2.sharpe) == False:
-                    
                     ''' We have selected another fund with defined Sharpe'''
-                    # JMK method (wrongly implemented?)
-                    #''' Calculate Pearson correlation '''
                     DataSlice2 = ReturnData[:,j]
-                    #S2 = ind2.sharpe
-                    #P = pearson(DataSlice, DataSlice2)
-
-                    #term = 0.5 * (S ** 2 + S2 ** 2 - 2 * S * S2 * (P ** 2))
-                    #T = (S - S2) / (((1.0 / InvestmentHorizon) * (2 - 2 * P + term)) ** 0.5)
-
-                    # Ordinary test
                     S = mean(DataSlice)
                     S2 = mean(DataSlice2)
                     if isnan(S2) == False:
                         # T test for similar variances (difference in std betw 0.5 and 2)
-                        # T = (S - S2) / ((sqrt( ((InvestmentHorizon - 1.0) * (std(DataSlice) ** 2) + (InvestmentHorizon - 1.0) * (std(DataSlice2) ** 2)))/(2.0 * InvestmentHorizon - 2)) * sqrt (2.0 / InvestmentHorizon))
-                        
+                        # T = (S - S2) / ((sqrt( ((InvestmentHorizon - 1.0) * (std(DataSlice) ** 2) + (InvestmentHorizon - 1.0) * (std(DataSlice2) ** 2)))/(2.0 * InvestmentHorizon - 2)) * sqrt (2.0 / InvestmentHorizon))                    
                         # Simple T Test
                         # T = (S - S2) / sqrt((2/InvestmentHorizon) * ((std(DataSlice) ** 2 + std(DataSlice2) ** 2) / 2))
-                        # print([i, j, S, S2, T])
-
                         # T test for unequal variances (difference in std > 2)
                         T = (S - S2) / sqrt((std(DataSlice) ** 2 + std(DataSlice2) ** 2) / (InvestmentHorizon))
-                    
 
-                    #if S > S2:
                         ind.tvalue_cpr += T
+                        num_test += 1.0
 
-                    #if S < S2:
-                    #    ind.tvalue_cpr -= abs(T)
-                    #    total_tvalue_cpr_minus += abs(T)
-                        
-
+                        if abs(T) > abs(TestThreshold):
+                            num_signif_test += 1.0
 
     for ind in pop:
         if isnan(ind.tvalue_cpr) == False:
@@ -150,7 +135,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
         print(sum_inv_ratio)
         raise ValueError('Sum of investment ratios is not null.')
 
-    return pop, (sum_tvalue_cpr_abs / (len(pop) * (len(pop) - 1)))
+    return pop, (sum_tvalue_cpr_abs / num_test), (100 * num_signif_test / num_test)
 
 cdef DistributionInvestment(list pop, double InvestmentSupply):
     cdef cythonized.Individual ind 
@@ -164,10 +149,10 @@ cdef DistributionInvestment(list pop, double InvestmentSupply):
 
 def InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity):
     if InvestmentHorizon > 0 and generation > Barr + InvestmentHorizon + ShieldInvestment and InvestmentHorizon != 1:
-        pop, AvgValSignif = Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply, TestThreshold, InvestmentIntensity)
+        pop, AvgValSignif, PerSignif = Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply, TestThreshold, InvestmentIntensity)
     else:
-        AvgValSignif = 0
-    return pop, AvgValSignif
+        AvgValSignif, PerSignif = 0, 0
+    return pop, AvgValSignif, PerSignif
 
 
 
@@ -188,10 +173,10 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
         DataSlice = ReturnData[:,i]
         ind = compute_sharpe(ind, DataSlice)
         
-    pop, AvgVal = compare_sharpe(pop, ReturnData, InvestmentHorizon, TestThreshold, InvestmentIntensity)
+    pop, AvgVal, PerSignif = compare_sharpe(pop, ReturnData, InvestmentHorizon, TestThreshold, InvestmentIntensity)
 
     pop = DistributionInvestment(pop, InvestmentSupply)
 
-    return pop, AvgVal
+    return pop, AvgVal, PerSignif
 
 

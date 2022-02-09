@@ -105,7 +105,8 @@ def main(
 
         (
             pop, 
-            AvgValSignif
+            AvgValSignif,
+            PerSignif
         ) = ApplyInvestment(
             pop, 
             generation, 
@@ -142,6 +143,7 @@ def main(
             StratFlow,
             AvgValSignif,
             TestThreshold,
+            PerSignif,
         )
 
     df = pd.DataFrame(results, columns=data.columns)

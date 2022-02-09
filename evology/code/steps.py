@@ -120,6 +120,6 @@ def ApplyReinvestment(
 def ApplyInvestment(
     pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity
 ):
-    pop, AvgValSignif = iv.InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity)
+    pop, AvgValSignif, PerSignif = iv.InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity)
 
-    return pop, AvgValSignif
+    return pop, AvgValSignif, PerSignif
