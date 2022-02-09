@@ -53,13 +53,13 @@ def run(
 
 df, pop, ReturnsNT, ReturnsVI, ReturnsTF = run(
     10, 0, 20000, wealth_coordinates, tqdm_display=False, reset_wealth=False, 
-    ReinvestmentRate= 1.0, InvestmentHorizon = 3, InvestmentIntensity = 1.0
+    ReinvestmentRate= 1.0, InvestmentHorizon = 252, InvestmentIntensity = 1.0
 )
 
-df.to_csv("evology/data/run_data.csv")
-np.savetxt('evology/data/ReturnsNT.csv', ReturnsNT, delimiter=',')
-np.savetxt('evology/data/ReturnsVI.csv', ReturnsVI, delimiter=',')
-np.savetxt('evology/data/ReturnsTF.csv', ReturnsTF, delimiter=',')
+df.to_csv("rundata/run_data.csv")
+# np.savetxt('evology/code/rundata/ReturnsNT.csv', ReturnsNT, delimiter=',')
+# np.savetxt('evology/code/rundata/ReturnsVI.csv', ReturnsVI, delimiter=',')
+# np.savetxt('evology/code/rundata/ReturnsTF.csv', ReturnsTF, delimiter=',')
 
 print(df)
 print([df['WShare_NT'].mean(), df['WShare_VI'].mean(), df['WShare_TF'].mean()])

@@ -141,6 +141,7 @@ def main(
             CountCrossed,
             StratFlow,
             AvgValSignif,
+            TestThreshold,
         )
 
     df = pd.DataFrame(results, columns=data.columns)

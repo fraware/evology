@@ -143,6 +143,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                     raise ValueError('Investment ratio positive despite negative T statistic value.')
 
 
+        # Prop signif did not work because it should be much before: ind.tvalue_cpr is cumulative!
         # print([round(ind.sharpe,2), round(ind.investment_ratio,2), round(ind.tvalue_cpr,2), round(total_tvalue_cpr,2)])
 
     if round(sum_inv_ratio,3) != 0.0:

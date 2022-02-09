@@ -370,6 +370,7 @@ def record_results(
     CountCrossed,
     StratFlow,
     AvgValSignif,
+    TestThreshold,
 ):
 
     if generation >= Barr:
@@ -454,7 +455,7 @@ def record_results(
         arr += [wamp_nt, wamp_vi, wamp_tf]
 
         """ Investment Statistics """
-        arr += [AvgValSignif]
+        arr += [AvgValSignif - TestThreshold]
 
         arr += ListOutput[35:38]
 
@@ -519,11 +520,12 @@ cdef WealthTracking(wealth_tracker, list pop, int generation):
 cdef ReturnTracking(returns_tracker, list pop, int generation):
     if generation >= Barr + 1: # Otherwise there won't be a previous_wealth.
         for i, ind in enumerate(pop):
-            previous_wealth = ind.prev_wealth + ind.investor_flow
-            if previous_wealth != 0 or previous_wealth != np.nan:
-                returns_tracker[generation, i] = (ind.wealth - previous_wealth) / previous_wealth
-            else:
-                returns_tracker[generation, i] = np.nan
-            # Mark investor flows as being applied, so that we don't deduct them at the next period.
-            ind.investor_flow = 0.0
+            if ind.age > 2:
+                previous_wealth = ind.prev_wealth + ind.investor_flow
+                if previous_wealth != 0 and previous_wealth != np.nan and ind.wealth != np.nan and ind.wealth:
+                    returns_tracker[generation, i] = (ind.wealth - previous_wealth) / previous_wealth
+                else:
+                    returns_tracker[generation, i] = np.nan
+                # Mark investor flows as being applied, so that we don't deduct them at the next period.
+                ind.investor_flow = 0.0
     return returns_tracker

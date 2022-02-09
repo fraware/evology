@@ -34,7 +34,7 @@ def CreateHalfFund(pop, MaxFund):
 
     # Copy fund j characteristics to be divided
     half.prev_wealth = pop[MaxFund].prev_wealth / 2
-    half.wealth = 0.0
+    half.wealth = pop[MaxFund].wealth / 2
     half.cash = pop[MaxFund].cash / 2
     half.loan = pop[MaxFund].loan / 2
     half.asset = pop[MaxFund].asset / 2
