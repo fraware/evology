@@ -101,7 +101,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                         # print([i, j, S, S2, T])
 
                         # T test for unequal variances (difference in std > 2)
-                        T = (S - S2) / sqrt((std(Dataslice) ** 2 + std(DataSlice2) ** 2) / 2.0 * InvestmentHorizon)
+                        T = (S - S2) / sqrt((std(Dataslice) ** 2 + std(DataSlice2) ** 2) / (2.0 * InvestmentHorizon))
                     
 
                     #if S > S2:
