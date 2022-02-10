@@ -374,6 +374,7 @@ def record_results(
     AvgValSignif,
     TestThreshold,
     PerSignif,
+    NumDev,
 ):
 
     if generation >= Barr:
@@ -458,7 +459,7 @@ def record_results(
         arr += [wamp_nt, wamp_vi, wamp_tf]
 
         """ Investment Statistics """
-        arr += [AvgValSignif, AvgValSignif - TestThreshold, PerSignif]
+        arr += [AvgValSignif, NumDev, PerSignif]
 
         arr += ListOutput[35:38]
 
