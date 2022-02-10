@@ -34,6 +34,7 @@ cdef double pearson(double[:] x, double[:] y) nogil:
     cdef double denum1 = 0.0
     cdef double denum2 = 0.0
     cdef double result
+    cdef double P
 
     for i in range(N):
         num += (x[i] - mx) * (y[i] - my)
@@ -92,8 +93,13 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                         # T = (S - S2) / ((sqrt( ((InvestmentHorizon - 1.0) * (std(DataSlice) ** 2) + (InvestmentHorizon - 1.0) * (std(DataSlice2) ** 2)))/(2.0 * InvestmentHorizon - 2)) * sqrt (2.0 / InvestmentHorizon))                    
                         # Simple T Test
                         # T = (S - S2) / sqrt((2/InvestmentHorizon) * ((std(DataSlice) ** 2 + std(DataSlice2) ** 2) / 2))
-                        # T test for unequal variances (difference in std > 2)
+                        
+                        # Welch test (T test for unequal variances, difference in std > 2)
                         T = (S - S2) / (sqrt((std(DataSlice) ** 2 + std(DataSlice2) ** 2) / (InvestmentHorizon)))
+
+                        # JKM test
+                        # P = pearson(DataSlice, DataSlice2)
+                        # T = (ind.sharpe - ind2.sharpe) / sqrt((1.0 / InvestmentHorizon) * (2 - 2 * P + 0.5 * (ind.sharpe ** 2 + ind2.sharpe ** 2 - 2 * ind.sharpe * ind2.sharpe * (P ** 2))))
 
                         ind.tvalue_cpr += T
                         num_test += 1.0
