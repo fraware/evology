@@ -145,4 +145,6 @@ def WealthReset(pop, space, WealthCoords, generation, ResetWealth):
     else:
         if ResetWealth == True:
             pop, asset_supply = CreatePop(len(pop), space, WealthCoords)
+        for ind in pop:
+            ind.age = generation
     return pop
