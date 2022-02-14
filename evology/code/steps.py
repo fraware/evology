@@ -79,6 +79,9 @@ def marketClearing(pop, current_price, price_history, spoils, solver):
         current_price = optimize.brentq(
             ed_functions[0], 0.5 * current_price, 2 * current_price
         )
+    elif solver == 'scipy.min':
+        ed_functions, ToLiquidate = bs.agg_ed(pop, spoils)
+        current_price = optimize.minimize(ed_functions[0], current_price).x[0]
     else:
         raise ValueError(
             "No solver was selected. Available options: esl, newton, brentq"
