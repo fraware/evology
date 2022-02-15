@@ -463,7 +463,7 @@ def record_results(
         ListOutput = ResultsProcess(pop, spoils, current_price)
         current = generation - Barr
 
-        if current > Barr + 21:
+        if current > Barr + 252:
             resultsNT = results[Barr:current, -12]
             resultsVI = results[Barr:current, -11]
             resultsTF = results[Barr:current, -10]

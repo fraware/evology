@@ -10,7 +10,7 @@ if sys.platform == 'linux':
 from main import main as evology
 import multiprocessing as mp
 
-TimeHorizon = 252 * 1 + 3 * 21 # 
+TimeHorizon = 252 * 10 # + 3 * 21 # 
 PopulationSize = 3
 Coordinates = [1/3, 1/3, 1/3]
 
@@ -32,13 +32,22 @@ def job(param):
             tqdm_display = True,
             reset_wealth = False
             )
-        result = [param[0], param[1], df['WShare_NT'].mean(), df['WShare_VI'].mean(), df['WShare_TF'].mean()]
+        result = [
+            param[0], param[1], 
+            df['WShare_NT'].mean(), df['WShare_VI'].mean(), df['WShare_TF'].mean(),
+            df['SharpeNT'].mean(), df['SharpeVI'].mean(), df['SharpeTF'].mean(),
+            np.nanmean(df['DeltaNTVI']), np.nanmean(df['DeltaNTTF']), np.nanmean(df['DeltaVITF']),
+            df['AvgSignificance'].mean(), df['AvgNumberDev'].mean(), df['PerSignif'].mean()
+        ]
         return result
     except Exception as e:
         print(e)
         # raise ValueError('Failed run') 
         print('Failed run' + str(param) + str(e))
-        return [param[0], param[1], 0, 0, 0]
+        result = [param[0], param[1]]
+        for _ in range(12):
+            result.append(0)
+        return result
 
 # Define the domains 
 # domain_f = [x / 10.0 for x in range(0, 31, 1)]
@@ -58,8 +67,6 @@ def GenerateParam(reps):
                 param.append(config)
     return param
 
-# print(param)
-
 def main():
     p = mp.Pool()
     data = p.map(job, param)
@@ -67,6 +74,11 @@ def main():
     data = np.array(data)
     return data
 
+''' we are looking at reps of 10 for contunuous plots but 50 for ternaries'''
+''' but lets not make too many runs when we dont have to. If we want to look at specific configs for scatterplots,
+we can make dedicated experiments for that'''
+
+''' change reps and time '''
 
 reps = 2
 param = GenerateParam(reps)
@@ -74,11 +86,26 @@ if __name__ == '__main__':
     data = main()
     df = pd.DataFrame()
 
+    # Inputs 
     df['F'] = data[:,0]
     df['H'] = data[:,1]
+    # Outputs 
+    # Wealth share averages
     df['WShare_NT'] = data[:,2]
     df['WShare_VI'] = data[:,3]
     df['WShare_TF'] = data[:,4]
+    # Sharpe ratios
+    df['SharpeNT'] = data[:,5]
+    df['SharpeVI'] = data[:,6]
+    df['SharpeTF'] = data[:,7]
+    # Delta measures 
+    df['DeltaNTVI'] = data[:,8]
+    df['DeltaNTTF'] = data[:,9]
+    df['DeltaVITF'] = data[:,10]
+    # Significance measures 
+    df['AvgSignificance'] = data[:,11]
+    df['AvgNumberDev'] = data[:,12]
+    df['PerSignif'] = data[:,13]
     print(df)
 
     df.to_csv("data/data.csv")

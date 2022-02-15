@@ -47,7 +47,7 @@ def run(
 
 df, pop = run(
     3, 0, 5000, wealth_coordinates, tqdm_display=False, reset_wealth=False, 
-    ReinvestmentRate = 1.2, InvestmentHorizon = 21, InvestorBehavior = 'JKM')
+    ReinvestmentRate = 1.5, InvestmentHorizon = 2, InvestorBehavior = 'JKM')
 
 df.to_csv("rundata/run_data.csv")
 print(df)
