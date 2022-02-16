@@ -81,8 +81,8 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
     #print(TestThreshold)
 
     for i, ind in enumerate(pop):
+        ind.tvalue_cpr = 0.0
         if isnan(ind.sharpe) == False:
-            ind.tvalue_cpr = 0.0
             DataSlice = ReturnData[:,i]
             S = ind.sharpe
             ''' Then we compare to other funds with non-NAN Sharpes'''
@@ -172,6 +172,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
         for ind in pop:
             print([ind.tvalue_cpr, ind.investment_ratio])
         #raise ValueError('Sum of investment ratios is outside bounds [-1,1].')
+        ''' for minor problems we can multiply it all by 1/sum or something to normalise?'''
         raise ValueError('Sum of investment ratios is not 1.0')
 
     return pop, (sum_tvalue_cpr_abs / num_test), (100 * num_signif_test / num_test), number_deviations / len(pop)
