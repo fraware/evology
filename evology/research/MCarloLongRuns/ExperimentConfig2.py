@@ -32,7 +32,7 @@ def job(iteration):
             MUTATION_RATE = 0,
             ReinvestmentRate = 0.5,
             InvestmentHorizon = 252,
-            InvestmentBehavior = 'JKM',
+            InvestorBehavior = 'JKM',
             tqdm_display = True, 
             reset_wealth = False
             )
