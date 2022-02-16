@@ -9,7 +9,9 @@ if sys.platform == 'linux':
     sys.path.append('/home/vie/Documents/GitHub/evology/evology/code')
 from main import main as evology
 import multiprocessing as mp
-
+import tqdm
+import warnings
+warnings.simplefilter("ignore")
 
 TimeHorizon = 252 * 100 + 3 * 21 # 100 Years + 3 months to compensate early period without recording data.
 PopulationSize = 3
@@ -41,7 +43,7 @@ def job(iteration):
 
 def main():
     p = mp.Pool()
-    data = p.map(job, [i for i in range(reps)])
+    data = p.map(job, [i for i in tqdm.tqdm(range(reps))])
     p.close()
     data = np.array(list(data))
     return data

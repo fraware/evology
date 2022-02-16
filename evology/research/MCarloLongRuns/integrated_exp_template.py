@@ -2,6 +2,10 @@
 import numpy as np
 import pandas as pd
 import sys
+import tqdm
+import warnings
+warnings.simplefilter("ignore")
+
 if sys.platform == 'darwin':
     sys.path.append('/Users/aymericvie/Documents/GitHub/evology/evology/code')
     # Need to be executed from cd to MCarloLongRuns
@@ -69,7 +73,7 @@ def GenerateParam(reps):
 
 def main():
     p = mp.Pool()
-    data = p.map(job, param)
+    data = p.map(job, tqdm.tqdm(param))
     p.close()
     data = np.array(data)
     return data

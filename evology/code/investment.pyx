@@ -81,8 +81,8 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
     #print(TestThreshold)
 
     for i, ind in enumerate(pop):
+        ind.tvalue_cpr = 0.0
         if isnan(ind.sharpe) == False:
-            ind.tvalue_cpr = 0.0
             DataSlice = ReturnData[:,i]
             S = ind.sharpe
             ''' Then we compare to other funds with non-NAN Sharpes'''
@@ -130,7 +130,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
 
 
     for ind in pop:
-        if isnan(ind.tvalue_cpr) == False:
+        if isnan(ind.tvalue_cpr) == False and isnan(ind.sharpe) == False:
             sum_tvalue_cpr_abs += abs(ind.tvalue_cpr)
             sum_exp_tval += exp(ind.tvalue_cpr * InvestmentIntensity)
 
@@ -159,15 +159,20 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
             #    if ind.investment_ratio > 0:
             #        raise ValueError('Investment ratio positive despite negative T statistic value.')
             sum_inv_ratio += ind.investment_ratio 
+    
+    if sum_inv_ratio == 0.0:
+        for ind in pop:
+            ind.investment_ratio = 1/len(pop)
 
         # print([round(ind.sharpe,2), round(ind.investment_ratio,2), round(ind.tvalue_cpr,2), round(total_tvalue_cpr,2)])
 
     #if round(sum_inv_ratio,3) < -1.0 or round(sum_inv_ratio,3) > 1.0:
-    if round(sum_inv_ratio, 4) != 1.0:
+    if round(sum_inv_ratio, 2) != 1.0:
         print(sum_inv_ratio)
         for ind in pop:
             print([ind.tvalue_cpr, ind.investment_ratio])
         #raise ValueError('Sum of investment ratios is outside bounds [-1,1].')
+        ''' for minor problems we can multiply it all by 1/sum or something to normalise?'''
         raise ValueError('Sum of investment ratios is not 1.0')
 
     return pop, (sum_tvalue_cpr_abs / num_test), (100 * num_signif_test / num_test), number_deviations / len(pop)
