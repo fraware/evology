@@ -10,7 +10,7 @@ if sys.platform == 'linux':
 from main import main as evology
 import multiprocessing as mp
 
-TimeHorizon = 252 * 10 # + 3 * 21 # 
+TimeHorizon = 252 * 100 # + 3 * 21 # 
 PopulationSize = 3
 Coordinates = [1/3, 1/3, 1/3]
 
@@ -80,8 +80,9 @@ we can make dedicated experiments for that'''
 
 ''' change reps and time '''
 
-reps = 10
+reps = 5
 param = GenerateParam(reps)
+print(len(param))
 if __name__ == '__main__':
     data = main()
     df = pd.DataFrame()
