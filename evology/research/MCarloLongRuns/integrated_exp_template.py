@@ -14,11 +14,8 @@ if sys.platform == 'linux':
 from main import main as evology
 import multiprocessing as mp
 
-<<<<<<< HEAD
-TimeHorizon = 252 * 100 # + 3 * 21 # 
-=======
+
 TimeHorizon = 252 * 50 # + 3 * 21 # 
->>>>>>> 330a86c64b9918ac4b6d02daf559e228e53c9d07
 PopulationSize = 3
 Coordinates = [1/3, 1/3, 1/3]
 
