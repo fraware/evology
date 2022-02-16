@@ -10,10 +10,11 @@ if sys.platform == 'linux':
 from main import main as evology
 import multiprocessing as mp
 
+
 TimeHorizon = 252 * 100 + 3 * 21 # 100 Years + 3 months to compensate early period without recording data.
-PopulationSize = 100
+PopulationSize = 3
 Coordinates = [1/3, 1/3, 1/3]
-reps = 50
+reps = 100
 
 def job(iteration):
     np.random.seed()
@@ -24,9 +25,11 @@ def job(iteration):
             wealth_coordinates = Coordinates, 
             POPULATION_SIZE = PopulationSize, 
             MAX_GENERATIONS = TimeHorizon,
-            PROBA_SELECTION = 1/252,
+            PROBA_SELECTION = 0,
             MUTATION_RATE = 0,
-            ReinvestmentRate = 0,
+            ReinvestmentRate = 2.0,
+            InvestmentHorizon = 252,
+            InvestmentBehavior = 'JKM',
             tqdm_display = True, 
             reset_wealth = False
             )
