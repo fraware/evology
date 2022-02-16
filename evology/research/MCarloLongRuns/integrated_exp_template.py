@@ -15,7 +15,6 @@ from main import main as evology
 import multiprocessing as mp
 
 TimeHorizon = 252 * 10 # + 3 * 21 # 
-TimeHorizon = 252 * 2
 PopulationSize = 3
 Coordinates = [1/3, 1/3, 1/3]
 
@@ -55,10 +54,10 @@ def job(param):
         return result
 
 # Define the domains 
-# domain_f = [x / 10.0 for x in range(0, 31, 1)]
-# domain_H = [x / 1 for x in range(21, 252*3+1, 21)]
-domain_f = [x / 10.0 for x in range(0, 31, 15)]
-domain_H = [x / 1 for x in range(21, 252*3+1, 500)]
+domain_f = [x / 10.0 for x in range(0, 31, 1)]
+domain_H = [x / 1 for x in range(21, 252*3+1, 21)]
+# domain_f = [x / 10.0 for x in range(0, 31, 15)]
+# domain_H = [x / 1 for x in range(21, 252*3+1, 500)]
 domain_H.insert(0, 10)
 domain_H.insert(0, 5)
 domain_H.insert(0, 2)
@@ -85,8 +84,7 @@ we can make dedicated experiments for that'''
 
 ''' change reps and time '''
 
-#reps = 10
-reps = 2
+reps = 10
 param = GenerateParam(reps)
 if __name__ == '__main__':
     data = main()
