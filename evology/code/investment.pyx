@@ -159,11 +159,15 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
             #    if ind.investment_ratio > 0:
             #        raise ValueError('Investment ratio positive despite negative T statistic value.')
             sum_inv_ratio += ind.investment_ratio 
+    
+    if sum_inv_ratio == 0.0:
+        for ind in pop:
+            ind.investment_ratio = 1/len(pop)
 
         # print([round(ind.sharpe,2), round(ind.investment_ratio,2), round(ind.tvalue_cpr,2), round(total_tvalue_cpr,2)])
 
     #if round(sum_inv_ratio,3) < -1.0 or round(sum_inv_ratio,3) > 1.0:
-    if round(sum_inv_ratio, 4) != 1.0:
+    if round(sum_inv_ratio, 2) != 1.0:
         print(sum_inv_ratio)
         for ind in pop:
             print([ind.tvalue_cpr, ind.investment_ratio])
