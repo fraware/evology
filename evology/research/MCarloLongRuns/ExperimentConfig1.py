@@ -36,7 +36,8 @@ def job(iteration):
             reset_wealth = False
             )
         return df['WShare_NT'], df['WShare_VI'], df['WShare_TF']
-    except:
+    except Exception as e:
+        print(e)
         print('Job failed and passed.')
         array = np.zeros((TimeHorizon - 3*21))
         return pd.Series(array), pd.Series(array), pd.Series(array)
