@@ -17,7 +17,7 @@ warnings.simplefilter("ignore")
 TimeHorizon = 252 * 100 + 3 * 21 # 100 Years + 3 months to compensate early period without recording data.
 PopulationSize = 3
 Coordinates = [1/3, 1/3, 1/3]
-reps = 100
+reps = 50
 
 def job(iteration):
     np.random.seed()
