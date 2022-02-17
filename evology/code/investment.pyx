@@ -162,7 +162,8 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
     
     if sum_inv_ratio == 0.0:
         for ind in pop:
-            ind.investment_ratio = 1/len(pop)
+            ind.investment_ratio = 1.0 / len(pop)
+            sum_inv_ratio += ind.investment_ratio 
 
         # print([round(ind.sharpe,2), round(ind.investment_ratio,2), round(ind.tvalue_cpr,2), round(total_tvalue_cpr,2)])
 
