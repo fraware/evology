@@ -125,6 +125,7 @@ columns = [
     "AvgSignificance",
     "AvgNumberDev",
     "PerSignif",
+    "SharpeDiff",
     "NTflows",
     "VIflows",
     "TFflows",
@@ -456,6 +457,7 @@ def record_results(
     TestThreshold,
     PerSignif,
     NumDev,
+    SharpeDiff
 ):
 
     if generation >= Barr:
@@ -553,7 +555,7 @@ def record_results(
         arr += [NT_AR_noinv, VI_AR_noinv, TF_AR_noinv]
 
         """ Investment Statistics """
-        arr += [AvgValSignif, NumDev, PerSignif]
+        arr += [AvgValSignif, NumDev, PerSignif, SharpeDiff]
 
         arr += ListOutput[38:41]
 

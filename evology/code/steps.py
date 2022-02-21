@@ -126,9 +126,9 @@ def ApplyInvestment(
     pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity, InvestorBehavior
 ):
     if InvestorBehavior == 'JKM':
-        pop, AvgValSignif, PerSignif, NumDev = iv.InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity)
+        pop, AvgValSignif, PerSignif, NumDev, SharpeDiff = iv.InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity)
     elif InvestorBehavior == 'Kelly':
         pop, AvgValSignif, PerSignif, NumDev = iv.KellyInvestment(pop, InvestmentSupply, InvestmentIntensity, generation, InvestmentHorizon, returns_tracker, TestThreshold)
     else:
         raise ValueError('Investor Behavior input not recognised.')
-    return pop, AvgValSignif, PerSignif, NumDev
+    return pop, AvgValSignif, PerSignif, NumDev, SharpeDiff

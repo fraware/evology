@@ -76,6 +76,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
     cdef list bounds
     cdef double number_deviations = 0.0
     cdef double sum_exp_tval = 0.0
+    cdef double Sharpe_diff = 0.0
 
     #print("---")
     #print(TestThreshold)
@@ -125,19 +126,14 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                                 raise ValueError('NAN T result')
 
                             ind.tvalue_cpr += T
+                            number_deviations += abs(T)
                             num_test += 1.0
-                            #print(T)
-                            bounds = [(S - S2) - TestThreshold * SE, (S - S2) + TestThreshold * SE]
+                            Sharpe_diff += abs(S - S2)
 
-                            if T > 0:
-                                # TODO: to fix
-                                if bounds[0] > 0:
-                                    num_signif_test += 1.0
-                                    number_deviations += (bounds[0] / SE)
-                            if T < 0:
-                                if bounds[1] < 0:
-                                    num_signif_test += 1.0
-                                    number_deviations += abs(bounds[1] / SE)
+                            if T >= TestThreshold:
+                                num_signif_test += 1.0
+                            
+                            
 
     for i, ind in enumerate(pop):
         if isnan(ind.tvalue_cpr) == False:
@@ -188,7 +184,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
         ''' for minor problems we can multiply it all by 1/sum or something to normalise?'''
         raise ValueError('Sum of investment ratios is not 1.0')
 
-    return pop, (sum_tvalue_cpr_abs / num_test), (100 * num_signif_test / num_test), number_deviations / num_test
+    return pop, (sum_tvalue_cpr_abs / num_test), (100 * num_signif_test / num_test), number_deviations / num_test, Sharpe_diff / num_test
 
 cdef DistributionInvestment(list pop, double InvestmentSupply):
     cdef cythonized.Individual ind 
@@ -202,10 +198,10 @@ cdef DistributionInvestment(list pop, double InvestmentSupply):
 
 def InvestmentProcedure(pop, generation, returns_tracker, InvestmentHorizon, InvestmentSupply, TestThreshold, InvestmentIntensity):
     if InvestmentHorizon > 0 and generation > Barr + InvestmentHorizon + ShieldInvestment and InvestmentHorizon != 1:
-        pop, AvgValSignif, PerSignif, NumDev = Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply, TestThreshold, InvestmentIntensity)
+        pop, AvgValSignif, PerSignif, NumDev, SharpeDiff = Investment(returns_tracker, generation, InvestmentHorizon, pop, InvestmentSupply, TestThreshold, InvestmentIntensity)
     else:
-        AvgValSignif, PerSignif, NumDev = 0, 0, 0
-    return pop, AvgValSignif, PerSignif, NumDev
+        AvgValSignif, PerSignif, NumDev, SharpeDiff = 0, 0, 0, 0
+    return pop, AvgValSignif, PerSignif, NumDev, SharpeDiff
 
 
 
@@ -226,11 +222,11 @@ cdef Investment(double[:, :] returns_tracker, int generation, int InvestmentHori
         DataSlice = ReturnData[:,i]
         ind = compute_sharpe(ind, DataSlice)
         
-    pop, AvgVal, PerSignif, NumDev = compare_sharpe(pop, ReturnData, InvestmentHorizon, TestThreshold, InvestmentIntensity)
+    pop, AvgVal, PerSignif, NumDev, SharpeDiff = compare_sharpe(pop, ReturnData, InvestmentHorizon, TestThreshold, InvestmentIntensity)
 
     pop = DistributionInvestment(pop, InvestmentSupply)
 
-    return pop, AvgVal, PerSignif, NumDev
+    return pop, AvgVal, PerSignif, NumDev, SharpeDiff
 
 
 def KellyInvestment(pop, InvestmentSupply, InvestmentIntensity, generation, InvestmentHorizon, returns_tracker, TestThreshold):
@@ -343,5 +339,6 @@ cdef MeasureSignificance(double[:,:] returns_tracker, int generation, int Invest
         AvgValSignif = 0.0
         PerSignif = 0.0
     NumDev = number_deviations / len(pop)
+
 
     return pop, AvgValSignif, PerSignif, NumDev

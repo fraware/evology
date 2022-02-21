@@ -113,7 +113,8 @@ def main(
             pop, 
             AvgValSignif,
             PerSignif,
-            NumDev
+            NumDev,
+            SharpeDiff
         ) = ApplyInvestment(
             pop, 
             generation, 
@@ -154,6 +155,7 @@ def main(
             TestThreshold,
             PerSignif,
             NumDev,
+            SharpeDiff
         )
 
     df = pd.DataFrame(results, columns=data.columns)
