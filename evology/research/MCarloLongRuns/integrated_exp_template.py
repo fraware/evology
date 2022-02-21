@@ -15,7 +15,7 @@ from main import main as evology
 import multiprocessing as mp
 
 
-TimeHorizon = 252 * 100 # + 3 * 21 # 
+TimeHorizon = 252 * 50 # + 3 * 21 # 
 PopulationSize = 3
 Coordinates = [1/3, 1/3, 1/3]
 
@@ -55,9 +55,16 @@ def job(param):
         return result
 
 # Define the domains 
-domain_f = [x / 100.0 for x in range(1, 41, 5)]
-domain_H = [x for x in range(21, 252*3+1, 21)]
-add = [x for x in range(2, 21, 1)][::-1]
+domain_f = [x / 10.0 for x in range(1, 41, 1)]
+add = [x / 20.0 for x in range(21, 41, 2)]
+for i in range(len(add)):
+    domain_f.append(add[i])
+
+domain_H = [x for x in range(21, 252*2+1, 21)]
+add = [x for x in range(2, 21, 2)][::-1]
+for i in range(len(add)):
+    domain_H.insert(0, add[i])
+add = [x for x in range(252*2, 252*3+1, 21*3)]
 for i in range(len(add)):
     domain_H.insert(0, add[i])
 
@@ -69,6 +76,9 @@ def GenerateParam(reps):
                 config = [domain_f[i], domain_H[j]]
                 param.append(config)
     return param
+reps = 10
+param = GenerateParam(reps)
+print(len(param))
 
 def main():
     p = mp.Pool()
@@ -77,15 +87,6 @@ def main():
     data = np.array(data)
     return data
 
-''' we are looking at reps of 15 for contunuous plots but 50 for ternaries'''
-''' but lets not make too many runs when we dont have to. If we want to look at specific configs for scatterplots,
-we can make dedicated experiments for that'''
-
-''' change reps and time '''
-
-reps = 15
-param = GenerateParam(reps)
-print(len(param))
 if __name__ == '__main__':
     data = main()
     df = pd.DataFrame()
