@@ -104,7 +104,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
 
                         # JKM test
                         P = pearson(DataSlice, DataSlice2)
-                        if P != 1.0:
+                        if round(P,3) != 1.0:
                             # Necessary because otherwise, the fund is comparing itself to something exactly the same and SE = 0.
                             SE = sqrt((1.0 / InvestmentHorizon) * (2 - 2 * P + 0.5 * (S ** 2 + S2 ** 2 - 2 * S * S2 * (P ** 2))))
                             T = (S - S2) / SE
@@ -114,12 +114,23 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                                 print(sqrt((1.0 / InvestmentHorizon) * (2 - 2 * P + 0.5 * (S ** 2 + S2 ** 2 - 2 * S * S2 * (P ** 2)))))
                                 raise ValueError('Null SE for Sharpe test.')
 
+                            if isnan(T) == True:
+                                print(T)
+                                print((S - S2))
+                                print(SE)
+                                print((1.0 / InvestmentHorizon))
+                                print(P)
+                                print((2 - 2 * P + 0.5 * (S ** 2 + S2 ** 2 - 2 * S * S2 * (P ** 2))))
+                                print((1.0 / InvestmentHorizon) * (2 - 2 * P + 0.5 * (S ** 2 + S2 ** 2 - 2 * S * S2 * (P ** 2))))
+                                raise ValueError('NAN T result')
+
                             ind.tvalue_cpr += T
                             num_test += 1.0
                             #print(T)
                             bounds = [(S - S2) - TestThreshold * SE, (S - S2) + TestThreshold * SE]
 
                             if T > 0:
+                                # TODO: to fix
                                 if bounds[0] > 0:
                                     num_signif_test += 1.0
                                     number_deviations += (bounds[0] / SE)
@@ -128,11 +139,12 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                                     num_signif_test += 1.0
                                     number_deviations += abs(bounds[1] / SE)
 
-
-    for ind in pop:
-        if isnan(ind.tvalue_cpr) == False and isnan(ind.sharpe) == False:
+    for i, ind in enumerate(pop):
+        if isnan(ind.tvalue_cpr) == False:
             sum_tvalue_cpr_abs += abs(ind.tvalue_cpr)
             sum_exp_tval += exp(ind.tvalue_cpr * InvestmentIntensity)
+            if isnan(sum_tvalue_cpr_abs) == True:
+                raise ValueError('Nan sum tvalue copr abs')
 
 
             #if ind.tvalue_cpr > 0:
@@ -151,7 +163,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
     for i, ind in enumerate(pop):
         ind.investment_ratio = 0.0
         if isnan(ind.tvalue_cpr) == False and isnan(ind.sharpe) == False:
-            ind.investment_ratio = exp(ind.tvalue_cpr * InvestmentIntensity) / sum_exp_tval
+            ind.investment_ratio = (exp(ind.tvalue_cpr * InvestmentIntensity)) / sum_exp_tval
             #if ind.tvalue_cpr > 0:
             #    ind.investment_ratio = ind.tvalue_cpr / total_tvalue_cpr
             #if ind.tvalue_cpr < 0:
@@ -171,12 +183,12 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
     if round(sum_inv_ratio, 2) != 1.0:
         print(sum_inv_ratio)
         for ind in pop:
-            print([ind.tvalue_cpr, ind.investment_ratio])
+            print([ind.sharpe, ind.tvalue_cpr, ind.investment_ratio])
         #raise ValueError('Sum of investment ratios is outside bounds [-1,1].')
         ''' for minor problems we can multiply it all by 1/sum or something to normalise?'''
         raise ValueError('Sum of investment ratios is not 1.0')
 
-    return pop, (sum_tvalue_cpr_abs / num_test), (100 * num_signif_test / num_test), number_deviations / len(pop)
+    return pop, (sum_tvalue_cpr_abs / num_test), (100 * num_signif_test / num_test), number_deviations / num_test
 
 cdef DistributionInvestment(list pop, double InvestmentSupply):
     cdef cythonized.Individual ind 
