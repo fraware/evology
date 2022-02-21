@@ -57,7 +57,7 @@ def job(param):
 # Define the domains 
 domain_f = [x / 100.0 for x in range(1, 41, 5)]
 domain_H = [x for x in range(21, 252*3+1, 21)]
-add = [x for x in range(3, 21, 1)][::-1]
+add = [x for x in range(2, 21, 1)][::-1]
 for i in range(len(add)):
     domain_H.insert(0, add[i])
 
