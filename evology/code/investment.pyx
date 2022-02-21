@@ -136,7 +136,7 @@ cdef compare_sharpe(list pop, double[:,:] ReturnData, double InvestmentHorizon, 
                             
 
     for i, ind in enumerate(pop):
-        if isnan(ind.tvalue_cpr) == False:
+        if isnan(ind.tvalue_cpr) == False and isnan(ind.sharpe) == False:
             sum_tvalue_cpr_abs += abs(ind.tvalue_cpr)
             sum_exp_tval += exp(ind.tvalue_cpr * InvestmentIntensity)
             if isnan(sum_tvalue_cpr_abs) == True:
