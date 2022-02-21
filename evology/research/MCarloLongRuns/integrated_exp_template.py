@@ -43,14 +43,14 @@ def job(param):
             df['SharpeNT'].mean(), df['SharpeVI'].mean(), df['SharpeTF'].mean(),
             np.nanmean(df['DeltaNTVI']), np.nanmean(df['DeltaNTTF']), np.nanmean(df['DeltaVITF']),
             df['AvgSignificance'].mean(), df['AvgNumberDev'].mean(), df['PerSignif'].mean(),
-            df['SharpeDiff'].mean()
+            df['SharpeDiff'].mean(), df['NTflows'].mean(), df['VIflows'].mean(), df['TFflows'].mean()
         ]
         return result
     except Exception as e:
         print(e)
         print('Failed run' + str(param) + str(e))
         result = [param[0], param[1]]
-        for _ in range(13):
+        for _ in range(16):
             result.append(0)
         return result
 
