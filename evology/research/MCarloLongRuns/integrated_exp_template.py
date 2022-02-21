@@ -42,26 +42,24 @@ def job(param):
             df['WShare_NT'].mean(), df['WShare_VI'].mean(), df['WShare_TF'].mean(),
             df['SharpeNT'].mean(), df['SharpeVI'].mean(), df['SharpeTF'].mean(),
             np.nanmean(df['DeltaNTVI']), np.nanmean(df['DeltaNTTF']), np.nanmean(df['DeltaVITF']),
-            df['AvgSignificance'].mean(), df['AvgNumberDev'].mean(), df['PerSignif'].mean()
+            df['AvgSignificance'].mean(), df['AvgNumberDev'].mean(), df['PerSignif'].mean(),
+            df['SharpeDiff'].mean()
         ]
         return result
     except Exception as e:
         print(e)
-        # raise ValueError('Failed run') 
         print('Failed run' + str(param) + str(e))
         result = [param[0], param[1]]
-        for _ in range(12):
+        for _ in range(13):
             result.append(0)
         return result
 
 # Define the domains 
-domain_f = [x / 10.0 for x in range(0, 31, 1)]
-domain_H = [x / 1 for x in range(21, 252*2+1, 21)]
-# domain_f = [x / 10.0 for x in range(0, 31, 15)]
-# domain_H = [x / 1 for x in range(21, 252*3+1, 500)]
-domain_H.insert(0, 10)
-domain_H.insert(0, 5)
-domain_H.insert(0, 2)
+domain_f = [x / 100.0 for x in range(1, 41, 5)]
+domain_H = [x for x in range(21, 252*3+1, 21)]
+add = [x for x in range(3, 21, 1)][::-1]
+for i in range(len(add)):
+    domain_H.insert(0, add[i])
 
 def GenerateParam(reps):
     param = []
@@ -79,13 +77,13 @@ def main():
     data = np.array(data)
     return data
 
-''' we are looking at reps of 10 for contunuous plots but 50 for ternaries'''
+''' we are looking at reps of 15 for contunuous plots but 50 for ternaries'''
 ''' but lets not make too many runs when we dont have to. If we want to look at specific configs for scatterplots,
 we can make dedicated experiments for that'''
 
 ''' change reps and time '''
 
-reps = 10
+reps = 15
 param = GenerateParam(reps)
 print(len(param))
 if __name__ == '__main__':
