@@ -4,6 +4,7 @@ import pandas as pd
 import sys
 import tqdm
 import warnings
+import time
 warnings.simplefilter("ignore")
 
 if sys.platform == 'darwin':
@@ -15,7 +16,9 @@ from main import main as evology
 import multiprocessing as mp
 
 
-TimeHorizon = 252 * 50 # + 3 * 21 # 
+startTime = time.time()
+
+TimeHorizon = 252 * 100 # + 3 * 21 # 
 PopulationSize = 3
 Coordinates = [1/3, 1/3, 1/3]
 
@@ -119,3 +122,5 @@ if __name__ == '__main__':
     print(df)
 
     df.to_csv("data/data.csv")
+    print("Completion time:")
+    print(time.time() - startTime)
