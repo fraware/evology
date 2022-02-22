@@ -111,6 +111,11 @@ if __name__ == '__main__':
     df['AvgSignificance'] = data[:,11]
     df['AvgNumberDev'] = data[:,12]
     df['PerSignif'] = data[:,13]
+    # Investment
+    df['SharpeDiff'] = data[:,14]
+    df['NTflows'] = data[:,15]
+    df['VIflows'] = data[:,16]
+    df['TFflows'] = data[:,17]
     print(df)
 
     df.to_csv("data/data.csv")
