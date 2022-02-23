@@ -1,4 +1,4 @@
-# def GenerateParam(reps, increment):
+def GenerateParam(reps, increment):
 #     param = []
 
 #     iteration = [x for x in range(0, 101, increment)]
@@ -25,21 +25,3 @@
 # param = GenerateParam(reps, increment)
 # print(len(param))
 # print("param")
-# print(param)
-
-# print(param[0])
-
-
-import ternary
-from ternary.helpers import simplex_iterator
-
-def GenerateCoords(reps, scale):
-    param = []
-    for (i,j,k) in simplex_iterator(scale):
-        for _ in range(reps):
-            param.append([i/scale,j/scale,k/scale])
-    return param
-
-param = GenerateCoords(1,2)
-print(param)
-print(len(param))
