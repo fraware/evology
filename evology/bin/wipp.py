@@ -33,13 +33,16 @@
 import ternary
 from ternary.helpers import simplex_iterator
 
-def GenerateCoords(reps, scale):
-    param = []
-    for (i,j,k) in simplex_iterator(scale):
-        for _ in range(reps):
-            param.append([i/scale,j/scale,k/scale])
-    return param
+# def GenerateCoords(reps, scale):
+#     param = []
+#     for (i,j,k) in simplex_iterator(scale):
+#         for _ in range(reps):
+#             param.append([i/scale,j/scale,k/scale])
+#     return param
 
-param = GenerateCoords(1,2)
-print(param)
-print(len(param))
+# param = GenerateCoords(1,2)
+# print(param)
+# print(len(param))
+
+for (i,j,k) in simplex_iterator(50):
+    print(i,j,k)
