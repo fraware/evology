@@ -64,7 +64,7 @@ def GenerateCoords(reps, scale):
     return param
 
 reps = 10
-scale = 100 # increment = 1/scale
+scale = 50 # increment = 1/scale
 param = GenerateCoords(reps,scale)
 # print(param)
 print(len(param))
