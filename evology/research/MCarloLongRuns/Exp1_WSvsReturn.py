@@ -64,7 +64,7 @@ def GenerateCoords(reps, scale):
     return param
 
 reps = 10
-scale = 10 # increment = 1/scale
+scale = 100 # increment = 1/scale
 param = GenerateCoords(reps,scale)
 # print(param)
 print(len(param))
@@ -98,5 +98,5 @@ if __name__ == '__main__':
     
     print(df)
 
-    df.to_csv("data/data.csv")
+    df.to_csv("data/data1.csv")
     print("Completion time: " + str(time.time() - startTime))
