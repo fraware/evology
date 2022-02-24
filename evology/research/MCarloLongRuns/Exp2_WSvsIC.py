@@ -54,7 +54,7 @@ def job(coords):
         # traceback.print_stack()
         print('Failed run' + str(coords) + str(e))
         result = [coords[0], coords[1], coords[2]]
-        for _ in range(6):
+        for _ in range(7):
             result.append(np.nan)
         return result
 
