@@ -84,7 +84,7 @@ def generate_random_heatmap_data(scale):
     nt_r = dict()
 
     for l in range(len(data_group['WS_NT'])):
-        (i,j,k) = (int(data_group.loc[l,'WS_VI'] * scale), int(data_group.loc[l,'WS_TF'] * scale), int(data_group.loc[l,'WS_NT'] * scale))
+        (i,j,k) = (int(data_group.loc[l,'WS_NT'] * scale), int(data_group.loc[l,'WS_TF'] * scale), int(data_group.loc[l,'WS_VI'] * scale))
         nt_r[(i,j)] = data_group.loc[l,"NT_returns_mean"]
         vi_r[(i,j)] = data_group.loc[l,"VI_returns_mean"]
         tf_r[(i,j)] = data_group.loc[l,"TF_returns_mean"]
