@@ -55,7 +55,7 @@ def job(coords):
         print('Failed run' + str(coords) + str(e))
         result = [coords[0], coords[1], coords[2]]
         for _ in range(6):
-            result.append(0)
+            result.append(np.nan)
         return result
 
 # Define the domains 
