@@ -43,10 +43,10 @@ def run(
         )
     return df, pop
 
-wealth_coordinates = [0.33688219083814136, 0.5184083371625832, 0.1447094719992755]
-np.random.seed(3)
+wealth_coordinates = [0.27229641546203254, 0.17394592672293924, 0.5537576578150283]
+np.random.seed(95)
 df, pop = run(
-    10, 0, 25000, wealth_coordinates, tqdm_display=False, reset_wealth=True, 
+    10, 1, 25000, wealth_coordinates, tqdm_display=False, reset_wealth=True, 
     ReinvestmentRate = 1.0, InvestmentHorizon = 252, InvestorBehavior = 'profit')
 
 df.to_csv("rundata/run_data.csv")
