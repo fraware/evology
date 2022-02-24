@@ -6,6 +6,7 @@ import tqdm
 import warnings
 import time
 import ternary
+import traceback
 from ternary.helpers import simplex_iterator
 import multiprocessing as mp
 warnings.simplefilter("ignore")
@@ -50,6 +51,7 @@ def job(coords):
         return result
     except Exception as e:
         print(e)
+        traceback.print_stack()
         print('Failed run' + str(coords) + str(e))
         result = [coords[0], coords[1], coords[2]]
         for _ in range(6):
