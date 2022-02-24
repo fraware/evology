@@ -25,39 +25,32 @@ def heat_data(original_data, columnX, columnY, columnZ):
 
 # print(dataNT)
 def GenPlot(dataNT, dataVI, dataTF):
-    # fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3, figsize = (15,8), sharey=True, sharex=True)
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize = (15,6), sharey=True, sharex=True)
     cmap = 'seismic'
     model = sns.heatmap(dataNT, ax=ax1, cmap = cmap)
     sns.heatmap(dataVI, ax=ax2, cmap = cmap)
     sns.heatmap(dataTF, ax=ax3, cmap = cmap)
-    # sns.heatmap(gaussian_filter(dataNT,sigma=sigma), ax=ax1, cmap = cmap)
-    # sns.heatmap(gaussian_filter(dataVI,sigma=sigma), ax=ax2, cmap = cmap)
-    # sns.heatmap(gaussian_filter(dataTF,sigma=sigma), ax=ax3, cmap = cmap)
-    # ax1.set_yticklabels(model.get_yticklabels(), rotation = 0)
-    # ax2.set_yticklabels(model.get_yticklabels(), rotation = 0)
-    # ax3.set_yticklabels(model.get_yticklabels(), rotation = 0)
-    # ax1.set_xticklabels(model.get_xticklabels(), rotation = 90)
-    # ax2.set_xticklabels(model.get_xticklabels(), rotation = 90)
-    # ax3.set_xticklabels(model.get_xticklabels(), rotation = 90)
     ax1.set_xlabel("Wealth Share NT", fontsize=fontsize)
     ax1.set_ylabel("Wealth Share VI", fontsize=fontsize)
     ax2.set_xlabel("Wealth Share VI", fontsize=fontsize)
     ax2.set_ylabel("Wealth Share NT", fontsize=fontsize)
     ax3.set_xlabel("Wealth Share TF", fontsize=fontsize)
     ax3.set_ylabel("Wealth Share NT", fontsize=fontsize)
-    ax1.set_title("NT_returns_mean", fontsize=fontsize)
-    ax2.set_title("VI_returns_mean", fontsize=fontsize)
-    ax3.set_title("TF_returns_mean", fontsize=fontsize)
+    ax1.set_title("NT returns", fontsize=fontsize)
+    ax2.set_title("VI returns", fontsize=fontsize)
+    ax3.set_title("TF returns", fontsize=fontsize)
     ax1.invert_yaxis()
     ax2.invert_yaxis()
     ax3.invert_yaxis()
+    plt.tight_layout()
+    plt.savefig('Experiment1.png', dpi=300)
     plt.show()
 
 dataNT = heat_data(data, 'WS_NT', 'WS_VI', 'NT_returns_mean')
 dataVI = heat_data(data, 'WS_VI', 'WS_NT', 'VI_returns_mean')
 dataTF = heat_data(data, 'WS_TF', 'WS_NT', 'TF_returns_mean')
 fig = GenPlot(dataNT, dataVI, dataTF)
+
 
 
 # fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize = (15,6), sharex=True)
@@ -73,9 +66,11 @@ fig = GenPlot(dataNT, dataVI, dataTF)
 # sns.scatterplot(x="WS_TF", y="TF_returns_mean", data=data1, ax=ax3)
 # plt.show()
 
+''' ternary that does not work 
+data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data/data1.csv")
 data_group = data.copy()
 print(data_group)
-data_group = data_group.groupby(['WS_NT', 'WS_VI', 'WS_TF'], as_index=False).mean()
+data_group = data_group.groupby(['WS_VI', 'WS_TF', 'WS_NT'], as_index=False).mean()
 print(data_group)
 
 def generate_random_heatmap_data(scale):
@@ -84,12 +79,12 @@ def generate_random_heatmap_data(scale):
     nt_r = dict()
 
     for l in range(len(data_group['WS_NT'])):
-        (i,j,k) = (int(data_group.loc[l,'WS_NT'] * scale), int(data_group.loc[l,'WS_TF'] * scale), int(data_group.loc[l,'WS_VI'] * scale))
+        (i,j,k) = (int(data_group.loc[l,'WS_NT'] * scale), int(data_group.loc[l,'WS_VI'] * scale), int(data_group.loc[l,'WS_TF'] * scale))
         nt_r[(i,j)] = data_group.loc[l,"NT_returns_mean"]
         vi_r[(i,j)] = data_group.loc[l,"VI_returns_mean"]
         tf_r[(i,j)] = data_group.loc[l,"TF_returns_mean"]
-    return tf_r, vi_r, nt_r
-
+    nt_r[(0.4 * scale,0.58 * scale)] = 10
+    return nt_r, vi_r, tf_r
 
 
 def GenerateTernary(data, title):
@@ -98,11 +93,10 @@ def GenerateTernary(data, title):
     tax.heatmap(data, style='triangular')
     tax.boundary()
     tax.clear_matplotlib_ticks()
-    # ticks = [i for i in range(99)]
     ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     tax.ticks(ticks = ticks, axis='lbr', linewidth=1, multiple=10)
-    tax.bottom_axis_label("VI (%)", fontsize = fontsize)
-    tax.left_axis_label("NT (%)", fontsize = fontsize)
+    tax.bottom_axis_label("NT (%)", fontsize = fontsize) #VI
+    tax.left_axis_label("VI (%)", fontsize = fontsize) #NT
     tax.right_axis_label("TF (%)", fontsize = fontsize)
     tax.get_axes().axis('off')
     tax.set_title(title, fontsize = fontsize)
@@ -111,18 +105,18 @@ def GenerateTernary(data, title):
     return figure, tax
     
 scale = 50
-tf_r, vi_r, nt_r = generate_random_heatmap_data(scale)
+nt_r, vi_r, tf_r = generate_random_heatmap_data(scale)
+
 fig, tax = GenerateTernary(nt_r, 'NT returns')
 tax.show()
 
 fig, tax = GenerateTernary(vi_r, 'VI returns')
-tax.show()
+# tax.show()
 
 fig, tax = GenerateTernary(tf_r, 'TF returns')
-tax.show()
-''' something is wrong '''
+# tax.show()
 
 # print(data.columns)
-# data2 = data_group.loc[(data_group['WS_NT'] > 0.55) & (data_group['WS_NT'] < 0.6)]
+# data2 = data_group.loc[(data_group['WS_TF'] > 0.55) & (data_group['WS_TF'] < 0.65)]
 # print(data2)
-
+'''
