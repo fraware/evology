@@ -19,8 +19,9 @@ from main import main as evology
 
 
 startTime = time.time()
-TimeHorizon = 252 * 100
+TimeHorizon = 100_000
 PopulationSize = 3
+obs = 10000
 
 def job(coords):
     np.random.seed()
@@ -34,23 +35,23 @@ def job(coords):
             PROBA_SELECTION = 0,
             MUTATION_RATE = 0,
             ReinvestmentRate = 1.0,
-            InvestmentHorizon = 21,
+            InvestmentHorizon = 252,
             InvestorBehavior = 'profit',
             tqdm_display = True,
             reset_wealth = False
             )
         result = [
             coords[0], coords[1], coords[2],
-            df['NT_returns'].mean(), df['VI_returns'].mean(), df['TF_returns'].mean(),
-            df['NT_returns'].std(), df['VI_returns'].std(), df['TF_returns'].std(),
-            df['HighestT'].mean(), df['AvgAbsT'].mean()
+            df['WShare_NT'].tail(obs).mean(), df['WShare_VI'].tail(obs).mean, df['WShare_TF'].tail(obs).mean(),
+            df['NT_returns'].tail(obs).mean(), df['VI_returns'].tail(obs).mean(), df['TF_returns'].tail(obs).mean(),
+            df['DiffReturns'].tail(obs).mean()
         ]
         return result
     except Exception as e:
         print(e)
         print('Failed run' + str(coords) + str(e))
         result = [coords[0], coords[1], coords[2]]
-        for _ in range(8):
+        for _ in range(6):
             result.append(0)
         return result
 
@@ -63,8 +64,8 @@ def GenerateCoords(reps, scale):
             param.append([i/scale,j/scale,k/scale])
     return param
 
-reps = 10
-scale = 50 # increment = 1/scale
+reps = 1
+scale = 2 # increment = 1/scale
 param = GenerateCoords(reps,scale)
 # print(param)
 print(len(param))
@@ -80,22 +81,18 @@ def main():
 if __name__ == '__main__':
     data = main()
     df = pd.DataFrame()
-
     # Inputs 
-    df['WS_NT'] = data[:,0]
-    df['WS_VI'] = data[:,1]
-    df['WS_TF'] = data[:,2]
-
+    df['WS_NT_inital'] = data[:,0]
+    df['WS_VI_inital'] = data[:,1]
+    df['WS_TF_initial'] = data[:,2]
     # Outputs 
-    df['NT_returns_mean'] = data[:,3]
-    df['VI_returns_mean'] = data[:,4]
-    df['TF_returns_mean'] = data[:,5]
-    df['NT_returns_std'] = data[:,6]
-    df['VI_returns_std'] = data[:,7]
-    df['TF_returns_std'] = data[:,8]
-    df['HighestT'] = data[:,9]
-    df['AvgAbsT'] = data[:,10]
-    
+    df['WS_NT_final'] = data[:,3]
+    df['WS_VI_final'] = data[:,4]
+    df['WS_TF_final'] = data[:,5]
+    df['NT_returns_final'] = data[:,6]
+    df['NT_returns_final'] = data[:,7]
+    df['NT_returns_final'] = data[:,8]
+    df['DiffReturns'] = data[:,9]
     print(df)
 
     df.to_csv("data/data2.csv")

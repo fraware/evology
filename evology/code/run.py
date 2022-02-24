@@ -45,11 +45,15 @@ np.random.seed(9)
 wealth_coordinates=[0.30944031694403584, 0.5072556229728443, 0.1833040600831198]
 print(wealth_coordinates)
 df, pop = run(
-    3, 0, 150000, wealth_coordinates, tqdm_display=False, reset_wealth=False, 
-    ReinvestmentRate = 3.0, InvestmentHorizon = 252, InvestorBehavior = 'profit')
+    3, 0, 1000, wealth_coordinates, tqdm_display=False, reset_wealth=False, 
+    ReinvestmentRate = 1.5, InvestmentHorizon = 252, InvestorBehavior = 'profit')
 
 df.to_csv("rundata/run_data.csv")
 print(df)
 print([df['NT_returns'].mean(), df['VI_returns'].mean(), df['TF_returns'].mean()])
-
+obs = 500
+# diffreturn = (df['NT_returns'].tail(obs).mean() - df['VI_returns'].tail(obs).mean())**2 + (df['NT_returns'].tail(obs).mean() - df['TF_returns'].tail(obs).mean())**2 + (df['VI_returns'].tail(obs).mean()-df['TF_returns'].tail(obs).mean())**2
+# print(diffreturn)
+print(df['DiffReturns'].tail(100).mean())
+print
 

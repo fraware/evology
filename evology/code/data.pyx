@@ -131,6 +131,8 @@ columns = [
     "TFflows",
     # Age
     "AvgAge",
+    # DiffReturns
+    "DiffReturns",
 ]
 variables = len(columns) 
 
@@ -578,6 +580,9 @@ def record_results(
 
         ''' average age '''
         arr += [ListOutput[41]]
+
+        ''' diff return '''
+        arr += [(ListOutput[18] - ListOutput[27]) ** 2 + (ListOutput[18] - ListOutput[36]) ** 2 + (ListOutput[27] - ListOutput[36]) ** 2]
 
         if len(arr) != len(results[current,:]):
             print(len(arr))
