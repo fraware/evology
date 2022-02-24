@@ -33,7 +33,7 @@ def job(coords):
             MAX_GENERATIONS = TimeHorizon,
             PROBA_SELECTION = 0,
             MUTATION_RATE = 0,
-            ReinvestmentRate = 1.0,
+            ReinvestmentRate = 0.0,
             InvestmentHorizon = 21,
             InvestorBehavior = 'profit',
             tqdm_display = True,

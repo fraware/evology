@@ -57,7 +57,7 @@ def GenPlot(dataNT, dataVI, dataTF):
 dataNT = heat_data(data, 'WS_NT', 'WS_VI', 'NT_returns_mean')
 dataVI = heat_data(data, 'WS_VI', 'WS_NT', 'VI_returns_mean')
 dataTF = heat_data(data, 'WS_TF', 'WS_NT', 'TF_returns_mean')
-# fig = GenPlot(dataNT, dataVI, dataTF)
+fig = GenPlot(dataNT, dataVI, dataTF)
 
 
 # fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize = (15,6), sharex=True)
