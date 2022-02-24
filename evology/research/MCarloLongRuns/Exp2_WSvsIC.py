@@ -44,7 +44,7 @@ def job(coords):
         df_tail = df.tail(obs)
         result = [
             coords[0], coords[1], coords[2],
-            df_tail['WShare_NT'].mean(), df_tail['WShare_VI'].mean, df_tail['WShare_TF'].mean(),
+            df_tail['WShare_NT'].mean(), df_tail['WShare_VI'].mean(), df_tail['WShare_TF'].mean(),
             df_tail['NT_returns'].mean(), df_tail['VI_returns'].mean(), df_tail['TF_returns'].mean(),
             df_tail['DiffReturns'].mean()
         ]
@@ -67,8 +67,8 @@ def GenerateCoords(reps, scale):
             param.append([i/scale,j/scale,k/scale])
     return param
 
-reps = 10
-scale = 25 # increment = 1/scale
+reps = 5
+scale = 20 # increment = 1/scale
 param = GenerateCoords(reps,scale)
 # print(param)
 print(len(param))
