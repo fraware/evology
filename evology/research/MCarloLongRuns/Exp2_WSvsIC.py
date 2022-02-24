@@ -40,11 +40,12 @@ def job(coords):
             tqdm_display = True,
             reset_wealth = False
             )
+        df_tail = df.tail(obs)
         result = [
             coords[0], coords[1], coords[2],
-            df['WShare_NT'].tail(obs).mean(), df['WShare_VI'].tail(obs).mean, df['WShare_TF'].tail(obs).mean(),
-            df['NT_returns'].tail(obs).mean(), df['VI_returns'].tail(obs).mean(), df['TF_returns'].tail(obs).mean(),
-            df['DiffReturns'].tail(obs).mean()
+            df_tail['WShare_NT'].mean(), df_tail['WShare_VI'].mean, df_tail['WShare_TF'].mean(),
+            df_tail['NT_returns'].mean(), df_tail['VI_returns'].mean(), df_tail['TF_returns'].mean(),
+            df_tail['DiffReturns'].mean()
         ]
         return result
     except Exception as e:
