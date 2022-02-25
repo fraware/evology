@@ -58,5 +58,5 @@ def GenPlot(dataNT, dataVI, dataTF, title1, title2, title3, figname, bounds):
 
 dataNT = heat_data(data, 'WS_NT_inital', 'WS_VI_inital', 'WS_NT_final')
 dataVI = heat_data(data, 'WS_VI_inital', 'WS_NT_inital', 'WS_VI_final')
-dataTF = heat_data(data, 'WS_TF_inital', 'WS_NT_inital', 'WS_TF_final')
+dataTF = heat_data(data, 'WS_TF_initial', 'WS_NT_inital', 'WS_TF_final')
 fig = GenPlot(dataNT, dataVI, dataTF, "NT Wealth Share", "VI Wealth Share", "TF Wealth Share", 'Experiment2a.png', False)

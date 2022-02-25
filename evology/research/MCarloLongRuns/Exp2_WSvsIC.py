@@ -67,8 +67,8 @@ def GenerateCoords(reps, scale):
             param.append([i/scale,j/scale,k/scale])
     return param
 
-reps = 5
-scale = 20 # increment = 1/scale
+reps = 10
+scale = 30 # increment = 1/scale
 param = GenerateCoords(reps,scale)
 # print(param)
 print(len(param))
@@ -85,8 +85,8 @@ if __name__ == '__main__':
     data = main()
     df = pd.DataFrame()
     # Inputs 
-    df['WS_NT_inital'] = data[:,0]
-    df['WS_VI_inital'] = data[:,1]
+    df['WS_NT_initial'] = data[:,0]
+    df['WS_VI_initial'] = data[:,1]
     df['WS_TF_initial'] = data[:,2]
     # Outputs 
     df['WS_NT_final'] = data[:,3]
