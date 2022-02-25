@@ -3,7 +3,7 @@ data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/
 print(data)
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+print(data.columns)
 
 sns.set(font_scale=1) 
 fontsize = 18
@@ -60,3 +60,25 @@ dataNT = heat_data(data, 'WS_NT_inital', 'WS_VI_inital', 'WS_NT_final')
 dataVI = heat_data(data, 'WS_VI_inital', 'WS_NT_inital', 'WS_VI_final')
 dataTF = heat_data(data, 'WS_TF_initial', 'WS_NT_inital', 'WS_TF_final')
 fig = GenPlot(dataNT, dataVI, dataTF, "NT Wealth Share", "VI Wealth Share", "TF Wealth Share", 'Experiment2a.png', False)
+
+
+# Clear we have converged around everywhere
+# Returns are similar everywhere for NT, TF but VI has a clear two-regime demarcation. 
+''' 
+data_diff = heat_data(data, 'WS_NT_inital', 'WS_VI_inital', 'DiffReturns')
+sns.heatmap(data_diff, cmap = 'seismic')
+plt.show()
+
+
+data_diff = heat_data(data, 'WS_NT_inital', 'WS_VI_inital', 'NT_returns_final')
+sns.heatmap(data_diff, cmap = 'seismic')
+plt.show()
+
+data_diff = heat_data(data, 'WS_NT_inital', 'WS_VI_inital', 'VI_returns_final')
+sns.heatmap(data_diff, cmap = 'seismic')
+plt.show()
+
+data_diff = heat_data(data, 'WS_TF_initial', 'WS_VI_inital', 'TF_returns_final')
+sns.heatmap(data_diff, cmap = 'seismic')
+plt.show()
+'''
