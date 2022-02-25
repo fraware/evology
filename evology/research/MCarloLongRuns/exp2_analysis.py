@@ -70,11 +70,14 @@ fig = GenPlot(dataNT, dataVI, dataTF, "NT Wealth Share", "VI Wealth Share", "TF 
 
 
 # Clear we have converged around everywhere
+
 # Returns are similar everywhere for NT, TF but VI has a clear two-regime demarcation. 
-''' 
+
+
 data_diff = heat_data(data, 'WS_NT_inital', 'WS_VI_inital', 'DiffReturns')
 sns.heatmap(data_diff, cmap = 'seismic')
 plt.show()
+''' 
 
 
 data_diff = heat_data(data, 'WS_NT_inital', 'WS_VI_inital', 'NT_returns_final')

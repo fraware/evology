@@ -46,7 +46,7 @@ def job(coords):
             coords[0], coords[1], coords[2],
             df_tail['WShare_NT'].mean(), df_tail['WShare_VI'].mean(), df_tail['WShare_TF'].mean(),
             df_tail['NT_returns'].mean(), df_tail['VI_returns'].mean(), df_tail['TF_returns'].mean(),
-            df_tail['DiffReturns'].mean()
+            df_tail['DiffReturns'].mean(), df['DiffReturns'].mean(), df['HighestT'].mean()
         ]
         return result
     except Exception as e:
@@ -54,7 +54,7 @@ def job(coords):
         # traceback.print_stack()
         print('Failed run' + str(coords) + str(e))
         result = [coords[0], coords[1], coords[2]]
-        for _ in range(7):
+        for _ in range(9):
             result.append(np.nan)
         return result
 
@@ -68,7 +68,7 @@ def GenerateCoords(reps, scale):
     return param
 
 reps = 10
-scale = 30 # increment = 1/scale
+scale = 25 # increment = 1/scale
 param = GenerateCoords(reps,scale)
 # print(param)
 print(len(param))
@@ -96,6 +96,9 @@ if __name__ == '__main__':
     df['VI_returns_final'] = data[:,7]
     df['TF_returns_final'] = data[:,8]
     df['DiffReturns'] = data[:,9]
+    df['AvgDiffReturns'] = data[:, 10]
+    df['HighestT'] = data[:, 11]
+    
     print(df)
 
     df.to_csv("data/data2.csv")
