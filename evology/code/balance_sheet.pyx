@@ -57,6 +57,8 @@ def DetermineTsvProc(pop, price_history):
                 )
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
+            if ind.tsv == 0:
+                ind.tsv = np.random.normal(0, 0.01)
         elif ind.type == "nt":
             ind.process = abs(
                 ind.process

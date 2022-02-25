@@ -4,6 +4,7 @@ print(data)
 import matplotlib.pyplot as plt
 import seaborn as sns
 print(data.columns)
+import numpy as np
 
 sns.set(font_scale=1) 
 fontsize = 18
@@ -22,6 +23,12 @@ def heat_data(original_data, columnX, columnY, columnZ):
     data_ready = data_temp2.pivot(index='H', columns='F', values = 'T')
     return data_ready
 
+print(len(data))
+# Removing the failed runs
+data = data.loc[(data['WS_TF_final'] + data['WS_NT_final'] + data['WS_VI_final'] != np.nan)]
+print(len(data))
+data = data.loc[(data['WS_TF_final'] + data['WS_NT_final'] + data['WS_VI_final'] != 0)]
+print(len(data))
 
 #######
 
