@@ -58,7 +58,7 @@ def job(param):
         return result
 
 # Define the domains 
-domain_f = [x / 10.0 for x in range(1, 41, 2)]
+domain_f = [x / 10.0 for x in range(11, 41, 2)]
 domain_H = [x for x in range(21, 252, 21*3)]
 def GenerateParam(reps):
     param = []
