@@ -118,7 +118,7 @@ ax1.set_title(title1, fontsize=fontsize)
 ax2.set_title(title2, fontsize=fontsize)
 ax3.set_title(title3, fontsize=fontsize)
 plt.tight_layout()
-plt.savefig(figname, dpi=300)
+# plt.savefig(figname, dpi=300)
 plt.show()
 
 
@@ -144,8 +144,9 @@ ax1.set_xticklabels(model.get_xticklabels(), rotation = 90)
 ax1.set_xlabel("F", fontsize=fontsize)
 ax1.set_ylabel("H", fontsize=fontsize)
 ax1.invert_yaxis()
-title1, title2, title3, figname =  "Difference in returns (last)", "Difference in returns (full)", "Avg. Highest T", "Experiment4b.png"
+title3, figname = "Avg. Highest T", "Experiment4c.png"
 ax1.set_title(title3, fontsize=fontsize)
 plt.tight_layout()
 plt.savefig(figname, dpi=300)
 plt.show()
+
