@@ -96,7 +96,6 @@ plt.savefig(figname, dpi=300)
 plt.show()
 
 
-# Plot without noise, difficult to extract anything
 dataNT = heat_data(data, 'F', 'H', 'DiffReturns')
 dataVI = heat_data(data, 'F', 'H', 'AvgDiffReturns')
 dataTF = heat_data(data, 'F', 'H', 'HighestT')
@@ -123,3 +122,30 @@ plt.savefig(figname, dpi=300)
 plt.show()
 
 
+dataTF = heat_data(data, 'F', 'H', 'HighestT')
+fig, (ax1) = plt.subplots(1, 1, figsize = (5,6))
+cmap = 'seismic'
+model = sns.heatmap(dataTF, ax=ax1, cmap = cmap)
+ax1.set_xlabel("F", fontsize=fontsize)
+ax1.set_ylabel("H", fontsize=fontsize)
+ax1.invert_yaxis()
+title1, title2, title3, figname =  "Difference in returns (last)", "Difference in returns (full)", "Avg. Highest T", "Experiment4b.png"
+ax1.set_title(title1, fontsize=fontsize)
+plt.tight_layout()
+plt.show()
+
+
+dataTF2 = gaussian_filter(dataTF, sigma=sigma)
+fig, (ax1) = plt.subplots(1, 1, figsize = (5,6))
+cmap = 'seismic'
+sns.heatmap(dataTF2, ax=ax1, cmap = cmap)
+ax1.set_yticklabels(model.get_yticklabels(), rotation = 0)
+ax1.set_xticklabels(model.get_xticklabels(), rotation = 90)
+ax1.set_xlabel("F", fontsize=fontsize)
+ax1.set_ylabel("H", fontsize=fontsize)
+ax1.invert_yaxis()
+title1, title2, title3, figname =  "Difference in returns (last)", "Difference in returns (full)", "Avg. Highest T", "Experiment4b.png"
+ax1.set_title(title3, fontsize=fontsize)
+plt.tight_layout()
+plt.savefig(figname, dpi=300)
+plt.show()
