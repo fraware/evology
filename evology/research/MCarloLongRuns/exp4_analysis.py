@@ -26,13 +26,13 @@ def heat_data(original_data, columnX, columnY, columnZ):
     return data_ready
 
 
-print(len(data))
+# print(len(data))
 # Removing the failed runs
 data = data.loc[(data['WS_TF_final'] + data['WS_NT_final'] + data['WS_VI_final'] != np.nan)]
-print(len(data))
+# print(len(data))
 data = data.loc[(data['WS_TF_final'] + data['WS_NT_final'] + data['WS_VI_final'] != 0)]
-data = data.loc[(data['DiffReturns'] < 2)]
-data = data.loc[(data['AvgDiffReturns'] < 3)]
+data = data.loc[(data['DiffReturns'] < 10)]
+data = data.loc[(data['AvgDiffReturns'] < 10)]
 data = data.loc[(data['HighestT'] < 100)]
 print(len(data))
 
@@ -46,12 +46,12 @@ cmap = 'seismic'
 model = sns.heatmap(dataNT, ax=ax1, cmap = cmap)
 sns.heatmap(dataVI, ax=ax2, cmap = cmap)
 sns.heatmap(dataTF, ax=ax3, cmap = cmap)
-ax1.set_xlabel("Wealth Share NT", fontsize=fontsize)
-ax1.set_ylabel("Wealth Share VI", fontsize=fontsize)
-ax2.set_xlabel("Wealth Share VI", fontsize=fontsize)
-ax2.set_ylabel("Wealth Share NT", fontsize=fontsize)
-ax3.set_xlabel("Wealth Share TF", fontsize=fontsize)
-ax3.set_ylabel("Wealth Share NT", fontsize=fontsize)
+ax1.set_xlabel("F", fontsize=fontsize)
+ax1.set_ylabel("H", fontsize=fontsize)
+ax2.set_xlabel("F", fontsize=fontsize)
+ax2.set_ylabel("H", fontsize=fontsize)
+ax3.set_xlabel("F", fontsize=fontsize)
+ax3.set_ylabel("H", fontsize=fontsize)
 ax1.invert_yaxis()
 ax2.invert_yaxis()
 ax3.invert_yaxis()
@@ -78,12 +78,12 @@ ax3.set_yticklabels(model.get_yticklabels(), rotation = 0)
 ax1.set_xticklabels(model.get_xticklabels(), rotation = 90)
 ax2.set_xticklabels(model.get_xticklabels(), rotation = 90)
 ax3.set_xticklabels(model.get_xticklabels(), rotation = 90)
-ax1.set_xlabel("Wealth Share NT", fontsize=fontsize)
-ax1.set_ylabel("Wealth Share VI", fontsize=fontsize)
-ax2.set_xlabel("Wealth Share VI", fontsize=fontsize)
-ax2.set_ylabel("Wealth Share NT", fontsize=fontsize)
-ax3.set_xlabel("Wealth Share TF", fontsize=fontsize)
-ax3.set_ylabel("Wealth Share NT", fontsize=fontsize)
+ax1.set_xlabel("F", fontsize=fontsize)
+ax1.set_ylabel("H", fontsize=fontsize)
+ax2.set_xlabel("F", fontsize=fontsize)
+ax2.set_ylabel("H", fontsize=fontsize)
+ax3.set_xlabel("F", fontsize=fontsize)
+ax3.set_ylabel("H", fontsize=fontsize)
 ax1.invert_yaxis()
 ax2.invert_yaxis()
 ax3.invert_yaxis()
@@ -96,6 +96,30 @@ plt.savefig(figname, dpi=300)
 plt.show()
 
 
-
+# Plot without noise, difficult to extract anything
+dataNT = heat_data(data, 'F', 'H', 'DiffReturns')
+dataVI = heat_data(data, 'F', 'H', 'AvgDiffReturns')
+dataTF = heat_data(data, 'F', 'H', 'HighestT')
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize = (15,6), sharey=True, sharex=True)
+cmap = 'seismic'
+model = sns.heatmap(dataNT, ax=ax1, cmap = cmap)
+sns.heatmap(dataVI, ax=ax2, cmap = cmap)
+sns.heatmap(dataTF, ax=ax3, cmap = cmap)
+ax1.set_xlabel("F", fontsize=fontsize)
+ax1.set_ylabel("H", fontsize=fontsize)
+ax2.set_xlabel("F", fontsize=fontsize)
+ax2.set_ylabel("H", fontsize=fontsize)
+ax3.set_xlabel("F", fontsize=fontsize)
+ax3.set_ylabel("H", fontsize=fontsize)
+ax1.invert_yaxis()
+ax2.invert_yaxis()
+ax3.invert_yaxis()
+title1, title2, title3, figname =  "Difference in returns (last)", "Difference in returns (full)", "Avg. Highest T", "Experiment4b.png"
+ax1.set_title(title1, fontsize=fontsize)
+ax2.set_title(title2, fontsize=fontsize)
+ax3.set_title(title3, fontsize=fontsize)
+plt.tight_layout()
+plt.savefig(figname, dpi=300)
+plt.show()
 
 
