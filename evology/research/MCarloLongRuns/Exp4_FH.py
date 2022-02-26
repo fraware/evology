@@ -58,8 +58,8 @@ def job(param):
         return result
 
 # Define the domains 
-domain_f = [x / 10.0 for x in range(10, 41, 1)]
-domain_H = [x for x in range(21, 252, 21)]
+domain_f = [x / 10.0 for x in range(10, 31, 1)]
+domain_H = [x for x in range(21, 252, 21*2)]
 addH = [x for x in range(253, 252*4, 21*6)]
 for z in addH:
     domain_H.append(z)
