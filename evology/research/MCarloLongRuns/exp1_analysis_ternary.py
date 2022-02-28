@@ -116,6 +116,11 @@ def generate_random_heatmap_data2(scale):
             vi_ws[(i,j)] = 0.0
         if isnan(tf_ws[(i,j)]) == True: 
             tf_ws[(i,j)] = 0.0
+        # NOTE: this isnan is important to add. Because if the first value that ternary heatmap
+        # encounters is NAN, then it will turn the figure ALL to Nan.
+        # When the NAN is a row of data (ex for WS = 0) but it is not the first row to be plotted,
+        # then the program simply displays a black line. 
+        # Porbably a bug to be noted when using ternary.
         l += 1
     return nt_ws, vi_ws, tf_ws
     
