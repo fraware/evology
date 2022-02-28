@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.ndimage.filters import gaussian_filter
 import ternary
+import numpy as np
 
 sns.set(font_scale=1) 
 fontsize = 18
@@ -37,12 +38,12 @@ def GenPlot(dataNT, dataVI, dataTF, title1, title2, title3, figname, bounds):
         sns.heatmap(dataNT, ax=ax1, cmap = cmap)
         sns.heatmap(dataVI, ax=ax2, cmap = cmap)
         sns.heatmap(dataTF, ax=ax3, cmap = cmap)
-    ax1.set_xlabel("Wealth Share NT", fontsize=fontsize)
-    ax1.set_ylabel("Wealth Share VI", fontsize=fontsize)
-    ax2.set_xlabel("Wealth Share VI", fontsize=fontsize)
-    ax2.set_ylabel("Wealth Share NT", fontsize=fontsize)
-    ax3.set_xlabel("Wealth Share TF", fontsize=fontsize)
-    ax3.set_ylabel("Wealth Share NT", fontsize=fontsize)
+    ax1.set_xlabel("Initial Wealth Share NT", fontsize=fontsize)
+    ax1.set_ylabel("Initial Wealth Share VI", fontsize=fontsize)
+    ax2.set_xlabel("Initial Wealth Share VI", fontsize=fontsize)
+    ax2.set_ylabel("Initial Wealth Share NT", fontsize=fontsize)
+    ax3.set_xlabel("Initial Wealth Share TF", fontsize=fontsize)
+    ax3.set_ylabel("Initial Wealth Share NT", fontsize=fontsize)
     ax1.set_title(title1, fontsize=fontsize)
     ax2.set_title(title2, fontsize=fontsize)
     ax3.set_title(title3, fontsize=fontsize)
@@ -69,10 +70,19 @@ dataVI = heat_data(data, 'WS_VI', 'WS_NT', 'Net_VI_returns')
 dataTF = heat_data(data, 'WS_TF', 'WS_NT', 'Net_TF_returns')
 fig = GenPlot(dataNT, dataVI, dataTF, "NT net returns", "VI net returns", "TF net returns", 'Experiment1b.png', True)
 
-dataNT = heat_data(data, 'WS_NT', 'WS_VI', 'AvgReturn')
-dataVI = heat_data(data, 'WS_VI', 'WS_NT', 'AvgReturn')
-dataTF = heat_data(data, 'WS_TF', 'WS_NT', 'AvgReturn')
-fig = GenPlot(dataNT, dataVI, dataTF, "AvgReturn", "AvgReturn", "AvgReturn", 'Experiment1c.png', False)
+data['NT_weighted_returns'] = data['NT_returns_mean'] / np.sqrt(data['WS_NT'])
+data['VI_weighted_returns'] = data['VI_returns_mean'] / np.sqrt(data['WS_VI'])
+data['TF_weighted_returns'] = data['TF_returns_mean'] / np.sqrt(data['WS_TF'])
+
+dataNT = heat_data(data, 'WS_NT', 'WS_VI', 'NT_weighted_returns')
+dataVI = heat_data(data, 'WS_VI', 'WS_NT', 'VI_weighted_returns')
+dataTF = heat_data(data, 'WS_TF', 'WS_NT', 'TF_weighted_returns')
+fig = GenPlot(dataNT, dataVI, dataTF, "NT weighted returns", "VI weighted returns", "TF weighted returns", 'Experiment1bb.png', False)
+
+# dataNT = heat_data(data, 'WS_NT', 'WS_VI', 'AvgReturn')
+# dataVI = heat_data(data, 'WS_VI', 'WS_NT', 'AvgReturn')
+# dataTF = heat_data(data, 'WS_TF', 'WS_NT', 'AvgReturn')
+# fig = GenPlot(dataNT, dataVI, dataTF, "AvgReturn", "AvgReturn", "AvgReturn", 'Experiment1c.png', False)
 
 # fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize = (15,6), sharex=True)
 # sns.scatterplot(x="WS_NT", y="NT_returns_mean", data=data, ax=ax1)
@@ -80,52 +90,37 @@ fig = GenPlot(dataNT, dataVI, dataTF, "AvgReturn", "AvgReturn", "AvgReturn", 'Ex
 # sns.scatterplot(x="WS_TF", y="TF_returns_mean", data=data, ax=ax3)
 # plt.show()
 
-data1 = data.loc[data['WS_NT'] == 0.3]
-data2 = data.loc[data['WS_VI'] == 0.3]
+
+
+# order = 1
+data1 = data.loc[data['WS_NT'] == 0.1]
+data2 = data.loc[data['WS_VI'] == 0.1]
+
+data1['VI_returns_mean'] = np.log(data1['VI_returns_mean'])
+data1['TF_returns_mean'] = np.log(data1['TF_returns_mean'])
+data2['NT_returns_mean'] = np.log(data2['NT_returns_mean'])
+
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize = (15,6), sharex=True)
-# sns.scatterplot(x="WS_NT", y="NT_returns_mean", data=data2, ax=ax1, lowess = True)
-# sns.scatterplot(x="WS_VI", y="VI_returns_mean", data=data1, ax=ax2, lowess = True)
-# sns.scatterplot(x="WS_TF", y="TF_returns_mean", data=data1, ax=ax3, lowess = True)
-sns.regplot(x="WS_NT", y="NT_returns_mean", data=data2, ax=ax1, lowess = True)
-sns.regplot(x="WS_VI", y="VI_returns_mean", data=data1, ax=ax2, lowess = True)
-sns.regplot(x="WS_TF", y="TF_returns_mean", data=data1, ax=ax3, lowess = True)
-ax1.set_xlabel("Wealth Share NT (VI = 0.3)", fontsize=fontsize)
-ax1.set_ylabel("NT returns", fontsize=fontsize)
-ax2.set_xlabel("Wealth Share VI (NT = 0.3)", fontsize=fontsize)
-ax2.set_ylabel("VI returns", fontsize=fontsize)
-ax3.set_xlabel("Wealth Share TF (NT = 0.3)", fontsize=fontsize)
-ax3.set_ylabel("TF returns", fontsize=fontsize)
-ax1.set_title('NT returns vs size', fontsize=fontsize)
-ax2.set_title('VI returns vs size', fontsize=fontsize)
-ax3.set_title('TF returns vs size', fontsize=fontsize)
+# sns.regplot(x="WS_NT", y="NT_returns_mean", data=data2, ax=ax1, lowess = True)
+# sns.regplot(x="WS_VI", y="VI_returns_mean", data=data1, ax=ax2, lowess = True)
+# sns.regplot(x="WS_TF", y="TF_returns_mean", data=data1, ax=ax3, lowess = True)
+sns.regplot(x="WS_NT", y="NT_returns_mean", data=data2, ax=ax1, lowess = True) #order = order)
+sns.regplot(x="WS_VI", y="VI_returns_mean", data=data1, ax=ax2, lowess = True) #, order = order)
+sns.regplot(x="WS_TF", y="TF_returns_mean", data=data1, ax=ax3, lowess = True) #, order = order)
+ax1.set_xlabel("Initial Wealth Share NT (VI = 0.1)", fontsize=fontsize)
+ax1.set_ylabel("Log NT returns", fontsize=fontsize)
+ax2.set_xlabel("Initial Wealth Share VI (NT = 0.1)", fontsize=fontsize)
+ax2.set_ylabel("Log VI returns", fontsize=fontsize)
+ax3.set_xlabel("Initial Wealth Share TF (NT = 0.1)", fontsize=fontsize)
+ax3.set_ylabel("Log TF returns", fontsize=fontsize)
+ax1.set_title('Log NT returns vs size', fontsize=fontsize)
+ax2.set_title('Log VI returns vs size', fontsize=fontsize)
+ax3.set_title('Log TF returns vs size', fontsize=fontsize)
 plt.tight_layout()
 plt.savefig('Experiment1d', dpi=300)
 plt.show()
 
 
-
-
-data1 = data.loc[data['WS_TF'] == 0.3]
-data2 = data.loc[data['WS_VI'] == 0.3]
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize = (15,6), sharex=True)
-# sns.scatterplot(x="WS_NT", y="NT_returns_mean", data=data2, ax=ax1, lowess = True)
-# sns.scatterplot(x="WS_VI", y="VI_returns_mean", data=data1, ax=ax2, lowess = True)
-# sns.scatterplot(x="WS_TF", y="TF_returns_mean", data=data1, ax=ax3, lowess = True)
-sns.regplot(x="WS_NT", y="NT_returns_mean", data=data2, ax=ax1, lowess = True)
-sns.regplot(x="WS_VI", y="VI_returns_mean", data=data1, ax=ax2, lowess = True)
-sns.regplot(x="WS_TF", y="TF_returns_mean", data=data1, ax=ax3, lowess = True)
-ax1.set_xlabel("Wealth Share NT (VI = 0.3)", fontsize=fontsize)
-ax1.set_ylabel("NT returns", fontsize=fontsize)
-ax2.set_xlabel("Wealth Share VI (NT = 0.3)", fontsize=fontsize)
-ax2.set_ylabel("VI returns", fontsize=fontsize)
-ax3.set_xlabel("Wealth Share TF (NT = 0.3)", fontsize=fontsize)
-ax3.set_ylabel("TF returns", fontsize=fontsize)
-ax1.set_title('NT returns vs size', fontsize=fontsize)
-ax2.set_title('VI returns vs size', fontsize=fontsize)
-ax3.set_title('TF returns vs size', fontsize=fontsize)
-plt.tight_layout()
-# plt.savefig('Experiment1d', dpi=300)
-plt.show()
 
 ''' ternary that does not work 
 data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data/data1.csv")
