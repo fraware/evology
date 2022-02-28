@@ -36,6 +36,7 @@ data = data.loc[(data['AvgDiffReturns'] < 10)]
 data = data.loc[(data['HighestT'] < 100)]
 print(len(data))
 
+data = data.loc[(data['H'] <= 252)]
 
 # Plot without noise, difficult to extract anything
 dataNT = heat_data(data, 'F', 'H', 'WS_NT_final')
