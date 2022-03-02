@@ -55,6 +55,10 @@ def DetermineTsvProc(pop, price_history):
                 ind.tsv = math.log2(price_history[-1]) - math.log2(
                     price_history[-ind[0]]
                 )
+                # ind.tsv = price_history[-1] / price_history[-ind[0]]
+                
+                ### DIFFERENCE
+                #ind.tsv = 10 * price_history[-1] / max(0.0001, price_history[-ind[0]])
             elif len(price_history) < ind[0]:
                 ind.tsv = 0
             if ind.tsv == 0:
@@ -63,7 +67,10 @@ def DetermineTsvProc(pop, price_history):
             ind.process = abs(
                 ind.process
                 + parameters.RHO_NT * (math.log2(parameters.MU_NT) - math.log2(ind.process))
-                + parameters.GAMMA_NT * randoms[count]
+                # + parameters.GAMMA_NT * randoms[count] * ind.process
+                ### THIS IS WHERE WE ARE DIFFERENT
+                + parameters.GAMMA_NT * randoms[count] 
+                
             )
             if ind.process < 0:
                 warnings.warn("Negative process value for NT")
