@@ -39,12 +39,12 @@ def run(
     return df, pop
 
 wealth_coordinates = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
-np.random.seed(9)
-wealth_coordinates = [1 / 3, 1 / 3, 1 / 3]
+np.random.seed(89)
+wealth_coordinates = [0.5382233712349753, 0.2297567768599786, 0.23201985190504598]
 print(wealth_coordinates)
 df, pop = run(
-    3, 0, 20000, wealth_coordinates, tqdm_display=False, reset_wealth=False, 
-    ReinvestmentRate = 1.5, InvestmentHorizon = 255, InvestorBehavior = 'profit')
+    10, 0, 25000, wealth_coordinates, tqdm_display=False, reset_wealth=False, 
+    ReinvestmentRate = 1.1, InvestmentHorizon = 252, InvestorBehavior = 'profit')
 
 df.to_csv("rundata/run_data.csv")
 print(df)

@@ -32,6 +32,7 @@ jobs:
           architecture: 'x64'
       - name: python setup
         run: python setup.py
+        run: cython -V
       - name: change permission
         run: chmod +x tests/test_deterministic.py
       - name: compile cythonized files
