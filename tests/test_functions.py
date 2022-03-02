@@ -64,7 +64,7 @@ def nolearning_runs(repetitions, time, agents):
     while i < repetitions:
         try: 
             seed = random.randint(0,100)
-            f = random.randint(0,3)
+            f = random.randint(1,3)
             np.random.seed(seed)
             wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
             print(wealth_coordinates)

@@ -91,7 +91,13 @@ def hypermutate(
     MaxFund = wealth_list.index(max(wealth_list))
     NumberReplace = len(index_to_replace)
 
-    if NumberReplace != 0:
+    if NumberReplace == len(pop):
+        warnings.warn('Evology wiped out')
+        round_replacements = -1
+        return pop, round_replacements, spoils
+
+
+    elif NumberReplace != 0:
         for index in index_to_replace:
             half = CreateFractionalFund(pop, MaxFund, NumberReplace + 1)
             del pop[index]

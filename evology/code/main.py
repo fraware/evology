@@ -51,6 +51,8 @@ def main(
             pop,
             spoils,
         )  # Replace insolvent agents
+        if replacements < 0:
+            break
 
         # Strategy evolution
         pop, CountSelected, CountMutated, CountCrossed, StratFlow = ga_evolution(
