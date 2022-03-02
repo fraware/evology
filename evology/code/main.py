@@ -160,6 +160,10 @@ def main(
             AvgAbsT 
         )
 
+    if generation < MAX_GENERATIONS - data.Barr:
+        # It means the simulation has breaked.
+        results[generation:MAX_GENERATIONS-data.Barr,:] = np.empty((MAX_GENERATIONS - data.Barr - generation,data.variables)) * np.nan
+
     df = pd.DataFrame(results, columns=data.columns)
 
     return df, pop
