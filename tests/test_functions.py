@@ -64,14 +64,16 @@ def nolearning_runs(repetitions, time, agents):
     while i < repetitions:
         try: 
             seed = random.randint(0,100)
+            f = random.randint(0,3)
             np.random.seed(seed)
             wealth_coordinates = np.random.dirichlet(np.ones(3),size=1)[0].tolist()
             print(wealth_coordinates)
-            df,pop = main('scholl', solver, wealth_coordinates, agents, time, 0, 0, ReinvestmentRate = 1.1, InvestmentHorizon = 252, InvestorBehavior = 'profit', tqdm_display=True, reset_wealth = False)
+            df,pop = main('scholl', solver, wealth_coordinates, agents, time, 0, 0, ReinvestmentRate = f, InvestmentHorizon = 252, InvestorBehavior = 'profit', tqdm_display=True, reset_wealth = False)
 
         except Exception as e: 
             went_smoothly = False
             print('Seed ' + str(seed))
+            print('F ' + str(f))
             print('Process ' + str(i) + ' encoutered an exception.')
             print(str(e))
             traceback.print_exc()
