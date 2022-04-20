@@ -13,10 +13,9 @@ CROSSOVER_RATE = 1 / 21
 """ GP PARAMETERS """
 
 """ STRATEGY PARAMETERS """
-# General parameters
 
 LeverageNT, LeverageVI, LeverageTF = 1, 1, 1
-SCALE_NT, SCALE_VI, SCALE_TF = 1, 1, 1  # np.pi, np.pi, np.pi
+SCALE_NT, SCALE_VI, SCALE_TF = 1, 1, 1  
 ATC_TF = 1
 
 GAMMA_NT = 0.2 * np.sqrt(1 / 252)
@@ -27,15 +26,13 @@ RHO_NT = 0.00045832561
 """ MARKET PARAMETERS """
 TRADING_DAYS = 252
 InitialPrice = 100
-Short_Size_Percent = 80
+Short_Size_Percent = 50
 
 RefLoan = 0
 RefCash = 3 * 50_000_000
 RefAssets = 3 * 500_000
 RefInvestmentSupply = 10_000_000 / (21)
 
-# AnnualInterestRate = 0.01
-# INTEREST_RATE = AnnualInterestRate / TRADING_DAYS
 EMA_HORIZON = 2 * TRADING_DAYS
 
 interest_year = 0.01
@@ -48,10 +45,7 @@ DIVIDEND_GROWTH_RATE_G = 0.01
 INITIAL_DIVIDEND = 0.003983
 
 div_vol = 0.1 / np.sqrt(TRADING_DAYS) # Dividend volatility
-# DIVIDEND_GROWTH_VOLATILITY = 0.1 / np.sqrt(TRADING_DAYS)
-# DIVIDEND_AUTOCORRELATION = 0.1
 div_atc = 0.1 # Dividend autocorrelation
-# INITIAL_RANDOM_DIVIDEND = 0
 DIVIDEND_ATC_TAU = 1
 liquidation_perc = 10 / 100
 
@@ -68,7 +62,7 @@ ShieldInvestment = 252
 dividend_history = []
 random_dividend_history = []
 
-# NT strat is divided by 10
+# NT strat is divided by 1000
 min_nt_strat = -10
 max_nt_strat = 10
 
