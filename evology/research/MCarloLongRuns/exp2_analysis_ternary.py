@@ -1,6 +1,5 @@
 """ ternary plot for final wealth shares """
 
-from termios import TIOCPKT_FLUSHREAD
 import pandas as pd
 
 data = pd.read_csv(
