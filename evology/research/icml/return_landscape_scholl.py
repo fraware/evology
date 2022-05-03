@@ -17,10 +17,10 @@ if sys.platform == "linux":
 from main import main as evology
 
 startTime = time.time()
-TimeHorizon = 252 * 5
-PopulationSize = 100
-reps = 1 #10
-scale = 5 #50  # increment = 1/scale
+TimeHorizon = 252 * 100
+PopulationSize = 1000
+reps = 10 
+scale = 25 # increment = 1/scale
 
 def job(coords):
     np.random.seed()
