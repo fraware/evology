@@ -43,7 +43,7 @@ def generate_random_heatmap_data(scale):
     return nt_ws, vi_ws, tf_ws, attractor
 
 
-'''
+
 nt_r, vi_r, tf_r, attractor = generate_random_heatmap_data(scale)
 
 figure, tax = ternary.figure(scale=scale)
@@ -116,7 +116,7 @@ tax._redraw_labels()
 plt.tight_layout()
 plt.savefig('Experiment2_attractors.png',dpi=300)
 plt.show()
-'''
+
 
 
 # print(data_group)
@@ -208,7 +208,7 @@ plt.tight_layout()
 plt.savefig('Experiment2_diff_returns2.png',dpi=300)
 plt.show()
 
-'''
+
 def PathPoints(data):
     points = []
     for i in range(len(data["WS_NT_final"])):
@@ -308,7 +308,7 @@ tax._redraw_labels()
 plt.tight_layout()
 plt.savefig("Experiment2_density.png", dpi=300)
 plt.show()
-'''
+
 
 
 
