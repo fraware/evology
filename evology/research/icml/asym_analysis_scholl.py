@@ -53,8 +53,8 @@ tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
-tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
-tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.bottom_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
 tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
 tax.get_axes().axis('off')
 tax.set_title('NT final wealth share', fontsize = fontsize)
@@ -70,8 +70,8 @@ tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
-tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
-tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.bottom_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
 tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
 tax.get_axes().axis('off')
 tax.set_title('VI final wealth share', fontsize = fontsize)
@@ -87,8 +87,8 @@ tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
-tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
-tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.bottom_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
 tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
 tax.get_axes().axis('off')
 tax.set_title('TF final wealth share', fontsize = fontsize)
@@ -107,8 +107,8 @@ tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
-tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
-tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.bottom_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
 tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
 tax.get_axes().axis('off')
 tax.set_title('Basins of attraction', fontsize = fontsize)
@@ -137,8 +137,8 @@ tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
-tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
-tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.bottom_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
 tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
 tax.get_axes().axis('off')
 tax.set_title('Max generations', fontsize = fontsize)
@@ -169,8 +169,8 @@ tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
-tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
-tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.bottom_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
 tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
 tax.get_axes().axis('off')
 tax.set_title('Avg diff returns', fontsize = fontsize)
@@ -196,8 +196,8 @@ tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
-tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
-tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.bottom_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
 tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
 tax.get_axes().axis('off')
 tax.set_title('Avg diff returns', fontsize = fontsize)
@@ -210,29 +210,28 @@ plt.savefig('figures/diff_returns_scholl2.png',dpi=300)
 def PathPoints(data):
     points = []
     for i in range(len(data["WS_NT_final"])):
-        x = (data.loc[i, "WS_TF_final"] / 100) * scale
-        y = (data.loc[i, "WS_NT_final"] / 100) * scale
-        z = (data.loc[i, "WS_VI_final"] / 100) * scale
+        x = (data.loc[i, "WS_VI_final"] / 100) * scale
+        y = (data.loc[i, "WS_TF_final"] / 100) * scale 
+        z = (data.loc[i, "WS_NT_final"] / 100) * scale 
         points.append((x, y, z))
     return points
 
 
 points = PathPoints(data)
-origin = [((100/3, 100/3, 100/3))]
+# origin = [((100/3, 100/3, 100/3))]
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
 tax.gridlines(color="gray", multiple=10)
 tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
-tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.bottom_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
 tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
 tax.scatter(points, marker='D', color='red', label="Simulations")
-# tax.scatter(origin, marker='D', color='black', label="Initial condition")
-tax.ticks(ticks = ticks, axis='lbr', linewidth=1, multiple=10)
+tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
 tax.get_axes().axis('off')
-tax.set_title('title', fontsize=fontsize)
+tax.set_title('Scatterplot', fontsize=fontsize)
 plt.legend(loc='upper right', fontsize=fontsize)
 plt.tight_layout()
 tax._redraw_labels()
@@ -245,9 +244,9 @@ def PathPoints(df):
     points = []
     N = len(df)
     for i in range(N):
-        x = int((df.loc[i, "WS_TF_final"] / 100) * scale)
-        y = int((df.loc[i, "WS_NT_final"] / 100) * scale)
-        z = int((df.loc[i, "WS_VI_final"] / 100) * scale)
+        x = int((df.loc[i, "WS_VI_final"] / 100) * scale)
+        y = int((df.loc[i, "WS_TF_final"] / 100) * scale)
+        z = int((df.loc[i, "WS_NT_final"] / 100) * scale)
         points.append((x, y, z))
     return points
 
@@ -269,6 +268,7 @@ def DensityData(points, scale):
 
 
 # scale = 24  # to remove the artifact attractor
+scale = 25 #cant set scale more than the experiment setting (25)
 density = DensityData(points, scale)
 
 figure, tax = ternary.figure(scale=scale)
@@ -278,8 +278,8 @@ tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 tax.ticks(ticks=ticks, axis="blr", linewidth=1, multiple=10)
-tax.bottom_axis_label("NT Final Wealth Share (%)", fontsize=fontsize)
-tax.left_axis_label("VI Final Wealth Share (%)", fontsize=fontsize)
+tax.bottom_axis_label("VI Final Wealth Share (%)", fontsize=fontsize)
+tax.left_axis_label("NT Final Wealth Share (%)", fontsize=fontsize)
 tax.right_axis_label("TF Final Wealth Share (%)", fontsize=fontsize)
 tax.get_axes().axis("off")
 tax.set_title("Wealth asymptotic distributions density", fontsize=fontsize)

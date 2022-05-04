@@ -211,8 +211,8 @@ def PathPoints(data):
         # y = (data.loc[i, "WS_NT_final"] / 100) * scale
         # z = (data.loc[i, "WS_VI_final"] / 100) * scale
         x = int((data.loc[i, "WS_NT_final"] / 100) * scale)
-        y = int((data.loc[i, "WS_VI_final"] / 100) * scale)
-        z = int((data.loc[i, "WS_TF_final"] / 100) * scale)
+        y = int((data.loc[i, "WS_TF_final"] / 100) * scale)
+        z = int((data.loc[i, "WS_VI_final"] / 100) * scale)
         points.append((x, y, z))
     return points
 
@@ -260,8 +260,8 @@ def PathPoints(df):
         # y = int((df.loc[i, "WS_NT_final"] / 100) * scale)
         # z = int((df.loc[i, "WS_VI_final"] / 100) * scale)
         x = int((df.loc[i, "WS_NT_final"] / 100) * scale)
-        y = int((df.loc[i, "WS_VI_final"] / 100) * scale)
-        z = int((df.loc[i, "WS_TF_final"] / 100) * scale)
+        y = int((df.loc[i, "WS_TF_final"] / 100) * scale)
+        z = int((df.loc[i, "WS_VI_final"] / 100) * scale)
         points.append((x, y, z))
     return points
 
@@ -318,9 +318,9 @@ def gen_data(scale):
     nt = dict()
     l = 0
     for (i, j, k) in simplex_iterator(scale):
-        nt[(i, j)] = data_group.loc[l, "Mean_NT"]
-        vi[(i, j)] = data_group.loc[l, "Mean_VI"]
-        tf[(i, j)] = data_group.loc[l, "Mean_TF"]
+        nt[(i, j)] = data_group.loc[l, "Mean_TF"]
+        vi[(i, j)] = data_group.loc[l, "Mean_NT"]
+        tf[(i, j)] = data_group.loc[l, "Mean_VI"]
 
         l += 1
     return nt, vi, tf
