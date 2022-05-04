@@ -13,7 +13,7 @@ scale = 25
 fontsize = 18
 
 data = pd.read_csv(
-    "/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/asym_dis_ext.csv"
+    "/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/asym_dis_scholl.csv"
 )
 
 # Removing the sum 0 or sum nan runs does not seem necessary
