@@ -42,7 +42,7 @@ def generate_random_heatmap_data(scale):
     return nt_ws, vi_ws, tf_ws, attractor
 
 
-
+'''
 nt_r, vi_r, tf_r, attractor = generate_random_heatmap_data(scale)
 
 figure, tax = ternary.figure(scale=scale)
@@ -115,12 +115,72 @@ tax._redraw_labels()
 plt.tight_layout()
 plt.savefig('Experiment2_attractors.png',dpi=300)
 plt.show()
+'''
 
 
+# print(data_group)
+def gen_data(scale):
+    gens = dict()
+    l = 0
+    for (i, j, k) in simplex_iterator(scale):
+        gens[(i, j)] = data_group.loc[l, "Gen"]
+        l += 1
+    return gens
 
-""" Density/diffusion plot for attractors """
+
+""" Density/diffusion plot for generations """
+
+gens = gen_data(scale)
+figure, tax = ternary.figure(scale=scale)
+figure.set_size_inches(7, 7)
+tax.heatmap(gens, style='triangular')
+tax.boundary()
+tax.clear_matplotlib_ticks()
+ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
+tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
+tax.get_axes().axis('off')
+tax.set_title('Max generations', fontsize = fontsize)
+tax._redraw_labels()
+plt.tight_layout()
+plt.savefig('Experiment2_generations.png',dpi=300)
+plt.show()
 
 
+# Difference in returns
+
+# Result: regions with early extinctions correspond to high difference in returns; 
+# these are regions that are by nature imbalanced and pushing to the boundary.  
+def gen_data(scale):
+    gens = dict()
+    l = 0
+    for (i, j, k) in simplex_iterator(scale):
+        gens[(i, j)] = data_group.loc[l, "AvgDiffReturns"]
+        if data_group.loc[l, "AvgDiffReturns"] > 10:
+            gens[(i, j)] = 10
+        l += 1
+    return gens
+gens = gen_data(scale)
+figure, tax = ternary.figure(scale=scale)
+figure.set_size_inches(7, 7)
+tax.heatmap(gens, style='triangular')
+tax.boundary()
+tax.clear_matplotlib_ticks()
+ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+tax.ticks(ticks = ticks, axis='blr', linewidth=1, multiple=10)
+tax.bottom_axis_label("NT Initial Wealth Share (%)", fontsize = fontsize) 
+tax.left_axis_label("VI Initial Wealth Share (%)", fontsize = fontsize) 
+tax.right_axis_label("TF Initial Wealth Share (%)", fontsize = fontsize)
+tax.get_axes().axis('off')
+tax.set_title('Avg diff returns', fontsize = fontsize)
+tax._redraw_labels()
+plt.tight_layout()
+plt.savefig('Experiment2_diff_returns.png',dpi=300)
+plt.show()
+
+'''
 def PathPoints(data):
     points = []
     for i in range(len(data["WS_NT_final"])):
@@ -220,3 +280,4 @@ tax._redraw_labels()
 plt.tight_layout()
 plt.savefig("Experiment2_density.png", dpi=300)
 plt.show()
+'''
