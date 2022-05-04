@@ -4,21 +4,16 @@ from scipy.ndimage.filters import gaussian_filter
 import ternary
 import numpy as np
 import pandas as pd
+from math import isnan
 from ternary.helpers import simplex_iterator
-# data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/asym_dis_ext.csv")
 data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/data_return_landscape_ext.csv")
 
-# print(data)
-
-print(data.columns)
 # For scale = 100, 300 observations out of 5151 will stop at 
 # Gen 0.0 because they are at the boundary. This is OK.
 
 sns.set(font_scale=1)
 fontsize = 18
 scale = 25 #from the experiment.py
-
-#sigma = 1
 
 # We want a simplex plot of strategy returns. 
 threshold = 1
@@ -94,29 +89,23 @@ plt.show()
 
 """ return to size ratios """
 
-# data = pd.read_csv(
-#     "/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data/data1.csv"
-# )
-# data_group = data.groupby(["WS_VI", "WS_TF", "WS_NT"], as_index=False).mean()
-# print('here')
-# print(data_group['WS_VI'])
 
 
-# data_group["NT_weighted_returns"] = data_group["NT_returns_mean"] / np.sqrt(
-#     data_group["WS_NT"]
-# )
-# data_group["VI_weighted_returns"] = data_group["VI_returns_mean"] / np.sqrt(
-#     data_group["WS_VI"]
-# )
-# data_group["TF_weighted_returns"] = data_group["TF_returns_mean"] / np.sqrt(
-#     data_group["WS_TF"]
-# )
-data_group['NT_weighted_returns'] = data_group['NT_returns_mean'] / data_group['WS_NT']
-data_group['VI_weighted_returns'] = data_group['VI_returns_mean'] / data_group['WS_VI']
-data_group['TF_weighted_returns'] = data_group['TF_returns_mean'] / data_group['WS_TF']
+data_group["NT_weighted_returns"] = data_group["NT_returns_mean"] / np.sqrt(
+    data_group["WS_NT"]
+)
+data_group["VI_weighted_returns"] = data_group["VI_returns_mean"] / np.sqrt(
+    data_group["WS_VI"]
+)
+data_group["TF_weighted_returns"] = data_group["TF_returns_mean"] / np.sqrt(
+    data_group["WS_TF"]
+)
+# data_group['NT_weighted_returns'] = data_group['NT_returns_mean'] / data_group['WS_NT']
+# data_group['VI_weighted_returns'] = data_group['VI_returns_mean'] / data_group['WS_VI']
+# data_group['TF_weighted_returns'] = data_group['TF_returns_mean'] / data_group['WS_TF']
 
 
-from math import isnan
+
 
 
 def generate_random_heatmap_data2(scale):
