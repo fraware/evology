@@ -18,7 +18,6 @@ scale = 25 #from the experiment.py
 
 # We want a simplex plot of strategy returns. 
 threshold = 1
-# data = data[(abs(data["NT_returns_mean"]) < threshold) & (abs(data["VI_returns_mean"]) < threshold) & (abs(data["TF_returns_mean"]) < threshold)]
 data_group = data.groupby(['WS_VI', 'WS_TF', 'WS_NT'], as_index=False).mean()
 
 def generate_random_heatmap_data(scale):
@@ -49,8 +48,8 @@ tax.get_axes().axis('off')
 tax.set_title('NT returns', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment1_NT_ternary.png',dpi=300)
-plt.show()
+plt.savefig('figures/NT_returns_ext.png',dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -66,8 +65,8 @@ tax.get_axes().axis('off')
 tax.set_title('VI returns', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment1_VI_ternary.png',dpi=300)
-plt.show()
+plt.savefig('figures/VI_returns_ext.png',dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -83,8 +82,8 @@ tax.get_axes().axis('off')
 tax.set_title('TF returns', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment1_TF_ternary.png',dpi=300)
-plt.show()
+plt.savefig('figures/TF_returns_ext.png',dpi=300)
+#plt.show()
 
 
 
@@ -134,9 +133,6 @@ def generate_random_heatmap_data2(scale):
 
 nt_r2, vi_r2, tf_r2 = generate_random_heatmap_data2(scale)
 
-
-# print(vi_r2)
-
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
 tax.heatmap(nt_r2, style="triangular")
@@ -151,8 +147,8 @@ tax.get_axes().axis("off")
 tax.set_title("NT weighted returns", fontsize=fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig("Experiment1b_NT_ternary.png", dpi=300)
-plt.show()
+plt.savefig("figures/NT_weighted_returns_ext.png", dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -168,8 +164,8 @@ tax.get_axes().axis("off")
 tax.set_title("VI weighted returns", fontsize=fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig("Experiment1b_VI_ternary.png", dpi=300)
-plt.show()
+plt.savefig("figures/VI_weighted_returns_ext.png", dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -185,5 +181,5 @@ tax.get_axes().axis("off")
 tax.set_title("TF weighted returns", fontsize=fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig("Experiment1b_TF_ternary.png", dpi=300)
-plt.show()
+plt.savefig("figures/TF_weighted_returns_ext.png", dpi=300)
+#plt.show()

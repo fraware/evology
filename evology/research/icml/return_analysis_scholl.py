@@ -5,12 +5,8 @@ import ternary
 import numpy as np
 import pandas as pd
 from ternary.helpers import simplex_iterator
-# data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/asym_dis_ext.csv")
 data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/data_return_landscape_scholl.csv")
 
-# print(data)
-
-print(data.columns)
 # For scale = 100, 300 observations out of 5151 will stop at 
 # Gen 0.0 because they are at the boundary. This is OK.
 
@@ -18,11 +14,8 @@ sns.set(font_scale=1)
 fontsize = 18
 scale = 25 #from the experiment.py
 
-#sigma = 1
-
 # We want a simplex plot of strategy returns. 
 threshold = 1
-# data = data[(abs(data["NT_returns_mean"]) < threshold) & (abs(data["VI_returns_mean"]) < threshold) & (abs(data["TF_returns_mean"]) < threshold)]
 data_group = data.groupby(['WS_VI', 'WS_TF', 'WS_NT'], as_index=False).mean()
 
 def generate_random_heatmap_data(scale):
@@ -53,8 +46,8 @@ tax.get_axes().axis('off')
 tax.set_title('NT returns', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment1_NT_ternary.png',dpi=300)
-plt.show()
+plt.savefig('figures/NT_returns_scholl.png',dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -70,8 +63,8 @@ tax.get_axes().axis('off')
 tax.set_title('VI returns', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment1_VI_ternary.png',dpi=300)
-plt.show()
+plt.savefig('figures/VI_returns_scholl.png',dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -87,19 +80,12 @@ tax.get_axes().axis('off')
 tax.set_title('TF returns', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment1_TF_ternary.png',dpi=300)
-plt.show()
+plt.savefig('figures/TF_returns_scholl.png',dpi=300)
+#plt.show()
 
 
 
 """ return to size ratios """
-
-# data = pd.read_csv(
-#     "/Users/aymericvie/Documents/GitHub/evology/evology/research/MCarloLongRuns/data/data1.csv"
-# )
-# data_group = data.groupby(["WS_VI", "WS_TF", "WS_NT"], as_index=False).mean()
-# print('here')
-# print(data_group['WS_VI'])
 
 
 # data_group["NT_weighted_returns"] = data_group["NT_returns_mean"] / np.sqrt(
@@ -144,9 +130,6 @@ def generate_random_heatmap_data2(scale):
 
 nt_r2, vi_r2, tf_r2 = generate_random_heatmap_data2(scale)
 
-
-# print(vi_r2)
-
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
 tax.heatmap(nt_r2, style="triangular")
@@ -161,8 +144,8 @@ tax.get_axes().axis("off")
 tax.set_title("NT weighted returns", fontsize=fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig("Experiment1b_NT_ternary.png", dpi=300)
-plt.show()
+plt.savefig("figures/NT_weighted_returns_scholl.png", dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -178,8 +161,8 @@ tax.get_axes().axis("off")
 tax.set_title("VI weighted returns", fontsize=fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig("Experiment1b_VI_ternary.png", dpi=300)
-plt.show()
+plt.savefig("figures/VI_weighted_returns_scholl.png", dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -195,5 +178,5 @@ tax.get_axes().axis("off")
 tax.set_title("TF weighted returns", fontsize=fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig("Experiment1b_TF_ternary.png", dpi=300)
-plt.show()
+plt.savefig("figures/TF_weighted_returns_scholl.png", dpi=300)
+#plt.show()

@@ -60,8 +60,8 @@ tax.get_axes().axis('off')
 tax.set_title('NT final wealth share', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment2_NT_ternary.png',dpi=300)
-plt.show()
+plt.savefig('figures/WS_NT_scholl.png',dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -77,8 +77,8 @@ tax.get_axes().axis('off')
 tax.set_title('VI final wealth share', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment2_VI_ternary.png',dpi=300)
-plt.show()
+plt.savefig('figures/WS_VI_scholl.png',dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -94,8 +94,8 @@ tax.get_axes().axis('off')
 tax.set_title('TF final wealth share', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment2_TF_ternary.png',dpi=300)
-plt.show()
+plt.savefig('figures/WS_TF_scholl.png',dpi=300)
+#plt.show()
 
 
 cmap = plt.get_cmap('inferno', 3)
@@ -114,12 +114,10 @@ tax.get_axes().axis('off')
 tax.set_title('Basins of attraction', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment2_attractors.png',dpi=300)
-plt.show()
+plt.savefig('figures/basins_scholl.png',dpi=300)
+#plt.show()
 
 
-
-# print(data_group)
 def gen_data(scale):
     gens = dict()
     l = 0
@@ -146,8 +144,8 @@ tax.get_axes().axis('off')
 tax.set_title('Max generations', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment2_generations.png',dpi=300)
-plt.show()
+plt.savefig('figures/generations_scholl.png',dpi=300)
+#plt.show()
 
 
 # Difference in returns
@@ -178,8 +176,8 @@ tax.get_axes().axis('off')
 tax.set_title('Avg diff returns', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment2_diff_returns.png',dpi=300)
-plt.show()
+plt.savefig('figures/diff_returns_scholl.png',dpi=300)
+#plt.show()
 
 def gen_data(scale):
     gens = dict()
@@ -205,8 +203,8 @@ tax.get_axes().axis('off')
 tax.set_title('Avg diff returns', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig('Experiment2_diff_returns2.png',dpi=300)
-plt.show()
+plt.savefig('figures/diff_returns_scholl2.png',dpi=300)
+#plt.show()
 
 
 def PathPoints(data):
@@ -220,9 +218,6 @@ def PathPoints(data):
 
 
 points = PathPoints(data)
-# print(points)
-
-#""" scatterplot
 origin = [((100/3, 100/3, 100/3))]
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -241,19 +236,11 @@ tax.set_title('title', fontsize=fontsize)
 plt.legend(loc='upper right', fontsize=fontsize)
 plt.tight_layout()
 tax._redraw_labels()
-plt.savefig('Experiment2_scatterplot.png',dpi=300)
+plt.savefig('figures/scatterplot_scholl.png',dpi=300)
 # plt.show()
 
 
 """ density """
-
-
-# print(len(data))
-data_edit = data.loc[(data["WS_NT_final"] <= 95)]
-# data = data.loc[(data['WS_TF_final'] + data['WS_NT_final'] + data['WS_VI_final'] != np.nan)]
-# print(len(data))
-# N = len(data['WS_NT_final'])
-# N = len(data_edit)
 def PathPoints(df):
     points = []
     N = len(df)
@@ -264,12 +251,7 @@ def PathPoints(df):
         points.append((x, y, z))
     return points
 
-
-# points = PathPoints(data_edit)
 points = PathPoints(data)
-# points = PathPoints(data_edit)
-
-
 def DensityData(points, scale):
     density = dict()
     total_count = (scale + 1) * (scale + 2) / 2
@@ -281,16 +263,13 @@ def DensityData(points, scale):
         for point in points:
             if i == point[0] and j == point[1]:
                 count += 1
-        # d[(i,j)] = random.random()
         density[(i, j)] = (count / total_count) / 10
         sum_count += density[(i, j)]
-    # print([sum_count, total_count, total_enum])
     return density
 
 
 # scale = 24  # to remove the artifact attractor
 density = DensityData(points, scale)
-# print(density)
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -306,8 +285,8 @@ tax.get_axes().axis("off")
 tax.set_title("Wealth asymptotic distributions density", fontsize=fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-plt.savefig("Experiment2_density.png", dpi=300)
-plt.show()
+plt.savefig("figures/density_scholl.png", dpi=300)
+#plt.show()
 
 
 
@@ -342,8 +321,8 @@ tax.get_axes().axis('off')
 tax.set_title('NT substrategy', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-# plt.savefig('nt_substrat.png',dpi=300)
-plt.show()
+plt.savefig('figures/nt_substrat_scholl.png',dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -359,8 +338,8 @@ tax.get_axes().axis('off')
 tax.set_title('VI substrategy', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-# plt.savefig('vi_substrat.png',dpi=300)
-plt.show()
+plt.savefig('figures/vi_substrat_scholl.png',dpi=300)
+#plt.show()
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -376,5 +355,5 @@ tax.get_axes().axis('off')
 tax.set_title('TF substrategy', fontsize = fontsize)
 tax._redraw_labels()
 plt.tight_layout()
-# plt.savefig('tf_substrat.png',dpi=300)
-plt.show()
+plt.savefig('figures/tf_substrat_scholl.png',dpi=300)
+#plt.show()
