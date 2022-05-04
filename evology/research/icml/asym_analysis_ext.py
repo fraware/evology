@@ -5,6 +5,7 @@ import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 import ternary
 import numpy as np
+from math import isnan
 from ternary.helpers import simplex_iterator
 from matplotlib.colors import ListedColormap
 
@@ -15,6 +16,8 @@ fontsize = 18
 data = pd.read_csv(
     "/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/asym_dis_ext.csv"
 )
+
+
 
 # Removing the sum 0 or sum nan runs does not seem necessary
 
@@ -43,7 +46,7 @@ def generate_random_heatmap_data(scale):
     return nt_ws, vi_ws, tf_ws, attractor
 
 
-'''
+
 nt_r, vi_r, tf_r, attractor = generate_random_heatmap_data(scale)
 
 figure, tax = ternary.figure(scale=scale)
@@ -97,7 +100,7 @@ plt.tight_layout()
 plt.savefig('Experiment2_TF_ternary.png',dpi=300)
 plt.show()
 
-
+'''
 cmap = plt.get_cmap('inferno', 3)
 cmap = ListedColormap(['red', 'grey', 'blue'])
 figure, tax = ternary.figure(scale=scale)
@@ -119,6 +122,7 @@ plt.show()
 '''
 
 
+
 # print(data_group)
 def gen_data(scale):
     gens = dict()
@@ -131,6 +135,7 @@ def gen_data(scale):
 
 """ Density/diffusion plot for generations """
 
+'''
 gens = gen_data(scale)
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
@@ -207,14 +212,17 @@ tax._redraw_labels()
 plt.tight_layout()
 plt.savefig('Experiment2_diff_returns2.png',dpi=300)
 plt.show()
-
 '''
+
 def PathPoints(data):
     points = []
     for i in range(len(data["WS_NT_final"])):
-        x = (data.loc[i, "WS_TF_final"] / 100) * scale
-        y = (data.loc[i, "WS_NT_final"] / 100) * scale
-        z = (data.loc[i, "WS_VI_final"] / 100) * scale
+        # x = (data.loc[i, "WS_TF_final"] / 100) * scale
+        # y = (data.loc[i, "WS_NT_final"] / 100) * scale
+        # z = (data.loc[i, "WS_VI_final"] / 100) * scale
+        x = int((data.loc[i, "WS_NT_final"] / 100) * scale)
+        y = int((data.loc[i, "WS_VI_final"] / 100) * scale)
+        z = int((data.loc[i, "WS_TF_final"] / 100) * scale)
         points.append((x, y, z))
     return points
 
@@ -249,7 +257,7 @@ plt.savefig('Experiment2_scatterplot.png',dpi=300)
 
 
 # print(len(data))
-data_edit = data.loc[(data["WS_NT_final"] <= 95)]
+# data_edit = data.loc[(data["WS_NT_final"] <= 95)]
 # data = data.loc[(data['WS_TF_final'] + data['WS_NT_final'] + data['WS_VI_final'] != np.nan)]
 # print(len(data))
 # N = len(data['WS_NT_final'])
@@ -258,9 +266,12 @@ def PathPoints(df):
     points = []
     N = len(df)
     for i in range(N):
-        x = int((df.loc[i, "WS_TF_final"] / 100) * scale)
-        y = int((df.loc[i, "WS_NT_final"] / 100) * scale)
-        z = int((df.loc[i, "WS_VI_final"] / 100) * scale)
+        # x = int((df.loc[i, "WS_TF_final"] / 100) * scale)
+        # y = int((df.loc[i, "WS_NT_final"] / 100) * scale)
+        # z = int((df.loc[i, "WS_VI_final"] / 100) * scale)
+        x = int((df.loc[i, "WS_NT_final"] / 100) * scale)
+        y = int((df.loc[i, "WS_VI_final"] / 100) * scale)
+        z = int((df.loc[i, "WS_TF_final"] / 100) * scale)
         points.append((x, y, z))
     return points
 
@@ -308,9 +319,9 @@ tax._redraw_labels()
 plt.tight_layout()
 plt.savefig("Experiment2_density.png", dpi=300)
 plt.show()
+
+
 '''
-
-
 
 #### SUBSTRATEGIES
 
@@ -378,3 +389,4 @@ tax._redraw_labels()
 plt.tight_layout()
 # plt.savefig('tf_substrat.png',dpi=300)
 plt.show()
+'''

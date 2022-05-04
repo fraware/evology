@@ -11,6 +11,7 @@ data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/
 # For scale = 100, 300 observations out of 5151 will stop at 
 # Gen 0.0 because they are at the boundary. This is OK.
 
+
 sns.set(font_scale=1)
 fontsize = 18
 scale = 25 #from the experiment.py
