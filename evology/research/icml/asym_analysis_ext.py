@@ -300,9 +300,9 @@ def gen_data(scale):
     nt = dict()
     l = 0
     for (i, j, k) in simplex_iterator(scale):
-        nt[(i, j)] = data_group.loc[l, "Mean_TF"]
-        vi[(i, j)] = data_group.loc[l, "Mean_NT"]
-        tf[(i, j)] = data_group.loc[l, "Mean_VI"]
+        nt[(i, j)] = data_group.loc[l, "Mean_NT"]
+        vi[(i, j)] = data_group.loc[l, "Mean_VI"]
+        tf[(i, j)] = data_group.loc[l, "Mean_TF"]
 
         l += 1
     return nt, vi, tf
