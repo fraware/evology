@@ -10,7 +10,7 @@ from ternary.helpers import simplex_iterator
 from matplotlib.colors import ListedColormap
 
 sns.set(font_scale=1)
-scale = 25  
+scale = 30
 fontsize = 18
 
 data = pd.read_csv(
