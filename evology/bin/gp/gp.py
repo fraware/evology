@@ -57,7 +57,7 @@ def evalSymbReg(individual, points):
     return (math.fsum(sqerrors) / len(points),)
 
 
-toolbox.register("evaluate", evalSymbReg, points=[x / 10.0 for x in range(-10, 10)])
+toolbox.register("evaluate", evalSymbReg, points=[x / 1.0 for x in range(-10, 10)])
 toolbox.register("select", tools.selTournament, tournsize=3)
 toolbox.register("mate", gp.cxOnePoint)
 toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
@@ -74,7 +74,7 @@ toolbox.decorate(
 def main():
     random.seed(318)
 
-    hof = tools.HallOfFame(1)
+    hof = tools.HallOfFame(5)
 
     halloffame = hof
     population = toolbox.population(n=500)
@@ -214,12 +214,13 @@ from networkx.drawing.nx_pydot import graphviz_layout
 
 def func(x):
     return x ** 3 + x ** 2 + x
-X = np.linspace(-1, 1, 100)
+X = np.linspace(-10, 10, 100)
 Y_true = func(X)
 Y_reconstructed = [toolbox.compile(bests[0])(x) for x in X]
 
 plt.plot(X, Y_true, label = 'True function')
 plt.plot(X, Y_reconstructed, label = 'GP symoblic regression')
+plt.legend()
 plt.show()
 
 nodes, edges, labels = gp.graph(bests[0])
