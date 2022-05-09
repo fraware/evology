@@ -11,10 +11,11 @@ from deap import tools
 from deap import gp
 
 import matplotlib.pyplot as plt
-# import networkx as nx
-# import graphviz
-# import pygraphviz as pgv
 from networkx.drawing.nx_agraph import graphviz_layout
+import networkx as nx
+import pydot
+from networkx.drawing.nx_pydot import graphviz_layout
+
 
 # in Conda prompt conda install -c alubbock pygraphviz run in admin mode
 
@@ -35,6 +36,7 @@ pset.addPrimitive(protectedDiv, 2)
 pset.addPrimitive(operator.neg, 1)
 # pset.addPrimitive(math.cos, 1)
 # pset.addPrimitive(math.sin, 1)
+# pset.addPrimitive(math.exp, 1)
 # pset.addEphemeralConstant("rand101", lambda: random.randint(-1,1))
 pset.renameArguments(ARG0="x")
 
@@ -52,12 +54,11 @@ def evalSymbReg(individual, points):
     # Transform the tree expression in a callable function
     func = toolbox.compile(expr=individual)
     # Evaluate the mean squared error between the expression
-    # and the real function : x**3 + x**2 + x
-    sqerrors = ((func(x) - x**3 - x**2 - x) ** 2 for x in points)
-    return (math.fsum(sqerrors) / len(points),)
+    # and the real function : x**4 + x**3 + x**2 + x
+    sqerrors = ((func(x) - x**4 - x**3 - x**2 - x)**2 for x in points)
+    return math.fsum(sqerrors) / len(points),
 
-
-toolbox.register("evaluate", evalSymbReg, points=[x / 1.0 for x in range(-10, 10)])
+toolbox.register("evaluate", evalSymbReg, points=[x / 10.0 for x in range(-10, 10)])
 toolbox.register("select", tools.selTournament, tournsize=3)
 toolbox.register("mate", gp.cxOnePoint)
 toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
@@ -72,14 +73,14 @@ toolbox.decorate(
 
 
 def main():
-    random.seed(318)
+    random.seed(8)
 
-    hof = tools.HallOfFame(5)
+    hof = tools.HallOfFame(1)
 
     halloffame = hof
-    population = toolbox.population(n=500)
-    cxpb = 0.9
-    ngen = 100
+    population = toolbox.population(n=300)
+    cxpb = 0.5
+    ngen = 50
     mutpb = 0.1
 
     verbose = True
@@ -183,38 +184,13 @@ print(bests[0])
 print(type(bests[0]))
 print(toolbox.compile(expr=bests[0]))
 
-def strategy(x):
-    return toolbox.compile(expr=bests[0])(x)
-
-import time
-print("Using strategy()")
-start_time = time.time()
-for i in range(1000):
-    a = strategy(0)
-print(a)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-print("Using directly toolbox")
-start_time = time.time()
-for i in range(1000):
-    a = toolbox.compile(expr=bests[0])(0)
-print(a)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-import networkx as nx
-import pydot
-from networkx.drawing.nx_pydot import graphviz_layout
-
-'''
-
-'''
 
 
 # Show solution
 
 def func(x):
-    return x ** 3 + x ** 2 + x
-X = np.linspace(-10, 10, 100)
+    return x ** 3 + x ** 2 + x + 1
+X = np.linspace(-1, 1, 100)
 Y_true = func(X)
 Y_reconstructed = [toolbox.compile(bests[0])(x) for x in X]
 
@@ -233,4 +209,31 @@ nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="w", node_shape='o'
 nx.draw_networkx_edges(graph, pos)
 nx.draw_networkx_labels(graph, pos, labels)
 plt.axis("off")
+plt.show()
+
+
+
+gen = log.select("gen")
+fit_mins = log.chapters["fitness"].select("min")
+size_avgs = log.chapters["size"].select("avg")
+
+
+
+fig, ax1 = plt.subplots()
+line1 = ax1.plot(gen, fit_mins, "b-", label="Minimum Fitness")
+ax1.set_xlabel("Generation")
+ax1.set_ylabel("Fitness", color="b")
+for tl in ax1.get_yticklabels():
+    tl.set_color("b")
+
+ax2 = ax1.twinx()
+line2 = ax2.plot(gen, size_avgs, "r-", label="Average Size")
+ax2.set_ylabel("Size", color="r")
+for tl in ax2.get_yticklabels():
+    tl.set_color("r")
+
+lns = line1 + line2
+labs = [l.get_label() for l in lns]
+ax1.legend(lns, labs, loc="center right")
+
 plt.show()
