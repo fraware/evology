@@ -1,9 +1,7 @@
 import operator
 import math
 import random
-
 import numpy 
-
 from deap import algorithms
 from deap import base
 from deap import creator
@@ -14,10 +12,6 @@ from deap import gp
 import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout # This is essential import, not nx.nx_agraph.
-# import pydot
-
-
-# import pygraphviz
 
 # Define new functions
 def protectedDiv(left, right):
@@ -64,6 +58,8 @@ toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_v
 toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=17))
 
 def main():
+    points2=[x/1. for x in range(-10,10)]
+    print(points2)
     random.seed(318)
 
     pop = toolbox.population(n=300)
@@ -131,7 +127,7 @@ if __name__ == "__main__":
     graph.add_edges_from(edges)
     pos = graphviz_layout(graph, prog = 'dot') # prog="twopi")  # run dot -c in conda prompt #"dot"
     plt.figure(figsize=(7, 7))
-    nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="w", node_shape='D')
+    nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="skyblue", node_shape='o', edgecolors='black')
     nx.draw_networkx_edges(graph, pos)
     nx.draw_networkx_labels(graph, pos, labels)
     plt.axis("off")
