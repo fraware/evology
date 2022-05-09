@@ -2,7 +2,7 @@ import operator
 import math
 import random
 
-import numpy
+import numpy as np
 
 from deap import algorithms
 from deap import base
@@ -33,8 +33,8 @@ pset.addPrimitive(operator.sub, 2)
 pset.addPrimitive(operator.mul, 2)
 pset.addPrimitive(protectedDiv, 2)
 pset.addPrimitive(operator.neg, 1)
-pset.addPrimitive(math.cos, 1)
-pset.addPrimitive(math.sin, 1)
+# pset.addPrimitive(math.cos, 1)
+# pset.addPrimitive(math.sin, 1)
 # pset.addEphemeralConstant("rand101", lambda: random.randint(-1,1))
 pset.renameArguments(ARG0="x")
 
@@ -52,8 +52,8 @@ def evalSymbReg(individual, points):
     # Transform the tree expression in a callable function
     func = toolbox.compile(expr=individual)
     # Evaluate the mean squared error between the expression
-    # and the real function : x**4 + x**3 + x**2 + x
-    sqerrors = ((func(x) - x**4 - x**3 - x**2 - x) ** 2 for x in points)
+    # and the real function : x**3 + x**2 + x
+    sqerrors = ((func(x) - x**3 - x**2 - x) ** 2 for x in points)
     return (math.fsum(sqerrors) / len(points),)
 
 
@@ -77,9 +77,9 @@ def main():
     hof = tools.HallOfFame(1)
 
     halloffame = hof
-    population = toolbox.population(n=10)
-    cxpb = 0.5
-    ngen = 40
+    population = toolbox.population(n=500)
+    cxpb = 0.9
+    ngen = 100
     mutpb = 0.1
 
     verbose = True
@@ -87,10 +87,10 @@ def main():
     stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
     stats_size = tools.Statistics(len)
     mstats = tools.MultiStatistics(fitness=stats_fit, size=stats_size)
-    mstats.register("avg", numpy.mean)
-    mstats.register("std", numpy.std)
-    mstats.register("min", numpy.min)
-    mstats.register("max", numpy.max)
+    mstats.register("avg", np.mean)
+    mstats.register("std", np.std)
+    mstats.register("min", np.min)
+    mstats.register("max", np.max)
     stats = mstats
     logbook = tools.Logbook()
     logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
@@ -204,6 +204,23 @@ print("--- %s seconds ---" % (time.time() - start_time))
 import networkx as nx
 import pydot
 from networkx.drawing.nx_pydot import graphviz_layout
+
+'''
+
+'''
+
+
+# Show solution
+
+def func(x):
+    return x ** 3 + x ** 2 + x
+X = np.linspace(-1, 1, 100)
+Y_true = func(X)
+Y_reconstructed = [toolbox.compile(bests[0])(x) for x in X]
+
+plt.plot(X, Y_true, label = 'True function')
+plt.plot(X, Y_reconstructed, label = 'GP symoblic regression')
+plt.show()
 
 nodes, edges, labels = gp.graph(bests[0])
 graph = nx.Graph()
