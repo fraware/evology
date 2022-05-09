@@ -11,9 +11,9 @@ from deap import tools
 from deap import gp
 
 import matplotlib.pyplot as plt
-import networkx as nx
-import graphviz
-import pygraphviz as pgv
+# import networkx as nx
+# import graphviz
+# import pygraphviz as pgv
 from networkx.drawing.nx_agraph import graphviz_layout
 
 # in Conda prompt conda install -c alubbock pygraphviz run in admin mode
@@ -77,7 +77,7 @@ def main():
     hof = tools.HallOfFame(1)
 
     halloffame = hof
-    population = toolbox.population(n=300)
+    population = toolbox.population(n=10)
     cxpb = 0.5
     ngen = 40
     mutpb = 0.1
@@ -156,31 +156,21 @@ def main():
 pop, log, hof = main()
 bests = tools.selBest(pop, k=1)
 
-nodes, edges, labels = gp.graph(bests[0])
-graph = nx.Graph()
-graph.add_nodes_from(nodes)
-graph.add_edges_from(edges)
-pos = graphviz_layout(graph, prog="dot")  # run dot -c in conda prompt
-plt.figure(figsize=(7, 7))
-nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="w")
-nx.draw_networkx_edges(graph, pos)
-nx.draw_networkx_labels(graph, pos, labels)
-plt.axis("off")
-plt.show()
 
 
-def plot_graph(tree):
-    nodes, edges, labels = gp.graph(tree)
-    graph = nx.Graph()
-    graph.add_nodes_from(nodes)
-    graph.add_edges_from(edges)
-    pos = graphviz_layout(graph, prog="dot")  # run dot -c in conda prompt
-    plt.figure(figsize=(7, 7))
-    nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="w")
-    nx.draw_networkx_edges(graph, pos)
-    nx.draw_networkx_labels(graph, pos, labels)
-    plt.axis("off")
-    plt.show()
+
+# def plot_graph(tree):
+#     nodes, edges, labels = gp.graph(tree)
+#     graph = nx.Graph()
+#     graph.add_nodes_from(nodes)
+#     graph.add_edges_from(edges)
+#     pos = graphviz_layout(graph, prog="dot")  # run dot -c in conda prompt
+#     plt.figure(figsize=(7, 7))
+#     nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="w")
+#     nx.draw_networkx_edges(graph, pos)
+#     nx.draw_networkx_labels(graph, pos, labels)
+#     plt.axis("off")
+#     plt.show()
 
 
 # print("Pop")
@@ -190,3 +180,39 @@ def plot_graph(tree):
 
 print("Best ")
 print(bests[0])
+print(type(bests[0]))
+print(toolbox.compile(expr=bests[0]))
+
+def strategy(x):
+    return toolbox.compile(expr=bests[0])(x)
+
+import time
+print("Using strategy()")
+start_time = time.time()
+for i in range(1000):
+    a = strategy(0)
+print(a)
+print("--- %s seconds ---" % (time.time() - start_time))
+
+print("Using directly toolbox")
+start_time = time.time()
+for i in range(1000):
+    a = toolbox.compile(expr=bests[0])(0)
+print(a)
+print("--- %s seconds ---" % (time.time() - start_time))
+
+import networkx as nx
+import pydot
+from networkx.drawing.nx_pydot import graphviz_layout
+
+nodes, edges, labels = gp.graph(bests[0])
+graph = nx.Graph()
+graph.add_nodes_from(nodes)
+graph.add_edges_from(edges)
+pos = graphviz_layout(graph) # prog="twopi")  # run dot -c in conda prompt #"dot"
+plt.figure(figsize=(7, 7))
+nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="w")
+nx.draw_networkx_edges(graph, pos)
+nx.draw_networkx_labels(graph, pos, labels)
+plt.axis("off")
+plt.show()

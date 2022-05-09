@@ -1,22 +1,21 @@
-from creation import WealthReset
 from steps import *
 
-
 def main(
+    strategy,
     space,
-    solver,
+    #solver,
     wealth_coordinates,
     POPULATION_SIZE,
     MAX_GENERATIONS,
-    PROBA_SELECTION,
-    MUTATION_RATE,
+    #PROBA_SELECTION,
+    #MUTATION_RATE,
     tqdm_display,
     reset_wealth,
 ):
     # Initialisation
     generation, CurrentPrice, dividend, spoils = 0, InitialPrice, INITIAL_DIVIDEND, 0
     results = np.zeros((MAX_GENERATIONS - data.Barr, data.variables))
-    price_history, dividend_history, replace, volume, avg_phi = [], [], 0, 0.0, 0.0
+    price_history, dividend_history, replace, volume = [], [], 0, 0.0
 
     # Population creation
     pop, asset_supply = cr.CreatePop(POPULATION_SIZE, space, wealth_coordinates, CurrentPrice)
