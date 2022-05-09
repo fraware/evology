@@ -209,9 +209,9 @@ nodes, edges, labels = gp.graph(bests[0])
 graph = nx.Graph()
 graph.add_nodes_from(nodes)
 graph.add_edges_from(edges)
-pos = graphviz_layout(graph) # prog="twopi")  # run dot -c in conda prompt #"dot"
+pos = graphviz_layout(graph, prog = 'dot') # prog="twopi")  # run dot -c in conda prompt #"dot"
 plt.figure(figsize=(7, 7))
-nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="w")
+nx.draw_networkx_nodes(graph, pos, node_size=900, node_color="w", node_shape='o')
 nx.draw_networkx_edges(graph, pos)
 nx.draw_networkx_labels(graph, pos, labels)
 plt.axis("off")
