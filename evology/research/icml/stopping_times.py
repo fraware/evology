@@ -21,10 +21,10 @@ from main import main as evology
 
 
 startTime = time.time()
-TimeHorizon = 252 * 500
+TimeHorizon = 252 * 400
 obs = 10000
 reps = 10
-scale = 25 #increment = 1/scale
+scale = 15 #increment = 1/scale
 
 def job(coords):
     np.random.seed()
@@ -74,7 +74,7 @@ def job(coords):
 # Define the domains
 def GenerateCoords(reps, scale):
     param = []
-    for popsize in [100, 200, 300, 400, 500, 1000]:
+    for popsize in [100, 250, 500, 1000]:
         for (i, j, k) in simplex_iterator(scale):
             for _ in range(reps):
                 param.append([i / scale, j / scale, k / scale, popsize])
