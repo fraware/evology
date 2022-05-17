@@ -114,6 +114,10 @@ columns = [
     "IR_WShare",
     "BH_stocks",
     "IR_stocks",
+    # Substrategies variuance
+    "NT_Sub_Var",
+    "VI_Sub_Var",
+    "TF_Sub_Var"
 ]
 variables = len(columns) 
 
@@ -235,6 +239,13 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
     cdef double bh_stocks = NAN
     cdef double ir_stocks = NAN
 
+    cdef list NT_substrategies = []
+    cdef list VI_substrategies = []
+    cdef list TF_substrategies = []
+    cdef double NT_sub_var = NAN
+    cdef double VI_sub_var = NAN 
+    cdef double TF_sub_var = NAN
+
 
     for ind in pop:
         AvgAge += ind.age
@@ -291,6 +302,7 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
                 NTreturn += ind.DailyReturn
             NTflows += 0 #ind.investor_flow
             NT_process += ind.process
+            NT_substrategies.append(ind.strategy)
 
         elif ind.type == "vi":
             VIcount += 1
@@ -308,6 +320,7 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
                 VIreturn += ind.DailyReturn
             VIflows += 0 #ind.investor_flow
             VI_val += ind.val * ind.wealth
+            VI_substrategies.append(ind.strategy)
 
         elif ind.type == "tf":
             TFcount += 1
@@ -324,6 +337,7 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
             if ind.prev_wealth != 0:
                 TFreturn += ind.DailyReturn
             TFflows += 0 #ind.investor_flow
+            TF_substrategies.append(ind.strategy)
 
     if NTcount != 0:
         NTcash = NTcash / NTcount
@@ -399,6 +413,10 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
 
     nav_pct = nav_pct / len(pop)
 
+    NT_sub_var = np.var(NT_substrategies)
+    VI_sub_var = np.var(VI_substrategies)
+    TF_sub_var = np.var(TF_substrategies)
+
     ListOutput = [
         LongAssets,
         ShortAssets,
@@ -455,7 +473,10 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
         ir_return,
         ir_wshare,
         bh_stocks,
-        ir_stocks
+        ir_stocks,
+        NT_sub_var,
+        VI_sub_var,
+        TF_sub_var
     ]
 
     return ListOutput, sim_break
@@ -535,6 +556,8 @@ def record_results(
         arr += [ListOutput[51], ListOutput[52], ListOutput[53]]
         arr += [ListOutput[54], ListOutput[55]]
 
+        ''' substrat variance '''
+        arr += [ListOutput[56], ListOutput[57], ListOutput[58]]
 
         if len(arr) != len(results[current,:]):
             print(len(arr))
