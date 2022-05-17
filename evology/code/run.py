@@ -13,7 +13,7 @@ df, pop, av_stats = main(
     space = 'extended', # 'extended',
     wealth_coordinates=wealth_coordinates,
     POPULATION_SIZE = 200,
-    MAX_GENERATIONS = 100 * 252, #20000, #1000 * 252,
+    MAX_GENERATIONS = 50 * 252, #20000, #1000 * 252,
     tqdm_display=False,
     reset_wealth=False,
 )

@@ -21,26 +21,30 @@ from main import main as evology
 
 
 startTime = time.time()
-TimeHorizon = 252 * 400
-PopulationSize = 1000
+TimeHorizon = 10000 #252 * 400 #TBD
+PopulationSize = 100# 1000 #TBD
 obs = 10000
-reps = 10 
-scale = 30 # increment = 1/scale
+reps = 1 #10  #TBD
+scale = 3 #30
 
 def job(coords):
     np.random.seed()
     try:
-        df, pop = evology(
+        df, pop, stats = evology(
+            strateg = None,
             space="extended",
-            solver="linear",
-            wealth_coordinates=coords,
-            POPULATION_SIZE=PopulationSize,
-            MAX_GENERATIONS=TimeHorizon,
-            PROBA_SELECTION=0,
-            MUTATION_RATE=0,
+            wealth_coordinates = coords,
+            POPULATION_SIZE = PopulationSize,
+            MAX_GENERATIONS = TimeHorizon,
             tqdm_display=True,
             reset_wealth=False,
         )
+
+        df["Mispricing"] = (df["Mean_VI"] / df["Price"]) - 1
+        df["LogPriceReturns"] = np.log(df["Price"]/df["Price"].shift(1))
+
+        volatility = df["LogPriceReturns"].rolling(window=252).std()*np.sqrt(252)
+
         df_tail = df.tail(obs)
         result = [
             coords[0],
@@ -51,6 +55,9 @@ def job(coords):
             df_tail["WShare_VI"].mean(),
             df_tail["WShare_TF"].mean(),
 
+            df_tail["Mispricing"].mean(),
+            volatility,
+
             df_tail["NT_returns"].mean(),
             df_tail["VI_returns"].mean(),
             df_tail["TF_returns"].mean(),
@@ -59,13 +66,23 @@ def job(coords):
             df_tail["TF_returns"].std(),
 
             df_tail["DiffReturns"].mean(),
-            df["DiffReturns"].mean(),
 
             df["Gen"].iloc[-1],
 
             df_tail["Mean_NT"].mean(),
             df_tail["Mean_VI"].mean(),
             df_tail["Mean_TF"].mean(),
+
+            df_tail["NT_Sub_Var"].mean(),
+            df_tail["VI_Sub_Var"].mean(),
+            df_tail["TF_Sub_Var"].mean(),
+
+            df["NT_nav"].iloc[-1] / df["NT_nav"].iloc[0], 
+            df["VI_nav"].iloc[-1] / df["VI_nav"].iloc[0], 
+            df["TF_nav"].iloc[-1] / df["TF_nav"].iloc[0], 
+            df["BH_wealth"].iloc[-1] / df["BH_wealth"].iloc[0], 
+            df["IR_wealth"].iloc[-1] / df["IR_wealth"].iloc[0] 
+            
         ]
         return result
     except Exception as e:
@@ -73,7 +90,7 @@ def job(coords):
         # traceback.print_stack()
         print("Failed run" + str(coords) + str(e))
         result = [coords[0], coords[1], coords[2]]
-        for _ in range(12):
+        for _ in range(24):
             result.append(np.nan)
         return result
 
@@ -109,21 +126,32 @@ if __name__ == "__main__":
     df["WS_VI_final"] = data[:, 4]
     df["WS_TF_final"] = data[:, 5]
 
-    df["NT_returns_final"] = data[:, 6]
-    df["VI_returns_final"] = data[:, 7]
-    df["TF_returns_final"] = data[:, 8]
-    df["NT_returns_final_std"] = data[:, 9]
-    df["VI_returns_final_std"] = data[:, 10]
-    df["TF_returns_final_std"] = data[:, 11]
+    df["Mispricing"] = data[:, 6]
+    df["Volatility"] = data[:, 7]
 
-    df["DiffReturns"] = data[:, 12]
-    df["AvgDiffReturns"] = data[:, 13]
+    df["NT_returns_final"] = data[:, 8]
+    df["VI_returns_final"] = data[:, 9]
+    df["TF_returns_final"] = data[:, 10]
+    df["NT_returns_final_std"] = data[:, 11]
+    df["VI_returns_final_std"] = data[:, 12]
+    df["TF_returns_final_std"] = data[:, 13]
 
-    df["Gen"] = data[:, 14]
+    df["DiffReturns"] = data[:, 14]
+    df["Gen"] = data[:, 15]
 
-    df["Mean_NT"] = data[:, 15]
-    df["Mean_VI"] = data[:, 16]
-    df["Mean_TF"] = data[:, 17]
+    df["Mean_NT"] = data[:, 16]
+    df["Mean_VI"] = data[:, 17]
+    df["Mean_TF"] = data[:, 18]
+
+    df["Var_NT"] = data[:, 19]
+    df["Var_VI"] = data[:, 20]
+    df["Var_TF"] = data[:, 21]
+
+    df["Multiplier_NT"] = data[:, 22]
+    df["Multiplier_VI"] = data[:, 23]
+    df["Multiplier_TF"] = data[:, 24]
+    df["Multiplier_BH"] = data[:, 25]
+    df["Multiplier_IR"] = data[:, 26]
 
     print(df)
 
