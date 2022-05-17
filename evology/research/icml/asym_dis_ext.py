@@ -1,6 +1,7 @@
 # Imports
 import numpy as np
 import pandas as pd
+from math import isnan
 import sys
 import tqdm
 # import warnings
@@ -21,17 +22,17 @@ from main import main as evology
 
 
 startTime = time.time()
-TimeHorizon = 10000 #252 * 400 #TBD
+TimeHorizon = 15000 #252 * 400 #TBD
 PopulationSize = 100# 1000 #TBD
 obs = 10000
-reps = 1 #10  #TBD
-scale = 3 #30
+reps = 10  #TBD
+scale = 30
 
 def job(coords):
     np.random.seed()
     try:
         df, pop, stats = evology(
-            strateg = None,
+            strategy = None,
             space="extended",
             wealth_coordinates = coords,
             POPULATION_SIZE = PopulationSize,
@@ -40,10 +41,37 @@ def job(coords):
             reset_wealth=False,
         )
 
-        df["Mispricing"] = (df["Mean_VI"] / df["Price"]) - 1
-        df["LogPriceReturns"] = np.log(df["Price"]/df["Price"].shift(1))
+        
 
-        volatility = df["LogPriceReturns"].rolling(window=252).std()*np.sqrt(252)
+        if df["Gen"].iloc[-1] >= 252:
+            df["LogPriceReturns"] = np.log(df["Price"]/df["Price"].shift(1))
+            df["Volatility"] = df["LogPriceReturns"].rolling(window=252).std()*np.sqrt(252)
+            volatility = df["Volatility"].mean()
+
+            df["Mispricing"] = (df["Mean_VI"] / df["Price"]) - 1
+            mispricing = df["Mispricing"].mean()
+        else:
+            volatility = np.nan
+            mispricing = np.nan
+
+
+        if df["NT_nav"].iloc[0] != 0 and isnan(df["NT_nav"].iloc[0]) == False:
+            multi_NT = df["NT_nav"].iloc[-1] / df["NT_nav"].iloc[0]
+        else:
+            multi_NT = 0.0
+
+        if df["VI_nav"].iloc[0] != 0 and isnan(df["VI_nav"].iloc[0]) == False:
+            multi_VI = df["VI_nav"].iloc[-1] / df["VI_nav"].iloc[0]
+        else:
+            multi_VI = 0.0
+
+        if df["TF_nav"].iloc[0] != 0 and isnan(df["TF_nav"].iloc[0]) == False:
+            multi_TF = df["TF_nav"].iloc[-1] / df["TF_nav"].iloc[0]
+        else:
+            multi_TF = 0.0
+
+        multi_BH = df["BH_wealth"].iloc[-1] / df["BH_wealth"].iloc[0]
+        multi_IR = df["IR_wealth"].iloc[-1] / df["IR_wealth"].iloc[0] 
 
         df_tail = df.tail(obs)
         result = [
@@ -55,7 +83,7 @@ def job(coords):
             df_tail["WShare_VI"].mean(),
             df_tail["WShare_TF"].mean(),
 
-            df_tail["Mispricing"].mean(),
+            mispricing,
             volatility,
 
             df_tail["NT_returns"].mean(),
@@ -77,11 +105,13 @@ def job(coords):
             df_tail["VI_Sub_Var"].mean(),
             df_tail["TF_Sub_Var"].mean(),
 
-            df["NT_nav"].iloc[-1] / df["NT_nav"].iloc[0], 
-            df["VI_nav"].iloc[-1] / df["VI_nav"].iloc[0], 
-            df["TF_nav"].iloc[-1] / df["TF_nav"].iloc[0], 
-            df["BH_wealth"].iloc[-1] / df["BH_wealth"].iloc[0], 
-            df["IR_wealth"].iloc[-1] / df["IR_wealth"].iloc[0] 
+            multi_NT,
+            multi_VI,
+            multi_TF,
+            multi_BH,
+            multi_IR
+
+
             
         ]
         return result

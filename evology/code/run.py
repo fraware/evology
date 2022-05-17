@@ -22,3 +22,16 @@ print(df)
 df.to_csv("rundata/run_data.csv")
 
 print(av_stats)
+
+df["Mispricing"] = (df["Mean_VI"] / df["Price"]) - 1
+df["LogPriceReturns"] = np.log(df["Price"]/df["Price"].shift(1))
+
+df["Volatility"] = df["LogPriceReturns"].rolling(window=252).std()*np.sqrt(252)
+volatiltiy = df["Volatility"].mean()
+print(volatiltiy)
+
+print([df["NT_nav"].iloc[-1] / df["NT_nav"].iloc[0],
+            df["VI_nav"].iloc[-1] / df["VI_nav"].iloc[0], 
+            df["TF_nav"].iloc[-1] / df["TF_nav"].iloc[0], 
+            df["BH_wealth"].iloc[-1] / df["BH_wealth"].iloc[0], 
+            df["IR_wealth"].iloc[-1] / df["IR_wealth"].iloc[0] ])
