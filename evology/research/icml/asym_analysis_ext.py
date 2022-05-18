@@ -1,3 +1,4 @@
+# %%
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -20,7 +21,7 @@ data_group = data.groupby(
     ["WS_VI_initial", "WS_TF_initial", "WS_NT_initial"], as_index=False
 ).mean()
 
-
+# %%
 def generate_random_heatmap_data(scale):
     tf_ws = dict()
     vi_ws = dict()
@@ -92,7 +93,7 @@ tax._redraw_labels()
 plt.tight_layout()
 plt.savefig('figures/WS_TF_ext.png',dpi=300)
 #plt.show()
-
+# %%
 
 cmap = plt.get_cmap('inferno', 3)
 cmap = ListedColormap(['red', 'grey', 'blue'])
@@ -113,7 +114,7 @@ plt.tight_layout()
 plt.savefig('figures/basins_ext.png',dpi=300)
 #plt.show()
 
-
+# %%
 def gen_data(scale):
     gens = dict()
     l = 0
@@ -144,7 +145,7 @@ plt.tight_layout()
 plt.savefig('figures/generations_ext.png',dpi=300)
 #plt.show()
 
-
+# %%
 # Difference in returns
 
 # Result: regions with early extinctions correspond to high difference in returns; 
@@ -153,8 +154,8 @@ def gen_data(scale):
     gens = dict()
     l = 0
     for (i, j, k) in simplex_iterator(scale):
-        gens[(i, j)] = data_group.loc[l, "AvgDiffReturns"]
-        if data_group.loc[l, "AvgDiffReturns"] > 10:
+        gens[(i, j)] = data_group.loc[l, "DiffReturns"]
+        if data_group.loc[l, "DiffReturns"] > 10:
             gens[(i, j)] = 10
         l += 1
     return gens
@@ -175,7 +176,7 @@ tax._redraw_labels()
 plt.tight_layout()
 plt.savefig('figures/diff_returns_ext.png',dpi=300)
 #plt.show()
-
+'''
 def gen_data(scale):
     gens = dict()
     l = 0
@@ -202,7 +203,9 @@ tax._redraw_labels()
 plt.tight_layout()
 plt.savefig('figures/diff_returns_ext2.png',dpi=300)
 #plt.show()
+'''
 
+# %%
 
 def PathPoints(data):
     points = []
@@ -238,6 +241,7 @@ plt.savefig('figures/scatterplot_ext.png',dpi=300)
 
 
 """ density """
+# %%
 
 def PathPoints(df):
     points = []
@@ -273,7 +277,7 @@ density = DensityData(points, scale)
 
 figure, tax = ternary.figure(scale=scale)
 figure.set_size_inches(10, 8)
-tax.heatmap(density, style="triangular", cmap="Reds", vmin=0, vmax=0.15)
+tax.heatmap(density, style="triangular", cmap="Reds")
 tax.boundary()
 tax.clear_matplotlib_ticks()
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -293,7 +297,7 @@ plt.savefig("figures/density_ext.png", dpi=300)
 
 #### SUBSTRATEGIES
 
-
+# %%
 def gen_data(scale):
     tf = dict()
     vi = dict()
