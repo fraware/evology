@@ -227,13 +227,13 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
     cdef double WSTF_ 
     cdef int sim_break
 
-    cdef double av_wealth = NAN
+    cdef double av_wealth = 0.0
     cdef double av_return = NAN
     cdef double av_wshare = 0.0
-    cdef double bh_wealth = NAN
+    cdef double bh_wealth = 0.0
     cdef double bh_return = NAN
     cdef double bh_wshare = 0.0
-    cdef double ir_wealth = NAN
+    cdef double ir_wealth = 0.0
     cdef double ir_return = NAN
     cdef double ir_wshare = 0.0
     cdef double bh_stocks = NAN
@@ -280,6 +280,9 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
         
         if ind.type == "ir":
             ir_wealth = ind.wealth
+            if isnan(ir_wealth) == True:
+                print([ind.cash, ind.asset, ind.loan, ind.wealth])
+                raise ValueError('Nan ir wealth')
             if ind.prev_wealth != 0:
                 ir_return = ind.DailyReturn
             else:
@@ -393,6 +396,14 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
         av_wshare = 0.0
     bh_wshare = bh_wealth / (WSNT + WSVI + WSTF)
     ir_wshare = ir_wealth / (WSNT + WSVI + WSTF)
+    if isnan(bh_wshare) == True:
+        raise ValueError('NAN bh wshare')
+    if isnan(ir_wshare) == True:
+        print(ir_wshare)
+        print(ir_wealth)
+        print(WSNT + WSVI + WSTF)
+        print([ind.cash, ind.asset, ind.loan, ind.wealth, price])
+        raise ValueError('NAN ir wshare')
     WSNT = WSNT_
     WSVI = WSVI_
     WSTF = WSTF_
@@ -414,9 +425,9 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
 
     nav_pct = nav_pct / len(pop)
 
-    NT_sub_var = np.var(NT_substrategies)
-    VI_sub_var = np.var(VI_substrategies)
-    TF_sub_var = np.var(TF_substrategies)
+    #NT_sub_var = np.var(NT_substrategies) #creates errors
+    #VI_sub_var = np.var(VI_substrategies) #creates errors
+    #TF_sub_var = np.var(TF_substrategies) #creates errors
 
     ListOutput = [
         LongAssets,

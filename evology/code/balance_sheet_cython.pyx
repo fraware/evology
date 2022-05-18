@@ -181,6 +181,9 @@ cpdef UpdateFullWealth(list pop, double current_price):
     cdef int replace = 0
     for ind in pop:
         ind.wealth = ind.cash + ind.asset * current_price - ind.loan
+        if isnan(ind.wealth) == True:
+            print([ind.cash, ind.asset, current_price, ind.loan, ind.wealth])
+            raise ValueError('ind.wealth is nan')
         ind.prev_wealth = ind.wealth
         if ind.wealth < 0:
             replace = 1  
@@ -252,6 +255,10 @@ cpdef CalculateEDV(list pop, double current_price):
 
         ind.edv = a * b - c
         mismatch += ind.edv
+
+        if isnan(ind.edv) == True:
+            print(ind.type)
+            raise TypeError('NAN EDV')
 
     return pop, mismatch
 

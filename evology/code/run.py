@@ -9,7 +9,7 @@ print(wealth_coordinates)
 
 def func(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, d, v, g, r):
     return 0
-df, pop, av_stats = main(
+df, pop = main(
     strategy = None, #func, #None, #func,
     space = 'extended', # 'extended',
     wealth_coordinates=wealth_coordinates,
@@ -22,17 +22,42 @@ df, pop, av_stats = main(
 print(df)
 df.to_csv("rundata/run_data.csv")
 
-print(av_stats)
-
+# print(av_stats)
+'''
 df["Mispricing"] = (df["Mean_VI"] / df["Price"]) - 1
 df["LogPriceReturns"] = np.log(df["Price"]/df["Price"].shift(1))
-
 df["Volatility"] = df["LogPriceReturns"].rolling(window=252).std()*np.sqrt(252)
-volatiltiy = df["Volatility"].mean()
-print(volatiltiy)
+volatility = df["Volatility"].mean()
+if df["NT_nav"].iloc[0] != 0 and math.isnan(df["NT_nav"].iloc[0]) == False and math.isnan(df["NT_nav"].iloc[-1]) == False:
+    multi_NT = df["NT_nav"].iloc[-1] / df["NT_nav"].iloc[0]
+if df["NT_nav"].iloc[-1] == 0 and df["NT_nav"].iloc[0] > 0 :
+    multi_NT = -1.
+else:
+    multi_NT = 0.0
+if df["VI_nav"].iloc[0] != 0 and math.isnan(df["VI_nav"].iloc[0]) == False and math.isnan(df["VI_nav"].iloc[-1]) == False:
+    multi_VI = df["VI_nav"].iloc[-1] / df["VI_nav"].iloc[0]
+if df["VI_nav"].iloc[-1] == 0 and df["VI_nav"].iloc[0] > 0 :
+    multi_VI = -1.
+else:
+    multi_VI = 0.0
+if df["TF_nav"].iloc[0] != 0 and math.isnan(df["TF_nav"].iloc[0]) == False and math.isnan(df["TF_nav"].iloc[-1]) == False:
+    multi_TF = df["TF_nav"].iloc[-1] / df["TF_nav"].iloc[0]
+if df["TF_nav"].iloc[-1] == 0 and df["TF_nav"].iloc[0] > 0 :
+    multi_TF = -1.
+else:
+    multi_TF = 0.0
+if math.isnan(df["BH_wealth"].iloc[-1]) == False:
+    multi_BH = df["BH_wealth"].iloc[-1] / df["BH_wealth"].iloc[0]
+if df["BH_wealth"].iloc[-1] == 0 and df["BH_wealth"].iloc[0] > 0 :
+    multi_BH = -1.
+else:
+    multi_BH = 0.0
+if math.isnan(df["IR_wealth"].iloc[-1]) == False:
+    multi_IR = df["IR_wealth"].iloc[-1] / df["IR_wealth"].iloc[0] 
+if df["IR_wealth"].iloc[-1] == 0 and df["IR_wealth"].iloc[0] > 0 :
+    multi_IR = -1.
+else:
+    multi_IR = 0.0
 
-print([df["NT_nav"].iloc[-1] / df["NT_nav"].iloc[0],
-            df["VI_nav"].iloc[-1] / df["VI_nav"].iloc[0], 
-            df["TF_nav"].iloc[-1] / df["TF_nav"].iloc[0], 
-            df["BH_wealth"].iloc[-1] / df["BH_wealth"].iloc[0], 
-            df["IR_wealth"].iloc[-1] / df["IR_wealth"].iloc[0] ])
+print([volatility, multi_NT, multi_VI, multi_TF, multi_BH, multi_IR])
+'''
