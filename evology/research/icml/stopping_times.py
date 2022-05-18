@@ -21,7 +21,7 @@ from main import main as evology
 
 
 startTime = time.time()
-TimeHorizon = 50_000,
+TimeHorizon = 50_000
 obs = 10000
 reps = 10
 scale = 15 #increment = 1/scale
