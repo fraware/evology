@@ -17,22 +17,19 @@ if sys.platform == "linux":
 from main import main as evology
 
 startTime = time.time()
-TimeHorizon = 252 * 10
-PopulationSize = 1000
+TimeHorizon = 252 * 20
+PopulationSize = 100
 reps = 10 
-scale = 25 # increment = 1/scale
+scale = 30 # increment = 1/scale
 
 def job(coords):
     np.random.seed()
     try:
         df, pop = evology(
             space="extended",
-            solver="linear",
             wealth_coordinates=coords,
             POPULATION_SIZE=PopulationSize,
             MAX_GENERATIONS=TimeHorizon,
-            PROBA_SELECTION=0,
-            MUTATION_RATE=0,
             tqdm_display=True,
             reset_wealth=True,
         )
