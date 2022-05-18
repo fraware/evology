@@ -22,7 +22,7 @@ from main import main as evology
 
 
 startTime = time.time()
-TimeHorizon = 15000 #252 * 400 #TBD
+TimeHorizon = 40_000 #252 * 400 #TBD
 PopulationSize = 100# 1000 #TBD
 obs = 10000
 reps = 10  #TBD
