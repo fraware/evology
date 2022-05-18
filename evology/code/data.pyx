@@ -406,7 +406,8 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
 
     AvgAge = AvgAge / len(pop)
 
-    if WSNT == 0.0 or WSVI == 0.0 or WSTF == 0.0:
+    # if either TF is only left, or VI is only left, or NT is only left
+    if (WSNT == 0.0 and WSVI == 0.0) or (WSNT == 0.0 and WSTF == 0.0) or (WSVI == 0.0 and WSTF == 0.0):
         sim_break = 1
     else:
         sim_break = 0

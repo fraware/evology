@@ -1,9 +1,10 @@
 from main import *
 from parameters import *
 
-# wealth_coordinates = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
+wealth_coordinates = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
 np.random.seed(8)
-wealth_coordinates = [1/3,1/3,1/3]
+# wealth_coordinates = [1/3,1/3,1/3]
+wealth_coordinates = [0.35980457948740263, 0.1503673717372929, 0.48982804877530445]
 print(wealth_coordinates)
 
 def func(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, d, v, g, r):
@@ -12,8 +13,8 @@ df, pop, av_stats = main(
     strategy = None, #func, #None, #func,
     space = 'extended', # 'extended',
     wealth_coordinates=wealth_coordinates,
-    POPULATION_SIZE = 200,
-    MAX_GENERATIONS = 50 * 252, #20000, #1000 * 252,
+    POPULATION_SIZE = 100,
+    MAX_GENERATIONS = 40000, #50 * 252, #20000, #1000 * 252,
     tqdm_display=False,
     reset_wealth=False,
 )

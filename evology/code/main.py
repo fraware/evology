@@ -22,9 +22,7 @@ def main(
         ):
     #for generation in range(MAX_GENERATIONS):
 
-        if CurrentPrice >= 1_000_000:
-            warnings.warn('Simulation break: price above 1M.')
-            break
+
 
         # Population reset
         pop = cr.WealthReset(pop, space, wealth_coordinates, generation, reset_wealth, CurrentPrice, strategy)
@@ -138,7 +136,24 @@ def main(
         )
 
         if sim_break == 1 and reset_wealth != True:
-            warnings.warn('Simulation break: one of the 3 strategy types is extinct.')
+           warnings.warn('Only one base strategy left.')
+           break
+
+        if CurrentPrice >= 1_000_000:
+            warnings.warn('Simulation break: price above 1M.' + str(generation))
+            # X = np.linspace(0.01, 500, 1000)
+            # Y = [ed_functions(x) for x in X]
+            # plt.plot(X, Y)
+            # plt.ylim(0, 10000)
+            # plt.show()
+
+            # plt.plot(X, Y)
+            # plt.show()
+
+            # X = np.linspace(0, 100_000_000, 10000)
+            # Y = [ed_functions(x) for x in X]
+            # plt.plot(X, Y)
+            # plt.show()
             break
 
     
