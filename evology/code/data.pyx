@@ -418,7 +418,7 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
     AvgAge = AvgAge / len(pop)
 
     # if either TF is only left, or VI is only left, or NT is only left
-    if (WSNT + WSVI <= 0.0001) or (WSNT + WSTF <= 0.0001) or (WSVI + WSTF <= 0.0001):
+    if (WSNT + WSVI <= 0.001) or (WSNT + WSTF <= 0.001) or (WSVI + WSTF <= 0.001):
         sim_break = 1
     else:
         sim_break = 0
