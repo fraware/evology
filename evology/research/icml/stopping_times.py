@@ -21,7 +21,7 @@ from main import main as evology
 
 
 startTime = time.time()
-TimeHorizon = 252 * 400
+TimeHorizon = 50_000,
 obs = 10000
 reps = 10
 scale = 15 #increment = 1/scale
@@ -74,10 +74,11 @@ def job(coords):
 # Define the domains
 def GenerateCoords(reps, scale):
     param = []
-    for popsize in [100, 250, 500, 1000]:
-        for (i, j, k) in simplex_iterator(scale):
-            for _ in range(reps):
-                param.append([i / scale, j / scale, k / scale, popsize])
+    popsize = 100
+    #for popsize in [100, 250, 500]:
+    for (i, j, k) in simplex_iterator(scale):
+        for _ in range(reps):
+            param.append([i / scale, j / scale, k / scale, popsize])
     return param
 param = GenerateCoords(reps, scale)
 print(len(param))
