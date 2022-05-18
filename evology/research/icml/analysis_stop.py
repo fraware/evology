@@ -17,6 +17,7 @@ fontsize = 18
 data = pd.read_csv(
     "/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/stop_time.csv"
 )
+del data['PopSize']
 
 # %%
 data.hist("StopTime")

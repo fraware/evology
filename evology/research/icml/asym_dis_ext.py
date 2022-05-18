@@ -25,13 +25,13 @@ startTime = time.time()
 TimeHorizon = 40_000 #252 * 400 #TBD
 PopulationSize = 100# 1000 #TBD
 obs = 10000
-reps = 1 #10  #TBD
-scale = 5# #30
+reps = 10  #TBD
+scale = 30
 
 def job(coords):
     np.random.seed()
     try:
-        df, pop, stats = evology(
+        df, pop = evology(
             strategy = None,
             space="extended",
             wealth_coordinates = coords,
