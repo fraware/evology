@@ -26,7 +26,7 @@ def job(coords):
     np.random.seed()
     try:
         df, pop = evology(
-            strateg = None,
+            strategy = None,
             space="extended",
             wealth_coordinates=coords,
             POPULATION_SIZE=PopulationSize,
