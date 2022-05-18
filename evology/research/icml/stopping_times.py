@@ -29,7 +29,7 @@ scale = 15 #increment = 1/scale
 def job(coords):
     np.random.seed()
     try:
-        df, pop, stats = evology(
+        df, pop = evology(
             strategy = None,
             space = "extended",
             wealth_coordinates = [coords[0], coords[1], coords[2]],
