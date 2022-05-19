@@ -119,7 +119,10 @@ def gen_data(scale):
     gens = dict()
     l = 0
     for (i, j, k) in simplex_iterator(scale):
+        # if data_group.loc[l, "Gen"] < data_group.loc[l, "StopTime"]:
         gens[(i, j)] = data_group.loc[l, "Gen"]
+        # else:
+            # gens[(i, j)] = data_group.loc[l, "StopTime"]
         l += 1
     return gens
 
