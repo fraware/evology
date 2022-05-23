@@ -17,9 +17,9 @@ if sys.platform == "linux":
 from main import main as evology
 
 startTime = time.time()
-TimeHorizon = 252 * 20
+TimeHorizon = 252 * 30
 PopulationSize = 100
-reps = 20 
+reps = 10
 scale = 30 #30 # increment = 1/scale
 
 def job(coords):
