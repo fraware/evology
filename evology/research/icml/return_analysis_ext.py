@@ -1,3 +1,4 @@
+# %%
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.ndimage.filters import gaussian_filter
@@ -8,12 +9,18 @@ from math import isnan
 from ternary.helpers import simplex_iterator
 data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/data_return_landscape_ext.csv")
 
-data = data[data["Gen"] > 7000]
+# data = data[data["Gen"] > 7000]
 
 sns.set(font_scale=1)
 fontsize = 18
-scale = 25 #from the experiment.py
+scale = 30 #from the experiment.py
 
+''' Another ternary bug is that, when the scale for
+the plots (as here) is not equal to the scale for the experiment,
+e.g. lower, strange geometric trails appear in the plot;
+the program does not show any error, but the results are broken.'''
+
+# %%
 # We want a simplex plot of strategy returns. 
 threshold = 1
 data_group = data.groupby(['WS_VI', 'WS_TF', 'WS_NT'], as_index=False).mean()
@@ -27,7 +34,11 @@ def generate_random_heatmap_data(scale):
         nt_ws[(i,j)] = data_group.loc[l,"NT_returns_mean"] 
         vi_ws[(i,j)] = data_group.loc[l,"VI_returns_mean"] 
         tf_ws[(i,j)] = data_group.loc[l,"TF_returns_mean"] 
-        l += 1
+
+        if data_group.loc[l, "Gen"] < 7000:
+            nt_ws[(i,j)], vi_ws[(i,j)], tf_ws[(i,j)] = 0,0,0
+        
+        l += 1 
     return nt_ws, vi_ws, tf_ws
 
 nt_r, vi_r, tf_r = generate_random_heatmap_data(scale)
@@ -84,7 +95,7 @@ plt.savefig('figures/TF_returns_ext.png',dpi=300)
 #plt.show()
 
 
-
+# %%
 """ return to size ratios """
 
 
