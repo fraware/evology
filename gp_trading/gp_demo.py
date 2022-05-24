@@ -83,6 +83,11 @@ def main_eval(func):
                     print([i, item])
                     print(df["AV_return"].iloc[i])
                     break
+                if item == 0:
+                    print([i, item])
+                    print(np.log(item))
+                    break
+                    
             raise ValueError('Nan fitness')
         if df["AV_WShare"].iloc[0] >= 10:
             warnings.warn('AV wshare above 10%')
