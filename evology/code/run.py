@@ -13,11 +13,11 @@ print(wealth_coordinates)
 def func(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, d, v, g, r):
     return 0
 df, pop = main(
-    strategy = None, #func, #None, #func,
+    strategy = func, #None, #func,
     space = 'extended', # 'extended',
     wealth_coordinates = wealth_coordinates,
-    POPULATION_SIZE = 1000,
-    MAX_GENERATIONS = 10000, #50 * 252, #20000, #1000 * 252,
+    POPULATION_SIZE = 100,
+    MAX_GENERATIONS = 10, #50 * 252, #20000, #1000 * 252,
     seed = seed,
     tqdm_display = False,
     reset_wealth = False,
@@ -27,6 +27,8 @@ print(df)
 df.to_csv("rundata/run_data.csv")
 print(df["WShare_NT"].iloc[-1], df["WShare_VI"].iloc[-1], df["WShare_TF"].iloc[-1])
 
+print(df["AV_return"])
+print((stats.gmean(df["AV_return"].add(1)) - 1) / df["AV_return"].std())
 # print(av_stats)
 '''
 df["Mispricing"] = (df["Mean_VI"] / df["Price"]) - 1

@@ -32,9 +32,9 @@ def generate_random_heatmap_data(scale):
         nt_ws[(i, j)] = data_group.loc[l, "WS_NT_final"]
         vi_ws[(i, j)] = data_group.loc[l, "WS_VI_final"]
         tf_ws[(i, j)] = data_group.loc[l, "WS_TF_final"]
-        if data_group.loc[l, "WS_TF_final"] >= 90:
+        if data_group.loc[l, "WS_TF_final"] >= 50:
             attractor[(i, j)] = 0
-        elif data_group.loc[l, "WS_TF_final"] > 10:
+        elif data_group.loc[l, "WS_TF_final"] > 50:
             attractor[(i, j)] = 1
         else:
             attractor[(i, j)] = 2
@@ -98,7 +98,7 @@ plt.savefig('figures/WS_TF_ext.png',dpi=300)
 cmap = plt.get_cmap('inferno', 3)
 cmap = ListedColormap(['red', 'grey', 'blue'])
 figure, tax = ternary.figure(scale=scale)
-figure.set_size_inches(10, 8)
+figure.set_size_inches(8, 8)
 tax.heatmap(attractor, style='triangular',cmap=cmap, colorbar=False)
 tax.boundary()
 tax.clear_matplotlib_ticks()

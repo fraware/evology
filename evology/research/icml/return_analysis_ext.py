@@ -8,6 +8,7 @@ from math import isnan
 from ternary.helpers import simplex_iterator
 data = pd.read_csv("/Users/aymericvie/Documents/GitHub/evology/evology/research/icml/data/data_return_landscape_ext.csv")
 
+data = data[data["Gen"] > 7000]
 
 sns.set(font_scale=1)
 fontsize = 18

@@ -1,14 +1,15 @@
 import operator
 import math
-import random
-import numpy 
+import numpy as np
 from deap import algorithms
 from deap.algorithms import varAnd
 from deap import base
 from deap import creator
 from deap import tools
 from deap import gp
-
+import warnings
+import scipy
+from math import isnan
 import sys
 sys.path.append('/Users/aymericvie/Documents/GitHub/evology/evology/code')
 from main import main as evology
@@ -64,11 +65,28 @@ toolbox.register("compile", gp.compile, pset=pset)
 def main_eval(func):
     # takes a trading function and evaluates it
     fitness = 0
-    for _ in range(3): # Number of repetitions of the evology simulation
-        numpy.random.seed()
-        df, pop, av_stats = evology(func, 'extended', [1/3, 1/3, 1/3], 500, 500, True, False)
-        fitness += av_stats[0]
-    return fitness / 3
+    for _ in range(1): # Number of repetitions of the evology simulation
+        df, pop, = evology(func, 'extended', [1/3, 1/3, 1/3], 100, 252 * 5, np.random.seed(), True, False)
+        # fitness += np.nanmean(df["AV_return"])
+        df["AV_return_1"] = df["AV_return"].add(1)
+        fitness = ((scipy.stats.gmean(df["AV_return_1"])) - 1) / df["AV_return"].std()
+        if isnan(fitness) == True:
+            print(fitness)
+            print(df["AV_return"])
+            print(df["AV_return_1"])
+            print(df["AV_return"].std())
+            for i, item in enumerate(df["AV_return_1"]):
+                if item < 0:
+                    print([i, item])
+                    break
+                if isnan(item) == True:
+                    print([i, item])
+                    print(df["AV_return"].iloc[i])
+                    break
+            raise ValueError('Nan fitness')
+        if df["AV_WShare"].iloc[0] >= 10:
+            warnings.warn('AV wshare above 10%')
+    return fitness 
 
 def evalSymbReg(individual):
     # Transform the tree expression in a callable function
@@ -87,17 +105,17 @@ toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_v
 toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=5))
 
 def round_mean(x):
-    return round(numpy.mean(x), 2)
+    return round(np.mean(x), 2)
 def round_std(x):
-    return round(numpy.std(x), 2)
+    return round(np.std(x), 2)
 def round_min(x):
-    return round(numpy.min(x), 2)
+    return round(np.min(x), 2)
 def round_max(x):
-    return round(numpy.max(x), 2)
+    return round(np.max(x), 2)
 
 def main():
     # https://github.com/DEAP/deap/blob/eba726cf2ee64acba221213ccacaa74f63cfd174/deap/algorithms.py
-    random.seed(8)
+    np.random.seed(8)
 
     population = toolbox.population(n=50)
     halloffame = tools.HallOfFame(1)
@@ -188,6 +206,7 @@ if __name__ == "__main__":
     lns = line1 + line2
     labs = [l.get_label() for l in lns]
     ax1.legend(lns, labs, loc="center right")
+    plt.savefig('fitness_size.png', dpi=300)
     plt.show()
 
     # Show best function
@@ -204,4 +223,5 @@ if __name__ == "__main__":
     nx.draw_networkx_edges(graph, pos)
     nx.draw_networkx_labels(graph, pos, labels)
     plt.axis("off")
+    plt.savefig('best_strategy.png', dpi=300)
     plt.show()

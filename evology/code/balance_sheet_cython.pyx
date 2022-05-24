@@ -27,7 +27,7 @@ cpdef UpdateWealthProfitAge(list pop, double current_price):
         ind.profit_internal = ind.wealth - ind.prev_wealth
         # Compute return
         if ind.prev_wealth != 0:
-            ind.DailyReturn = (ind.wealth - ind.prev_wealth) / ind.prev_wealth
+            ind.DailyReturn = max((ind.wealth - ind.prev_wealth) / ind.prev_wealth, -1)
         else:
             ind.DailyReturn = NAN
         # Update age

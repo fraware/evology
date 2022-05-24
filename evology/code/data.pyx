@@ -228,13 +228,13 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
     cdef int sim_break
 
     cdef double av_wealth = 0.0
-    cdef double av_return = NAN
+    cdef double av_return = 0.0
     cdef double av_wshare = 0.0
     cdef double bh_wealth = 0.0
-    cdef double bh_return = NAN
+    cdef double bh_return = 0.0
     cdef double bh_wshare = 0.0
     cdef double ir_wealth = 0.0
-    cdef double ir_return = NAN
+    cdef double ir_return = 0.0
     cdef double ir_wshare = 0.0
     cdef double bh_stocks = NAN
     cdef double ir_stocks = NAN
@@ -267,7 +267,7 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
             if ind.prev_wealth != 0:
                 av_return = ind.DailyReturn
             else:
-                av_return = NAN
+                av_return = 0.0
 
         if ind.type == "bh":
             bh_wealth = ind.wealth
@@ -414,7 +414,10 @@ def ResultsProcess(list pop, double spoils, double price, double generation):
         )
     if WSNT < 0 or WSNT < 0 or WSNT < 0 or av_wshare < 0:
         raise ValueError("Negative wealth share. " + str([WSNT, WSVI, WSTF, av_wshare]))
-
+    if isnan(av_wshare) == True:
+        print(av_wshare)
+        print(av_wealth)
+        raise RuntimeError('NAN av wshare')
     AvgAge = AvgAge / len(pop)
 
     # if either TF is only left, or VI is only left, or NT is only left

@@ -13,6 +13,9 @@ params = {"ytick.color" : "w",
 plt.rcParams.update(params)
 df.plot(x="Gen", y = ['Dividends'],
         kind="line", figsize=(15, 6))
-plt.savefig('/Users/aymericvie/Documents/GitHub/evology/evology/figures/validation/dividends.png')
+# plt.savefig('/Users/aymericvie/Documents/GitHub/evology/evology/figures/validation/dividends.png')
 plt.show()
+# %%
+print(df["NT_nav"].iloc[-1] / df["NT_nav"].iloc[0])
+
 # %%
