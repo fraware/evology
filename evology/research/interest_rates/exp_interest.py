@@ -24,7 +24,7 @@ from main import main as evology
 
 startTime = time.time()
 TimeHorizon = 100_000 
-PopulationSize = 1000
+PopulationSize = 500
 obs = 10000
 reps = 100
 coords = [0.1, 0.8, 0.1]
@@ -45,7 +45,7 @@ def job(param):
             reset_wealth=False,
         )
         # Compute mispricing
-        df["Mispricing"] = (df["Mean_VI"] / df["Price"]) - 1
+        df["Mispricing"] = abs((df["VI_val"] / df["Price"]) - 1)
         mispricing = df["Mispricing"].mean()
 
         # Compute volatility
@@ -59,6 +59,31 @@ def job(param):
             volatility = np.nan
             print('Failed to compute volatility: not enough generations.')
             
+        # Compute average duration of trends
+        movement_history = []
+        for i in range(len(df)):
+            if i > 1:
+                # Get the sign of this day movement
+                if df["Price"].iloc[i] - df["Price"].iloc[i-1] > 0:
+                    movement = 'up'
+                elif df["Price"].iloc[i] - df["Price"].iloc[i-1] < 0:
+                    movement = 'down'
+                movement_history.append(movement)
+
+        trend_durations = []
+        current_trade_duration = 0
+        for i in range(len(movement_history)):
+            if i > 1:
+                if movement_history[i] == movement_history[i-1]:
+                    current_trade_duration += 1
+                else:
+                    trend_durations.append(current_trade_duration)
+                    current_trade_duration = 0
+        avg_trend_duration = np.mean(trend_durations)
+            
+
+
+
         df_tail = df.tail(obs)
         result = [
             # Seed 
@@ -114,6 +139,10 @@ def job(param):
             df["Mean_NT"].std(),
             df["Mean_VI"].std(),
             df["Mean_TF"].std(),
+
+            # Other information
+            df["Price"].mean(),
+            avg_trend_duration,
         ]
         return result
     except Exception as e:
@@ -121,7 +150,7 @@ def job(param):
         # traceback.print_stack()
         print("Failed run" + str(param) + str(e))
         result = [param[0], param[1]]
-        for _ in range(34):
+        for _ in range(36):
             result.append(np.nan)
         return result
 
@@ -130,6 +159,8 @@ def job(param):
 randoms = np.random.randint(0, 100000, reps)
 param = []
 for seed in randoms:
+    param.append([-0.01, int(seed)])
+    param.append([0.00, int(seed)])
     param.append([0.01, int(seed)])
     param.append([0.02, int(seed)])
 print(len(param)) 
@@ -191,6 +222,9 @@ if __name__ == "__main__":
     df["Mean_NT_avg_std"] = data[:, 33]
     df["Mean_VI_avg_std"] = data[:, 34]
     df["Mean_TF_avg_std"] = data[:, 35]
+
+    df["Avg_Price"] = data[:, 36]
+    df["Avg_Trend_Duration"] = data[:, 37]
 
     print(df)
 
