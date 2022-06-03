@@ -26,7 +26,7 @@ startTime = time.time()
 TimeHorizon = 100_000 
 PopulationSize = 500
 obs = 10000
-reps = 100
+reps = 200
 coords = [0.1, 0.8, 0.1]
 
 
@@ -159,9 +159,10 @@ def job(param):
 randoms = np.random.randint(0, 100000, reps)
 param = []
 for seed in randoms:
-    param.append([-0.01, int(seed)])
     param.append([0.00, int(seed)])
+    param.append([0.005, int(seed)])
     param.append([0.01, int(seed)])
+    param.append([0.015, int(seed)])
     param.append([0.02, int(seed)])
 print(len(param)) 
 
