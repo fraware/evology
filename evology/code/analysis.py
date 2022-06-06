@@ -16,6 +16,31 @@ if sys.platform == "win32":
     )
 
 # %%
+df.plot(
+    x="Gen",
+    y=["NT_loans", "VI_loans", "TF_loans"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+df.plot(
+    x="Gen",
+    y=["NT_cash", "VI_cash", "TF_cash"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+df.plot(
+    x="Gen",
+    y=["NT_lending", "VI_lending", "TF_lending"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+# %%
 df["Dividends (x1,000)"] = 10000 * df["Dividends"]
 df["Process (x100)"] = 100 * df["NT_process"].add(1)
 df["VI_val_1000"] = df["VI_val"]
