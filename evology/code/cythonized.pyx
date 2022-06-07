@@ -1,7 +1,7 @@
 #cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 
 # See https://stackoverflow.com/questions/30564253/cython-boundscheck-true-faster-than-boundscheck-false
-from libc.math cimport tanh, log2, isnan
+from libc.math cimport tanh, log2, isnan, exp
 from cpython cimport list
 import numpy as np
 
@@ -15,21 +15,38 @@ cdef double SCALE_TF = parameters.SCALE_TF
 cdef double SCALE_VI = parameters.SCALE_VI
 cdef double SCALE_NT = parameters.SCALE_NT
 
+cpdef sigmoid(double x):
+    cdef double result 
+    result = 1. / (1. + exp(-x))
+    return result
+
 cdef double edf(Individual ind, double price):
     cdef int t = ind.type_as_int
-    cdef double corr = 0.1
+    cdef double corr = 0.0
     #cdef double VI_price = price_means[1]
     if t == 0:
-        return (LeverageNT * ind.wealth / price) * tanh(SCALE_NT * ind.tsv + corr) - ind.asset 
+        #return (LeverageNT * ind.wealth / price) * tanh(SCALE_NT * ind.tsv + corr) - ind.asset 
+        """ Sigmoid on """
+        return (LeverageNT * ind.wealth / price) * sigmoid(SCALE_NT * ind.tsv + corr) - ind.asset 
     elif t == 1:
         ''' for previous-price VI '''
         #return (LeverageVI * ind.wealth / price) * tanh(SCALE_VI * ind.tsv + corr) - ind.asset
         ''' for contemporaneous-price VI '''
-        return (LeverageVI * ind.wealth / price) * tanh(SCALE_VI * (log2(ind.val / price)) + corr) - ind.asset
+        #return (LeverageVI * ind.wealth / price) * tanh(SCALE_VI * (log2(ind.val / price)) + corr) - ind.asset
+
+        ''' sigmoid on '''
+        return (LeverageVI * ind.wealth / price) * sigmoid(SCALE_VI * (log2(ind.val / price)) + corr) - ind.asset
+        #return (LeverageVI * ind.wealth / price) * sigmoid(SCALE_VI * ((ind.val / price) - 1) + corr) - ind.asset
+
     elif t == 2: # TF
-        return (LeverageTF * ind.wealth / price) * tanh(SCALE_TF * ind.tsv + corr) - ind.asset 
+        #return (LeverageTF * ind.wealth / price) * tanh(SCALE_TF * ind.tsv + corr) - ind.asset 
+        """ sigmoid """
+        return (LeverageTF * ind.wealth / price) * sigmoid(SCALE_TF * ind.tsv + corr) - ind.asset 
     elif t == 3: # AV
-        return (ind.wealth / price) * tanh(ind.tsv) - ind.asset 
+        #return (ind.wealth / price) * tanh(ind.tsv) - ind.asset 
+
+        ''' Sigmoid on '''
+        return (ind.wealth / price) * sigmoid(ind.tsv) - ind.asset
     # BH and IR agents do not interact in the market, they are fictious agents to measure their strategy performance.
     elif t == 4 or t == 5:
         pass

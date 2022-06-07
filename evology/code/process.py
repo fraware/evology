@@ -7,7 +7,8 @@ def ExogeneousProcess(MAX_GENERATIONS, rng):
     randoms = rng.standard_normal(MAX_GENERATIONS)
 
     for i in range(MAX_GENERATIONS):
-        value = abs(value + RHO_NT * (MU_NT - value) + GAMMA_NT * randoms[i])
+        # removed abs()
+        value = value + RHO_NT * (MU_NT - value) + GAMMA_NT * randoms[i]
         process_series.append(value)
 
     return process_series

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
+import math
 
 # Import the data
 if sys.platform == "darwin":
@@ -15,30 +16,13 @@ if sys.platform == "win32":
         "D:/OneDrive/Research/2021_Market_Ecology/evology/evology/code/rundata/run_data.csv"
     )
 
+def sigmoid(x):
+    return 1. / (1. + np.exp(-x))
+
 # %%
-df.plot(
-    x="Gen",
-    y=["NT_loans", "VI_loans", "TF_loans"],
-    kind="line",
-    figsize=(15, 6),
-)
+df.plot(x="Gen", y=["NT_process"], kind="line", figsize=(15, 6))
 plt.show()
 
-df.plot(
-    x="Gen",
-    y=["NT_cash", "VI_cash", "TF_cash"],
-    kind="line",
-    figsize=(15, 6),
-)
-plt.show()
-
-df.plot(
-    x="Gen",
-    y=["NT_lending", "VI_lending", "TF_lending"],
-    kind="line",
-    figsize=(15, 6),
-)
-plt.show()
 
 # %%
 df["Dividends (x1,000)"] = 10000 * df["Dividends"]
@@ -69,32 +53,34 @@ df.plot(
 )
 plt.show()
 
-df["NT_signal2"] = np.tanh(df["NT_signal"])
-df["VI_signal2"] = np.tanh(df["VI_signal"])
-df["TF_signal2"] = np.tanh(df["TF_signal"])
-
-df.plot(x="Gen", y=["NT_process"], kind="line", figsize=(15, 6))
-plt.show()
 
 # %%
 df.plot(
+    x="Gen", y=["NT_signal", "VI_signal", "TF_signal"], kind="line", figsize=(15, 6)
+)
+
+
+df["NT_signal2"] = sigmoid(df["NT_signal"])
+df["VI_signal2"] = sigmoid(df["VI_signal"])
+df["TF_signal2"] = sigmoid(df["TF_signal"])
+
+
+df.plot(
     x="Gen", y=["NT_signal2", "VI_signal2", "TF_signal2"], kind="line", figsize=(15, 6)
 )
-plt.hlines(y=0, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
-plt.show()
 
-df.plot(x="Gen", y=["Price"], kind="line", figsize=(15, 6))
-plt.show()
-
-df["NT_signalW"] = np.tanh(df["NT_signal"]) * df["WShare_NT"]
-df["VI_signalW"] = np.tanh(df["VI_signal"]) * df["WShare_VI"]
-df["TF_signalW"] = np.tanh(df["TF_signal"]) * df["WShare_TF"]
+df["NT_signalW"] = sigmoid(df["NT_signal"]) * df["WShare_NT"]
+df["VI_signalW"] = sigmoid(df["VI_signal"]) * df["WShare_VI"]
+df["TF_signalW"] = sigmoid(df["TF_signal"]) * df["WShare_TF"]
 
 df.plot(
     x="Gen", y=["NT_signalW", "VI_signalW", "TF_signalW"], kind="line", figsize=(15, 6)
 )
 plt.hlines(y=0, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
 plt.show()
+
+
+# %%
 
 df.plot(
     x="Gen", y=["NT_stocks", "VI_stocks", "TF_stocks"], kind="line", figsize=(15, 6)
@@ -106,16 +92,9 @@ df.plot(x="Gen", y=["NT_asset", "VI_asset", "TF_asset"], kind="line", figsize=(1
 plt.hlines(y=0, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
 plt.show()
 
+
 # %%
-df.plot(
-    x="Gen",
-    y=["Dividends (x1,000)", "Price", "Process (x100)", "VI_val_1000"],
-    kind="line",
-    figsize=(15, 6),
-)
-plt.show()
-# %%
-df["Mispricing"] = abs((df["VI_val"] / df["Price"]) - 1)
+df["Mispricing"] = np.log2(df["VI_val"] / df["Price"])
 mispricing = df["Mispricing"].mean()
 
 
@@ -124,9 +103,10 @@ if df["Gen"].iloc[-1] >= 252:
     df["Volatility"] = df["LogPriceReturns"].rolling(window=252).std() * np.sqrt(252)
     volatility = df["Volatility"].mean()
 
-    df.plot(x="Gen", y=["Mispricing", "Volatility"], kind="line", figsize=(15, 6))
+    df.plot(x="Gen", y=["Mispricing"], kind="line", figsize=(15, 6))
     plt.show()
-
+    df.plot(x="Gen", y=["Volatility"], kind="line", figsize=(15, 6))
+    plt.show()
 
 else:
     volatility = np.nan
@@ -175,8 +155,14 @@ df.plot(x="Gen", y=["Mismatch"], kind="line", figsize=(15, 6))
 plt.show()
 
 # %%
+df["divlog"] = np.log(df["Dividends"])
+df.plot(x="Gen", y=["divlog"], kind="line", figsize=(15, 6))
+plt.show()
+
+# %%
 df.plot(x="Gen", y=["Dividends"], kind="line", figsize=(15, 6))
 plt.show()
+
 
 
 # %%
@@ -344,3 +330,30 @@ NT_mul = df["NT_nav"].iloc[-1] / df["NT_nav"].iloc[0]
 print(NT_mul)
 NT_mul = df["VI_nav"].iloc[-1] / df["VI_nav"].iloc[0]
 print(NT_mul)
+
+
+# %%
+
+df.plot(
+    x="Gen",
+    y=["NT_loans", "VI_loans", "TF_loans"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+df.plot(
+    x="Gen",
+    y=["NT_cash", "VI_cash", "TF_cash"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+df.plot(
+    x="Gen",
+    y=["NT_lending", "VI_lending", "TF_lending"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
