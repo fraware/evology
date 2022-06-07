@@ -20,7 +20,7 @@ ScaleCorr = 1.0
 ATC_TF = 1.0
 SCALE_NT, SCALE_VI, SCALE_TF = (
     1.0 * ScaleCorr,
-    2.0 * ScaleCorr,
+    1.0 * ScaleCorr,
     1.0 * ScaleCorr * ATC_TF,
 )
 
