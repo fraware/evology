@@ -5,6 +5,7 @@ from libc.math cimport log2, tanh, isnan, fabs, fmin, fmax
 from parameters import G, GAMMA_NT, RHO_NT, MU_NT, LeverageNT, LeverageVI, LeverageTF
 from parameters import G_day, SCALE_NT, SCALE_TF, SCALE_VI, liquidation_perc
 from parameters import tf_daily_ma_horizons, ema_factors
+from parameters import G
 import warnings
 import math
 import numpy as np
@@ -184,7 +185,7 @@ cpdef CalculateTSV_avf(list pop, double generation, object strategy, list price_
     return pop
 
 
-cpdef UpdateFval(list pop, double dividend):
+cpdef UpdateFval(list pop, double dividend, double interest_year):
 
     cdef double estimated_daily_div_growth
     cdef double numerator
@@ -196,9 +197,27 @@ cpdef UpdateFval(list pop, double dividend):
     for ind in pop:
         t = ind.type_as_int
         if t==1:
+            if ind.val_net == 0.0 or ind.val_net < 0:
+                print(ind.strategy)
+                print(ind.val_net)
+                raise ValueError('ind.val_net <= 0')
             fval = numerator / ind.val_net # TODO: Val_net only changes when val changes
             #if fval != np.inf:
             ind.val = fval
+
+            if ind.val == 0.0 or isnan(ind.val) == True or ind.val < 0:
+                print('ind.val, numerator, ind.val_net, ind.strategy, actual formula for ind.val_net in creation')
+                print(ind.val)
+                print(numerator)
+                print(ind.val_net)
+                print(ind.strategy)
+                print((1.0 + (interest_year + ind.strategy) - G) ** (
+                    1.0 / 252.0
+                ) - 1.0)
+                print(numerator/ ((1.0 + (interest_year + ind.strategy) - G) ** (
+                    1.0 / 252.0
+                ) - 1.0))
+                raise RuntimeError('Nan or 0 ind.val')
     return pop
 
 '''

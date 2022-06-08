@@ -4,6 +4,7 @@ from deap import tools
 from deap import algorithms
 from deap import gp
 import numpy as np
+from math import isnan
 
 toolbox = base.Toolbox()
 from parameters import min_nt_strat, max_nt_strat, min_vi_strat, max_vi_strat, tf_daily_ma_horizon_index, tf_daily_ma_horizons_probas
@@ -70,6 +71,10 @@ def IndCreation(strat):
 
 
 def CreatePop(n, space, WealthCoords, CurrentPrice, strategy, rng, interest_year):
+
+    if interest_year - G + min_vi_strat / 1000 <= 0:
+        print(interest_year - G + min_vi_strat / 1000)
+        raise RuntimeError('Interest rate - G < min VI val, hence negative valuations')
 
     if n < 3:
         raise ValueError("Cannot create diverse population with less than 3 agents. ")
@@ -169,6 +174,10 @@ def CreatePop(n, space, WealthCoords, CurrentPrice, strategy, rng, interest_year
             ind.val_net = (1.0 + (interest_year + ind.strategy) - G) ** (
                 1.0 / 252.0
             ) - 1.0
+            if isnan(ind.val_net) == True or ind.val_net <= 0:
+                print(ind.val_net)
+                print(ind.strategy)
+                raise RuntimeError('Negative or NaN ind.val_net (denominator)') 
         if ind.type == "tf":
             ind.cash = PcTFCash
             ind.asset = PcTFAsset
@@ -182,7 +191,7 @@ def CreatePop(n, space, WealthCoords, CurrentPrice, strategy, rng, interest_year
             if ind.asset != PcNTAsset:
                 raise RuntimeError("NT asset position mismatch.")
 
-    return pop, TotalAsset
+    return pop, TotalAsset #Money supply
 
 
 def WealthReset(
@@ -209,3 +218,12 @@ def WealthReset(
     #     print([types, [ind.type for ind in pop]])
     #     raise ValueError('Wealth reset generated a population size mismatch.')
     return pop
+
+def Wealth_Normalisation(pop):
+    " This function normalizes wealth to keep money supply "
+    " at constant levels "
+    # We need money supply (from pop creation)
+    # We need current money in circulation
+    # We normalise at the fund level, and keep the wealth share constant
+    # We'll need an error check for equality of WS before/after normalisation
+    pass

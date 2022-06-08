@@ -19,9 +19,6 @@ if sys.platform == "win32":
 def sigmoid(x):
     return 1. / (1. + np.exp(-x))
 
-# %%
-df.plot(x="Gen", y=["NT_process"], kind="line", figsize=(15, 6))
-plt.show()
 
 
 # %%
@@ -53,8 +50,27 @@ df.plot(
 )
 plt.show()
 
+df.plot(
+    x="Gen",
+    y=["NT_cash", "VI_cash", "TF_cash"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+df.plot(
+    x="Gen",
+    y=["Price"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
 
 # %%
+
+print(df["VI_signal"])
+
 df.plot(
     x="Gen", y=["NT_signal", "VI_signal", "TF_signal"], kind="line", figsize=(15, 6)
 )
@@ -79,8 +95,31 @@ df.plot(
 plt.hlines(y=0, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
 plt.show()
 
+#%%
+df["NT_signalW_ma"] = df["NT_signalW"].rolling(10000).mean()
+df["VI_signalW_ma"] = df["VI_signalW"].rolling(10000).mean()
+df["TF_signalW_ma"] = df["TF_signalW"].rolling(10000).mean()
+
+df.plot(
+    x="Gen", y=["NT_signalW_ma", "VI_signalW_ma", "TF_signalW_ma"], kind="line", figsize=(15, 6)
+)
+plt.hlines(y=20, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
+plt.hlines(y=15, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
+plt.hlines(y=10, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
+
+plt.show()
+
+
 
 # %%
+
+df.plot(
+    x="Gen",
+    y=["NT_loans", "VI_loans", "TF_loans"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
 
 df.plot(
     x="Gen", y=["NT_stocks", "VI_stocks", "TF_stocks"], kind="line", figsize=(15, 6)

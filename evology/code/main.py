@@ -56,6 +56,13 @@ def main(
             interest_year
         )
 
+        '''
+        # Wealth normalisation
+        pop = cr.Wealth_Normalisation(
+            pop
+        )
+        '''
+
         # Hypermutation
         pop, replacements, spoils = ga.hypermutate(pop, spoils, replace)
         if replacements < 0:
@@ -77,7 +84,7 @@ def main(
         # Market decisions
 
         pop, replace = bsc.UpdateFullWealth(pop, CurrentPrice)
-        pop = bsc.UpdateFval(pop, dividend)
+        pop = bsc.UpdateFval(pop, dividend, interest_year)
         price_emas = bsc.price_emas(CurrentPrice, price_emas)
         pop = bsc.CalculateTSV_staticf(
             pop,
