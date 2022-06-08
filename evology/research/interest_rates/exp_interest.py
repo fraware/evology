@@ -28,6 +28,7 @@ reps = 100
 coords = [0.2, 0.6, 0.2]
 coords = [0.3, 0.4, 0.3]
 coords = [0.4, 0.4, 0.2]
+coords = [0.4, 0.2, 0.4]
 
 
 def job(param):
