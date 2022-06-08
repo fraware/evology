@@ -59,7 +59,7 @@ liquidation_perc = 10 / 100
 """ RESET WEALTH """
 
 SHIELD_DURATION = 0  # 21
-ShieldResults = 0  # 5000
+ShieldResults = # 21  # 5000
 ShieldInvestment = 252
 SHIELD_TOLERANCE = 0.01
 MAX_ATTEMPTS = 100

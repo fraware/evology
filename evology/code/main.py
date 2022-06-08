@@ -123,7 +123,7 @@ def main(
             break
         price_history = bsc.UpdatePriceHistory(price_history, CurrentPrice)
 
-        pop = mk.earnings(pop, dividend, interest_day)
+        # pop = mk.earnings(pop, dividend, interest_day)
         pop = mk.update_margin(pop, CurrentPrice)
         pop = mk.clear_debt(pop, CurrentPrice)
 

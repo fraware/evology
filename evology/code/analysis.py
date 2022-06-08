@@ -199,10 +199,15 @@ df.plot(x="Gen", y=["divlog"], kind="line", figsize=(15, 6))
 plt.show()
 
 # %%
+
+df.plot(x="Gen", y=["Price"], kind="line", figsize=(15, 6))
+plt.show()
+
 df.plot(x="Gen", y=["Dividends"], kind="line", figsize=(15, 6))
 plt.show()
 
-
+df.plot(x="Gen", y=["NT_process"], kind="line", figsize=(15, 6))
+plt.show()
 
 # %%
 pct_changes = list(df["nav_pct"])
