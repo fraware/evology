@@ -47,6 +47,28 @@ plt.savefig('/Users/aymericvie/Documents/GitHub/evology/evology/research/interes
 plt.tight_layout()
 plt.show()
 
+fig, axs = plt.subplots(ncols=3, sharex=True, figsize=(20, 8))
+sns.set(font_scale = sns_fontsize)
+sns.boxplot(x = 'interest_rate', y = 'WS_NT_final', data = data,
+showfliers=True, ax=axs[0])
+sns.set(font_scale = sns_fontsize)
+sns.boxplot(x = 'interest_rate', y = 'WS_VI_final', data = data,
+showfliers=True,ax=axs[1])
+sns.set(font_scale = sns_fontsize)
+sns.boxplot(x = 'interest_rate', y = 'WS_TF_final', data = data,
+showfliers=True,ax=axs[2])
+sns.set(font_scale = sns_fontsize)
+
+axs[0].set(xlabel='NT')
+axs[1].set(xlabel='VI')
+axs[2].set(xlabel='TF')
+fig.suptitle('Wealth Share (NT, VI, TF) vs Interest Rate')
+for ax in axs:
+    ax.set(ylabel=None)
+# plt.savefig('/Users/aymericvie/Documents/GitHub/evology/evology/research/interest_rates/figures/WS.png',dpi=300)
+plt.tight_layout()
+plt.show()
+
 # %%
 
 sns.boxplot(x = 'interest_rate', y = 'Avg_Price', data = data,
