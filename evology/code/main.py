@@ -132,12 +132,15 @@ def main(
             pop = iv.Emp_Investment(pop, rng)
 
         
+        '''
         # Wealth normalisation
         pop, total_cash = bsc.Wealth_Normalisation(
             pop,
             MoneySupply,
             CurrentPrice
         )
+        '''
+        total_cash = 0
         
         
 

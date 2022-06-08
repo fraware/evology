@@ -114,6 +114,16 @@ df.plot(
 plt.hlines(y=0, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
 plt.show()
 
+df["NT_signalW"] = sigmoid(df["NT_signal"]) * df["NT_nav"]
+df["VI_signalW"] = sigmoid(df["VI_signal"]) * df["VI_nav"]
+df["TF_signalW"] = sigmoid(df["TF_signal"]) * df["TF_nav"]
+
+df.plot(
+    x="Gen", y=["NT_signalW", "VI_signalW", "TF_signalW"], kind="line", figsize=(15, 6)
+)
+plt.hlines(y=0, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
+plt.show()
+
 #%%
 df["NT_signalW_ma"] = df["NT_signalW"].rolling(10000).mean()
 df["VI_signalW_ma"] = df["VI_signalW"].rolling(10000).mean()

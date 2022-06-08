@@ -510,9 +510,11 @@ cpdef Wealth_Normalisation(list pop, double MoneySupply, double price):
             print(total_cash2, MoneySupply)
             raise RuntimeError('New cash exceeds money supply')
 
-        if wshare_nt - wshare_nt2 > 0.01:
+        if wshare_nt - wshare_nt2 > 0.001:
             print(norm_factor)
             print([wshare_nt, wshare_nt2])
+            print([wshare_vi, wshare_vi2])
+            print([wshare_tf, wshare_tf2])
             raise RuntimeError('WShares NT have changed after normalisation')
 
         if wshare_vi - wshare_vi2 > 0.01:
