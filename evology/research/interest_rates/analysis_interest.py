@@ -9,8 +9,8 @@ from math import isnan
 data = pd.read_csv(
     "/Users/aymericvie/Documents/GitHub/evology/evology/research/interest_rates/data/ir_noinv.csv"
 )
-data_plus = data[data["interest_rate"] > 0]
-data_plus2 = data[data["interest_rate"] > 0.005]
+# data_plus = data[data["interest_rate"] > 0]
+# data_plus2 = data[data["interest_rate"] > 0.005]
 
 # %%
 fontsize = 20
@@ -121,16 +121,16 @@ showfliers=False)
 plt.show()
 # %%
 # Returns
-data00 = data[data["interest_rate"] == 0.00]
-data005 = data[data["interest_rate"] == 0.005]
+data03 = data[data["interest_rate"] == 0.03]
+data025 = data[data["interest_rate"] == 0.025]
 data01 = data[data["interest_rate"] == 0.01]
 data015 = data[data["interest_rate"] == 0.015]
 data02 = data[data["interest_rate"] == 0.02]
 
-avg00 = 1/3 * (data00["NT_returns_avg"].mean() + data00["VI_returns_avg"].mean() + data00["TF_returns_avg"].mean())
+avg03 = 1/3 * (data03["NT_returns_avg"].mean() + data03["VI_returns_avg"].mean() + data03["TF_returns_avg"].mean())
 avg01 = 1/3 * (data01["NT_returns_avg"].mean() + data01["VI_returns_avg"].mean() + data01["TF_returns_avg"].mean())
 avg02 = 1/3 * (data02["NT_returns_avg"].mean() + data02["VI_returns_avg"].mean() + data02["TF_returns_avg"].mean())
-avg005 = 1/3 * (data005["NT_returns_avg"].mean() + data005["VI_returns_avg"].mean() + data005["TF_returns_avg"].mean())
+avg025 = 1/3 * (data025["NT_returns_avg"].mean() + data025["VI_returns_avg"].mean() + data025["TF_returns_avg"].mean())
 avg015 = 1/3 * (data015["NT_returns_avg"].mean() + data015["VI_returns_avg"].mean() + data015["TF_returns_avg"].mean())
 
 
@@ -150,14 +150,14 @@ for i in range(len(data["interest_rate"])):
         NT_net_return.append(data["NT_returns_avg"].iloc[i] - avg02)
         VI_net_return.append(data["VI_returns_avg"].iloc[i] - avg02)
         TF_net_return.append(data["TF_returns_avg"].iloc[i] - avg02)
-    elif data["interest_rate"].iloc[i] == 0.00: 
-        NT_net_return.append(data["NT_returns_avg"].iloc[i] - avg00)
-        VI_net_return.append(data["VI_returns_avg"].iloc[i] - avg00)
-        TF_net_return.append(data["TF_returns_avg"].iloc[i] - avg00)
-    elif data["interest_rate"].iloc[i] == 0.005: 
-        NT_net_return.append(data["NT_returns_avg"].iloc[i] - avg005)
-        VI_net_return.append(data["VI_returns_avg"].iloc[i] - avg005)
-        TF_net_return.append(data["TF_returns_avg"].iloc[i] - avg005)
+    elif data["interest_rate"].iloc[i] == 0.03: 
+        NT_net_return.append(data["NT_returns_avg"].iloc[i] - avg03)
+        VI_net_return.append(data["VI_returns_avg"].iloc[i] - avg03)
+        TF_net_return.append(data["TF_returns_avg"].iloc[i] - avg03)
+    elif data["interest_rate"].iloc[i] == 0.025: 
+        NT_net_return.append(data["NT_returns_avg"].iloc[i] - avg025)
+        VI_net_return.append(data["VI_returns_avg"].iloc[i] - avg025)
+        TF_net_return.append(data["TF_returns_avg"].iloc[i] - avg025)
 data["net_NT_return"] = NT_net_return
 data["net_VI_return"] = VI_net_return
 data["net_TF_return"] = TF_net_return

@@ -26,6 +26,7 @@ PopulationSize = 300
 obs = 10000
 reps = 100
 coords = [0.2, 0.6, 0.2]
+coords = [0.3, 0.4, 0.3]
 
 
 def job(param):
