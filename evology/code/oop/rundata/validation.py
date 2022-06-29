@@ -7,7 +7,6 @@ import sys
 import math
 from statsmodels.graphics.tsaplots import plot_acf
 
-
 # Import the data
 if sys.platform == "darwin":
     df = pd.read_csv(
@@ -20,13 +19,12 @@ if sys.platform == "win32":
 fontsize = 18
 
 # %%
-""" Absence of linear autocorrelations} in asset returns """
+""" Absence of linear autocorrelations in asset returns """
 """ intermittency """
 
-# regular return
-df["PriceReturn"] = (df["Price"] - df["Price"].shift(1)) / df["Price"]
 # log return
-df["PriceReturn"] = df["Price"].pct_change()
+df["PriceReturn"] = (np.log(df["Price"]) - np.log(df["Price"].shift(1))) 
+
 print(df["PriceReturn"].autocorr())
 
 df.plot(x="Generation", y=["PriceReturn"], kind="line")
@@ -45,14 +43,12 @@ elif sys.platform == "win32":
     )
 plt.show()
 
-# %%
 data = pd.DataFrame()
 data["Time"] = df["Generation"]
 data["PriceReturn"] = df["PriceReturn"]
 data.set_index(["Time"])
 del data["Time"]
 data = data.apply(lambda x: pd.Series(x.dropna().values))
-# print(data.isnull().sum())
 
 plot_acf(x=data, lags=21, zero=False, alpha=0.05)
 plt.ylim(-0.4, 0.4)
@@ -71,15 +67,13 @@ elif sys.platform == "win32":
     )
 plt.show()
 # %%
-""" {Heavy tails distributions of returns} """
-
-print(data.kurt())
+""" Heavy tails distributions of returns """
 print(data.kurtosis())
 
-data.hist("PriceReturn", bins=50)
-plt.xlabel("Time", fontsize=fontsize)
+data.hist("PriceReturn", bins=50, density=False)
+plt.xlabel("Log Price Returns", fontsize=fontsize)
 plt.ylabel("Observations", fontsize=fontsize)
-plt.xlim(-0.05, 0.05)
+plt.xlim(-0.04, 0.04)
 plt.tight_layout()
 if sys.platform == "darwin":
     plt.savefig(
@@ -98,6 +92,7 @@ plt.show()
 df.plot(x="Generation", y=["Price"], kind="line")
 plt.xlabel("Time", fontsize=fontsize)
 plt.ylabel("Price", fontsize=fontsize)
+
 plt.tight_layout()
 if sys.platform == "darwin":
     plt.savefig(
@@ -110,13 +105,82 @@ elif sys.platform == "win32":
         dpi=300,
     )
 plt.show()
-# %%
-""" volatiltiy clustering """
 
-df["Volatility"] = df["PriceReturn"].pct_change()
+print(data.kurtosis())
+# %%
+""" Aggregational Gaussianity """
+
+# For horizon 21 days
+
+df["PriceReturnYear"] = (np.log(df["Price"]) - np.log(df["Price"].shift(21))) 
+
+data = pd.DataFrame()
+data["Time"] = df["Generation"]
+data["PriceReturn"] = df["PriceReturnYear"]
+data.set_index(["Time"])
+del data["Time"]
+data = data.apply(lambda x: pd.Series(x.dropna().values))
+
+print(data.kurtosis())
+
+# For horizon 252 days
+
+
+df["PriceReturnYear"] = (np.log(df["Price"]) - np.log(df["Price"].shift(252))) 
+
+data = pd.DataFrame()
+data["Time"] = df["Generation"]
+data["PriceReturn"] = df["PriceReturnYear"]
+data.set_index(["Time"])
+del data["Time"]
+data = data.apply(lambda x: pd.Series(x.dropna().values))
+
+print(data.kurtosis())
+
+
+data.hist("PriceReturn", bins=50, density=False)
+plt.xlabel("Log Price Returns (Yearly)", fontsize=fontsize)
+plt.ylabel("Observations", fontsize=fontsize)
+plt.title('')
+# plt.xlim(-0.04, 0.04)
+plt.tight_layout()
+if sys.platform == "darwin":
+    plt.savefig(
+        "/Users/aymericvie/Documents/GitHub/evology/evology/validation/val2b.png",
+        dpi=300,
+    )
+elif sys.platform == "win32":
+    plt.savefig(
+        r"D:\OneDrive\Research\2021_Market_Ecology\evology\evology\validation\val2b.png",
+        dpi=300,
+    )
+plt.show()
+
+
+
+# %%
+""" Intermittency """
+
+
+
+df.plot(x="Generation", y=["Price"], kind="line")
+plt.xlabel("Time", fontsize=fontsize)
+plt.ylabel("Price", fontsize=fontsize)
+plt.show()
+
+daily_volatility = df['PriceReturn'].std()
+print('Daily volatility: ', '{:.2f}%'.format(daily_volatility))
+
+monthly_volatility = math.sqrt(21) * daily_volatility
+print ('Monthly volatility: ', '{:.2f}%'.format(monthly_volatility))
+
+annual_volatility = math.sqrt(252) * daily_volatility
+print ('Annual volatility: ', '{:.2f}%'.format(annual_volatility ))
+
+df["Volatility"] = df["PriceReturn"].rolling(1000).std()
 df.plot(x="Generation", y=["Volatility"], kind="line")
 plt.xlabel("Time", fontsize=fontsize)
-plt.ylabel("Price returns volatility", fontsize=fontsize)
+plt.ylabel("Log Price returns volatility", fontsize=fontsize)
 plt.tight_layout()
 if sys.platform == "darwin":
     plt.savefig(

@@ -43,17 +43,17 @@ class Fund:
         if self.wealth < 0:
             print("price", price)
             print("TODO: handle insolvency")
-            warnings.warn(
-                "Insolvent agent",
-                self.type,
+            print(                self.type,
                 self.wealth,
                 self.cash,
                 self.asset,
                 self.loan,
                 self.margin,
                 self.wealth + self.margin,
-                self.net_flow,
-            )
+                self.net_flow)
+            warnings.warn(
+                "Insolvent agent")
+
         return self.wealth
 
     def compute_demand(self, price):
