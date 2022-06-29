@@ -72,16 +72,9 @@ class NoiseTrader(Fund):
 
     def get_pod_demand(self):
         def func(price):
-            # print(self.leverage)
             mt = tanh(log2((self.valuation * self.trading_signal) / max(price, 0.0001)))
 
             if mt <= Fund.mt_short:
-                # print(mt)
-                # print('NT')
-                # print('current position')
-                # print(self.asset)
-                # print('demand result')
-                # print((1 - self.leverage) * self.wealth / price)
                 return (1 - self.leverage) * self.wealth / price
             elif mt > Fund.mt_long:
                 return self.leverage * self.wealth / price
