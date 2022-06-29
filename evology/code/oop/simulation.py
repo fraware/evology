@@ -90,6 +90,8 @@ class Simulation:
             pop.compute_profit()
             investor.investment_flows(pop)
             pop.count_wealth(asset.price)
+
+            pop.get_returns_statistics()
             pop.get_wealth_statistics()
             pop.get_activity_statistics()
             pop.get_positions()
@@ -114,6 +116,9 @@ class Simulation:
                 pop.NT_cash,
                 pop.VI_cash,
                 pop.TF_cash,
+                pop.NT_returns,
+                pop.VI_returns,
+                pop.TF_returns
             )
 
         self.data = result.convert_df()

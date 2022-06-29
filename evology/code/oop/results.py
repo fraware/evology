@@ -23,6 +23,9 @@ class Result:
         "NT_cash",
         "VI_cash",
         "TF_cash",
+        "NT_returns",
+        "VI_returns",
+        "TF_returns"
     ]
 
     def __init__(self, max_generations):
@@ -49,6 +52,9 @@ class Result:
         NT_cash,
         VI_cash,
         TF_cash,
+        NT_returns,
+        VI_returns,
+        TF_returns
     ):
         arr = [
             generation,
@@ -69,6 +75,9 @@ class Result:
             NT_cash,
             VI_cash,
             TF_cash,
+            NT_returns,
+            VI_returns,
+            TF_returns
         ]
         self.data[generation, :] = arr
 

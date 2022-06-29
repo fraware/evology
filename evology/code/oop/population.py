@@ -44,6 +44,9 @@ class Population:
         self.NT_cash = 0.0
         self.VI_cash = 0.0
         self.TF_cash = 0.0
+        self.NT_return = np.nan
+        self.VI_return = np.nan
+        self.TF_return = np.nan
 
         # TODO self.assetNT and things like that at the level of the population?
 
@@ -290,6 +293,37 @@ class Population:
     def compute_excess_profit(self):
         for ind in self.agents:
             ind.excess_annual_return = ind.annual_return - self.average_annual_return
+
+    def get_returns_statistics(self):
+
+        returnNT = 0.0
+        returnVI = 0.0
+        returnTF = 0.0
+        countNT, countVI, countTF = 0, 0, 0
+
+        for ind in self.agents:
+            if isinstance(ind, NoiseTrader):
+                returnNT += ind.daily_return
+                countNT += 1
+            elif isinstance(ind, ValueInvestor):
+                returnVI += ind.daily_return
+                countVI += 1
+            elif isinstance(ind, TrendFollower):
+                returnTF += ind.daily_return
+                countTF += 1
+
+        if countNT != 0:
+            self.NT_returns = returnNT / countNT
+        else:
+            self.NT_returns = np.nan
+        if countVI != 0:
+            self.VI_returns = returnVI / countVI
+        else:
+            self.VI_returns = np.nan
+        if countTF != 0:
+            self.TF_returns = returnTF / countTF
+        else:
+            self.TF_returns = np.nan
 
     def get_wealth_statistics(self):
 
