@@ -177,10 +177,10 @@ print ('Monthly volatility: ', '{:.2f}%'.format(monthly_volatility))
 annual_volatility = math.sqrt(252) * daily_volatility
 print ('Annual volatility: ', '{:.2f}%'.format(annual_volatility ))
 
-df["Volatility"] = df["PriceReturn"].rolling(1000).std()
+df["Volatility"] = df["PriceReturn"].rolling(252*5).std()
 df.plot(x="Generation", y=["Volatility"], kind="line")
 plt.xlabel("Time", fontsize=fontsize)
-plt.ylabel("Log Price returns volatility", fontsize=fontsize)
+plt.ylabel("5Y MA volatility", fontsize=fontsize)
 plt.tight_layout()
 if sys.platform == "darwin":
     plt.savefig(
@@ -195,15 +195,7 @@ elif sys.platform == "win32":
 plt.show()
 
 # %%
-""" leverage effect  and volatility-volume correlation"""
-df2 = pd.DataFrame()
-
-df2["Volatility"] = df["Volatility"]
-df2["PriceReturn"] = df["PriceReturn"]
-df2["Volume"] = df["Volume"]
-df2 = df2.apply(lambda x: pd.Series(x.dropna().values))
-df2.corr()
-# %%
+""" Volatility clustering """
 """ slow decay of autocorrelation in absolute returns """
 
 df["AbsReturns"] = abs(df["PriceReturn"])
@@ -214,8 +206,8 @@ data.set_index(["Time"])
 del data["Time"]
 data = data.apply(lambda x: pd.Series(x.dropna().values))
 
-plot_acf(x=data, lags=5000, alpha=0.05, auto_ylims=True)
-plt.ylim(-0.25, 1.0)
+plot_acf(x=data, lags=5000, alpha=0.05, auto_ylims=True, zero=False)
+plt.ylim(0.0, 0.2)
 plt.xlabel("Time (periods)", fontsize=fontsize)
 plt.ylabel("Autocorrelation", fontsize=fontsize)
 plt.tight_layout()
@@ -230,6 +222,22 @@ elif sys.platform == "win32":
         dpi=300,
     )
 plt.show()
+
+
+# %%
+""" leverage effect  and volatility-volume correlation"""
+df2 = pd.DataFrame()
+
+df2["Volatility"] = df["Volatility"]
+df2["PriceReturn"] = df["PriceReturn"]
+df2["Volume"] = df["Volume"]
+df2 = df2.apply(lambda x: pd.Series(x.dropna().values))
+df2.corr()
+
+# Volatility and returns should be negatively correlated
+# Volatility and volume should be positively correlated
+# %%
+
 # %%
 """ Conditional heavy tail returns"""
 bins = 20

@@ -21,10 +21,12 @@ if sys.platform == "win32":
 title_fontsize = 20
 label_size = 15
 
+ax_color = "black"
+
 fig, ax = plt.subplots(nrows=3, ncols=1, sharex=True, figsize=(10, 8))
-ax[0].set_title("Stock Price & Fund. Value", fontsize=title_fontsize, color="white")
-ax[1].set_title("Volume", fontsize=title_fontsize, color="white")
-ax[2].set_title("Wealth Shares", fontsize=title_fontsize, color="white")
+ax[0].set_title("Stock Price & Fund. Value", fontsize=title_fontsize, color=ax_color)
+ax[1].set_title("Volume", fontsize=title_fontsize, color=ax_color)
+ax[2].set_title("Wealth Shares", fontsize=title_fontsize, color=ax_color)
 
 ax[0].plot(df.index, df["Price"], color="black", linewidth=1)
 ax[0].plot(df.index, df["VI_val"], color="red", linewidth=0.5)
@@ -41,17 +43,17 @@ ax[0].set_ylabel("Price", fontsize=label_size)
 ax[1].set_ylabel("Volume", fontsize=label_size)
 plt.legend(loc=8, fontsize=label_size)
 
-ax[0].yaxis.label.set_color("white")
-ax[0].tick_params(axis="x", colors="white")
-ax[0].tick_params(axis="y", colors="white")
-ax[1].tick_params(axis="x", colors="white")
-ax[1].tick_params(axis="y", colors="white")
-ax[2].xaxis.label.set_color("white")
-ax[1].xaxis.label.set_color("white")
-ax[1].yaxis.label.set_color("white")
-ax[2].yaxis.label.set_color("white")
-ax[2].tick_params(axis="x", colors="white")
-ax[2].tick_params(axis="y", colors="white")
+ax[0].yaxis.label.set_color(ax_color)
+ax[0].tick_params(axis="x", colors=ax_color)
+ax[0].tick_params(axis="y", colors=ax_color)
+ax[1].tick_params(axis="x", colors=ax_color)
+ax[1].tick_params(axis="y", colors=ax_color)
+ax[2].xaxis.label.set_color(ax_color)
+ax[1].xaxis.label.set_color(ax_color)
+ax[1].yaxis.label.set_color(ax_color)
+ax[2].yaxis.label.set_color(ax_color)
+ax[2].tick_params(axis="x", colors=ax_color)
+ax[2].tick_params(axis="y", colors=ax_color)
 plt.tight_layout()
 if sys.platform == "darwin":
     plt.savefig(
