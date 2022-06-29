@@ -33,7 +33,7 @@ jobs:
         run: cython -V
       - name: compile cythonized files
         run: (cd evology/code && ./cythonize.sh)
-      - name: run test 'run'
+      # - name: run test 'run'
         # run: python tests/test_run.py
 
 
