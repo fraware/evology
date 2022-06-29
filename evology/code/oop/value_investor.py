@@ -42,3 +42,9 @@ class ValueInvestor(Fund):
                 return self.signal_scale * mt * self.wealth / price
 
         self.pod_demand = func
+
+        def func(price):
+            signal = tanh(self.signal_scale * log2((self.valuation) / max(price, 0.0001)))
+            return self.leverage * signal * self.wealth / price
+
+        self.pod_demand = func

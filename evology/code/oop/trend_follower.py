@@ -34,3 +34,9 @@ class TrendFollower(Fund):
                 return self.signal_scale * mt * self.wealth / price
 
         self.pod_demand = func
+
+        def func(price):
+            signal = self.signal_scale * self.trading_signal + 0.5
+            return self.leverage * signal * self.wealth / price
+
+        self.pod_demand = func
