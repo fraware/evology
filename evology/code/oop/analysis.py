@@ -6,13 +6,17 @@ import matplotlib.pyplot as plt
 import sys
 import math
 
+
 # Import the data
 if sys.platform == "darwin":
     df = pd.read_csv(
         "/Users/aymericvie/Documents/GitHub/evology/evology/code/oop/rundata/run_data.csv"
     )
 if sys.platform == "win32":
-    pass
+    
+    df = pd.read_csv(
+        r"D:\OneDrive\Research\2021_Market_Ecology\evology\evology\code\oop\rundata\run_data.csv"
+    )
     
 # %%
 title_fontsize = 20
@@ -48,7 +52,11 @@ ax[2].yaxis.label.set_color('white')
 ax[2].tick_params(axis='x', colors='white')   
 ax[2].tick_params(axis='y', colors='white')
 plt.tight_layout()
-plt.savefig('/Users/aymericvie/Documents/GitHub/evology/evology/code/oop/rundata/overview.png', dpi=300)
+if sys.platform == "darwin":
+    plt.savefig('/Users/aymericvie/Documents/GitHub/evology/evology/code/oop/rundata/overview.png', dpi=300)
+elif sys.platform == 'win32':
+    plt.savefig(r'D:\OneDrive\Research\2021_Market_Ecology\evology\evology\code\oop\rundata\overview.png', dpi=300)
+
 plt.show()
 
 
