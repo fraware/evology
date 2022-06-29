@@ -19,9 +19,9 @@ def FictiousPriceSeries(rng):
     price_history = []
     length = 1000
     value = 100
-    randoms = rng.normal(0, 1, length+1)
+    randoms = rng.normal(0, 1, length + 1)
 
-    for i in range(length+1):
+    for i in range(length + 1):
         value = value + (RHO_NT / 10) * (100 - value) + GAMMA_NT * randoms[i]
         previous_price_series.append(value)
 

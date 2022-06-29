@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 class Result:
 
     variables = [
@@ -21,7 +22,7 @@ class Result:
         "TF_asset",
         "NT_cash",
         "VI_cash",
-        "TF_cash"
+        "TF_cash",
     ]
 
     def __init__(self, max_generations):
@@ -29,11 +30,11 @@ class Result:
         self.data = np.zeros((max_generations, len(Result.variables)))
 
     def update_results(
-        self, 
-        generation, 
-        price, 
-        dividend, 
-        volume, 
+        self,
+        generation,
+        price,
+        dividend,
+        volume,
         NT_process,
         VI_val,
         wshareNT,
@@ -47,7 +48,7 @@ class Result:
         TF_asset,
         NT_cash,
         VI_cash,
-        TF_cash
+        TF_cash,
     ):
         arr = [
             generation,
@@ -67,9 +68,9 @@ class Result:
             TF_asset,
             NT_cash,
             VI_cash,
-            TF_cash
+            TF_cash,
         ]
-        self.data[generation, :] = arr 
+        self.data[generation, :] = arr
 
     def convert_df(self):
         df = pd.DataFrame(self.data, columns=Result.variables)

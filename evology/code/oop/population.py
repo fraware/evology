@@ -6,11 +6,19 @@ from fund import Fund
 from math import isnan
 import numpy as np
 
+
 class Population:
 
     asset_supply = 0
 
-    def __init__(self, population_size, max_generations, interest_rate, dividend_growth_rate, seed):
+    def __init__(
+        self,
+        population_size,
+        max_generations,
+        interest_rate,
+        dividend_growth_rate,
+        seed,
+    ):
         self.size = population_size
         self.max_generations = max_generations
         self.agents = []
@@ -19,50 +27,68 @@ class Population:
         self.seed = seed
         self.aggregate_demand = FunctionType
 
-        self.wealthNT = 0.
-        self.wealthVI = 0.
-        self.wealthTF = 0.
-        self.wshareNT = 0.
-        self.wshareVI = 0.
-        self.wshareTF = 0.
-        self.VI_val = 0.
-        self.average_annual_return = 0.
-        self.NT_flows = 0.
-        self.VI_flows = 0.
-        self.TF_flows = 0.
-        self.NT_asset = 0.
-        self.VI_asset = 0.
-        self.TF_asset = 0.
-        self.NT_cash = 0.
-        self.VI_cash = 0.
-        self.TF_cash = 0.
+        self.wealthNT = 0.0
+        self.wealthVI = 0.0
+        self.wealthTF = 0.0
+        self.wshareNT = 0.0
+        self.wshareVI = 0.0
+        self.wshareTF = 0.0
+        self.VI_val = 0.0
+        self.average_annual_return = 0.0
+        self.NT_flows = 0.0
+        self.VI_flows = 0.0
+        self.TF_flows = 0.0
+        self.NT_asset = 0.0
+        self.VI_asset = 0.0
+        self.TF_asset = 0.0
+        self.NT_cash = 0.0
+        self.VI_cash = 0.0
+        self.TF_cash = 0.0
 
         # TODO self.assetNT and things like that at the level of the population?
 
     def create_pop(self):
         if self.size == 3:
-            self.agents.append(NoiseTrader(100_000_000, 500_000, 0.01, self.interest_rate, self.dividend_growth_rate))
-            self.agents.append(ValueInvestor(100_000_000, 500_000, 0.01, self.interest_rate, self.dividend_growth_rate))
+            self.agents.append(
+                NoiseTrader(
+                    100_000_000,
+                    500_000,
+                    0.01,
+                    self.interest_rate,
+                    self.dividend_growth_rate,
+                )
+            )
+            self.agents.append(
+                ValueInvestor(
+                    100_000_000,
+                    500_000,
+                    0.01,
+                    self.interest_rate,
+                    self.dividend_growth_rate,
+                )
+            )
             self.agents.append(TrendFollower(100_000_000, 500_000, 1))
         else:
-            raise RuntimeError('Population size is not 3.')
+            raise RuntimeError("Population size is not 3.")
 
         total_asset = 0
         for ind in self.agents:
             total_asset += ind.asset
         Population.asset_supply = total_asset
-    
-    '''
+
+    """
     def set_max_short_size(self):
         for fund in self.agents:
             fund.max_short_size = 500_000
-    '''
+    """
 
     def count_wealth(self, price):
         for ind in self.agents:
-            ind.wealth = ind.count_wealth(price) 
-    
-    def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
+            ind.wealth = ind.count_wealth(price)
+
+    def update_trading_signal(
+        self, dividend, interest_rate_daily, generation, price, price_ema
+    ):
         # First, update VI valuation
         for ind in self.agents:
             if isinstance(ind, ValueInvestor):
@@ -73,7 +99,7 @@ class Population:
                 ind.update_valuation(dividend, interest_rate_daily)
             elif isinstance(ind, TrendFollower):
                 ind.get_price_ema(price, price_ema[0])
-    
+
     def get_excess_demand_functions(self):
         for ind in self.agents:
             ind.excess_demand_function = ind.get_excess_demand_function()
@@ -90,8 +116,11 @@ class Population:
                     result += ind.excess_demand(price)
                 except Exception as e:
                     print(e)
-                    raise RuntimeError('Failed to get ED(price) from agent.', ind.type, price)
-            return result 
+                    raise RuntimeError(
+                        "Failed to get ED(price) from agent.", ind.type, price
+                    )
+            return result
+
         self.aggregate_demand = func
 
     def get_pod_aggregate_demand(self):
@@ -102,8 +131,11 @@ class Population:
                     result += ind.pod_demand(price)
                 except Exception as e:
                     print(e)
-                    raise RuntimeError('Failed to get pod_D(price) from agent.', ind.type, price)
-            return result 
+                    raise RuntimeError(
+                        "Failed to get pod_D(price) from agent.", ind.type, price
+                    )
+            return result
+
         self.aggregate_demand = func
 
     def compute_demand_values(self, price):
@@ -130,67 +162,70 @@ class Population:
         for ind in self.agents:
             ind.execute_demand(price)
             sum_demand += ind.demand
-            volume += abs(ind.demand) # abs: buy & sell don't cancel out
+            volume += abs(ind.demand)  # abs: buy & sell don't cancel out
 
         total_short = self.get_short_positions()
 
-        if total_short >= Population.asset_supply + 1.:
+        if total_short >= Population.asset_supply + 1.0:
             print(total_short, Population.asset_supply)
             for ind in self.agents:
                 print(ind.type, ind.asset, ind.wealth, ind.demand)
-            raise RuntimeError('Short size position exceeded.') 
+            raise RuntimeError("Short size position exceeded.")
 
         if abs(sum_demand) >= 1:
-            # revert changes 
+            # revert changes
             for ind in self.agents:
                 ind.asset -= ind.demand
-                ind.cash += ind.demand * price 
+                ind.cash += ind.demand * price
             print(sum_demand)
             print(price)
             for ind in self.agents:
                 print(ind.type, ind.demand, ind.asset, ind.wealth)
                 print(ind.excess_demand(price), ind.demand)
-                print(- ind.leverage * ind.max_short_size - ind.asset)
-            raise ValueError('Sum demand not equal to 0.')
-        
-        total_assets = 0.
+                print(-ind.leverage * ind.max_short_size - ind.asset)
+            raise ValueError("Sum demand not equal to 0.")
+
+        total_assets = 0.0
         for ind in self.agents:
-            total_assets += ind.asset 
-        
+            total_assets += ind.asset
+
         if abs(total_assets - Population.asset_supply) >= 1:
             print(total_assets)
             print(Population.asset_supply)
             for ind in self.agents:
                 print(ind.type, ind.asset, ind.demand, ind.wealth)
-            raise ValueError('Asset supply violated', total_assets, Population.asset_supply)
+            raise ValueError(
+                "Asset supply violated", total_assets, Population.asset_supply
+            )
 
         if volume == 0:
-            raise RuntimeError('Volume is 0.')
+            raise RuntimeError("Volume is 0.")
         return volume
 
     def execute_pod_demand(self, price):
         volume = 0.0
         sum_demand = 0.0
         for ind in self.agents:
-            volume += abs(ind.demand - ind.asset) # abs: buy & sell don't cancel out
+            volume += abs(ind.demand - ind.asset)  # abs: buy & sell don't cancel out
             ind.execute_pop_demand(price)
             sum_demand += ind.demand
 
-        total_assets = 0.
+        total_assets = 0.0
         for ind in self.agents:
-            total_assets += ind.asset 
-        
+            total_assets += ind.asset
+
         if abs(total_assets - Population.asset_supply) >= 1:
-            print('agent type, demand')
+            print("agent type, demand")
             for ind in self.agents:
                 print(ind.type, ind.demand)
-            raise ValueError('Asset supply violated', total_assets, Population.asset_supply)
+            raise ValueError(
+                "Asset supply violated", total_assets, Population.asset_supply
+            )
 
         if volume == 0:
-            raise RuntimeError('Volume is 0.')
-        
-        return volume
+            raise RuntimeError("Volume is 0.")
 
+        return volume
 
     def clear_debt(self):
         for ind in self.agents:
@@ -226,7 +261,7 @@ class Population:
     def compute_average_return(self):
 
         # Compute average annual return
-        total_profit, count_funds = 0.,0
+        total_profit, count_funds = 0.0, 0
         for ind in self.agents:
             if isnan(ind.get_annual_return()) == False:
                 total_profit += ind.get_annual_return()
@@ -235,14 +270,14 @@ class Population:
             self.average_annual_return = total_profit / count_funds
         else:
             self.average_annual_return = np.nan
-        
+
         # Check that average return is not aberrant
         if self.average_annual_return > 10:
             print(self.average_annual_return)
-            raise ValueError('self average annual return > 10')
+            raise ValueError("self average annual return > 10")
 
         # Compute average monthly return
-        total_profit, count_funds = 0.,0
+        total_profit, count_funds = 0.0, 0
         for ind in self.agents:
             if isnan(ind.get_monthly_return()) == False:
                 total_profit += ind.get_monthly_return()
@@ -254,26 +289,26 @@ class Population:
 
     def compute_excess_profit(self):
         for ind in self.agents:
-            ind.excess_annual_return = ind.annual_return - self.average_annual_return    
+            ind.excess_annual_return = ind.annual_return - self.average_annual_return
 
     def get_wealth_statistics(self):
 
-        wealthNT = 0.
-        wealthVI = 0.
-        wealthTF = 0.
+        wealthNT = 0.0
+        wealthVI = 0.0
+        wealthTF = 0.0
 
         for ind in self.agents:
             if isinstance(ind, NoiseTrader):
-                wealthNT += ind.wealth 
+                wealthNT += ind.wealth
             elif isinstance(ind, ValueInvestor):
                 wealthVI += ind.wealth
             elif isinstance(ind, TrendFollower):
                 wealthTF += ind.wealth
-        
+
         total_wealth = wealthNT + wealthVI + wealthTF
 
         self.wealthNT = wealthNT
-        self.wealthVI = wealthVI 
+        self.wealthVI = wealthVI
         self.wealthTF = wealthTF
         self.wshareNT = wealthNT / total_wealth
         self.wshareVI = wealthVI / total_wealth
@@ -286,7 +321,6 @@ class Population:
                 total_short += abs(ind.asset)
         return total_short
 
-
     def get_activity_statistics(self):
         VI_val, VI_count = 0, 0
         for ind in self.agents:
@@ -296,7 +330,7 @@ class Population:
         self.VI_val = VI_val / VI_count
 
     def get_investment_flows(self):
-        NTflows, VIflows, TFflows = 0., 0., 0.
+        NTflows, VIflows, TFflows = 0.0, 0.0, 0.0
         for ind in self.agents:
             if isinstance(ind, NoiseTrader):
                 NTflows += ind.net_flow
@@ -304,18 +338,18 @@ class Population:
                 VIflows += ind.net_flow
             elif isinstance(ind, TrendFollower):
                 TFflows += ind.net_flow
-        
+
         total_flows = abs(NTflows) + abs(VIflows) + abs(TFflows)
         if total_flows != 0:
             self.NT_flows = NTflows / total_flows
             self.VI_flows = VIflows / total_flows
             self.TF_flows = TFflows / total_flows
         else:
-            self.NT_flows, self.VI_flows, self.TF_flows = 0.,0.,0.
+            self.NT_flows, self.VI_flows, self.TF_flows = 0.0, 0.0, 0.0
 
     def get_positions(self):
-        NT_asset, VI_asset, TF_asset = 0.,0.,0.
-        NT_cash, VI_cash, TF_cash = 0.,0.,0.
+        NT_asset, VI_asset, TF_asset = 0.0, 0.0, 0.0
+        NT_cash, VI_cash, TF_cash = 0.0, 0.0, 0.0
         for ind in self.agents:
             if isinstance(ind, NoiseTrader):
                 NT_asset += ind.asset

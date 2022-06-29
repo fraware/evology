@@ -7,7 +7,14 @@ import numpy as np
 from math import isnan
 
 toolbox = base.Toolbox()
-from parameters import min_nt_strat, max_nt_strat, min_vi_strat, max_vi_strat, tf_daily_ma_horizon_index, tf_daily_ma_horizons_probas
+from parameters import (
+    min_nt_strat,
+    max_nt_strat,
+    min_vi_strat,
+    max_vi_strat,
+    tf_daily_ma_horizon_index,
+    tf_daily_ma_horizons_probas,
+)
 from parameters import tf_daily_ma_horizons, RefAssets, RefCash, G, scholl_tf_strat
 from parameters import scholl_tf_index
 import cythonized
@@ -75,7 +82,7 @@ def CreatePop(n, space, WealthCoords, CurrentPrice, strategy, rng, interest_year
 
     if interest_year - G + min_vi_strat / 1000 <= 0:
         print(interest_year - G + min_vi_strat / 1000)
-        raise RuntimeError('Interest rate - G < min VI val, hence negative valuations')
+        raise RuntimeError("Interest rate - G < min VI val, hence negative valuations")
 
     if n < 3:
         raise ValueError("Cannot create diverse population with less than 3 agents. ")
@@ -138,7 +145,7 @@ def CreatePop(n, space, WealthCoords, CurrentPrice, strategy, rng, interest_year
     if space == "scholl":
         for ind in pop:
             if ind.type == "nt":
-                ind.strategy = 0.01 
+                ind.strategy = 0.01
             if ind.type == "vi":
                 ind.strategy = 0.01
             if ind.type == "tf":
@@ -176,7 +183,7 @@ def CreatePop(n, space, WealthCoords, CurrentPrice, strategy, rng, interest_year
             if isnan(ind.val_net) == True or ind.val_net <= 0:
                 print(ind.val_net)
                 print(ind.strategy)
-                raise RuntimeError('Negative or NaN ind.val_net (denominator) for NT') 
+                raise RuntimeError("Negative or NaN ind.val_net (denominator) for NT")
         if ind.type == "vi":
             ind.cash = PcVICash
             ind.asset = PcVIAsset
@@ -186,7 +193,7 @@ def CreatePop(n, space, WealthCoords, CurrentPrice, strategy, rng, interest_year
             if isnan(ind.val_net) == True or ind.val_net <= 0:
                 print(ind.val_net)
                 print(ind.strategy)
-                raise RuntimeError('Negative or NaN ind.val_net (denominator) for VI') 
+                raise RuntimeError("Negative or NaN ind.val_net (denominator) for VI")
         if ind.type == "tf":
             ind.cash = PcTFCash
             ind.asset = PcTFAsset
@@ -201,7 +208,7 @@ def CreatePop(n, space, WealthCoords, CurrentPrice, strategy, rng, interest_year
         if ind.type == "nt":
             if ind.asset != PcNTAsset:
                 raise RuntimeError("NT asset position mismatch.")
-        if ind.type != 'bh' or ind.type != 'ir':
+        if ind.type != "bh" or ind.type != "ir":
             MoneySupply += ind.cash
 
     return pop, TotalAsset, MoneySupply
@@ -216,7 +223,7 @@ def WealthReset(
     CurrentPrice,
     strategy,
     rng,
-    interest_year
+    interest_year,
 ):
     # current_size = len(pop)
     # types = [ind.type for ind in pop]
@@ -231,4 +238,3 @@ def WealthReset(
     #     print([types, [ind.type for ind in pop]])
     #     raise ValueError('Wealth reset generated a population size mismatch.')
     return pop
-

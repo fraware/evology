@@ -15,8 +15,11 @@ if sys.platform == "win32":
     df = pd.read_csv(
         "D:/OneDrive/Research/2021_Market_Ecology/evology/evology/code/rundata/run_data.csv"
     )
+
+
 def sigmoid(x):
-    return 1. / (1. + np.exp(-x))
+    return 1.0 / (1.0 + np.exp(-x))
+
 
 # %%
 df["Dividends (x1,000)"] = 10000 * df["Dividends"]
@@ -40,7 +43,6 @@ df.plot(
     figsize=(15, 6),
 )
 plt.show()
-
 
 
 df.plot(x="Gen", y=["NT_asset", "VI_asset", "TF_asset"], kind="line", figsize=(15, 6))
@@ -93,8 +95,6 @@ df.plot(
 plt.show()
 
 
-
-
 df.plot(x="Gen", y=["Volume"], kind="line", figsize=(15, 6))
 plt.show()
 
@@ -125,10 +125,7 @@ df.plot(
 plt.show()
 
 
-
 # %%
-
-
 
 
 df["NT_signal2"] = sigmoid(df["NT_signal"]) - 0.5
@@ -150,9 +147,9 @@ df.plot(
 plt.hlines(y=0, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
 plt.show()
 
-df["NT_signalW"] = (sigmoid(df["NT_signal"])- 0.5) * df["NT_nav"]
-df["VI_signalW"] = (sigmoid(df["VI_signal"])- 0.5) * df["VI_nav"]
-df["TF_signalW"] = (sigmoid(df["TF_signal"])- 0.5) * df["TF_nav"]
+df["NT_signalW"] = (sigmoid(df["NT_signal"]) - 0.5) * df["NT_nav"]
+df["VI_signalW"] = (sigmoid(df["VI_signal"]) - 0.5) * df["VI_nav"]
+df["TF_signalW"] = (sigmoid(df["TF_signal"]) - 0.5) * df["TF_nav"]
 
 df.plot(
     x="Gen", y=["NT_signalW", "VI_signalW", "TF_signalW"], kind="line", figsize=(15, 6)
@@ -166,14 +163,16 @@ df["VI_signalW_ma"] = df["VI_signalW"].rolling(10000).mean()
 df["TF_signalW_ma"] = df["TF_signalW"].rolling(10000).mean()
 
 df.plot(
-    x="Gen", y=["NT_signalW_ma", "VI_signalW_ma", "TF_signalW_ma"], kind="line", figsize=(15, 6)
+    x="Gen",
+    y=["NT_signalW_ma", "VI_signalW_ma", "TF_signalW_ma"],
+    kind="line",
+    figsize=(15, 6),
 )
 plt.hlines(y=20, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
 plt.hlines(y=15, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
 plt.hlines(y=10, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
 
 plt.show()
-
 
 
 # %%
@@ -201,8 +200,6 @@ plt.hlines(y=0, xmin=0, xmax=max(df["Gen"]), colors="gray", linestyles="dashed")
 plt.show()
 
 
-
-
 # %%
 df["Mispricing"] = np.log2(df["VI_val"] / df["Price"])
 mispricing = df["Mispricing"].mean()
@@ -226,8 +223,6 @@ df.plot(x="Gen", y=["Mispricing"], kind="line", figsize=(15, 6))
 plt.show()
 
 
-
-
 # %%
 df["TF_signal2x100"] = 100 * np.tanh(df["TF_signal"])
 df["NT_signal2x100"] = 100 * np.tanh(df["NT_signal"])
@@ -244,7 +239,6 @@ df.plot(
 plt.hlines(y=0, xmin=0, xmax=max(df["Gen"]), color="black")
 plt.show()
 # %%
-
 
 
 df.plot(x="Gen", y=["Pos-"], kind="line", figsize=(15, 6))
@@ -531,7 +525,7 @@ df.tail(100).plot(
 plt.show()
 
 # Why positive mismatch on the last 15-20 days before the spike?
-# 
+#
 
 df.tail(100).plot(
     x="Gen",
@@ -599,7 +593,7 @@ df.tail(100).plot(
 plt.show()
 
 #%%
-df['Mispricing'] = np.log2(df['VI_val'] / df['Price'])
+df["Mispricing"] = np.log2(df["VI_val"] / df["Price"])
 
 df.tail(100).plot(
     x="Gen",
@@ -669,7 +663,6 @@ df.plot(
 plt.show()
 
 
-
 # %%
 
 title_fontsize = 20
@@ -677,31 +670,36 @@ label_size = 15
 
 
 fig, ax = plt.subplots(nrows=2, ncols=1, sharex=True, figsize=(8, 6))
-ax[0].set_title('Stock Price', fontsize=title_fontsize, color='white')
-ax[1].set_title('Wealth Shares', fontsize=title_fontsize, color = 'white')
+ax[0].set_title("Stock Price", fontsize=title_fontsize, color="white")
+ax[1].set_title("Wealth Shares", fontsize=title_fontsize, color="white")
 
-ax[0].plot(df.index, df['Price'], color='black', label='Price', linewidth=1)
-ax[1].plot(df.index, df['WShare_NT'], color='green', label='Noise traders', linewidth=1)
-ax[1].plot(df.index, df['WShare_VI'], color='red', label='Value investors', linewidth=1)
-ax[1].plot(df.index, df['WShare_TF'], color='blue', label='Trend followers', linewidth=1)
+ax[0].plot(df.index, df["Price"], color="black", label="Price", linewidth=1)
+ax[1].plot(df.index, df["WShare_NT"], color="green", label="Noise traders", linewidth=1)
+ax[1].plot(df.index, df["WShare_VI"], color="red", label="Value investors", linewidth=1)
+ax[1].plot(
+    df.index, df["WShare_TF"], color="blue", label="Trend followers", linewidth=1
+)
 
 # ax[1].bar(df.index, df['B'], color='g', label='MACD')
 
 # ax[1].set_xticklabels(df.index, rotation=90)
-ax[1].set_xlabel('Time (days)', fontsize = label_size)
-ax[1].set_ylabel('Share (%)', fontsize = label_size)
-ax[0].set_ylabel('Price', fontsize = label_size)
-plt.legend(loc='right', fontsize = label_size)
+ax[1].set_xlabel("Time (days)", fontsize=label_size)
+ax[1].set_ylabel("Share (%)", fontsize=label_size)
+ax[0].set_ylabel("Price", fontsize=label_size)
+plt.legend(loc="right", fontsize=label_size)
 
-ax[0].yaxis.label.set_color('white')       
-ax[0].tick_params(axis='x', colors='white')   
-ax[0].tick_params(axis='y', colors='white')
-ax[1].xaxis.label.set_color('white')   
-ax[1].yaxis.label.set_color('white')       
-ax[1].tick_params(axis='x', colors='white')   
-ax[1].tick_params(axis='y', colors='white')
+ax[0].yaxis.label.set_color("white")
+ax[0].tick_params(axis="x", colors="white")
+ax[0].tick_params(axis="y", colors="white")
+ax[1].xaxis.label.set_color("white")
+ax[1].yaxis.label.set_color("white")
+ax[1].tick_params(axis="x", colors="white")
+ax[1].tick_params(axis="y", colors="white")
 
 plt.tight_layout()
-plt.savefig('/Users/aymericvie/Documents/GitHub/evology/evology/code/rundata/overview.png', dpi=300)
+plt.savefig(
+    "/Users/aymericvie/Documents/GitHub/evology/evology/code/rundata/overview.png",
+    dpi=300,
+)
 plt.show()
 # %%
