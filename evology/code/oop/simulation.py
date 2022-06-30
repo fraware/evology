@@ -69,15 +69,15 @@ class Simulation:
             """ TODO TSV computation for the AV agent """
             # pop.get_excess_demand_functions()
             pop.get_pod_demand_functions()  #
+            """ TODO TF does not seem to participate in the market, or very linearly with bias, + without bais sells it all in first period """
+            """ TODO we have to check what happens in first period, maybe saving results once before the loop. VI on short already? strange"""
+            """ TODO can't have the bias, creates unwanted shorts. But we do something for TF in early periods to avoid all selling"""
             # pop.get_aggregate_demand()
             pop.get_pod_aggregate_demand()  #
             """ TODO add liquidation system and spoils to market clearing """
             asset.market_clearing(pop.aggregate_demand)
             # asset.mismatch = pop.compute_demand_values(asset.price)
             asset.mismatch = pop.compute_pod_demand_values(asset.price)  #
-            """ TODO add check to not overtake short pos size """
-            """ TODO what to do with very small deviations from asset supply (0.01)?"""
-            """ TODO system to prevent short pos size excess and maybe cancel some buy orders """
             # asset.volume = pop.execute_demand(asset.price)
             asset.volume = pop.execute_pod_demand(asset.price)
             pop.earnings(asset.dividend, self.interest_rate_daily)
@@ -89,13 +89,14 @@ class Simulation:
             pop.compute_excess_profit()
             pop.compute_profit()
             investor.investment_flows(pop)
-            pop.count_wealth(asset.price)
 
+            pop.count_wealth(asset.price)
             pop.get_returns_statistics()
             pop.get_wealth_statistics()
             pop.get_activity_statistics()
             pop.get_positions()
             pop.get_investment_flows()
+            """ TODO collect traing signal / tsv / excess demand data"""
             """ TODO collect strategy return data"""
             result.update_results(
                 self.generation,

@@ -126,6 +126,23 @@ df.plot(
 )
 plt.show()
 
+# Average proportion of shorts 
+# For 3 agents, asset supply is 1_500_000
+asset_supply = 1_500_000
+total_short = 0
+
+for i in range(len(df)):
+    if df["NT_asset"].iloc[i] < 0:
+        total_short += df["NT_asset"].iloc[i]
+    if df["VI_asset"].iloc[i] < 0:
+        total_short += df["VI_asset"].iloc[i]
+    if df["TF_asset"].iloc[i] < 0:
+        total_short += df["TF_asset"].iloc[i]
+
+avg_prop_short = 100 * abs(total_short) / (asset_supply * len(df))
+print(avg_prop_short)
+
+# %%
 df.plot(
     x="Generation",
     y=["NT_cash", "VI_cash", "TF_cash"],

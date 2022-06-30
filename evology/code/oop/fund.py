@@ -21,7 +21,7 @@ class Fund:
         self.trading_signal = 0.0
         self.type = str
         self.excess_demand = FunctionType
-        self.leverage = 2.0
+        self.leverage = 1.0
         self.signal_scale = 1.0
         self.demand = 0.0
         self.previous_wealth = 0.0

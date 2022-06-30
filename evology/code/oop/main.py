@@ -19,7 +19,7 @@ if __name__ == "__main__":
         max_generations=18000,
         population_size=3,
         interest_rate=0.01,
-        investment_bool=True,
+        investment_bool=False,
         seed=0,
     )
     df.to_csv("rundata/run_data.csv")
