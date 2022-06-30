@@ -55,6 +55,7 @@ class Simulation:
             """TODO cythonize"""
             """ TODO wealth reset mode """
             """ TODO Hypermutate with liquidate, remove, split system"""
+            """ TODO leverage and hypermutation? how do we deal with loans from borrowing cash to buy assets? should not change anything right? yes but double check"""
             pop.liquidate_insolvent()
             asset.get_dividend(self.generation)
             """ TODO extend EMA to many lags """
