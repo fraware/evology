@@ -96,6 +96,7 @@ class Simulation:
             pop.get_wealth_statistics()
             pop.get_activity_statistics()
             pop.get_positions()
+            """ TODO investment flows need some noise! we need to estimate it from the raw data"""
             pop.get_investment_flows()
             """ TODO collect traing signal / tsv / excess demand data"""
             """ TODO collect strategy return data"""
