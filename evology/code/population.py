@@ -210,63 +210,7 @@ class Population:
         #     warnings.warn('Mismatch superior to 1 ' + str(mismatch))
         return mismatch
 
-    # def execute_demand(self, price):
-    #     volume = 0.0
-    #     sum_demand = 0.0
-    #     for ind in self.agents:
-    #         ind.execute_demand(price)
-    #         sum_demand += ind.demand
-    #         volume += abs(ind.demand)  # abs: buy & sell don't cancel out
-
-    #     total_short = self.get_short_positions()
-
-    #     if total_short >= Population.asset_supply + 1.0:
-    #         print(total_short, Population.asset_supply)
-    #         for ind in self.agents:
-    #             print(ind.type, ind.asset, ind.wealth, ind.demand)
-    #         raise RuntimeError("Short size position exceeded.")
-
-    #     if abs(sum_demand) >= 1:
-    #         # revert changes
-    #         for ind in self.agents:
-    #             ind.asset -= ind.demand
-    #             ind.cash += ind.demand * price
-    #         print(sum_demand)
-    #         print(price)
-    #         for ind in self.agents:
-    #             print(ind.type, ind.demand, ind.asset, ind.wealth)
-    #             print(ind.excess_demand(price), ind.demand)
-    #             print(-ind.leverage * ind.max_short_size - ind.asset)
-    #         raise ValueError("Sum demand not equal to 0.")
-
-    #     total_assets = 0.0
-    #     for ind in self.agents:
-    #         total_assets += ind.asset
-
-    #     if abs(total_assets - Population.asset_supply) >= 1:
-    #         print(total_assets)
-    #         print(Population.asset_supply)
-    #         for ind in self.agents:
-    #             print(ind.type, ind.asset, ind.demand, ind.wealth)
-    #         raise ValueError(
-    #             "Asset supply violated", total_assets, Population.asset_supply
-    #         )
-
-    #     if volume == 0:
-    #         raise RuntimeError("Volume is 0.")
-    #     return volume
-
     def execute_pod_demand(self, price):
-
-        # print("Price", price)
-
-        # print("- Pop info and sum assets---")
-        # sum_asset = 0
-        # for ind in self.agents:
-        #     print(ind.type, ind.wealth, ind.asset, ind.demand)
-        #     sum_asset += ind.asset
-        # print(sum_asset)
-
         
         # Verify that excess demand orders balance out
         sum_demand = 0.0
@@ -357,10 +301,6 @@ class Population:
     def update_margin(self, price):
         for ind in self.agents:
             ind.update_margin(price)
-
-    # def liquidate_insolvent(self):
-    #     for ind in self.agents:
-    #         ind.liquidate_insolvent()
 
     def compute_profit(self):
         for ind in self.agents:
@@ -577,17 +517,9 @@ class Population:
                     # warnings.warn("Replacement: ", self.agents[index].type, )
                     self.agents[index] = new_half_fund
                     
-                # for fund in self.agents:
-                #     if fund == None:
-                #         fund = new_half_fund
-                    # del self.agents[index]
-                    # self.agents.append(new_half_fund)
                     replacements += 1
                 # FInally, add the last subdivision in place of the maximum fund.
-                # new_half_fund = self.create_fractional_fund(MaxFund, NumberReplace + 1)
                 self.agents[MaxFund] = new_half_fund
-                # del self.agents[MaxFund]
-                # self.agents.append(new_half_fund)
                 warnings.warn('Replacement done.')
 
                 for ind in self.agents:

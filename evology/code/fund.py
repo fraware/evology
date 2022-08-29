@@ -60,14 +60,8 @@ class Fund:
         self.cash -= self.demand * price
 
     def execute_pop_demand(self, price):
-        # print(self.type, self.asset, self.demand, self.cash, self.demand - self.asset)
-        # previous_asset = self.asset
-        # asset_change = self.demand - previous_asset
-        # self.asset += asset_change
         self.asset += self.demand
-        # self.cash -= asset_change * price
         self.cash -= self.demand * price
-        # print(self.asset, self.cash, self.demand * price)
 
     def clear_debt(self):
         if self.loan > 0 and self.cash > 0:
@@ -133,17 +127,9 @@ class Fund:
             # Erase observations older than a month
             del self.wealth_history_month[0]
 
-    def liquidate_insolvent(self):
-        if self.wealth < 0:
-            # raise RuntimeError(
-            #     "Insolvent agent",
-            #     self.wealth,
-            #     self.type,
-            #     self.asset,
-            #     self.cash,
-            #     self.margin,
-            # )
-            pass
+    # def liquidate_insolvent(self):
+    #     if self.wealth < 0:
+    #         pass
 
     def get_assets(self):
         return self.asset

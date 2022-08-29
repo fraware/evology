@@ -9,7 +9,6 @@ class NoiseTrader(Fund):
     OU_rho = 0.00045832561
     OU_rho = 0.005
     OU_gamma = 0.2 * np.sqrt(1.0 / 252.0)
-    # OU_gamma = 0.035
     process_series = []
     noise_process = 0.0
 
@@ -31,12 +30,6 @@ class NoiseTrader(Fund):
         randoms = rng.standard_normal(max_generations)
         process_series = []
         value = NoiseTrader.OU_mean
-
-        """
-        for i in range(max_generations):
-            value = abs(value + NoiseTrader.OU_rho * (log2(NoiseTrader.OU_mean) - log2(value)) + NoiseTrader.OU_gamma * randoms[i])
-            process_series.append(value)
-        """
 
         for i in range(max_generations):
             value = abs(
@@ -71,17 +64,6 @@ class NoiseTrader(Fund):
             raise RuntimeError("Negative NT valuation", self.valuation)
 
     def get_pod_demand(self):
-        # def func(price):
-        #     mt = tanh(log2((self.valuation * self.trading_signal) / max(price, 0.0001)))
-
-        #     if mt <= Fund.mt_short:
-        #         return (1 - self.leverage) * self.wealth / price
-        #     elif mt > Fund.mt_long:
-        #         return self.leverage * self.wealth / price
-        #     else:
-        #         return self.signal_scale * mt * self.wealth / price
-
-        # self.pod_demand = func
 
         def func(price):
             signal = tanh(self.signal_scale * log2((self.valuation * self.trading_signal) / max(price, 0.0001)))
