@@ -265,11 +265,10 @@ class Population:
         for ind in self.agents:
             ind.clear_debt()
 
-    def earnings(self, dividend, interest_rate_daily):
-        # TODO: change name, earnings are for companies
+    def cash_gains(self, dividend, interest_rate_daily):
         """ All funds receive their earnings"""
         for ind in self.agents:
-            ind.earnings(dividend, interest_rate_daily)
+            ind.cash_gains(dividend, interest_rate_daily)
 
     def count_assets(self):
         """ Count funds total assets"""
@@ -277,8 +276,6 @@ class Population:
         for ind in self.agents:
             total += ind.get_assets()
         return total
-        # TODO add an error if we violate the asset supply cst
-        # Is that done somewhere else already?
 
     def update_margin(self, price):
         for ind in self.agents:

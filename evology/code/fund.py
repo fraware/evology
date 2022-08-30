@@ -61,7 +61,7 @@ class Fund:
             self.cash += self.loan
             self.loan = 0
 
-    def earnings(self, dividend, interest_rate_daily):
+    def cash_gains(self, dividend, interest_rate_daily):
         """ Earn dividends on shares and interest on cash"""
         self.cash += interest_rate_daily * self.cash
         self.cash += dividend * self.asset

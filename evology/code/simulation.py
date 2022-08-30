@@ -23,13 +23,11 @@ class Simulation:
         self.wealth_coords = wealth_coords
 
     def set_display(self):
+        """ Controls whether we hide the TQDM progress bar during a run. Yes for linux because linux is for experiments"""
         if sys.platform == "darwin":
             return False
         elif sys.platform == "linux":
             return True
-
-    def return_data(self):
-        return self.data
 
     def simulate(self):
         result = Result(self.max_generations)
@@ -50,8 +48,6 @@ class Simulation:
         pop.count_wealth(asset.price)
 
         for self.generation in tqdm(range(self.max_generations), disable=self.disable):
-            """TODO cythonize"""
-            """ TODO wealth reset mode """
             pop.replace_insolvent()
             if pop.shutdown == True:
                 result.data = result.data[0 : self.generation]
@@ -65,17 +61,13 @@ class Simulation:
                 asset.price,
                 asset.price_emas,
             )
-            """ TODO TSV computation for the AV agent """
-            pop.get_pod_demand_functions()  #
-            """ TODO TF does not seem to participate in the market, or very linearly with bias, + without bais sells it all in first period """
-            """ TODO we have to check what happens in first period, maybe saving results once before the loop. VI on short already? strange"""
-            """ TODO can't have the bias, creates unwanted shorts. But we do something for TF in early periods to avoid all selling"""
-            pop.get_pod_aggregate_demand()  #
+            pop.get_pod_demand_functions()  
+            pop.get_pod_aggregate_demand()  
             pop.compute_liquidation(asset.volume)
             asset.market_clearing(pop)
             asset.mismatch = pop.compute_pod_demand_values(asset.price)  #
             asset.volume = pop.execute_pod_demand(asset.price)
-            pop.earnings(asset.dividend, self.interest_rate_daily)
+            pop.cash_gains(asset.dividend, self.interest_rate_daily)
             pop.update_margin(asset.price)
             pop.clear_debt()
             pop.count_wealth(asset.price)
@@ -89,11 +81,7 @@ class Simulation:
             pop.get_wealth_statistics()
             pop.get_activity_statistics()
             pop.get_positions()
-            """ TODO investment flows need some noise! we need to estimate it from the raw data"""
             pop.get_investment_flows()
-            """ TODO collect traing signal / tsv / excess demand data"""
-            """ TODO collect strategy return data"""
-            """ TODO: measure age?"""
             result.update_results(
                 self.generation,
                 asset.price,

@@ -10,7 +10,7 @@ def main(max_generations, population_size, wealth_coords, interest_rate, investm
         seed=seed,
     )
     s.simulate()
-    df = s.return_data()
+    df = s.data
     return df
 
 if __name__ == "__main__":
