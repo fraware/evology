@@ -15,9 +15,9 @@ def main(max_generations, population_size, wealth_coords, interest_rate, investm
 
 if __name__ == "__main__":
     df = main(
-        max_generations=500,
-        population_size=3,
-        wealth_coords=[1/4, 1/4, 1/2],
+        max_generations=100000,
+        population_size=10,
+        wealth_coords= [1/4, 1/4, 1/2],
         interest_rate=0.01,
         investment_bool=True,
         seed=56615,
