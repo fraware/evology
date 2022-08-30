@@ -194,7 +194,7 @@ class Population:
         sum_demand = 0.0
         for ind in self.agents:
             sum_demand += ind.demand
-        if abs(sum_demand) > 1:
+        if abs(sum_demand) > 0.1:
             # We have an imbalance to solve.
             buy_orders = 0.
             sell_orders = 0.
