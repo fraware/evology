@@ -22,7 +22,7 @@ if __name__ == "__main__":
         interest_rate=0.01,
         investment_bool=True,
         seed=56615,
-        reset=True,
+        reset=False,
     )
     df.to_csv("rundata/run_data.csv")
     print(df)
