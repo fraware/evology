@@ -9,7 +9,7 @@ import sys
 
 class Simulation:
     def __init__(
-        self, max_generations, population_size, wealth_coords, interest_rate, investment_bool, seed
+        self, max_generations, population_size, wealth_coords, interest_rate, investment_bool, seed, reset
     ):
         self.max_generations = max_generations
         self.population_size = population_size
@@ -21,6 +21,7 @@ class Simulation:
         self.disable = Simulation.set_display(self)
         self.investment_bool = investment_bool
         self.wealth_coords = wealth_coords
+        self.reset = reset
 
     def set_display(self):
         """ Controls whether we hide the TQDM progress bar during a run. Yes for linux because linux is for experiments"""
@@ -47,8 +48,7 @@ class Simulation:
             self.max_generations, self.seed
         )
         investor = Investor(self.investment_bool)
-        pop.create_pop()
-        pop.count_wealth(asset.price)
+        pop.pop_init(asset.price)
 
         for self.generation in tqdm(range(self.max_generations), disable=self.disable):
 
@@ -56,6 +56,8 @@ class Simulation:
             if pop.shutdown == True:
                 result.data = result.data[0 : self.generation]
                 break
+            if self.reset == True:
+                pop.pop_init(asset.price)
             asset.get_dividend(self.generation)
             asset.compute_price_emas()
             pop.update_trading_signal(

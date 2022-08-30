@@ -23,12 +23,14 @@ def job1(param):
         wealth_coords = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
         np.random.seed(seed)
         inv_bool = random_bool()
-        df = model(time, agents, wealth_coords, 0.01, inv_bool, seed)
+        reset_bool = random_bool()
+        df = model(time, agents, wealth_coords, 0.01, inv_bool, seed, reset_bool)
     except Exception as e: 
         went_smoothly = False
         print('Investment Bool ' + str(inv_bool))
         print('Seed ' + str(seed))
         print('Coords ' + str(wealth_coords))
+        print('Reset: ' + str(reset_bool))
         print(str(e))
         went_smoothly = False
     assert went_smoothly == True
@@ -41,7 +43,7 @@ def job2(param):
         wealth_coords = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
         np.random.seed(seed)
         inv_bool = random_bool()
-        df = model(time, agents, wealth_coords, 0.01, inv_bool, seed)
+        df = model(time, agents, wealth_coords, 0.01, inv_bool, seed, False)
     except Exception as e: 
         went_smoothly = False
         print('Investment Bool ' + str(inv_bool))
@@ -57,7 +59,9 @@ def job2(param):
 def main():
     repetitions1, repetitions2 = 30, 5
     p = mp.Pool()
+    # Testing quick runs
     p.map(job1, list(range(repetitions1)))
+    # Testing long runs
     p.map(job2, list(range(repetitions2)))
     p.close()
 

@@ -85,6 +85,8 @@ class Population:
         """ generates a population of funds basd on initial coordinates
         There is always at least one fund of each type. """
 
+        self.agents = []
+
         # Check we can create a diverse population
         if self.size < 3:
             raise RuntimeError('Population size cannot be inferior to 3.')
@@ -521,3 +523,12 @@ class Population:
             self.liquidation = 0.
         elif self.spoils < 0:
             self.liquidation = min(abs(self.spoils), min(0.1 * volume, 10000))
+
+    def update_previous_wealth(self):
+        for fund in self.agents:
+            fund.previous_wealth = fund.wealth
+
+    def pop_init(self, price):
+        self.create_pop()
+        self.count_wealth(price)
+        self.update_previous_wealth()
