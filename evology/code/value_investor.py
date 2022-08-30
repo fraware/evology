@@ -3,6 +3,7 @@ from math import tanh, log2
 
 
 class ValueInvestor(Fund):
+    """ Defines the value investor class"""
     def __init__(
         self, cash, asset, req_rate_return, interest_rate, dividend_growth_rate
     ):

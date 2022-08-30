@@ -5,6 +5,8 @@ import numpy as np
 
 
 class TrendFollower(Fund):
+    """ Defines the momentum trader class"""
+    
     def __init__(self, cash, asset, time_horizon):
         super().__init__(cash, asset)
         self.time_horizon = time_horizon

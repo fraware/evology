@@ -4,6 +4,7 @@ from math import tanh, log2
 
 
 class NoiseTrader(Fund):
+    """ A trader whose trading signal is a fundamental valuation perturbed by an Orstein-Uhlenbeck process"""
 
     OU_mean = 1.0
     OU_rho = 0.00045832561
@@ -17,7 +18,6 @@ class NoiseTrader(Fund):
     ):
         super().__init__(cash, asset)
         self.type = "NT"
-        ##
         self.valuation = None
         self.req_rate_return = req_rate_return
         self.discount_rate = (
@@ -26,6 +26,7 @@ class NoiseTrader(Fund):
 
     @classmethod
     def compute_noise_process(cls, max_generations, seed):
+        """ Generate an OU process for max_generation time periods"""
         rng = np.random.default_rng(seed=seed + 1)
         randoms = rng.standard_normal(max_generations)
         process_series = []
@@ -42,6 +43,7 @@ class NoiseTrader(Fund):
         return process_series
 
     def get_noise_process(self, generation):
+        """ Access current value of the noise process"""
         NoiseTrader.noise_process = NoiseTrader.process_series[generation]
         self.trading_signal = NoiseTrader.noise_process
 
@@ -55,7 +57,6 @@ class NoiseTrader(Fund):
 
         self.excess_demand = func
 
-    ##
     def update_valuation(self, dividend, interest_rate_daily):
         self.valuation = (
             dividend * (1.0 + interest_rate_daily) / self.discount_rate
@@ -64,9 +65,9 @@ class NoiseTrader(Fund):
             raise RuntimeError("Negative NT valuation", self.valuation)
 
     def get_pod_demand(self):
-
+        """ Formulates excess demand for the asset"""
+        self.trading_signal = self.valuation * self.trading_signal
         def func(price):
-            signal = tanh(self.signal_scale * log2((self.valuation * self.trading_signal) / max(price, 0.0001)))
+            signal = tanh(self.signal_scale * log2(self.trading_signal / max(price, 0.0001)))
             return self.leverage * signal * self.wealth / price - self.asset
-
         self.pod_demand = func

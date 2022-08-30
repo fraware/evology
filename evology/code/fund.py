@@ -1,10 +1,9 @@
 from types import FunctionType
 import numpy as np
 from math import isnan
-import warnings
-
 
 class Fund:
+    """ Creates a Fund object, without specifying its strategy"""
 
     cash_nominal = 50_000_000
     asset_nominal = 500_000
@@ -31,11 +30,10 @@ class Fund:
         self.wealth_history_month = []
         self.net_flow = 0.0
         self.max_short_size = 500000
-
-        ##
         self.pod_demand = FunctionType
 
     def count_wealth(self, price):
+        """ Measure the wealth of the fund and raises error if it is NAN"""
         self.wealth = self.cash + self.asset * price - self.loan + self.margin
         if isnan(self.wealth) == True:
             print(self.type)
@@ -46,7 +44,6 @@ class Fund:
             print(self.loan) 
             print(self.margin)
             raise ValueError('NAN wealth.')
-  
 
     def compute_demand(self, price):
         self.demand = self.excess_demand(price)
@@ -54,16 +51,12 @@ class Fund:
     def compute_pod_demand(self, price):
         self.demand = self.pod_demand(price)
 
-    def execute_demand(self, price):
-        # TODO: possible issue if we have some mismatch?
-        self.asset += self.demand
-        self.cash -= self.demand * price
-
     def execute_pop_demand(self, price):
         self.asset += self.demand
         self.cash -= self.demand * price
 
     def clear_debt(self):
+        """ Try to clear fund debt with cash"""
         if self.loan > 0 and self.cash > 0:
             self.cash -= self.loan
             self.loan = 0
@@ -72,10 +65,12 @@ class Fund:
             self.loan = 0
 
     def earnings(self, dividend, interest_rate_daily):
+        """ Earn dividends on shares and interest on cash"""
         self.cash += interest_rate_daily * self.cash
         self.cash += dividend * self.asset
 
     def update_margin(self, price):
+        """ Update margin account value if a short position is open"""
         self.cash += self.margin
         self.margin = 0.0
         if self.asset < 0:
@@ -126,10 +121,6 @@ class Fund:
         if len(self.wealth_history_month) > 21:
             # Erase observations older than a month
             del self.wealth_history_month[0]
-
-    # def liquidate_insolvent(self):
-    #     if self.wealth < 0:
-    #         pass
 
     def get_assets(self):
         return self.asset

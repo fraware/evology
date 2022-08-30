@@ -50,8 +50,6 @@ class Simulation:
         pop.count_wealth(asset.price)
 
         for self.generation in tqdm(range(self.max_generations), disable=self.disable):
-
-            # print("Generation", generation)
             """TODO cythonize"""
             """ TODO wealth reset mode """
             pop.replace_insolvent()
@@ -59,7 +57,6 @@ class Simulation:
                 result.data = result.data[0 : self.generation]
                 break
             asset.get_dividend(self.generation)
-            """ TODO extend EMA to many lags """
             asset.compute_price_emas()
             pop.update_trading_signal(
                 asset.dividend,
@@ -69,19 +66,14 @@ class Simulation:
                 asset.price_emas,
             )
             """ TODO TSV computation for the AV agent """
-            # pop.get_excess_demand_functions()
             pop.get_pod_demand_functions()  #
             """ TODO TF does not seem to participate in the market, or very linearly with bias, + without bais sells it all in first period """
             """ TODO we have to check what happens in first period, maybe saving results once before the loop. VI on short already? strange"""
             """ TODO can't have the bias, creates unwanted shorts. But we do something for TF in early periods to avoid all selling"""
-            # pop.get_aggregate_demand()
             pop.get_pod_aggregate_demand()  #
-            """ TODO add liquidation system and spoils to market clearing """
             pop.compute_liquidation(asset.volume)
             asset.market_clearing(pop)
-            # asset.mismatch = pop.compute_demand_values(asset.price)
             asset.mismatch = pop.compute_pod_demand_values(asset.price)  #
-            # asset.volume = pop.execute_demand(asset.price)
             asset.volume = pop.execute_pod_demand(asset.price)
             pop.earnings(asset.dividend, self.interest_rate_daily)
             pop.update_margin(asset.price)
@@ -89,7 +81,6 @@ class Simulation:
             pop.count_wealth(asset.price)
             pop.update_wealth_history()
             pop.compute_average_return()
-            pop.compute_excess_profit()
             pop.compute_profit()
             investor.investment_flows(pop)
 
@@ -127,6 +118,5 @@ class Simulation:
                 pop.TF_returns,
                 pop.replacements
             )
-
 
         self.data = result.convert_df()

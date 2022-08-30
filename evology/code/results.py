@@ -3,6 +3,7 @@ import pandas as pd
 
 
 class Result:
+    """ Stores simulation results in a large nparray, updated at each period"""
 
     variables = [
         "Generation",

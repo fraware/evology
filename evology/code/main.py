@@ -1,6 +1,5 @@
 from simulation import Simulation
 
-
 def main(max_generations, population_size, wealth_coords, interest_rate, investment_bool, seed):
     s = Simulation(
         max_generations=max_generations,
@@ -14,11 +13,9 @@ def main(max_generations, population_size, wealth_coords, interest_rate, investm
     df = s.return_data()
     return df
 
-
 if __name__ == "__main__":
-
     df = main(
-        max_generations=20000,
+        max_generations=500,
         population_size=3,
         wealth_coords=[1/4, 1/4, 1/2],
         interest_rate=0.01,

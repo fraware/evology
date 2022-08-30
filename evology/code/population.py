@@ -8,6 +8,7 @@ import numpy as np
 import warnings
 
 class Population:
+    """ This object contains Fund objects and execute functions on this group"""
 
     asset_supply = 0
 
@@ -31,6 +32,7 @@ class Population:
         self.spoils = 0
         self.shutdown = False
 
+        # Create some population state variables to store as results
         self.wealthNT = 0.0
         self.wealthVI = 0.0
         self.wealthTF = 0.0
@@ -55,6 +57,7 @@ class Population:
         # TODO self.assetNT and things like that at the level of the population?
 
     def create_fund(self, type):
+        """ A function taking a type as argument and returning a corresponding Fund"""
         if type == "NT":
             fund = NoiseTrader(
                 0,
@@ -81,6 +84,8 @@ class Population:
         return fund
 
     def create_pop(self):
+        """ generates a population of funds basd on initial coordinates
+        There is always at least one fund of each type. """
 
         # Check we can create a diverse population
         if self.size < 3:
@@ -90,6 +95,8 @@ class Population:
             raise RuntimeError("Wealth coordinates sum is higher than 1.")
         if shareNT + shareVI + shareTF < 0.99999:
             raise RuntimeError("Wealth coordinates sum is lower than 1.")
+        if shareNT <= 0 or shareVI <= 0 or shareTF <= 0:
+            raise RuntimeError('Strategy initial condition <= 0')
 
         # Start the population with three agents of each type.
         self.agents.append(self.create_fund("NT"))
@@ -132,19 +139,20 @@ class Population:
 
 
     def count_wealth(self, price):
+        """ Count wealth of funds in the population"""
         for ind in self.agents:
             ind.count_wealth(price)
 
     def update_trading_signal(
         self, dividend, interest_rate_daily, generation, price, price_ema
     ):
-        # First, update VI valuation
+        """ Depending on fund types, compute their trading signals"""
+        # TODO: use polymorphism and a same function name for all.
         for ind in self.agents:
             if isinstance(ind, ValueInvestor):
                 ind.update_valuation(dividend, interest_rate_daily)
             elif isinstance(ind, NoiseTrader):
                 ind.get_noise_process(generation)
-                ##
                 ind.update_valuation(dividend, interest_rate_daily)
             elif isinstance(ind, TrendFollower):
                 if generation >= ind.time_horizon:
@@ -160,22 +168,8 @@ class Population:
         for ind in self.agents:
             ind.get_pod_demand()
 
-    def get_aggregate_demand(self):
-        def func(price):
-            result = 0.0
-            for ind in self.agents:
-                try:
-                    result += ind.excess_demand(price)
-                except Exception as e:
-                    print(e)
-                    raise RuntimeError(
-                        "Failed to get ED(price) from agent.", ind.type, price
-                    )
-            return result
-
-        self.aggregate_demand = func
-
     def get_pod_aggregate_demand(self):
+        """ Creates the aggregate demand function from funds' individual demands"""
         def func(price):
             result = 0.0
             for ind in self.agents:
@@ -184,33 +178,34 @@ class Population:
                 except Exception as e:
                     print(e)
                     raise RuntimeError(
-                        "Failed to get pod_D(price) from agent.", ind.type, price
+                        "Failed to get demand(price) from agent.", ind.type, price
                     )
             return result
-
         self.aggregate_demand = func
 
-    def compute_demand_values(self, price):
-        mismatch = 0.0
-        for ind in self.agents:
-            if isinstance(ind, ValueInvestor):
-                ind.compute_trading_signal(price)
-            ind.compute_demand(price)
-            mismatch += ind.demand
-        return mismatch
+    # def compute_demand_values(self, price):
+    #     """ Based on asset price, compute funds' excess demand values and mismatch"""
+    #     mismatch = 0.0
+    #     for ind in self.agents:
+    #         if isinstance(ind, ValueInvestor):
+    #             ind.compute_trading_signal(price)
+    #         ind.compute_demand(price)
+    #         mismatch += ind.demand
+    #     return mismatch
 
     def compute_pod_demand_values(self, price):
+        """ Based on asset price, compute funds' excess demand values and mismatch"""
         mismatch = 0.0
         for ind in self.agents:
             if isinstance(ind, ValueInvestor):
                 ind.compute_trading_signal(price)
             ind.compute_pod_demand(price)
             mismatch += ind.demand
-        # if mismatch > 1:
-        #     warnings.warn('Mismatch superior to 1 ' + str(mismatch))
         return mismatch
 
     def execute_pod_demand(self, price):
+        # TODO: this is too long, rewrite this
+        """ Execute buy and sell orders of the funds, making sure they are balanced"""
         
         # Verify that excess demand orders balance out
         sum_demand = 0.0
@@ -248,8 +243,6 @@ class Population:
                 # Buying will be restricted according to supply
             else:
                 raise ValueError("order_ratio has a strange value: " + str(order_ratio))
-                            
-            # warnings.warn('Agents demands adjusted to counter imbalance. ' + str(price) + str(order_ratio))
 
             for ind in self.agents:
                 if ind.demand > 0:
@@ -259,8 +252,6 @@ class Population:
 
         volume = 0.0
         for ind in self.agents:
-            # volume += abs(ind.demand - ind.asset)  # abs: buy & sell don't cancel out
-            
             volume += abs(ind.demand)  # abs: buy & sell don't cancel out
             ind.execute_pop_demand(price)
 
@@ -284,19 +275,24 @@ class Population:
         return volume
 
     def clear_debt(self):
+        """ All funds clear their debt"""
         for ind in self.agents:
             ind.clear_debt()
 
     def earnings(self, dividend, interest_rate_daily):
+        # TODO: change name, earnings are for companies
+        """ All funds receive their earnings"""
         for ind in self.agents:
             ind.earnings(dividend, interest_rate_daily)
 
     def count_assets(self):
+        """ Count funds total assets"""
         total = 0.0
         for ind in self.agents:
             total += ind.get_assets()
         return total
         # TODO add an error if we violate the asset supply cst
+        # Is that done somewhere else already?
 
     def update_margin(self, price):
         for ind in self.agents:
@@ -311,6 +307,7 @@ class Population:
             ind.update_wealth_history()
 
     def compute_average_return(self):
+        """ Computes average fund performance in the population"""
 
         # Compute average annual return
         total_profit, count_funds = 0.0, 0
@@ -323,13 +320,12 @@ class Population:
         else:
             self.average_annual_return = np.nan
 
-        # Check that average return is not aberrant
-        if self.average_annual_return > 100:
-            warnings.warn("self average annual return > 100:" + str(self.average_annual_return))
-
-        # Compute average monthly return
+        # Compute average monthly return and excess annual return for funds
         total_profit, count_funds = 0.0, 0
         for ind in self.agents:
+            # Measure excess annual return 
+            ind.excess_annual_return = ind.annual_return - self.average_annual_return
+            # Measure average monthly return
             if isnan(ind.get_monthly_return()) == False:
                 total_profit += ind.get_monthly_return()
                 count_funds += 1
@@ -338,11 +334,9 @@ class Population:
         else:
             self.average_monthly_return = np.nan
 
-    def compute_excess_profit(self):
-        for ind in self.agents:
-            ind.excess_annual_return = ind.annual_return - self.average_annual_return
 
     def get_returns_statistics(self):
+        """ Measure returns by strategy type"""
 
         returnNT = 0.0
         returnVI = 0.0
@@ -374,6 +368,7 @@ class Population:
             self.TF_returns = np.nan
 
     def get_wealth_statistics(self):
+        """ Measure various metrics about funds wealth"""
 
         wealthNT = 0.0
         wealthVI = 0.0
@@ -407,6 +402,7 @@ class Population:
             self.shutdown = True
 
     def get_short_positions(self):
+        """ Count short positions of funds"""
         total_short = 0
         for ind in self.agents:
             if ind.asset < 0:
@@ -414,6 +410,7 @@ class Population:
         return total_short
 
     def get_activity_statistics(self):
+        """ Measure various metrics about funds' trading activity"""
         VI_val, VI_count = 0, 0
         for ind in self.agents:
             if isinstance(ind, ValueInvestor):
@@ -425,6 +422,7 @@ class Population:
             self.VI_val = np.nan
 
     def get_investment_flows(self):
+        """ Measure investment flows per agent type"""
         NTflows, VIflows, TFflows = 0.0, 0.0, 0.0
         for ind in self.agents:
             if isinstance(ind, NoiseTrader):
@@ -443,6 +441,7 @@ class Population:
             self.NT_flows, self.VI_flows, self.TF_flows = 0.0, 0.0, 0.0
 
     def get_positions(self):
+        """ Measure positions of the funds"""
         NT_asset, VI_asset, TF_asset = 0.0, 0.0, 0.0
         NT_cash, VI_cash, TF_cash = 0.0, 0.0, 0.0
         for ind in self.agents:
@@ -465,6 +464,7 @@ class Population:
 
 
     def create_fractional_fund(self, index, divisions):
+        """ Create fractional copies of a fund"""
         if isinstance(self.agents[index], NoiseTrader):
             new_half = self.create_fund("NT")
         elif isinstance(self.agents[index], ValueInvestor):
@@ -484,6 +484,7 @@ class Population:
 
 
     def replace_insolvent(self):
+        """ Replace insolvent funds in the population by spliting the wealthiest fund"""
 
         index_to_replace = []
         wealth_list = []
@@ -512,9 +513,7 @@ class Population:
             if NumberReplace != 0:
                 new_half_fund = self.create_fractional_fund(MaxFund, NumberReplace + 1)
                 for index in index_to_replace:
-                    # new_half_fund = self.create_fractional_fund(MaxFund, NumberReplace + 1)
                     spoils += self.agents[index].asset
-                    # warnings.warn("Replacement: ", self.agents[index].type, )
                     self.agents[index] = new_half_fund
                     
                     replacements += 1
@@ -526,11 +525,13 @@ class Population:
                     if ind.wealth < 0:
                         raise ValueError("Insolvent funds after hypermutation.")
 
-            self.replacements = replacements
-            self.spoils += spoils
+
+            self.replacements = replacements # Count period replacements
+            self.spoils += spoils # Add shares of the insolvent funds to the liquidation pool (spoils)
         return self.spoils, replacements
 
     def compute_liquidation(self, volume):
+        """ Determine how many assets of insolvent funds are liquidated in the market today"""
         if self.spoils > 0:
             self.liquidation = - min(self.spoils, min(0.1 * volume, 10000))
         elif self.spoils == 0:

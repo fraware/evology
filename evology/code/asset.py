@@ -7,6 +7,8 @@ from population import Population
 
 class Asset:
 
+    """ The Asset class defines a company stock. """
+
     dividend_growth_rate_yearly = 0.01
     dividend_growth_rate_daily = (
         (1.0 + dividend_growth_rate_yearly) ** (1.0 / 252.0)
@@ -14,25 +16,30 @@ class Asset:
     dividend_volatility = 0.1 / sqrt(252)
     dividend_autocorrelation = 0.1
     dividend_autocorrelation_lag = 1
-    ema_horizons = 2  # TODO convert to list
-    ema_smoothing_factors = 2 / 3
+    ema_horizons = 2 
+    ema_smoothing_factor = 2 / 3
+    initial_price = 100
+    initial_dividend = 0.003983
 
     def __init__(self, time_horizon, seed):
+        """ Create an asset object and draw its dividend for time_horizon steps"""
         self.time_horizon = time_horizon
-        self.price = 100  # Initial price
-        self.dividend = 0.003983  # Initial dividend
+        self.price = Asset.initial_price 
+        self.dividend = Asset.initial_dividend  
         self.seed = seed
         self.dividend_series = self.compute_dividend_series(
             self.time_horizon, self.seed
         )
-        self.price_emas = [self.price]  # For a single time horizon
+        self.price_emas = self.price  
         self.volume = 0.0
         self.mismatch = 0.0
 
     def get_dividend(self, generation):
+        """ Get the dividend value at a specific time period"""
         self.dividend = self.dividend_series[0, generation]
 
     def compute_dividend_series(self, time_horizon, seed):
+        """ Compute the dividends from an autocorrelated Geometric Brownian Motion"""
         dividend_series = np.zeros((1, time_horizon))
         rd_dividend_series = np.zeros((1, time_horizon))
         rng = np.random.default_rng(seed=seed)
@@ -60,21 +67,22 @@ class Asset:
         return dividend_series
 
     def compute_price_emas(self):
-        # self.price_emas = [(self.price * Asset.ema_smoothing_factors[i] + self.price_emas[i] * (1. - Asset.ema_horizons[i])) for i in range(Asset.ema_horizons)]
-        self.price_emas = [
-            (
-                self.price * Asset.ema_smoothing_factors
-                + self.price_emas[0] * (1.0 - Asset.ema_smoothing_factors)
+        """ Compute the current EMA of the asset price for momentum funds"""
+        self.price_emas = (
+                self.price * Asset.ema_smoothing_factor
+                + self.price_emas * (1.0 - Asset.ema_smoothing_factor)
             )
-        ]
+        
 
     def market_clearing(self, pop):
+        """ Finds the clearing price for the asset based on population supply and demand
+        By finding the root of the excess demand function."""
         
         def pod_aggregate_demand(price):
-            return pop.aggregate_demand(price) + pop.liquidation #- Population.asset_supply
+            return pop.aggregate_demand(price) + pop.liquidation 
 
         self.price = root(pod_aggregate_demand, self.price, method="hybr").x
-        # TODO: install circuit breaker
+        # TODO: do we need circuit breaker?
         if self.price < 0:
             self.price = 0.01
             warnings.warn("Negative price converted to 0.01")

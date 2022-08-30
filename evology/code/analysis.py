@@ -1,4 +1,5 @@
 # %%
+""" analysis.py takes some run data from main.py and plots some figures """
 
 import numpy as np
 import pandas as pd
