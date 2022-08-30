@@ -47,16 +47,6 @@ class NoiseTrader(Fund):
         NoiseTrader.noise_process = NoiseTrader.process_series[generation]
         self.trading_signal = NoiseTrader.noise_process
 
-    # def get_excess_demand_function(self):
-    #     # Noisy VI setup for NT to avoid unbounded orders
-    #     def func(price):
-    #         value = (self.wealth * self.leverage / price) * tanh(
-    #             self.signal_scale * (log2((self.valuation) / max(price, 0.0001))) + 0.5
-    #         ) - self.asset
-    #         return max(value, -self.leverage * self.max_short_size - self.asset)
-
-    #     self.excess_demand = func
-
     def update_valuation(self, dividend, interest_rate_daily):
         self.valuation = (
             dividend * (1.0 + interest_rate_daily) / self.discount_rate
