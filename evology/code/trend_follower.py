@@ -37,3 +37,10 @@ class TrendFollower(Fund):
                 return 0
 
         self.pod_demand = func
+
+    def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
+        if generation >= self.time_horizon:
+            self.get_price_ema(price, price_ema[0])
+        else:
+            self.get_price_ema(price, np.nan)
+

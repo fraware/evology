@@ -71,3 +71,7 @@ class NoiseTrader(Fund):
             signal = tanh(self.signal_scale * log2(self.trading_signal / max(price, 0.0001)))
             return self.leverage * signal * self.wealth / price - self.asset
         self.pod_demand = func
+
+    def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
+        self.get_noise_process(generation)
+        self.update_valuation(dividend, interest_rate_daily)

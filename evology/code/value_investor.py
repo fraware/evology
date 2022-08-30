@@ -39,3 +39,7 @@ class ValueInvestor(Fund):
             return self.leverage * signal * self.wealth / price - self.asset
 
         self.pod_demand = func
+
+    def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
+        self.update_valuation(dividend, interest_rate_daily)
+

@@ -76,13 +76,13 @@ class Asset:
 
     def market_clearing(self, pop):
         """ Finds the clearing price for the asset based on population supply and demand
-        By finding the root of the excess demand function."""
+        By finding the root of the excess demand function.
+        For now, circuit breaking is not necessary to stabilise price movements."""
         
         def pod_aggregate_demand(price):
             return pop.aggregate_demand(price) + pop.liquidation 
 
         self.price = root(pod_aggregate_demand, self.price, method="hybr").x
-        # TODO: do we need circuit breaker?
         if self.price < 0:
             self.price = 0.01
             warnings.warn("Negative price converted to 0.01")

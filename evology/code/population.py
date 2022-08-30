@@ -54,8 +54,6 @@ class Population:
         self.VI_return = np.nan
         self.TF_return = np.nan
 
-        # TODO self.assetNT and things like that at the level of the population?
-
     def create_fund(self, type):
         """ A function taking a type as argument and returning a corresponding Fund"""
         if type == "NT":
@@ -147,18 +145,8 @@ class Population:
         self, dividend, interest_rate_daily, generation, price, price_ema
     ):
         """ Depending on fund types, compute their trading signals"""
-        # TODO: use polymorphism and a same function name for all.
         for ind in self.agents:
-            if isinstance(ind, ValueInvestor):
-                ind.update_valuation(dividend, interest_rate_daily)
-            elif isinstance(ind, NoiseTrader):
-                ind.get_noise_process(generation)
-                ind.update_valuation(dividend, interest_rate_daily)
-            elif isinstance(ind, TrendFollower):
-                if generation >= ind.time_horizon:
-                    ind.get_price_ema(price, price_ema[0])
-                else:
-                    ind.get_price_ema(price, np.nan)
+            ind.update_trading_signal(dividend, interest_rate_daily, generation, price, price_ema)
 
     def get_excess_demand_functions(self):
         for ind in self.agents:
@@ -182,16 +170,6 @@ class Population:
                     )
             return result
         self.aggregate_demand = func
-
-    # def compute_demand_values(self, price):
-    #     """ Based on asset price, compute funds' excess demand values and mismatch"""
-    #     mismatch = 0.0
-    #     for ind in self.agents:
-    #         if isinstance(ind, ValueInvestor):
-    #             ind.compute_trading_signal(price)
-    #         ind.compute_demand(price)
-    #         mismatch += ind.demand
-    #     return mismatch
 
     def compute_pod_demand_values(self, price):
         """ Based on asset price, compute funds' excess demand values and mismatch"""
