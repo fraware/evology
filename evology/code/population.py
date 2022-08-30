@@ -182,9 +182,14 @@ class Population:
         return mismatch
 
     def execute_pod_demand(self, price):
-        # TODO: this is too long, rewrite this
         """ Execute buy and sell orders of the funds, making sure they are balanced"""
-        
+        self.execute_balanced_orders()
+        self.check_asset_supply()
+        volume = self.volume_check(price)
+
+        return volume
+
+    def execute_balanced_orders(self):
         # Verify that excess demand orders balance out
         sum_demand = 0.0
         for ind in self.agents:
@@ -228,11 +233,9 @@ class Population:
                 elif ind.demand < 0:
                     ind.demand = ind.demand * multiplier_sell
 
-        volume = 0.0
-        for ind in self.agents:
-            volume += abs(ind.demand)  # abs: buy & sell don't cancel out
-            ind.execute_pop_demand(price)
 
+    def check_asset_supply(self):
+        # Verify asset supply 
         total_assets = 0.0
         for ind in self.agents:
             total_assets += ind.asset
@@ -246,10 +249,15 @@ class Population:
                 "Asset supply violated", total_assets, Population.asset_supply
             )
 
+    def volume_check(self, price):
+        # Measure volume and check it is not 0
+        volume = 0.0
+        for ind in self.agents:
+            volume += abs(ind.demand)  # abs: buy & sell don't cancel out
+            ind.execute_pop_demand(price)
         if volume == 0:
             warnings.warn('Volume is 0. Shuting down...')
             self.shutdown = True
-
         return volume
 
     def clear_debt(self):
