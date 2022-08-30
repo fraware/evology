@@ -45,10 +45,10 @@ class Fund:
             print(self.margin)
             raise ValueError('NAN wealth.')
 
-    def compute_pod_demand(self, price):
-        self.demand = self.pod_demand(price)
+    def compute_excess_demand(self, price):
+        self.demand = self.excess_demand(price)
 
-    def execute_pop_demand(self, price):
+    def execute_excess_demand(self, price):
         self.asset += self.demand
         self.cash -= self.demand * price
 

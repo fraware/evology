@@ -47,15 +47,15 @@ class NoiseTrader(Fund):
         NoiseTrader.noise_process = NoiseTrader.process_series[generation]
         self.trading_signal = NoiseTrader.noise_process
 
-    def get_excess_demand_function(self):
-        # Noisy VI setup for NT to avoid unbounded orders
-        def func(price):
-            value = (self.wealth * self.leverage / price) * tanh(
-                self.signal_scale * (log2((self.valuation) / max(price, 0.0001))) + 0.5
-            ) - self.asset
-            return max(value, -self.leverage * self.max_short_size - self.asset)
+    # def get_excess_demand_function(self):
+    #     # Noisy VI setup for NT to avoid unbounded orders
+    #     def func(price):
+    #         value = (self.wealth * self.leverage / price) * tanh(
+    #             self.signal_scale * (log2((self.valuation) / max(price, 0.0001))) + 0.5
+    #         ) - self.asset
+    #         return max(value, -self.leverage * self.max_short_size - self.asset)
 
-        self.excess_demand = func
+    #     self.excess_demand = func
 
     def update_valuation(self, dividend, interest_rate_daily):
         self.valuation = (
@@ -64,13 +64,13 @@ class NoiseTrader(Fund):
         if self.valuation < 0:
             raise RuntimeError("Negative NT valuation", self.valuation)
 
-    def get_pod_demand(self):
+    def get_excess_demand_function(self):
         """ Formulates excess demand for the asset"""
         self.trading_signal = self.valuation * self.trading_signal
         def func(price):
             signal = tanh(self.signal_scale * log2(self.trading_signal / max(price, 0.0001)))
             return self.leverage * signal * self.wealth / price - self.asset
-        self.pod_demand = func
+        self.excess_demand = func
 
     def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
         self.get_noise_process(generation)

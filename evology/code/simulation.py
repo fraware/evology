@@ -30,6 +30,9 @@ class Simulation:
             return True
 
     def simulate(self):
+        """ Contains all initialisation, simulations steps and results recording"""
+
+        # Initialise results, assets, fund population, investor
         result = Result(self.max_generations)
         asset = Asset(self.max_generations, self.seed)
         pop = Population(
@@ -48,6 +51,7 @@ class Simulation:
         pop.count_wealth(asset.price)
 
         for self.generation in tqdm(range(self.max_generations), disable=self.disable):
+
             pop.replace_insolvent()
             if pop.shutdown == True:
                 result.data = result.data[0 : self.generation]
@@ -61,12 +65,12 @@ class Simulation:
                 asset.price,
                 asset.price_emas,
             )
-            pop.get_pod_demand_functions()  
-            pop.get_pod_aggregate_demand()  
+            pop.get_excess_demand_functions()  
+            pop.get_excess_aggregate_demand()  
             pop.compute_liquidation(asset.volume)
             asset.market_clearing(pop)
-            asset.mismatch = pop.compute_pod_demand_values(asset.price)  #
-            asset.volume = pop.execute_pod_demand(asset.price)
+            asset.mismatch = pop.compute_excess_demand_values(asset.price)  #
+            asset.volume = pop.execute_excess_demand(asset.price)
             pop.cash_gains(asset.dividend, self.interest_rate_daily)
             pop.update_margin(asset.price)
             pop.clear_debt()

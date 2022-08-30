@@ -20,25 +20,17 @@ class ValueInvestor(Fund):
         if self.valuation < 0:
             raise RuntimeError("Negative VI valuation", self.valuation)
 
-    def get_excess_demand_function(self):
-        def func(price):
-            value = (self.wealth * self.leverage / price) * tanh(
-                (self.signal_scale * log2(self.valuation / max(price, 0.0001))) + 0.0
-            ) - self.asset
-            return max(value, -self.leverage * self.max_short_size - self.asset)
-
-        self.excess_demand = func
 
     def compute_trading_signal(self, price):
         self.trading_signal = log2(self.valuation / price)
 
-    def get_pod_demand(self):
+    def get_excess_demand_function(self):
 
         def func(price):
             signal = tanh(self.signal_scale * log2((self.valuation) / max(price, 0.0001)))
             return self.leverage * signal * self.wealth / price - self.asset
 
-        self.pod_demand = func
+        self.excess_demand = func
 
     def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
         self.update_valuation(dividend, interest_rate_daily)

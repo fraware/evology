@@ -152,17 +152,17 @@ class Population:
         for ind in self.agents:
             ind.excess_demand_function = ind.get_excess_demand_function()
 
-    def get_pod_demand_functions(self):
+    def get_excess_demand_functions(self):
         for ind in self.agents:
-            ind.get_pod_demand()
+            ind.get_excess_demand_function()
 
-    def get_pod_aggregate_demand(self):
+    def get_excess_aggregate_demand(self):
         """ Creates the aggregate demand function from funds' individual demands"""
         def func(price):
             result = 0.0
             for ind in self.agents:
                 try:
-                    result += ind.pod_demand(price)
+                    result += ind.excess_demand(price)
                 except Exception as e:
                     print(e)
                     raise RuntimeError(
@@ -171,17 +171,17 @@ class Population:
             return result
         self.aggregate_demand = func
 
-    def compute_pod_demand_values(self, price):
+    def compute_excess_demand_values(self, price):
         """ Based on asset price, compute funds' excess demand values and mismatch"""
         mismatch = 0.0
         for ind in self.agents:
             if isinstance(ind, ValueInvestor):
                 ind.compute_trading_signal(price)
-            ind.compute_pod_demand(price)
+            ind.compute_excess_demand(price)
             mismatch += ind.demand
         return mismatch
 
-    def execute_pod_demand(self, price):
+    def execute_excess_demand(self, price):
         """ Execute buy and sell orders of the funds, making sure they are balanced"""
         self.execute_balanced_orders()
         self.check_asset_supply()
@@ -250,11 +250,11 @@ class Population:
             )
 
     def volume_check(self, price):
-        # Measure volume and check it is not 0
+        # Measure volume and check it is not 0 + implement orders
         volume = 0.0
         for ind in self.agents:
             volume += abs(ind.demand)  # abs: buy & sell don't cancel out
-            ind.execute_pop_demand(price)
+            ind.execute_excess_demand(price)
         if volume == 0:
             warnings.warn('Volume is 0. Shuting down...')
             self.shutdown = True

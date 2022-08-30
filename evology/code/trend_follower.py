@@ -19,15 +19,6 @@ class TrendFollower(Fund):
             self.trading_signal = np.nan
 
     def get_excess_demand_function(self):
-        def func(price):
-            value = (self.wealth * self.leverage / price) * tanh(
-                self.signal_scale * self.trading_signal + 0.0
-            ) - self.asset
-            return max(value, -self.leverage * self.max_short_size - self.asset)
-
-        self.excess_demand = func
-
-    def get_pod_demand(self):
 
         def func(price):
             if isnan(self.trading_signal) == False:
@@ -36,7 +27,7 @@ class TrendFollower(Fund):
             else:
                 return 0
 
-        self.pod_demand = func
+        self.excess_demand = func
 
     def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
         if generation >= self.time_horizon:
