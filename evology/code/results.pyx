@@ -1,11 +1,7 @@
 import cython
-cimport numpy as np
 import pandas as pd
 import numpy as np
-DTYPE = np.intc
 DTYPE=np.float64
-
-cdef list variables
 
 
 cdef class Result:
