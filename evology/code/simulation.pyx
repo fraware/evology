@@ -44,7 +44,7 @@ cdef class Simulation:
             self.max_generations,
             self.wealth_coords,
             self.interest_rate,
-            Asset.dividend_growth_rate_yearly,
+            asset.dividend_growth_rate_yearly,
             self.seed,
         )
         # NoiseTrader.process_series = NoiseTrader.compute_noise_process(
@@ -93,7 +93,7 @@ cdef class Simulation:
             pop.get_investment_flows()
             result.update_results(
                 self.generation,
-                asset.price[0],
+                asset.price,
                 asset.dividend,
                 asset.volume,
                 self.noise_process,

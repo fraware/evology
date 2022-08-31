@@ -2,7 +2,7 @@ import cython
 cdef float NAN = float("nan")
 
 
-from types import FunctionType
+# from types import FunctionType
 from trend_follower import TrendFollower
 from value_investor import ValueInvestor
 from noise_trader import NoiseTrader
@@ -34,7 +34,7 @@ cdef class Population:
         self.interest_rate = interest_rate
         self.dividend_growth_rate = dividend_growth_rate
         self.seed = seed
-        self.aggregate_demand = FunctionType
+        # self.aggregate_demand = FunctionType
         self.spoils = 0.
         self.shutdown = False
         self.asset_supply = 0

@@ -30,6 +30,7 @@ extensions = [
         "population",
         "main",
         "results",
+        "asset",
         
     ]
 ]

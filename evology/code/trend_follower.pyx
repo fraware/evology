@@ -32,7 +32,7 @@ cdef class TrendFollower(Fund):
 
     def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
         if generation >= self.time_horizon:
-            self.get_price_ema(price, price_ema[0])
+            self.get_price_ema(price, price_ema)
         else:
             self.get_price_ema(price, NAN)
 
