@@ -28,6 +28,7 @@ extensions = [
         "value_investor",
         "simulation",
         "population",
+        "main",
         
     ]
 ]

@@ -1,3 +1,4 @@
+import cython
 from simulation import Simulation
 
 def main(max_generations, population_size, wealth_coords, interest_rate, investment_bool, seed, reset):

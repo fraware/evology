@@ -1,4 +1,5 @@
 import sys
+import cython
 sys.path.append('./evology/code')
 import numpy as np
 from main import main as model
