@@ -1,5 +1,6 @@
 from libc.math cimport isnan
-import cython
+cimport cython
+cimport fund
 
 cdef class Investor:
     """ Creates the investor object, who invests in funds based on their performance"""
@@ -7,15 +8,18 @@ cdef class Investor:
         self.active = investment_bool
 
     def investment_flows(self, pop):
+        cdef fund.Fund ind
+        cdef double invested_amount
         # net capital flows based on Ka and Ho, 2019
         if self.active == True:
-            for fund in pop.agents:
+            for ind in pop.agents:
                 if (
-                    isnan(fund.excess_monthly_return) == False
-                    and isnan(fund.monthly_return) == False
+                    isnan(ind.excess_monthly_return) == False
+                    and isnan(ind.monthly_return) == False
                 ):
                     invested_amount = (
-                        (-0.0012 + 0.1089 * fund.excess_monthly_return) / 21.0
-                    ) * fund.wealth
-                    fund.net_flow = invested_amount
-                    fund.cash += fund.net_flow
+                        (-0.0012 + 0.1089 * ind.excess_monthly_return) / 21.0
+                    ) * ind.wealth
+                    ind.net_flow = invested_amount
+                    ind.cash += ind.net_flow
+        
