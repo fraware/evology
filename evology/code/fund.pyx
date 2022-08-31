@@ -6,18 +6,6 @@ import cython
 
 cdef class Fund:
     """ Creates a Fund object, without specifying its strategy"""
-    # cdef public double cash
-    # cdef public double asset
-    # cdef public double loan
-    # cdef public double margin
-    # cdef public double wealth
-    # cdef public double trading_signal
-    # cdef public object type
-    # cdef public double leverage
-    # cdef public double signal_scale
-    # cdef public double demand 
-    # cdef public double previous_wealth
-    # TODO: others to cdef
 
     def __init__(self, cash, asset):
 
@@ -28,7 +16,6 @@ cdef class Fund:
         self.wealth = 0.0
         self.trading_signal = 0.0
         self.type = str
-        # self.excess_demand = FunctionType
         self.leverage = 1.0
         self.signal_scale = 1.0
         self.demand = 0.0
@@ -42,9 +29,8 @@ cdef class Fund:
         self.wealth_history_month = []
         self.net_flow = 0.0
         self.max_short_size = 500000.
-        # self.pod_demand = FunctionType
 
-    def count_wealth(self, price):
+    def count_wealth(self, double price):
         """ Measure the wealth of the fund and raises error if it is NAN"""
         self.wealth = self.cash + self.asset * price - self.loan + self.margin
         if isnan(self.wealth) == True:

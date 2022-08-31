@@ -1,8 +1,8 @@
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+
 import cython
 cdef float NAN = float("nan")
 
-
-# from types import FunctionType
 from trend_follower import TrendFollower
 from value_investor import ValueInvestor
 from noise_trader import NoiseTrader

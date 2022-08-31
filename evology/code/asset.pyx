@@ -1,3 +1,5 @@
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+
 import cython
 from libc.math cimport sqrt
 import numpy as np

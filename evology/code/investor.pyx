@@ -1,3 +1,5 @@
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+
 from libc.math cimport isnan
 cimport cython
 cimport fund
