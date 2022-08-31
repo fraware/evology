@@ -83,7 +83,6 @@ class Result:
             TF_returns,
             replacements
         ]
-        print(generation)
         self.data[int(generation), :] = arr
 
     def convert_df(self):

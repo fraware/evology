@@ -152,7 +152,9 @@ class Population:
         """ Depending on fund types, compute their trading signals"""
         for ind in self.agents:
             ind.update_trading_signal(dividend, interest_rate_daily, generation, price, price_ema)
-
+            if isinstance(ind, NoiseTrader):
+                self.noise_process = ind.noise_process
+                
     def get_excess_demand_functions(self):
         for ind in self.agents:
             ind.excess_demand_function = ind.get_excess_demand_function()

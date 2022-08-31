@@ -27,6 +27,7 @@ class Simulation:
         self.investment_bool = investment_bool
         self.wealth_coords = wealth_coords
         self.reset = reset
+        self.noise_process = 0.0
 
     def set_display(self):
         """ Controls whether we hide the TQDM progress bar during a run. Yes for linux because linux is for experiments"""
@@ -98,7 +99,7 @@ class Simulation:
                 asset.price,
                 asset.dividend,
                 asset.volume,
-                NoiseTrader.noise_process,
+                self.noise_process,
                 pop.VI_val,
                 pop.wshareNT,
                 pop.wshareVI,
