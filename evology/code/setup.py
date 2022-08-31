@@ -27,6 +27,7 @@ extensions = [
         "trend_follower",
         "value_investor",
         "simulation",
+        "population",
         
     ]
 ]

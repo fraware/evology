@@ -1,3 +1,7 @@
+import cython
+cdef float NAN = float("nan")
+
+
 from types import FunctionType
 from trend_follower import TrendFollower
 from value_investor import ValueInvestor
@@ -7,10 +11,10 @@ from math import isnan
 import numpy as np
 import warnings
 
-class Population:
+cdef class Population:
     """ This object contains Fund objects and execute functions on this group"""
 
-    asset_supply = 0
+    
 
     def __init__(
         self,
@@ -31,8 +35,9 @@ class Population:
         self.dividend_growth_rate = dividend_growth_rate
         self.seed = seed
         self.aggregate_demand = FunctionType
-        self.spoils = 0
+        self.spoils = 0.
         self.shutdown = False
+        self.asset_supply = 0
 
         # Create some population state variables to store as results
         self.wealthNT = 0.0
@@ -52,9 +57,9 @@ class Population:
         self.NT_cash = 0.0
         self.VI_cash = 0.0
         self.TF_cash = 0.0
-        self.NT_return = np.nan
-        self.VI_return = np.nan
-        self.TF_return = np.nan
+        self.NT_return = NAN
+        self.VI_return = NAN
+        self.TF_return = NAN
 
     def create_fund(self, type):
         """ A function taking a type as argument and returning a corresponding Fund"""
@@ -137,7 +142,7 @@ class Population:
             if isinstance(fund, TrendFollower):
                 fund.cash, fund.asset = TF_cash, TF_asset
 
-        Population.asset_supply = total_asset
+        self.asset_supply = total_asset
 
 
 
@@ -247,7 +252,7 @@ class Population:
         for ind in self.agents:
             total_assets += ind.asset
 
-        if abs(total_assets - Population.asset_supply + self.spoils) >= 1:
+        if abs(total_assets - self.asset_supply + self.spoils) >= 1:
             print("agent type, demand")
             for ind in self.agents:
                 print(ind.type, ind.wealth, ind.asset, ind.demand)

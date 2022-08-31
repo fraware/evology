@@ -74,7 +74,7 @@ cdef class Simulation:
             pop.get_excess_aggregate_demand()  
             pop.compute_liquidation(asset.volume)
             asset.market_clearing(pop)
-            asset.mismatch = pop.compute_excess_demand_values(asset.price)  #
+            asset.mismatch = pop.compute_excess_demand_values(asset.price)  
             asset.volume = pop.execute_excess_demand(asset.price)
             pop.cash_gains(asset.dividend, self.interest_rate_daily)
             pop.update_margin(asset.price)
