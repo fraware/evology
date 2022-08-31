@@ -15,7 +15,7 @@ helloworld.so in unix or helloworld.pyd in Windows.
 
 from setuptools import Extension, setup
 import os
-
+import numpy as np
 from Cython.Build import cythonize
 
 include_dirs = [os.getcwd()]
@@ -29,11 +29,12 @@ extensions = [
         "simulation",
         "population",
         "main",
+        "results",
         
     ]
 ]
 
 setup(
     ext_modules=cythonize(extensions, annotate=True),
-    # include_dirs=[numpy.get_include()],
+    include_dirs = [np.get_include()]
 )

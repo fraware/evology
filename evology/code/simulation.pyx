@@ -4,7 +4,7 @@ import cython
 from tqdm import tqdm
 from population import Population
 from asset import Asset
-from results import Result
+cimport results
 from investor import Investor
 import sys
 
@@ -37,7 +37,7 @@ cdef class Simulation:
         """ Contains all initialisation, simulations steps and results recording"""
 
         # Initialise results, assets, fund population, investor
-        result = Result(self.max_generations)
+        result = results.Result(self.max_generations)
         asset = Asset(self.max_generations, self.seed)
         pop = Population(
             self.population_size,
@@ -93,7 +93,7 @@ cdef class Simulation:
             pop.get_investment_flows()
             result.update_results(
                 self.generation,
-                asset.price,
+                asset.price[0],
                 asset.dividend,
                 asset.volume,
                 self.noise_process,
