@@ -1,10 +1,7 @@
 #cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 
-# import pyximport
-# pyximport.install()
-
+import cython
 from tqdm import tqdm
-from noise_trader import NoiseTrader
 from population import Population
 from asset import Asset
 from results import Result
@@ -12,7 +9,7 @@ from investor import Investor
 import sys
 
 
-class Simulation:
+cdef class Simulation:
     def __init__(
         self, max_generations, population_size, wealth_coords, interest_rate, investment_bool, seed, reset
     ):

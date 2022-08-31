@@ -1,6 +1,7 @@
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+
 from libc.math cimport log2, tanh, isnan
 from fund cimport Fund
-# import numpy as np
 import cython 
 cdef float NAN = float("nan")
 

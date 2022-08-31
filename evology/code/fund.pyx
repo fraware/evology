@@ -1,8 +1,7 @@
 #cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 
-# from types import FunctionType
 import numpy as np
-from math import isnan
+from libc.math cimport isnan
 import cython
 
 cdef class Fund:

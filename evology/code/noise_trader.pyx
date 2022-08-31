@@ -1,6 +1,5 @@
 #cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 
-# from fund import Fund
 from fund cimport Fund
 import numpy as np
 from libc.math cimport log2

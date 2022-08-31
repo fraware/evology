@@ -1,3 +1,5 @@
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+
 from fund cimport Fund
 from libc.math cimport tanh, log2
 

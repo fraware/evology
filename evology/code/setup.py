@@ -26,6 +26,7 @@ extensions = [
         "noise_trader",
         "trend_follower",
         "value_investor",
+        "simulation",
         
     ]
 ]
