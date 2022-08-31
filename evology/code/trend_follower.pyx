@@ -1,10 +1,10 @@
-from math import log2, tanh
-from fund import Fund
-from math import isnan
-import numpy as np
+from libc.math cimport log2, tanh, isnan
+from fund cimport Fund
+# import numpy as np
+import cython 
+cdef float NAN = float("nan")
 
-
-class TrendFollower(Fund):
+cdef class TrendFollower(Fund):
     """ Defines the momentum trader class"""
     
     def __init__(self, cash, asset, time_horizon):
@@ -12,11 +12,11 @@ class TrendFollower(Fund):
         self.time_horizon = time_horizon
         self.type = "TF"
 
-    def get_price_ema(self, price, price_ema):
-        if isnan(price_ema) == False:
-            self.trading_signal = log2(price / price_ema)
-        else:
-            self.trading_signal = np.nan
+    # def get_price_ema(self, price, price_ema):
+    #     if isnan(price_ema) == False:
+    #         self.trading_signal = log2(price / price_ema)
+    #     else:
+    #         self.trading_signal = np.nan
 
     def get_excess_demand_function(self):
 
@@ -33,5 +33,5 @@ class TrendFollower(Fund):
         if generation >= self.time_horizon:
             self.get_price_ema(price, price_ema[0])
         else:
-            self.get_price_ema(price, np.nan)
+            self.get_price_ema(price, NAN)
 

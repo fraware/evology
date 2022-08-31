@@ -6,6 +6,7 @@ import numpy as np
 from libc.math cimport log2
 import cython
 
+
 cdef class NoiseTrader(Fund):
     """ A trader whose trading signal is a fundamental valuation perturbed by an Orstein-Uhlenbeck process"""
 

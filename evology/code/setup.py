@@ -24,6 +24,8 @@ extensions = [
     for e in [
         "fund",
         "noise_trader",
+        "trend_follower",
+        "value_investor",
         
     ]
 ]

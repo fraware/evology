@@ -1,8 +1,8 @@
-from fund import Fund
-from math import tanh, log2
+from fund cimport Fund
+from libc.math cimport tanh, log2
 
 
-class ValueInvestor(Fund):
+cdef class ValueInvestor(Fund):
     """ Defines the value investor class"""
     def __init__(
         self, cash, asset, req_rate_return, interest_rate, dividend_growth_rate
@@ -10,7 +10,7 @@ class ValueInvestor(Fund):
         super().__init__(cash, asset)
         self.req_rate_return = req_rate_return
         self.type = "VI"
-        self.valuation = None
+        self.valuation = 100.
         self.discount_rate = (
             1.0 + (interest_rate + self.req_rate_return) - dividend_growth_rate
         ) ** (1.0 / 252.0) - 1.0
