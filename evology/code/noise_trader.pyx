@@ -2,7 +2,7 @@
 
 from fund cimport Fund
 import numpy as np
-from libc.math cimport log2
+from libc.math cimport log2, fabs
 import cython
 
 
@@ -33,9 +33,15 @@ cdef class NoiseTrader(Fund):
         self.process_series = []
         self.noise_process = 0.0
 
-    # @classmethod
+    
     def compute_noise_process(self, max_generations, seed):
         """ Generate an OU process for max_generation time periods"""
+        cdef object rng
+        cdef double[:] randoms
+        cdef list process_series
+        cdef double value 
+
+        
         rng = np.random.default_rng(seed=seed + 1)
         randoms = rng.standard_normal(max_generations)
         process_series = []
@@ -43,7 +49,7 @@ cdef class NoiseTrader(Fund):
         value = self.OU_mean
 
         for i in range(max_generations):
-            value = abs(
+            value = fabs(
                 value
                 + self.OU_rho * (log2(self.OU_mean) - log2(value))
                 + self.OU_gamma * randoms[i]
@@ -66,14 +72,15 @@ cdef class NoiseTrader(Fund):
     #     if self.valuation < 0:
     #         raise RuntimeError("Negative NT valuation", self.valuation)
 
-    # def get_excess_demand_function(self):
-    #     """ Formulates excess demand for the asset"""
-    #     self.trading_signal = self.valuation * self.trading_signal
-    #     def func(price):
-    #         signal = tanh(self.signal_scale * log2(self.trading_signal / max(price, 0.0001)))
-    #         return self.leverage * signal * self.wealth / price - self.asset
-    #     self.excess_demand = func
+    def get_excess_demand_function(self):
+        cdef object func
+        """ Formulates excess demand for the asset"""
+        self.trading_signal = self.valuation * self.trading_signal
+        def func(price):
+            signal = tanh(self.signal_scale * log2(self.trading_signal / max(price, 0.0001)))
+            return self.leverage * signal * self.wealth / price - self.asset
+        self.excess_demand = func
 
-    def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
+    def update_trading_signal(self, double dividend, double interest_rate_daily, int generation, double price, double price_ema):
         self.get_noise_process(generation)
         self.update_valuation(dividend, interest_rate_daily)
