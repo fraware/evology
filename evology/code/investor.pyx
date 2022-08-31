@@ -1,7 +1,7 @@
-from math import isnan
+from libc.math cimport isnan
+import cython
 
-
-class Investor:
+cdef class Investor:
     """ Creates the investor object, who invests in funds based on their performance"""
     def __init__(self, investment_bool):
         self.active = investment_bool
