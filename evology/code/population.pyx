@@ -1,4 +1,4 @@
-#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdiviion=True
 
 import cython
 cdef float NAN = float("nan")
@@ -89,9 +89,11 @@ cdef class Population:
         return fund
 
     def create_pop(self):
+        cdef int NumNT
+        cdef int NumVI
+        cdef int NumTF
         """ generates a population of funds basd on initial coordinates
         There is always at least one fund of each type. """
-
         self.agents = []
 
         # Check we can create a diverse population
@@ -146,7 +148,7 @@ cdef class Population:
 
 
 
-    def count_wealth(self, price):
+    def count_wealth(self, double price):
         """ Count wealth of funds in the population"""
         for ind in self.agents:
             ind.count_wealth(price)
@@ -170,6 +172,9 @@ cdef class Population:
 
     def get_excess_aggregate_demand(self):
         """ Creates the aggregate demand function from funds' individual demands"""
+        cdef double result 
+        cdef object func
+        
         def func(price):
             result = 0.0
             for ind in self.agents:

@@ -1,4 +1,4 @@
-#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=False
 
 import cython
 from tqdm import tqdm

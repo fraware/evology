@@ -1,4 +1,4 @@
-#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+#cython: boundscheck=False, wraparound=False, initializedcheck=False
 
 import cython
 from libc.math cimport sqrt
