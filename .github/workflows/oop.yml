@@ -38,7 +38,7 @@ jobs:
       #   run: chmod +x tests/test_deterministic.py
       - name: compile cythonized files
         # run: (cd evology/code && ./cythonize.sh)
-        run: (cd evology/code && python3 .\setup.py build_ext --inplace)
+        run: (cd evology/code && python3 setup.py build_ext --inplace)
       - name: run test oop runs
         run: python3 tests/oop_runs.py
 
