@@ -66,14 +66,14 @@ cdef class NoiseTrader(Fund):
     #     if self.valuation < 0:
     #         raise RuntimeError("Negative NT valuation", self.valuation)
 
-    # def get_excess_demand_function(self):
-    #     """ Formulates excess demand for the asset"""
-    #     self.trading_signal = self.valuation * self.trading_signal
-    #     def func(price):
-    #         signal = tanh(self.signal_scale * log2(self.trading_signal / max(price, 0.0001)))
-    #         return self.leverage * signal * self.wealth / price - self.asset
-    #     self.excess_demand = func
+    def get_excess_demand_function(self):
+        """ Formulates excess demand for the asset"""
+        self.trading_signal = self.valuation * self.trading_signal
+        def func(price):
+            signal = tanh(self.signal_scale * log2(self.trading_signal / max(price, 0.0001)))
+            return self.leverage * signal * self.wealth / price - self.asset
+        self.excess_demand = func
 
-    # def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
-    #     self.get_noise_process(generation)
-    #     self.update_valuation(dividend, interest_rate_daily)
+    def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
+        self.get_noise_process(generation)
+        self.update_valuation(dividend, interest_rate_daily)
