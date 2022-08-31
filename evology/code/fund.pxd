@@ -10,6 +10,16 @@ cdef class Fund:
     cdef public double signal_scale
     cdef public double demand 
     cdef public double previous_wealth
+    cdef public double annual_return
+    cdef public double daily_return
+    cdef public double monthly_return
+    cdef public double excess_annual_return
+    cdef public double excess_monthly_return
+    cdef public list  wealth_history_year
+    cdef public list wealth_history_month
+    cdef public double net_flow 
+    cdef public double max_short_size
+    cdef public object excess_demand
 
     # cdef count_wealth(self, price)
     # cdef compute_excess_demand(self, price)

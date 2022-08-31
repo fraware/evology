@@ -131,6 +131,7 @@ class Population:
         for fund in self.agents:
             if isinstance(fund, NoiseTrader):
                 fund.cash, fund.asset = NT_cash, NT_asset
+                fund.process_series = fund.compute_noise_process(self.max_generations, self.seed)
             if isinstance(fund, ValueInvestor):
                 fund.cash, fund.asset = VI_cash, VI_asset
             if isinstance(fund, TrendFollower):

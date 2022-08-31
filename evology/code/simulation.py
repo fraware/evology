@@ -49,9 +49,9 @@ class Simulation:
             Asset.dividend_growth_rate_yearly,
             self.seed,
         )
-        NoiseTrader.process_series = NoiseTrader.compute_noise_process(
-            self.max_generations, self.seed
-        )
+        # NoiseTrader.process_series = NoiseTrader.compute_noise_process(
+        #     self.max_generations, self.seed
+        # )
         investor = Investor(self.investment_bool)
         pop.pop_init(asset.price)
 

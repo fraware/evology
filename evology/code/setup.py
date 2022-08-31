@@ -23,7 +23,8 @@ extensions = [
     Extension(e, [f"{e}.pyx"], include_dirs=include_dirs)
     for e in [
         "fund",
-        "noise_trader"
+        "noise_trader",
+        
     ]
 ]
 

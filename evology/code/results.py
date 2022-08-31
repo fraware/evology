@@ -83,7 +83,8 @@ class Result:
             TF_returns,
             replacements
         ]
-        self.data[generation, :] = arr
+        print(generation)
+        self.data[int(generation), :] = arr
 
     def convert_df(self):
         df = pd.DataFrame(self.data, columns=Result.variables)
