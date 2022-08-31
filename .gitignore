@@ -13,6 +13,7 @@
 evology/data/run_data.csv
 evology/data/run_data.csv
 evology/research/TransferStatus/SingleRun_Replic_3ag/data/simulation3ag_15k.csv
+evology/code/build
 *.csv.gz
 *.xslx
 
