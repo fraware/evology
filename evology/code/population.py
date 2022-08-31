@@ -21,6 +21,8 @@ class Population:
         dividend_growth_rate,
         seed,
     ):
+        self.cash_nominal = 50_000_000.
+        self.asset_nominal = 500_000.
         self.size = population_size
         self.max_generations = max_generations
         self.wealth_coords = wealth_coords
@@ -119,8 +121,8 @@ class Population:
                 NumTF += 1
 
         # Amount of cash/asset to split within each subpopulation
-        total_cash = Fund.cash_nominal * self.size
-        total_asset = Fund.asset_nominal * self.size
+        total_cash = self.cash_nominal * self.size
+        total_asset = self.asset_nominal * self.size
         # Initialise cash and assets wrt shares and numbers
         NT_cash, NT_asset = total_cash * shareNT / NumNT, total_asset * shareNT / NumNT
         VI_cash, VI_asset = total_cash * shareVI / NumVI, total_asset * shareVI / NumVI

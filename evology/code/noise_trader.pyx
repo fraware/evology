@@ -1,9 +1,12 @@
-from fund import Fund
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+
+# from fund import Fund
+cimport fund
 import numpy as np
 from math import tanh, log2
+import cython
 
-
-class NoiseTrader(Fund):
+class NoiseTrader(fund.Fund):
     """ A trader whose trading signal is a fundamental valuation perturbed by an Orstein-Uhlenbeck process"""
 
     OU_mean = 1.0
@@ -30,13 +33,16 @@ class NoiseTrader(Fund):
         rng = np.random.default_rng(seed=seed + 1)
         randoms = rng.standard_normal(max_generations)
         process_series = []
-        value = NoiseTrader.OU_mean
+        value = cls.OU_mean
+        # value = NoiseTrader.OU_mean
 
         for i in range(max_generations):
             value = abs(
                 value
-                + NoiseTrader.OU_rho * (log2(NoiseTrader.OU_mean) - log2(value))
-                + NoiseTrader.OU_gamma * randoms[i]
+                # + NoiseTrader.OU_rho * (log2(NoiseTrader.OU_mean) - log2(value))
+                # + NoiseTrader.OU_gamma * randoms[i]
+                + cls.OU_rho * (log2(cls.OU_mean) - log2(value))
+                + cls.OU_gamma * randoms[i]
             )
             process_series.append(value)
 

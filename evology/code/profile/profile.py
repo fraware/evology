@@ -2,6 +2,8 @@ import sys
 
 sys.path.append("./evology/code/")
 sys.path.append("/Users/aymericvie/Documents/GitHub/evology/evology/code")
+sys.path.append("D:\\OneDrive\\Research\\2021_Market_Ecology\\evology\\evology\\code")
+
 from simulation import Simulation
 
 @profile

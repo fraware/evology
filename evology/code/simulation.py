@@ -1,3 +1,8 @@
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+
+# import pyximport
+# pyximport.install()
+
 from tqdm import tqdm
 from noise_trader import NoiseTrader
 from population import Population

@@ -1,22 +1,35 @@
-from types import FunctionType
+#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+
+# from types import FunctionType
 import numpy as np
 from math import isnan
+import cython
 
-class Fund:
+cdef class Fund:
     """ Creates a Fund object, without specifying its strategy"""
-
-    cash_nominal = 50_000_000
-    asset_nominal = 500_000
+    # cdef public double cash
+    # cdef public double asset
+    # cdef public double loan
+    # cdef public double margin
+    # cdef public double wealth
+    # cdef public double trading_signal
+    # cdef public object type
+    # cdef public double leverage
+    # cdef public double signal_scale
+    # cdef public double demand 
+    # cdef public double previous_wealth
+    # TODO: others to cdef
 
     def __init__(self, cash, asset):
+
         self.cash = cash
         self.asset = asset
         self.loan = 0.0
         self.margin = 0.0
-        self.wealth = 0
+        self.wealth = 0.0
         self.trading_signal = 0.0
         self.type = str
-        self.excess_demand = FunctionType
+        # self.excess_demand = FunctionType
         self.leverage = 1.0
         self.signal_scale = 1.0
         self.demand = 0.0
@@ -29,8 +42,8 @@ class Fund:
         self.wealth_history_year = []
         self.wealth_history_month = []
         self.net_flow = 0.0
-        self.max_short_size = 500000
-        self.pod_demand = FunctionType
+        self.max_short_size = 500000.
+        # self.pod_demand = FunctionType
 
     def count_wealth(self, price):
         """ Measure the wealth of the fund and raises error if it is NAN"""
