@@ -14,8 +14,6 @@ import warnings
 cdef class Population:
     """ This object contains Fund objects and execute functions on this group"""
 
-    
-
     def __init__(
         self,
         population_size,
@@ -154,7 +152,7 @@ cdef class Population:
             ind.count_wealth(price)
 
     def update_trading_signal(
-        self, dividend, interest_rate_daily, generation, price, price_ema
+        self, double dividend, double interest_rate_daily, int generation, double price, double price_ema
     ):
         """ Depending on fund types, compute their trading signals"""
         for ind in self.agents:
@@ -188,7 +186,8 @@ cdef class Population:
             return result
         self.aggregate_demand = func
 
-    def compute_excess_demand_values(self, price):
+    def compute_excess_demand_values(self, double price):
+        cdef double mismatch
         """ Based on asset price, compute funds' excess demand values and mismatch"""
         mismatch = 0.0
         for ind in self.agents:
@@ -198,8 +197,9 @@ cdef class Population:
             mismatch += ind.demand
         return mismatch
 
-    def execute_excess_demand(self, price):
+    def execute_excess_demand(self, double price):
         """ Execute buy and sell orders of the funds, making sure they are balanced"""
+        cdef double volume
         self.execute_balanced_orders()
         self.check_asset_supply()
         volume = self.volume_check(price)
@@ -207,6 +207,13 @@ cdef class Population:
         return volume
 
     def execute_balanced_orders(self):
+        cdef double sum_demand
+        cdef double order_ratio
+        cdef double buy_orders
+        cdef double sell_orders
+        cdef double multiplier_buy
+        cdef double multiplier_sell
+
         # Verify that excess demand orders balance out
         sum_demand = 0.0
         for ind in self.agents:
@@ -253,6 +260,7 @@ cdef class Population:
 
     def check_asset_supply(self):
         # Verify asset supply 
+        cdef double total_asset
         total_assets = 0.0
         for ind in self.agents:
             total_assets += ind.asset
@@ -263,10 +271,11 @@ cdef class Population:
                 print(ind.type, ind.wealth, ind.asset, ind.demand)
             print('spoils', self.spoils)
             raise ValueError(
-                "Asset supply violated", total_assets, Population.asset_supply
+                "Asset supply violated", total_assets, self.asset_supply
             )
 
-    def volume_check(self, price):
+    def volume_check(self, double price):
+        cdef double volume
         # Measure volume and check it is not 0 + implement orders
         volume = 0.0
         for ind in self.agents:
@@ -282,7 +291,7 @@ cdef class Population:
         for ind in self.agents:
             ind.clear_debt()
 
-    def cash_gains(self, dividend, interest_rate_daily):
+    def cash_gains(self, double dividend, double interest_rate_daily):
         """ All funds receive their earnings"""
         for ind in self.agents:
             ind.cash_gains(dividend, interest_rate_daily)
@@ -308,6 +317,9 @@ cdef class Population:
 
     def compute_average_return(self):
         """ Computes average fund performance in the population"""
+
+        cdef double total_profit
+        cdef int count_funds
 
         # Compute average annual return
         total_profit, count_funds = 0.0, 0
@@ -423,6 +435,10 @@ cdef class Population:
 
     def get_investment_flows(self):
         """ Measure investment flows per agent type"""
+
+        cdef double NTflows
+        cdef double VIflows
+        cdef double TFflows
         NTflows, VIflows, TFflows = 0.0, 0.0, 0.0
         for ind in self.agents:
             if isinstance(ind, NoiseTrader):
@@ -441,6 +457,14 @@ cdef class Population:
             self.NT_flows, self.VI_flows, self.TF_flows = 0.0, 0.0, 0.0
 
     def get_positions(self):
+
+        cdef double NT_asset
+        cdef double VI_asset
+        cdef double TF_asset
+        cdef double NT_cash
+        cdef double VI_cash
+        cdef double TF_cash
+
         """ Measure positions of the funds"""
         NT_asset, VI_asset, TF_asset = 0.0, 0.0, 0.0
         NT_cash, VI_cash, TF_cash = 0.0, 0.0, 0.0
@@ -464,6 +488,7 @@ cdef class Population:
 
 
     def create_fractional_fund(self, index, divisions):
+        
         """ Create fractional copies of a fund"""
         if isinstance(self.agents[index], NoiseTrader):
             new_half = self.create_fund("NT")
@@ -485,6 +510,13 @@ cdef class Population:
 
     def replace_insolvent(self):
         """ Replace insolvent funds in the population by spliting the wealthiest fund"""
+
+        cdef int replacements
+        cdef list index_to_replace
+        cdef list wealth_list
+        cdef int NumberReplace
+        cdef int MaxFund
+        cdef double spoils
 
         index_to_replace = []
         wealth_list = []
@@ -530,7 +562,7 @@ cdef class Population:
             self.spoils += spoils # Add shares of the insolvent funds to the liquidation pool (spoils)
         return self.spoils, replacements
 
-    def compute_liquidation(self, volume):
+    def compute_liquidation(self, double volume):
         """ Determine how many assets of insolvent funds are liquidated in the market today"""
         if self.spoils > 0:
             self.liquidation = - min(self.spoils, min(0.1 * volume, 10000))
@@ -543,7 +575,7 @@ cdef class Population:
         for fund in self.agents:
             fund.previous_wealth = fund.wealth
 
-    def pop_init(self, price):
+    def pop_init(self, double price):
         self.create_pop()
         self.count_wealth(price)
         self.update_previous_wealth()
