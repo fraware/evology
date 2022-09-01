@@ -77,16 +77,10 @@ cdef class Fund:
         if self.margin < 0:
             raise RuntimeError("Negative margin", self.type, self.margin)
 
-
-
-
     def compute_profit(self):
-
-        # np.prod seemed to slow down the code
-
-        cdef array.array hist = array.array('f', self.wealth_history_year)
-        cdef array.array hist_month = array.array('f', self.wealth_history_month)
-        
+        cdef double return_prod 
+        cdef double annual_return
+        cdef int length 
 
         # Compute daily return
         if self.previous_wealth != 0:
@@ -96,32 +90,28 @@ cdef class Fund:
         else:
             self.daily_return = NAN
 
-
-
         # Compute annual return
-        # if len(self.wealth_history_year) == 252:
-        if len(hist) == 252:   
-
-            # Compute annualised geometric mean of daily returns
-            self.annual_return = (
-                1.0 + ((prod(hist)) ** (1.0 / 252.0) - 1.0)
-            ) ** 252.0 - 1.0
-
-        if len(hist_month) == 21:
-            # Compute monthly geometric mean of daily returns
-            self.monthly_return = (
-                1.0 + ((prod(hist_month)) ** (1.0 / 21.0) - 1.0)
-            ) ** 21.0 - 1.0
-
+        length = len(self.wealth_history_year)
+        if length == 252:   
+            return_prod = prod_lis(self.wealth_history_year)
+            annual_return = geom_mean(return_prod, 252.)
+            self.annual_return = annual_return
         else:
             self.annual_return = NAN
+
+
+        if len(self.wealth_history_month) == 21:
+            self.monthly_return = geom_mean(prod_lis(self.wealth_history_month), 21.)
+        else:
+            self.monthly_return = NAN
+
 
         # Update previous wealth to current wealth
         self.previous_wealth = self.wealth
 
     def update_wealth_history(self):
+        cdef double entry
         # Make a history of daily returns
-
         if isnan(self.daily_return) == False:
             entry = float(self.daily_return) + 1.0
             self.wealth_history_year.append(entry)
@@ -144,10 +134,15 @@ cdef class Fund:
     def get_monthly_return(self):
         return self.monthly_return
 
-cpdef prod(array.array arr):
+cpdef prod_lis(list arr):
     cdef double result = 1.
     cdef int i
     cdef int length = len(arr)
     for i in range(length):
         result = result + result * arr[i]
+    return result 
+
+cpdef geom_mean(double product, double periods):
+    cdef double result
+    result =  (1.0 + (product ** (1.0 / periods) - 1.0)) ** periods - 1.0
     return result 
