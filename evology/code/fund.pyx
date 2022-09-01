@@ -92,9 +92,9 @@ cdef class Fund:
 
         # Compute annual return
         length = len(self.wealth_history_year)
-        if length == 252:   
+        if length == 21: #252:   
             return_prod = prod_lis(self.wealth_history_year)
-            annual_return = geom_mean(return_prod, 252.)
+            annual_return = geom_mean(return_prod, 21.) #252.)
             self.annual_return = annual_return
         else:
             self.annual_return = NAN
@@ -109,15 +109,17 @@ cdef class Fund:
         # Update previous wealth to current wealth
         self.previous_wealth = self.wealth
 
-    def update_wealth_history(self):
+    def update_wealth_history(self, double generation):
         cdef double entry
         # Make a history of daily returns
         if isnan(self.daily_return) == False:
             entry = float(self.daily_return) + 1.0
-            self.wealth_history_year.append(entry)
             self.wealth_history_month.append(entry)
 
-        if len(self.wealth_history_year) > 252:
+        if generation % 21 == 0:
+            self.wealth_history_year.append(self.monthly_return)
+
+        if len(self.wealth_history_year) > 12: #252:
             # Erase observations older than a year
             del self.wealth_history_year[0]
 

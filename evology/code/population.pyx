@@ -302,9 +302,9 @@ cdef class Population:
         for ind in self.agents:
             ind.compute_profit()
 
-    def update_wealth_history(self):
+    def update_wealth_history(self, double generation):
         for ind in self.agents:
-            ind.update_wealth_history()
+            ind.update_wealth_history(generation)
 
     def compute_average_return(self):
         """ Computes average fund performance in the population"""

@@ -85,7 +85,7 @@ class Simulation:
             pop.update_margin(asset.price)
             pop.clear_debt()
             pop.count_wealth(asset.price)
-            pop.update_wealth_history()
+            pop.update_wealth_history(self.generation)
             pop.compute_average_return()
             pop.compute_profit()
             investor.investment_flows(pop)
