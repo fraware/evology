@@ -46,10 +46,10 @@ cdef class Fund:
             print(self.margin)
             raise ValueError('NAN wealth.')
 
-    def compute_excess_demand(self, price):
+    def compute_excess_demand(self, double price):
         self.demand = self.excess_demand(price)
 
-    def execute_excess_demand(self, price):
+    def execute_excess_demand(self, double price):
         self.asset += self.demand
         self.cash -= self.demand * price
 
@@ -62,12 +62,12 @@ cdef class Fund:
             self.cash += self.loan
             self.loan = 0
 
-    def cash_gains(self, dividend, interest_rate_daily):
+    def cash_gains(self, double dividend, double interest_rate_daily):
         """ Earn dividends on shares and interest on cash"""
         self.cash += interest_rate_daily * self.cash
         self.cash += dividend * self.asset
 
-    def update_margin(self, price):
+    def update_margin(self, double price):
         """ Update margin account value if a short position is open"""
         self.cash += self.margin
         self.margin = 0.0

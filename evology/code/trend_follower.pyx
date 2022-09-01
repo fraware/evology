@@ -8,7 +8,7 @@ cdef float NAN = float("nan")
 cdef class TrendFollower(Fund):
     """ Defines the momentum trader class"""
     
-    def __init__(self, cash, asset, time_horizon):
+    def __init__(self, double cash, double asset, int time_horizon):
         super().__init__(cash, asset)
         self.time_horizon = time_horizon
         self.type = "TF"
@@ -30,7 +30,7 @@ cdef class TrendFollower(Fund):
 
         self.excess_demand = func
 
-    def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
+    def update_trading_signal(self, double dividend, double interest_rate_daily, int generation, double price, double price_ema):
         if generation >= self.time_horizon:
             self.get_price_ema(price, price_ema)
         else:

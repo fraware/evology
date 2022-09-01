@@ -7,7 +7,7 @@ from trend_follower import TrendFollower
 from value_investor import ValueInvestor
 from noise_trader import NoiseTrader
 from fund import Fund
-from math import isnan
+from libc.math cimport isnan, fabs
 import numpy as np
 import warnings
 
@@ -303,7 +303,7 @@ cdef class Population:
             total += ind.get_assets()
         return total
 
-    def update_margin(self, price):
+    def update_margin(self, double price):
         for ind in self.agents:
             ind.update_margin(price)
 
@@ -350,6 +350,13 @@ cdef class Population:
     def get_returns_statistics(self):
         """ Measure returns by strategy type"""
 
+        cdef double returnNT
+        cdef double returnVI
+        cdef double returnTF
+        cdef double countNT
+        cdef double countVI
+        cdef double countTF
+
         returnNT = 0.0
         returnVI = 0.0
         returnTF = 0.0
@@ -381,6 +388,11 @@ cdef class Population:
 
     def get_wealth_statistics(self):
         """ Measure various metrics about funds wealth"""
+
+        cdef double wealthNT
+        cdef double wealthVI
+        cdef double wealthTF
+        cdef double total_wealth
 
         wealthNT = 0.0
         wealthVI = 0.0
@@ -414,11 +426,12 @@ cdef class Population:
             self.shutdown = True
 
     def get_short_positions(self):
+        cdef double total_short
         """ Count short positions of funds"""
-        total_short = 0
+        total_short = 0.
         for ind in self.agents:
             if ind.asset < 0:
-                total_short += abs(ind.asset)
+                total_short += fabs(ind.asset)
         return total_short
 
     def get_activity_statistics(self):
@@ -468,6 +481,7 @@ cdef class Population:
         """ Measure positions of the funds"""
         NT_asset, VI_asset, TF_asset = 0.0, 0.0, 0.0
         NT_cash, VI_cash, TF_cash = 0.0, 0.0, 0.0
+
         for ind in self.agents:
             if isinstance(ind, NoiseTrader):
                 NT_asset += ind.asset
@@ -487,7 +501,7 @@ cdef class Population:
         self.TF_cash = TF_cash
 
 
-    def create_fractional_fund(self, index, divisions):
+    def create_fractional_fund(self, int index, int divisions):
         
         """ Create fractional copies of a fund"""
         if isinstance(self.agents[index], NoiseTrader):
@@ -499,11 +513,11 @@ cdef class Population:
         else:
             raise TypeError('Unrecognised agent type for create_fractional_fund')
 
-        new_half.cash = self.agents[index].cash / divisions
-        new_half.asset = self.agents[index].asset / divisions
-        new_half.loan = self.agents[index].loan / divisions
-        new_half.margin = self.agents[index].margin / divisions
-        new_half.wealth = self.agents[index].wealth / divisions
+        new_half.cash = float(self.agents[index].cash / divisions)
+        new_half.asset = float(self.agents[index].asset / divisions)
+        new_half.loan = float(self.agents[index].loan / divisions)
+        new_half.margin = float(self.agents[index].margin / divisions)
+        new_half.wealth = float(self.agents[index].wealth / divisions)
 
         return new_half
 

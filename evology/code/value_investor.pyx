@@ -7,7 +7,7 @@ from libc.math cimport tanh, log2
 cdef class ValueInvestor(Fund):
     """ Defines the value investor class"""
     def __init__(
-        self, cash, asset, req_rate_return, interest_rate, dividend_growth_rate
+        self, double cash, double asset, double req_rate_return, double interest_rate, double dividend_growth_rate
     ):
         super().__init__(cash, asset)
         self.req_rate_return = req_rate_return
@@ -17,13 +17,13 @@ cdef class ValueInvestor(Fund):
             1.0 + (interest_rate + self.req_rate_return) - dividend_growth_rate
         ) ** (1.0 / 252.0) - 1.0
 
-    def update_valuation(self, dividend, interest_rate_daily):
+    def update_valuation(self, double dividend, double interest_rate_daily):
         self.valuation = dividend * (1.0 + interest_rate_daily) / self.discount_rate
         if self.valuation < 0:
             raise RuntimeError("Negative VI valuation", self.valuation)
 
 
-    def compute_trading_signal(self, price):
+    def compute_trading_signal(self, double price):
         self.trading_signal = log2(self.valuation / price)
 
     def get_excess_demand_function(self):
@@ -34,6 +34,6 @@ cdef class ValueInvestor(Fund):
 
         self.excess_demand = func
 
-    def update_trading_signal(self, dividend, interest_rate_daily, generation, price, price_ema):
+    def update_trading_signal(self, double dividend, double interest_rate_daily, int generation, double price, double price_ema):
         self.update_valuation(dividend, interest_rate_daily)
 

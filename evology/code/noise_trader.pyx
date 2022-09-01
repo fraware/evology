@@ -9,15 +9,9 @@ import cython
 cdef class NoiseTrader(Fund):
     """ A trader whose trading signal is a fundamental valuation perturbed by an Orstein-Uhlenbeck process"""
 
-    # OU_mean = 1.0
-    # OU_rho = 0.00045832561
-    # OU_rho = 0.005
-    # OU_gamma = 0.2 * np.sqrt(1.0 / 252.0)
-    # process_series = []
-    # noise_process = 0.0
 
     def __init__(
-        self, cash, asset, req_rate_return, interest_rate, dividend_growth_rate
+        self, double cash, double asset, double req_rate_return,  double interest_rate, double dividend_growth_rate
     ):
         super().__init__(cash, asset)
         self.type = "NT"
@@ -34,13 +28,13 @@ cdef class NoiseTrader(Fund):
         self.noise_process = 0.0
 
     
-    def compute_noise_process(self, max_generations, seed):
+    def compute_noise_process(self, max_generations, int seed):
         """ Generate an OU process for max_generation time periods"""
         cdef object rng
         cdef double[:] randoms
         cdef list process_series
         cdef double value 
-
+        cdef int i
         
         rng = np.random.default_rng(seed=seed + 1)
         randoms = rng.standard_normal(max_generations)
@@ -59,18 +53,6 @@ cdef class NoiseTrader(Fund):
             process_series.append(value)
 
         return process_series
-
-    # cdef get_noise_process(self, generation):
-    #     """ Access current value of the noise process"""
-        
-    #     self.trading_signal = self.process_series[generation]
-
-    # def update_valuation(self, dividend, interest_rate_daily):
-    #     self.valuation = (
-    #         dividend * (1.0 + interest_rate_daily) / self.discount_rate
-    #     ) * self.trading_signal
-    #     if self.valuation < 0:
-    #         raise RuntimeError("Negative NT valuation", self.valuation)
 
     def get_excess_demand_function(self):
         cdef object func

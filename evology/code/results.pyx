@@ -9,7 +9,7 @@ DTYPE=np.float64
 cdef class Result:
     """ Stores simulation results in a large nparray, updated at each period"""
 
-    def __init__(self, max_generations):
+    def __init__(self, int max_generations):
         self.max_generations = max_generations
         self.variables = [
             "Generation",
@@ -38,7 +38,7 @@ cdef class Result:
         # self.data = np.zeros((self.max_generations, len(self.variables)), dtype=FTYPE)
         self.data = self.create_data(self.max_generations, len(self.variables))
     
-    def create_data(self, gen, var):
+    def create_data(self, int gen, int var):
 
         cdef Py_ssize_t x_max = gen
         cdef Py_ssize_t y_max = var
@@ -49,29 +49,32 @@ cdef class Result:
 
     def update_results(
         self,
-        generation,
-        price,
-        dividend,
-        volume,
-        NT_process,
-        VI_val,
-        wshareNT,
-        wshareVI,
-        wshareTF,
-        NTflows,
-        VIflows,
-        TFflows,
-        NT_asset,
-        VI_asset,
-        TF_asset,
-        NT_cash,
-        VI_cash,
-        TF_cash,
-        NT_returns,
-        VI_returns,
-        TF_returns,
-        replacements
+        int generation,
+        double price,
+        double dividend,
+        double volume,
+        double NT_process,
+        double VI_val,
+        double wshareNT,
+        double wshareVI,
+        double wshareTF,
+        double NTflows,
+        double VIflows,
+        double TFflows,
+        double NT_asset,
+        double VI_asset,
+        double TF_asset,
+        double NT_cash,
+        double VI_cash,
+        double TF_cash,
+        double NT_returns,
+        double VI_returns,
+        double TF_returns,
+        int replacements
     ):
+        cdef int i
+        cdef list arr
+
         arr = [
             generation,
             price,
