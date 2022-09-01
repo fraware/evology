@@ -3,6 +3,9 @@
 import numpy as np
 from libc.math cimport isnan
 import cython
+cdef float NAN = float("nan")
+from cpython cimport array
+import array
 
 cdef class Fund:
     """ Creates a Fund object, without specifying its strategy"""
@@ -74,29 +77,44 @@ cdef class Fund:
         if self.margin < 0:
             raise RuntimeError("Negative margin", self.type, self.margin)
 
+
+
+
     def compute_profit(self):
+
+        # np.prod seemed to slow down the code
+
+        cdef array.array hist = array.array('f', self.wealth_history_year)
+        cdef array.array hist_month = array.array('f', self.wealth_history_month)
+        
+
         # Compute daily return
         if self.previous_wealth != 0:
             self.daily_return = (
                 (self.wealth - self.net_flow) / self.previous_wealth
             ) - 1.0
         else:
-            self.daily_return = np.nan
+            self.daily_return = NAN
+
+
 
         # Compute annual return
-        if len(self.wealth_history_year) == 252:
+        # if len(self.wealth_history_year) == 252:
+        if len(hist) == 252:   
 
             # Compute annualised geometric mean of daily returns
             self.annual_return = (
-                1.0 + ((np.product(self.wealth_history_year)) ** (1.0 / 252.0) - 1.0)
+                1.0 + ((prod(hist)) ** (1.0 / 252.0) - 1.0)
             ) ** 252.0 - 1.0
 
+        if len(hist_month) == 21:
+            # Compute monthly geometric mean of daily returns
             self.monthly_return = (
-                1.0 + ((np.product(self.wealth_history_month)) ** (1.0 / 21.0) - 1.0)
+                1.0 + ((prod(hist_month)) ** (1.0 / 21.0) - 1.0)
             ) ** 21.0 - 1.0
 
         else:
-            self.annual_return = np.nan
+            self.annual_return = NAN
 
         # Update previous wealth to current wealth
         self.previous_wealth = self.wealth
@@ -125,3 +143,11 @@ cdef class Fund:
 
     def get_monthly_return(self):
         return self.monthly_return
+
+cpdef prod(array.array arr):
+    cdef double result = 1.
+    cdef int i
+    cdef int length = len(arr)
+    for i in range(length):
+        result = result + result * arr[i]
+    return result 
