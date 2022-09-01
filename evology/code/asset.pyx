@@ -72,16 +72,18 @@ cdef class Asset:
                 + self.price_emas * (1.0 - self.ema_smoothing_factor)
             )
         
-
     def market_clearing(self, pop):
         """ Finds the clearing price for the asset based on population supply and demand
         By finding the root of the excess demand function.
         For now, circuit breaking is not necessary to stabilise price movements."""
-        
-        def pod_aggregate_demand(price):
-            return pop.aggregate_demand(price) + pop.liquidation 
 
-        self.price = root(pod_aggregate_demand, self.price, method="hybr").x
+        cdef double liquidation = pop.liquidation
+        
+        def aggregate_demand(double price):
+            cdef double result = pop.aggregate_demand(price) + liquidation 
+            return result
+            
+        self.price = root(aggregate_demand, self.price, method="hybr").x
         if self.price < 0:
             self.price = 0.01
             warnings.warn("Negative price converted to 0.01")
