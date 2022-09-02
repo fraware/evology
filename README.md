@@ -16,7 +16,7 @@ Evology is a market ecology model in which investment funds of various strategie
 cd evology/code
 python setup.py build_ext --inplace
 ```
-* Run ```python main.pyx``` to start the simulation, and use ```analysis.py```to watch the results.
+* Run ```python main.pyx``` to start the simulation, and use ```analysis.py```to watch the results. You can change the population size, simulation duration, initial composition of the market, the interest rate, whether fund flows are active, the random seed, and whether wealth is constant in the system.
 
 ### Code formatting
 We use ```black``` to auto-format the code. After installing with ```pip install black```, go the the ```evology``` folder and run ```black evology``` to auto-format the full folder.
