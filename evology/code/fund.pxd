@@ -20,15 +20,3 @@ cdef class Fund:
     cdef public double net_flow 
     cdef public double max_short_size
     cdef public object excess_demand
-
-    # cdef count_wealth(self, price)
-    # cdef compute_excess_demand(self, price)
-    # cdef execute_excess_demand(self, price)
-    # cdef clear_debt(self)
-    # cdef cash_gains(self, dividend, interest_rate_daily)
-    # cdef update_margin(self, price)
-    # cdef compute_profit(self)
-    # cdef update_wealth_history(self)
-    # cdef get_assets(self)
-    # cdef get_annual_return(self)
-    # cdef get_monthly_return(self)
