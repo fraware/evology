@@ -47,14 +47,10 @@ cdef class Simulation:
             asset.dividend_growth_rate_yearly,
             self.seed,
         )
-        # NoiseTrader.process_series = NoiseTrader.compute_noise_process(
-        #     self.max_generations, self.seed
-        # )
         investor = Investor(self.investment_bool)
         pop.pop_init(asset.price)
 
         for self.generation in tqdm(range(self.max_generations), disable=self.disable):
-            # print(self.generation)
             pop.replace_insolvent()
             if pop.shutdown == True:
                 result.data = result.data[0 : self.generation]

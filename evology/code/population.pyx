@@ -161,8 +161,6 @@ cdef class Population:
         """ Depending on fund types, compute their trading signals"""
         for ind in self.agents:
             ind.update_trading_signal(dividend, interest_rate_daily, generation, price, price_ema)
-            # if isinstance(ind, NoiseTrader):
-            #     self.noise_process = ind.noise_process
                 
     def get_excess_demand_functions(self):
         for ind in self.agents:
@@ -224,9 +222,6 @@ cdef class Population:
             sum_demand += ind.demand
             prev_dmd += ind.demand
         if sum_demand != 0:
-            # print("adjusting")
-            # We have an imbalance to solve.
-            # But why do imbalances appear in the first place?
             buy_orders = 0.
             sell_orders = 0.
             for ind in self.agents:
@@ -259,23 +254,11 @@ cdef class Population:
                 raise ValueError("order_ratio has a strange value: " + str(order_ratio))
 
             for ind in self.agents:
-                # print(ind)
-                # print(ind.demand)
                 if ind.demand > 0:
-                    # print(multiplier_buy)
                     dmd = ind.demand * multiplier_buy
                     ind.demand = dmd
                 elif ind.demand < 0:
                     ind.demand = ind.demand * multiplier_sell
-                # print(ind.demand)
-
-            # sum_demand = 0.0
-            # for ind in self.agents:
-            #     sum_demand += ind.demand
-            # if sum_demand != 0:
-            #     print(multiplier_buy, multiplier_sell)
-            #     raise ValueError("sum demand not 0 after adjusting", sum_demand, prev_dmd)
-
 
     def check_asset_supply(self):
         # Verify asset supply 

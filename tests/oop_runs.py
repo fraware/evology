@@ -62,7 +62,7 @@ def job2(param):
 
 # Run experiment
 def main():
-    repetitions1, repetitions2 = 30, 5
+    repetitions1, repetitions2 = 30, 10
     p = mp.Pool()
     # Testing quick runs
     p.map(job1, list(range(repetitions1)))
