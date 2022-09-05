@@ -17,6 +17,9 @@ evology/code/build/*
 *.csv.gz
 *.xslx
 *.obj
+*.pyd
+*.lib
+*.exp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
