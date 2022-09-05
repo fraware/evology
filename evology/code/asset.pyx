@@ -19,19 +19,22 @@ cdef class Asset:
         self.price = self.initial_price 
         self.dividend = self.initial_dividend  
         self.seed = seed
-        self.dividend_series = self.compute_dividend_series()
-        self.price_emas = self.price  
-        self.volume = 0.0
-        self.mismatch = 0.0
         self.dividend_growth_rate_yearly = 0.01
         self.dividend_growth_rate_daily = (
             (1.0 + self.dividend_growth_rate_yearly) ** (1.0 / 252.0)
         ) - 1.0
+        
         self.dividend_volatility = 0.1 / sqrt(252)
         self.dividend_autocorrelation = 0.1
         self.dividend_autocorrelation_lag = 1
         self.ema_horizons = 2 
         self.ema_smoothing_factor = 2 / 3
+        self.dividend_series = self.compute_dividend_series()
+        self.price_emas = self.price  
+        self.volume = 0.0
+        self.mismatch = 0.0
+        
+
 
     def get_dividend(self, generation):
         """ Get the dividend value at a specific time period"""
@@ -45,12 +48,14 @@ cdef class Asset:
         z_process = rng.standard_normal(self.time_horizon)
         dividend_series[0, 0] = self.dividend
         rd_dividend_series[0, 0] = z_process[0]
-        dividend = self.dividend
+        cdef double dividend = self.dividend
+        cdef int i
+        cdef double wiener_back
 
         for i in range(self.time_horizon):
             wiener_back = z_process[i]
             if i > self.dividend_autocorrelation_lag:
-                wiener_back = (1.0 - self.dividend_autocorrelation**2) * z_process[
+                wiener_back = (1.0 - self.dividend_autocorrelation**2.) * z_process[
                     i
                 ] + self.dividend_autocorrelation * rd_dividend_series[
                     0, i - self.dividend_autocorrelation_lag - 1
