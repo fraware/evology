@@ -40,7 +40,7 @@ def job1(param):
         
 def job2(param):
     went_smoothly = True
-    time, agents = 100000, 10
+    time, agents = 100000, 3 # Not testing 4+ size because there is no individual-level heterogeneity.
     try: 
         seed = np.random.randint(0,100000)
         wealth_coords = np.random.dirichlet(np.ones(3), size=1)[0].tolist()

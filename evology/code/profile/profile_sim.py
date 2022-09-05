@@ -15,7 +15,14 @@ import sys
 
 class Simulation:
     def __init__(
-        self, max_generations, population_size, wealth_coords, interest_rate, investment_bool, seed, reset
+        self,
+        max_generations,
+        population_size,
+        wealth_coords,
+        interest_rate,
+        investment_bool,
+        seed,
+        reset,
     ):
         self.max_generations = max_generations
         self.population_size = population_size
@@ -31,15 +38,15 @@ class Simulation:
         self.noise_process = 0.0
 
     def set_display(self):
-        """ Controls whether we hide the TQDM progress bar during a run. Yes for linux because linux is for experiments"""
+        """Controls whether we hide the TQDM progress bar during a run. Yes for linux because linux is for experiments"""
         if sys.platform == "darwin":
             return False
         elif sys.platform == "linux":
             return True
 
-    @profile 
+    @profile
     def simulate(self):
-        """ Contains all initialisation, simulations steps and results recording"""
+        """Contains all initialisation, simulations steps and results recording"""
 
         # Initialise results, assets, fund population, investor
         result = results.Result(self.max_generations)
@@ -75,11 +82,11 @@ class Simulation:
                 asset.price,
                 asset.price_emas,
             )
-            pop.get_excess_demand_functions()  
-            pop.get_excess_aggregate_demand()  
+            pop.get_excess_demand_functions()
+            pop.get_excess_aggregate_demand()
             pop.compute_liquidation(asset.volume)
             asset.market_clearing(pop)
-            asset.mismatch = pop.compute_excess_demand_values(asset.price)  
+            asset.mismatch = pop.compute_excess_demand_values(asset.price)
             asset.volume = pop.execute_excess_demand(asset.price)
             pop.cash_gains(asset.dividend, self.interest_rate_daily)
             pop.update_margin(asset.price)
@@ -118,7 +125,7 @@ class Simulation:
                 pop.NT_returns,
                 pop.VI_returns,
                 pop.TF_returns,
-                pop.replacements
+                pop.replacements,
             )
 
         self.data = result.convert_df()
@@ -128,7 +135,7 @@ if __name__ == "__main__":
     s = Simulation(
         max_generations=20000,
         population_size=10,
-        wealth_coords=[1/4,1/2,1/4],
+        wealth_coords=[1 / 4, 1 / 2, 1 / 4],
         interest_rate=0.01,
         investment_bool=False,
         seed=56615,

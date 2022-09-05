@@ -127,7 +127,7 @@ df.plot(
 )
 plt.show()
 
-# Average proportion of shorts 
+# Average proportion of shorts
 # For 3 agents, asset supply is 1_500_000
 asset_supply = 1_500_000
 total_short = 0

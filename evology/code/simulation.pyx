@@ -96,7 +96,7 @@ cdef class Simulation:
                 asset.price,
                 asset.dividend,
                 asset.volume,
-                self.noise_process,
+                pop.noise_process[self.generation],
                 pop.VI_val,
                 pop.wshareNT,
                 pop.wshareVI,

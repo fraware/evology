@@ -6,8 +6,17 @@ sys.path.append("D:\\OneDrive\\Research\\2021_Market_Ecology\\evology\\evology\\
 
 from simulation import Simulation
 
+
 @profile
-def main(max_generations, population_size, wealth_coords, interest_rate, investment_bool, seed, reset):
+def main(
+    max_generations,
+    population_size,
+    wealth_coords,
+    interest_rate,
+    investment_bool,
+    seed,
+    reset,
+):
     s = Simulation(
         max_generations=max_generations,
         population_size=population_size,
@@ -21,11 +30,12 @@ def main(max_generations, population_size, wealth_coords, interest_rate, investm
     df = s.data
     return df
 
+
 if __name__ == "__main__":
     df = main(
         max_generations=20000,
         population_size=10,
-        wealth_coords= [1/4, 1/4, 1/2],
+        wealth_coords=[1 / 4, 1 / 4, 1 / 2],
         interest_rate=0.01,
         investment_bool=True,
         seed=56615,

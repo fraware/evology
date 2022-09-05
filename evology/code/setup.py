@@ -32,11 +32,7 @@ extensions = [
         "results",
         "asset",
         "investor",
-        
     ]
 ]
 
-setup(
-    ext_modules=cythonize(extensions, annotate=True),
-    include_dirs = [np.get_include()]
-)
+setup(ext_modules=cythonize(extensions, annotate=True), include_dirs=[np.get_include()])

@@ -11,16 +11,7 @@ cdef class NoiseTrader(Fund):
     cdef public double OU_gamma
     cdef public double noise_process
 
-    cdef inline get_noise_process(self, int generation):
-        """ Access current value of the noise process"""
-        self.trading_signal = self.process_series[generation]
 
-    cdef inline update_valuation(self, double dividend, double interest_rate_daily):
-        self.valuation = (
-            dividend * (1.0 + interest_rate_daily) / self.discount_rate
-        ) * self.trading_signal
-        if self.valuation < 0:
-            raise RuntimeError("Negative NT valuation", self.valuation)
 
     # cdef inline get_excess_demand_function(self):
     #     """ Formulates excess demand for the asset"""

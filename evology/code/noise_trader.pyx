@@ -28,7 +28,7 @@ cdef class NoiseTrader(Fund):
         self.noise_process = 0.0
 
     
-    def compute_noise_process(self, max_generations, int seed):
+    def compute_noise_process(self, int max_generations, int seed):
         """ Generate an OU process for max_generation time periods"""
         cdef object rng
         cdef double[:] randoms
@@ -51,6 +51,7 @@ cdef class NoiseTrader(Fund):
                 # + cls.OU_gamma * randoms[i]
             )
             process_series.append(value)
+        # print(process_series)
 
         return process_series
 
@@ -66,3 +67,15 @@ cdef class NoiseTrader(Fund):
     def update_trading_signal(self, double dividend, double interest_rate_daily, int generation, double price, double price_ema):
         self.get_noise_process(generation)
         self.update_valuation(dividend, interest_rate_daily)
+
+    def get_noise_process(self, int generation):
+        """ Access current value of the noise process"""
+        self.trading_signal = self.process_series[generation]
+        # print(self.trading_signal)
+
+    def update_valuation(self, double dividend, double interest_rate_daily):
+        self.valuation = (
+            dividend * (1.0 + interest_rate_daily) / self.discount_rate
+        ) * self.trading_signal
+        if self.valuation < 0:
+            raise RuntimeError("Negative NT valuation", self.valuation)

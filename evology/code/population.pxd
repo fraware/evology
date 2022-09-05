@@ -33,7 +33,7 @@ cdef class Population:
     cdef public double TF_return 
     cdef public double asset_supply
     cdef public int replacements
-    cdef public double noise_process
+    cdef public list noise_process
     cdef public double liquidation 
     cdef public double average_monthly_return
     cdef public double NT_returns

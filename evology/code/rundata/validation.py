@@ -23,7 +23,7 @@ fontsize = 18
 """ intermittency """
 
 # log return
-df["PriceReturn"] = (np.log(df["Price"]) - np.log(df["Price"].shift(1))) 
+df["PriceReturn"] = np.log(df["Price"]) - np.log(df["Price"].shift(1))
 
 print(df["PriceReturn"].autocorr())
 
@@ -112,7 +112,7 @@ print(data.kurtosis())
 
 # For horizon 21 days
 
-df["PriceReturnYear"] = (np.log(df["Price"]) - np.log(df["Price"].shift(21))) 
+df["PriceReturnYear"] = np.log(df["Price"]) - np.log(df["Price"].shift(21))
 
 data = pd.DataFrame()
 data["Time"] = df["Generation"]
@@ -126,7 +126,7 @@ print(data.kurtosis())
 # For horizon 252 days
 
 
-df["PriceReturnYear"] = (np.log(df["Price"]) - np.log(df["Price"].shift(252))) 
+df["PriceReturnYear"] = np.log(df["Price"]) - np.log(df["Price"].shift(252))
 
 data = pd.DataFrame()
 data["Time"] = df["Generation"]
@@ -141,7 +141,7 @@ print(data.kurtosis())
 data.hist("PriceReturn", bins=50, density=False)
 plt.xlabel("Log Price Returns (Yearly)", fontsize=fontsize)
 plt.ylabel("Observations", fontsize=fontsize)
-plt.title('')
+plt.title("")
 # plt.xlim(-0.04, 0.04)
 plt.tight_layout()
 if sys.platform == "darwin":
@@ -157,10 +157,8 @@ elif sys.platform == "win32":
 plt.show()
 
 
-
 # %%
 """ Intermittency """
-
 
 
 df.plot(x="Generation", y=["Price"], kind="line")
@@ -168,16 +166,16 @@ plt.xlabel("Time", fontsize=fontsize)
 plt.ylabel("Price", fontsize=fontsize)
 plt.show()
 
-daily_volatility = df['PriceReturn'].std()
-print('Daily volatility: ', '{:.2f}%'.format(daily_volatility))
+daily_volatility = df["PriceReturn"].std()
+print("Daily volatility: ", "{:.2f}%".format(daily_volatility))
 
 monthly_volatility = math.sqrt(21) * daily_volatility
-print ('Monthly volatility: ', '{:.2f}%'.format(monthly_volatility))
+print("Monthly volatility: ", "{:.2f}%".format(monthly_volatility))
 
 annual_volatility = math.sqrt(252) * daily_volatility
-print ('Annual volatility: ', '{:.2f}%'.format(annual_volatility ))
+print("Annual volatility: ", "{:.2f}%".format(annual_volatility))
 
-df["Volatility"] = df["PriceReturn"].rolling(252*5).std()
+df["Volatility"] = df["PriceReturn"].rolling(252 * 5).std()
 df.plot(x="Generation", y=["Volatility"], kind="line")
 plt.xlabel("Time", fontsize=fontsize)
 plt.ylabel("5Y MA volatility", fontsize=fontsize)

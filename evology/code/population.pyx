@@ -105,6 +105,9 @@ cdef class Population:
         if shareNT <= 0 or shareVI <= 0 or shareTF <= 0:
             raise RuntimeError('Strategy initial condition <= 0')
 
+        if self.size > 3:
+            warnings.warn("Pop size superior to 3, features may encounter issues. Please use the model with 3 agent and aggregate sizes, since there is no individual level heterogeneity.")
+
         # Start the population with three agents of each type.
         self.agents.append(self.create_fund("NT"))
         self.agents.append(self.create_fund("VI"))
@@ -137,6 +140,7 @@ cdef class Population:
             if isinstance(fund, NoiseTrader):
                 fund.cash, fund.asset = NT_cash, NT_asset
                 fund.process_series = fund.compute_noise_process(self.max_generations, self.seed)
+                self.noise_process = fund.process_series
             if isinstance(fund, ValueInvestor):
                 fund.cash, fund.asset = VI_cash, VI_asset
             if isinstance(fund, TrendFollower):
@@ -157,8 +161,8 @@ cdef class Population:
         """ Depending on fund types, compute their trading signals"""
         for ind in self.agents:
             ind.update_trading_signal(dividend, interest_rate_daily, generation, price, price_ema)
-            if isinstance(ind, NoiseTrader):
-                self.noise_process = ind.noise_process
+            # if isinstance(ind, NoiseTrader):
+            #     self.noise_process = ind.noise_process
                 
     def get_excess_demand_functions(self):
         for ind in self.agents:
