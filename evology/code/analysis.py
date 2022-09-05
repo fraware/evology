@@ -39,7 +39,7 @@ ax[2].plot(
 ax[1].plot(df.index, df["Volume"], color="black", linewidth=1)
 
 ax[2].set_xlabel("Time (days)", fontsize=label_size)
-ax[2].set_ylabel("Share (%)", fontsize=label_size)
+ax[2].set_ylabel("Share", fontsize=label_size)
 ax[0].set_ylabel("Price", fontsize=label_size)
 ax[1].set_ylabel("Volume", fontsize=label_size)
 plt.legend(loc=8, fontsize=label_size)
@@ -155,11 +155,31 @@ plt.show()
 # %%
 df.tail(1000).plot(
     x="Generation",
-    y=["NT_process"],
+    y=["Price_ema", "Price"],
     kind="line",
     figsize=(15, 6),
 )
 plt.show()
 
+df["Price/Ema"] = df["Price"] / df["Price_ema"]
 
+df.tail(1000).plot(
+    x="Generation",
+    y=["Price/Ema"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+df.tail(1000).plot(
+    x="Generation",
+    y=["WShare_NT", "WShare_VI", "WShare_TF"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+# %%
+print(16449.416015625 * 0.9999999499085798)
+16449.41519165039
 # %%

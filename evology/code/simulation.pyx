@@ -54,7 +54,7 @@ cdef class Simulation:
         pop.pop_init(asset.price)
 
         for self.generation in tqdm(range(self.max_generations), disable=self.disable):
-
+            # print(self.generation)
             pop.replace_insolvent()
             if pop.shutdown == True:
                 result.data = result.data[0 : self.generation]
@@ -113,7 +113,8 @@ cdef class Simulation:
                 pop.NT_returns,
                 pop.VI_returns,
                 pop.TF_returns,
-                pop.replacements
+                pop.replacements,
+                asset.price_emas
             )
 
         self.data = result.convert_df()

@@ -7,7 +7,7 @@ from trend_follower import TrendFollower
 from value_investor import ValueInvestor
 from noise_trader import NoiseTrader
 from fund import Fund
-from libc.math cimport isnan, fabs
+from libc.math cimport isnan, fabs, fmax
 import numpy as np
 import warnings
 
@@ -81,7 +81,7 @@ cdef class Population:
             fund = TrendFollower(
                 0, 
                 0, 
-                1)
+                252)
         else:
             raise TypeError("Unrecognised requested type for create_fund.")
         return fund
@@ -219,11 +219,14 @@ cdef class Population:
         cdef double multiplier_sell
 
         # Verify that excess demand orders balance out
-        sum_demand = 0.0
+        sum_demand, prev_dmd = 0.0, 0.0
         for ind in self.agents:
             sum_demand += ind.demand
-        if abs(sum_demand) > 0.1:
+            prev_dmd += ind.demand
+        if sum_demand != 0:
+            # print("adjusting")
             # We have an imbalance to solve.
+            # But why do imbalances appear in the first place?
             buy_orders = 0.
             sell_orders = 0.
             for ind in self.agents:
@@ -256,10 +259,22 @@ cdef class Population:
                 raise ValueError("order_ratio has a strange value: " + str(order_ratio))
 
             for ind in self.agents:
+                # print(ind)
+                # print(ind.demand)
                 if ind.demand > 0:
-                    ind.demand = ind.demand * multiplier_buy
+                    # print(multiplier_buy)
+                    dmd = ind.demand * multiplier_buy
+                    ind.demand = dmd
                 elif ind.demand < 0:
                     ind.demand = ind.demand * multiplier_sell
+                # print(ind.demand)
+
+            # sum_demand = 0.0
+            # for ind in self.agents:
+            #     sum_demand += ind.demand
+            # if sum_demand != 0:
+            #     print(multiplier_buy, multiplier_sell)
+            #     raise ValueError("sum demand not 0 after adjusting", sum_demand, prev_dmd)
 
 
     def check_asset_supply(self):
@@ -274,6 +289,11 @@ cdef class Population:
             for ind in self.agents:
                 print(ind.type, ind.wealth, ind.asset, ind.demand)
             print('spoils', self.spoils)
+
+            sum_demand = 0.0
+            for ind in self.agents:
+                sum_demand += ind.demand
+            print("sum demand", sum_demand)
             raise ValueError(
                 "Asset supply violated", total_assets, self.asset_supply
             )
@@ -410,14 +430,14 @@ cdef class Population:
             elif isinstance(ind, TrendFollower):
                 wealthTF += ind.wealth
 
-        total_wealth = wealthNT + wealthVI + wealthTF
+        total_wealth = fmax(0,wealthNT) + fmax(0,wealthVI) + fmax(0,wealthTF)
 
         self.wealthNT = wealthNT
         self.wealthVI = wealthVI
         self.wealthTF = wealthTF
-        self.wshareNT = wealthNT / total_wealth
-        self.wshareVI = wealthVI / total_wealth
-        self.wshareTF = wealthTF / total_wealth
+        self.wshareNT = fmax(0,wealthNT / total_wealth)
+        self.wshareVI = fmax(0,wealthVI / total_wealth)
+        self.wshareTF = fmax(0,wealthTF / total_wealth)
 
         if self.wshareNT < 0.001 and  self.wshareVI < 0.001:
             warnings.warn('NT and VI are extinct. Shuting down...')
@@ -569,7 +589,8 @@ cdef class Population:
                     replacements += 1
                 # FInally, add the last subdivision in place of the maximum fund.
                 self.agents[MaxFund] = new_half_fund
-                warnings.warn('Replacement done.')
+                # self.shutdown = False
+                print('Replacement done.')
 
                 for ind in self.agents:
                     if ind.wealth < 0:

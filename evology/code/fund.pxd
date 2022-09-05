@@ -8,7 +8,7 @@ cdef class Fund:
     cdef public object type
     cdef public double leverage
     cdef public double signal_scale
-    cdef public float demand 
+    cdef public double demand 
     cdef public double previous_wealth
     cdef public double annual_return
     cdef public double daily_return

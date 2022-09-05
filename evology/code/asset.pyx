@@ -27,8 +27,8 @@ cdef class Asset:
         self.dividend_volatility = 0.1 / sqrt(252)
         self.dividend_autocorrelation = 0.1
         self.dividend_autocorrelation_lag = 1
-        self.ema_horizons = 2 
-        self.ema_smoothing_factor = 2 / 3
+        self.ema_horizons = 252 
+        self.ema_smoothing_factor = 2 / (self.ema_horizons + 1)
         self.dividend_series = self.compute_dividend_series()
         self.price_emas = self.price  
         self.volume = 0.0

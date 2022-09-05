@@ -44,6 +44,8 @@ def job2(param):
     try: 
         seed = np.random.randint(0,100000)
         wealth_coords = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
+        while wealth_coords[2] > 1/3:
+            wealth_coords = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
         np.random.seed(seed)
         inv_bool = random_bool()
         df = model(time, agents, wealth_coords, 0.01, inv_bool, seed, False)
