@@ -18,7 +18,7 @@ cdef class Population:
     cdef public double wshareVI
     cdef public double wshareTF
     cdef public double VI_val 
-    cdef public double average_annual_return 
+    cdef public double average_10annual_return 
     cdef public double NT_flows 
     cdef public double VI_flows 
     cdef public double TF_flows 

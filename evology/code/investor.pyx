@@ -40,10 +40,10 @@ cdef class Investor:
                             ) / 21.0
                     ) 
                     ind.net_flow = invested_amount
-                    print("-----")
-                    print(self.constant_history[generation], self.month_coeff_history[generation], self.year_coeff_history[generation])      
-                    print(ind.net_flow, ind.monthly_return, ind.excess_monthly_return, ind.excess_10y_return)
-                    print(self.constant_history[generation], self.month_coeff_history[generation] * ind.excess_monthly_return, self.year_coeff_history[generation] * ind.excess_10y_return)
-                    # print(ind.monthly_return, ind.wealth_history_month)
+                    # print("-----")
+                    # print(self.constant_history[generation], self.month_coeff_history[generation], self.year_coeff_history[generation])      
+                    # print(ind.net_flow, ind.monthly_return, ind.excess_monthly_return, ind.excess_10y_return)
+                    # print(self.constant_history[generation], self.month_coeff_history[generation] * ind.excess_monthly_return, self.year_coeff_history[generation] * ind.excess_10y_return)
+                    # # print(ind.monthly_return, ind.wealth_history_month)
                     ind.cash += ind.net_flow * ind.wealth
         

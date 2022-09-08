@@ -119,6 +119,8 @@ cdef class Simulation:
                 pop.wealthNT,
                 pop.wealthVI,
                 pop.wealthTF,
+                pop.average_10annual_return,
+                pop.average_monthly_return
             )
 
         self.data = result.convert_df()

@@ -45,7 +45,7 @@ cdef class Population:
         self.wshareVI = 0.0
         self.wshareTF = 0.0
         self.VI_val = 0.0
-        self.average_annual_return = 0.0
+        self.average_10annual_return = 0.0
         self.NT_flows = 0.0
         self.VI_flows = 0.0
         self.TF_flows = 0.0
@@ -335,15 +335,15 @@ cdef class Population:
                 total_profit += ind.get_annual_return() * ind.wealth
                 count_funds += ind.wealth
         if count_funds != 0:
-            self.average_annual_return = total_profit / count_funds
+            self.average_10annual_return = total_profit / count_funds
         else:
-            self.average_annual_return = NAN
+            self.average_10annual_return = NAN
 
         # Compute average monthly return and excess annual return for funds
         total_profit, count_funds = 0.0, 0.0
         for ind in self.agents:
             # Measure excess annual return 
-            ind.excess_10y_return = ind.return_10y - self.average_annual_return
+            ind.excess_10y_return = ind.return_10y - self.average_10annual_return
             # Measure average monthly return
             if isnan(ind.get_monthly_return()) == False:
                 total_profit += ind.get_monthly_return() * ind.wealth

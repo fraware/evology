@@ -188,3 +188,6 @@ df.plot(
 )
 plt.show()
 # %%
+print(np.nanmean(df["Avg_10Y_return"]))
+print(np.nanmean(df["Avg_1M_return"]))
+# %%
