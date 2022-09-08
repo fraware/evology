@@ -23,7 +23,7 @@ if __name__ == "__main__":
         population_size=3,
         wealth_coords= [1/3, 1/3, 1/3],
         interest_rate=0.01,
-        investment_bool=False,
+        investment_bool=True,
         seed=1,
         reset=False,
     )

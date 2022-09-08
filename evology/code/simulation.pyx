@@ -47,7 +47,7 @@ cdef class Simulation:
             asset.dividend_growth_rate_yearly,
             self.seed,
         )
-        investor = Investor(self.investment_bool)
+        investor = Investor(self.investment_bool, self.seed, self.max_generations)
         pop.pop_init(asset.price)
 
         for self.generation in tqdm(range(self.max_generations), disable=self.disable):
@@ -79,7 +79,7 @@ cdef class Simulation:
             pop.update_wealth_history(self.generation)
             pop.compute_average_return()
             pop.compute_profit()
-            investor.investment_flows(pop)
+            investor.investment_flows(pop, self.generation)
 
             pop.count_wealth(asset.price)
             pop.get_returns_statistics()
