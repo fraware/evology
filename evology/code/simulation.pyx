@@ -115,7 +115,10 @@ cdef class Simulation:
                 pop.VI_returns,
                 pop.TF_returns,
                 pop.replacements,
-                asset.price_emas
+                asset.price_emas,
+                pop.wealthNT,
+                pop.wealthVI,
+                pop.wealthTF,
             )
 
         self.data = result.convert_df()

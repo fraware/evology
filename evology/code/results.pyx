@@ -34,7 +34,10 @@ cdef class Result:
             "VI_returns",
             "TF_returns",
             "Replacements",
-            "Price_ema"
+            "Price_ema",
+            "Wealth_NT",
+            "Wealth_VI",
+            "Wealth_TF",
             ]
         # self.data = np.zeros((self.max_generations, len(self.variables)), dtype=FTYPE)
         self.data = self.create_data(self.max_generations, len(self.variables))
@@ -73,6 +76,9 @@ cdef class Result:
         double TF_returns,
         int replacements,
         double price_ema,
+        double wealthNT,
+        double wealthVI,
+        double wealthTF
     ):
         cdef int i
         cdef list arr
@@ -100,7 +106,10 @@ cdef class Result:
             VI_returns,
             TF_returns,
             replacements,
-            price_ema
+            price_ema,
+            wealthNT,
+            wealthVI,
+            wealthTF
         ]
         # print(arr)
         # self.data[int(generation), :] = arr

@@ -180,6 +180,11 @@ df.tail(1000).plot(
 plt.show()
 
 # %%
-print(16449.416015625 * 0.9999999499085798)
-16449.41519165039
+df.plot(
+    x="Generation",
+    y=["Wealth_NT", "Wealth_VI", "Wealth_TF"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
 # %%

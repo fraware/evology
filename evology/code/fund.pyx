@@ -113,10 +113,14 @@ cdef class Fund:
             return10 = (wealth_now - wealth_before) / wealth_before
             # print(return10)
             self.return_10y = return10
+        else:
+            self.return_10y = NAN
 
         # print("108")
         if len(self.wealth_history_month) == 21:
-            self.monthly_return = geom_mean(prod_lis(self.wealth_history_month), 21.)
+            wealth_before = self.wealth_history_month[0]
+            wealth_now = self.wealth_history_month[20]
+            self.monthly_return =  (wealth_now - wealth_before) / wealth_before
         else:
             self.monthly_return = NAN
 
@@ -127,13 +131,13 @@ cdef class Fund:
     def update_wealth_history(self, double generation):
         cdef double entry
         # Make a history of daily returns
-        if isnan(self.daily_return) == False:
-            entry = float(self.daily_return) + 1.0
-            self.wealth_history_month.append(entry)
+        # if isnan(self.daily_return) == False:
+            # entry = float(self.daily_return) + 1.0
+        self.wealth_history_month.append(self.wealth - self.net_flow * self.wealth)
 
         # Make a history of yearly NAV once a year, for 10 years
         if generation % 252 == 0:
-            self.wealth_history_year.append(self.wealth)
+            self.wealth_history_year.append(self.wealth - self.net_flow * self.wealth)
             # print(self.wealth_history_year)
 
 

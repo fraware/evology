@@ -19,7 +19,7 @@ cdef class Asset:
         self.price = self.initial_price 
         self.dividend = self.initial_dividend  
         self.seed = seed
-        self.dividend_growth_rate_yearly = 0.01
+        self.dividend_growth_rate_yearly = 0.01 #0.01
         self.dividend_growth_rate_daily = (
             (1.0 + self.dividend_growth_rate_yearly) ** (1.0 / 252.0)
         ) - 1.0

@@ -23,20 +23,27 @@ cdef class Investor:
 
 
         if self.active == True:
+            # print(self.constant_history[generation], self.month_coeff_history[generation], self.year_coeff_history[generation])
             for ind in pop.agents:
+                # print(ind.monthly_return, ind.excess_monthly_return, ind.excess_10y_return)
+                
                 if (
                     isnan(ind.excess_monthly_return) == False
-                    and isnan(ind.monthly_return) == False
                     and isnan(ind.excess_10y_return) == False
                 ):
-                    print("Investing", generation)
+                    # print("Investing", generation)
                     invested_amount = (
                         (
                             self.constant_history[generation] 
                             + self.month_coeff_history[generation] * ind.excess_monthly_return
                             + self.year_coeff_history[generation] * ind.excess_10y_return
                             ) / 21.0
-                    ) * ind.wealth
+                    ) 
                     ind.net_flow = invested_amount
-                    ind.cash += ind.net_flow
+                    print("-----")
+                    print(self.constant_history[generation], self.month_coeff_history[generation], self.year_coeff_history[generation])      
+                    print(ind.net_flow, ind.monthly_return, ind.excess_monthly_return, ind.excess_10y_return)
+                    print(self.constant_history[generation], self.month_coeff_history[generation] * ind.excess_monthly_return, self.year_coeff_history[generation] * ind.excess_10y_return)
+                    # print(ind.monthly_return, ind.wealth_history_month)
+                    ind.cash += ind.net_flow * ind.wealth
         

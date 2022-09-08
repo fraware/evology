@@ -1,8 +1,7 @@
-#cython: boundscheck=False, wraparound=False, initializedcheck=False, cdiviion=True
+#cython: boundscheck=False, wraparound=False, initializedcheck=False
 
 import cython
 cdef float NAN = float("nan")
-
 from trend_follower import TrendFollower
 from value_investor import ValueInvestor
 from noise_trader import NoiseTrader
@@ -10,6 +9,7 @@ from fund import Fund
 from libc.math cimport isnan, fabs, fmax
 import numpy as np
 import warnings
+
 
 cdef class Population:
     """ This object contains Fund objects and execute functions on this group"""
@@ -326,32 +326,37 @@ cdef class Population:
         """ Computes average fund performance in the population"""
 
         cdef double total_profit
-        cdef int count_funds
+        cdef double count_funds
 
         # Compute average annual return
-        total_profit, count_funds = 0.0, 0
+        total_profit, count_funds = 0.0, 0.0
         for ind in self.agents:
             if isnan(ind.get_annual_return()) == False:
-                total_profit += ind.get_annual_return()
-                count_funds += 1
+                total_profit += ind.get_annual_return() * ind.wealth
+                count_funds += ind.wealth
         if count_funds != 0:
             self.average_annual_return = total_profit / count_funds
         else:
-            self.average_annual_return = np.nan
+            self.average_annual_return = NAN
 
         # Compute average monthly return and excess annual return for funds
-        total_profit, count_funds = 0.0, 0
+        total_profit, count_funds = 0.0, 0.0
         for ind in self.agents:
             # Measure excess annual return 
             ind.excess_10y_return = ind.return_10y - self.average_annual_return
             # Measure average monthly return
             if isnan(ind.get_monthly_return()) == False:
-                total_profit += ind.get_monthly_return()
-                count_funds += 1
+                total_profit += ind.get_monthly_return() * ind.wealth
+                count_funds += ind.wealth
+            
         if count_funds != 0:
             self.average_monthly_return = total_profit / count_funds
+            for ind in self.agents:
+                ind.excess_monthly_return = ind.monthly_return - self.average_monthly_return
+
         else:
-            self.average_monthly_return = np.nan
+            self.average_monthly_return = NAN
+
 
 
     def get_returns_statistics(self):
