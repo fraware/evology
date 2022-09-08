@@ -21,17 +21,21 @@ cdef class Investor:
         cdef fund.Fund ind
         cdef double invested_amount
 
-        # We need to have the 10Y return as fund variable
-        # Double check the monthly return as fund variable
 
         if self.active == True:
             for ind in pop.agents:
                 if (
                     isnan(ind.excess_monthly_return) == False
                     and isnan(ind.monthly_return) == False
+                    and isnan(ind.excess_10y_return) == False
                 ):
+                    print("Investing", generation)
                     invested_amount = (
-                        (self.constant_history[generation] + self.month_coeff_history[generation] * ind.excess_monthly_return) / 21.0
+                        (
+                            self.constant_history[generation] 
+                            + self.month_coeff_history[generation] * ind.excess_monthly_return
+                            + self.year_coeff_history[generation] * ind.excess_10y_return
+                            ) / 21.0
                     ) * ind.wealth
                     ind.net_flow = invested_amount
                     ind.cash += ind.net_flow

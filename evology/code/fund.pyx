@@ -26,8 +26,9 @@ cdef class Fund:
         self.annual_return = 0.0
         self.daily_return = 0.0
         self.monthly_return = 0.0
-        self.excess_annual_return = 0.0
-        self.excess_monthly_return = 0.0
+        self.excess_10y_return = NAN
+        self.return_10y = NAN
+        self.excess_monthly_return = NAN
         self.wealth_history_year = []
         self.wealth_history_month = []
         self.net_flow = 0.0
@@ -79,7 +80,9 @@ cdef class Fund:
 
     def compute_profit(self):
         cdef double return_prod 
-        cdef double annual_return
+        cdef double return10
+        cdef double wealth_before
+        cdef double wealth_now
         cdef int length 
 
         # Compute daily return
@@ -90,16 +93,28 @@ cdef class Fund:
         else:
             self.daily_return = NAN
 
+        # print("Section:")
+
         # Compute annual return
-        length = len(self.wealth_history_year)
-        if length == 21: #252:   
-            return_prod = prod_lis(self.wealth_history_year)
-            annual_return = geom_mean(return_prod, 21.) #252.)
-            self.annual_return = annual_return
-        else:
-            self.annual_return = NAN
+        # length = len(self.wealth_history_year)
+        # if length == 21: #252:   
+        #     return_prod = prod_lis(self.wealth_history_year)
+        #     annual_return = geom_mean(return_prod, 21.) #252.)
+        #     self.annual_return = annual_return
+        # else:
+        #     self.annual_return = NAN
 
+        if len(self.wealth_history_year) == 10:
+            # print(self.wealth_history_year)
+            wealth_before = self.wealth_history_year[0]
+            # print(wealth_before)
+            wealth_now = self.wealth_history_year[9]
+            # print(wealth_now)
+            return10 = (wealth_now - wealth_before) / wealth_before
+            # print(return10)
+            self.return_10y = return10
 
+        # print("108")
         if len(self.wealth_history_month) == 21:
             self.monthly_return = geom_mean(prod_lis(self.wealth_history_month), 21.)
         else:
@@ -116,11 +131,14 @@ cdef class Fund:
             entry = float(self.daily_return) + 1.0
             self.wealth_history_month.append(entry)
 
-        if generation % 21 == 0:
-            self.wealth_history_year.append(self.monthly_return)
+        # Make a history of yearly NAV once a year, for 10 years
+        if generation % 252 == 0:
+            self.wealth_history_year.append(self.wealth)
+            # print(self.wealth_history_year)
 
-        if len(self.wealth_history_year) > 12: #252:
-            # Erase observations older than a year
+
+        if len(self.wealth_history_year) > 10: 
+            # Erase observations older than 10 years
             del self.wealth_history_year[0]
 
         if len(self.wealth_history_month) > 21:
@@ -131,7 +149,7 @@ cdef class Fund:
         return self.asset
 
     def get_annual_return(self):
-        return self.annual_return
+        return self.return_10y
 
     def get_monthly_return(self):
         return self.monthly_return

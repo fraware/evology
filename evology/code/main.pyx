@@ -19,11 +19,11 @@ def main(max_generations, population_size, wealth_coords, interest_rate, investm
 
 if __name__ == "__main__":
     df = main(
-        max_generations=100000,
+        max_generations=20000,
         population_size=3,
-        wealth_coords= [1/3, 1/3, 1/3],
+        wealth_coords= [1/4, 1/2, 1/4],
         interest_rate=0.01,
-        investment_bool=True,
+        investment_bool=False,
         seed=1,
         reset=False,
     )

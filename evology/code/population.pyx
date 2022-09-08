@@ -343,7 +343,7 @@ cdef class Population:
         total_profit, count_funds = 0.0, 0
         for ind in self.agents:
             # Measure excess annual return 
-            ind.excess_annual_return = ind.annual_return - self.average_annual_return
+            ind.excess_10y_return = ind.return_10y - self.average_annual_return
             # Measure average monthly return
             if isnan(ind.get_monthly_return()) == False:
                 total_profit += ind.get_monthly_return()

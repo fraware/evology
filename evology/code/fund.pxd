@@ -13,9 +13,11 @@ cdef class Fund:
     cdef public double annual_return
     cdef public double daily_return
     cdef public double monthly_return
-    cdef public double excess_annual_return
+    # cdef public double excess_annual_return
+    cdef public double excess_10y_return
+    cdef public double return_10y
     cdef public double excess_monthly_return
-    cdef public list  wealth_history_year
+    cdef public list wealth_history_year
     cdef public list wealth_history_month
     cdef public double net_flow 
     cdef public double max_short_size
