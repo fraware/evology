@@ -160,7 +160,9 @@ cdef class Population:
     ):
         """ Depending on fund types, compute their trading signals"""
         for ind in self.agents:
+            # print(ind, ind.type)
             ind.update_trading_signal(dividend, interest_rate_daily, generation, price, price_ema)
+            # print("done")
                 
     def get_excess_demand_functions(self):
         for ind in self.agents:
@@ -518,6 +520,7 @@ cdef class Population:
         """ Create fractional copies of a fund"""
         if isinstance(self.agents[index], NoiseTrader):
             new_half = self.create_fund("NT")
+            
         elif isinstance(self.agents[index], ValueInvestor):
             new_half = self.create_fund("VI")
         elif isinstance(self.agents[index], TrendFollower):
@@ -543,6 +546,9 @@ cdef class Population:
         cdef int NumberReplace
         cdef int MaxFund
         cdef double spoils
+        cdef int NT
+        cdef int VI
+        cdef int TF
 
         index_to_replace = []
         wealth_list = []
@@ -570,15 +576,19 @@ cdef class Population:
 
             if NumberReplace != 0:
                 new_half_fund = self.create_fractional_fund(MaxFund, NumberReplace + 1)
+                # If we have created a new NT, we need to give it a noise process list (identical to all NT)
+                if isinstance(new_half_fund, NoiseTrader):
+                    new_half_fund.process_series = self.noise_process
+
                 for index in index_to_replace:
                     spoils += self.agents[index].asset
+                    warnings.warn('Replacement done.')
+                    print(self.agents[index].type, new_half_fund.type)
                     self.agents[index] = new_half_fund
                     
                     replacements += 1
                 # FInally, add the last subdivision in place of the maximum fund.
                 self.agents[MaxFund] = new_half_fund
-                # self.shutdown = False
-                print('Replacement done.')
 
                 for ind in self.agents:
                     if ind.wealth < 0:
@@ -587,7 +597,25 @@ cdef class Population:
 
             self.replacements = replacements # Count period replacements
             self.spoils += spoils # Add shares of the insolvent funds to the liquidation pool (spoils)
-        return self.spoils, replacements
+
+            # Verify that the replacement did not cause a type to go extinct
+            NT, VI, TF = 0, 0, 0
+            for ind in self.agents:
+                if isinstance(ind, NoiseTrader):
+                    NT += 1
+                elif isinstance(ind, ValueInvestor):
+                    VI += 1
+                elif isinstance(ind, TrendFollower):
+                    TF += 1
+                else:
+                    print(ind)
+                    raise TypeError("Unrecognised type")
+                if NT > 0 and VI > 0 and TF > 0:
+                    break
+            if NT == 0 or VI == 0 or TF == 0:
+                warnings.warn("Replacement caused a type extinction. Shutting down..." )
+                self.shutdown = True
+
 
     def compute_liquidation(self, double volume):
         """ Determine how many assets of insolvent funds are liquidated in the market today"""

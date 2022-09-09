@@ -51,12 +51,10 @@ cdef class Simulation:
         pop.pop_init(asset.price)
 
         for self.generation in tqdm(range(self.max_generations), disable=self.disable):
-            # print(self.generation)
             pop.replace_insolvent()
             if pop.shutdown == True:
                 result.data = result.data[0 : self.generation]
                 break
-            
             if self.reset == True:
                 pop.pop_init(asset.price)
             asset.get_dividend(self.generation)
@@ -77,21 +75,17 @@ cdef class Simulation:
             pop.cash_gains(asset.dividend, self.interest_rate_daily)
             pop.update_margin(asset.price)
             pop.clear_debt()
-            pop.count_wealth(asset.price)
-            
+            pop.count_wealth(asset.price)     
             pop.update_wealth_history(self.generation)
-            
             pop.compute_average_return()
             pop.compute_profit()
             investor.investment_flows(pop, self.generation)
-
             pop.count_wealth(asset.price)
             pop.get_returns_statistics()
             pop.get_wealth_statistics()
             pop.get_activity_statistics()
             pop.get_positions()
             pop.get_investment_flows()
-            # print("there")
             result.update_results(
                 self.generation,
                 asset.price,
@@ -122,5 +116,4 @@ cdef class Simulation:
                 pop.average_10annual_return,
                 pop.average_monthly_return
             )
-
         self.data = result.convert_df()

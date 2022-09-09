@@ -51,8 +51,7 @@ cdef class NoiseTrader(Fund):
                 # + cls.OU_gamma * randoms[i]
             )
             process_series.append(value)
-        # print(process_series)
-
+=
         return process_series
 
     def get_excess_demand_function(self):
@@ -70,8 +69,9 @@ cdef class NoiseTrader(Fund):
 
     def get_noise_process(self, int generation):
         """ Access current value of the noise process"""
+        if self.process_series == None or self.process_series == []:
+            raise RuntimeError('Incorrect process series for NT get_noise_process')
         self.trading_signal = self.process_series[generation]
-        # print(self.trading_signal)
 
     def update_valuation(self, double dividend, double interest_rate_daily):
         self.valuation = (

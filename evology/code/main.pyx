@@ -2,6 +2,7 @@
 
 import cython
 from simulation import Simulation
+import numpy as np
 
 def main(max_generations, population_size, wealth_coords, interest_rate, investment_bool, seed, reset):
     s = Simulation(
@@ -18,12 +19,14 @@ def main(max_generations, population_size, wealth_coords, interest_rate, investm
     return df
 
 if __name__ == "__main__":
+    coords = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
+    print(coords)
     df = main(
-        max_generations=4000,
+        max_generations=50000,
         population_size=3,
-        wealth_coords= [1/4, 1/2, 1/4],
+        wealth_coords= coords, #[1/4, 1/2, 1/4],
         interest_rate=0.01,
-        investment_bool=False,
+        investment_bool=True,
         seed=11,
         reset=False,
     )
