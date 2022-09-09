@@ -47,8 +47,6 @@ cdef class NoiseTrader(Fund):
                 value
                 + self.OU_rho * (log2(self.OU_mean) - log2(value))
                 + self.OU_gamma * randoms[i]
-                # + cls.OU_rho * (log2(cls.OU_mean) - log2(value))
-                # + cls.OU_gamma * randoms[i]
             )
             process_series.append(value)
 
