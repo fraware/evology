@@ -51,7 +51,7 @@ cdef class NoiseTrader(Fund):
                 # + cls.OU_gamma * randoms[i]
             )
             process_series.append(value)
-=
+
         return process_series
 
     def get_excess_demand_function(self):
