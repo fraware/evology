@@ -8,6 +8,10 @@
 
 Evology is a market ecology model in which investment funds of various strategies interact endogenously in a simulated stock market. 
 
+### Development and roadmap
+We are currently in version 1.1.
+Here is the [roadmap](https://doc.clickup.com/4645365/d/4drfn-1722/evologyroadmap) for the next updates & features.
+
 ### How to use
 
 * First, you need a few packages. To install the needed libraries, run ```setup.py```.
