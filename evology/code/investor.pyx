@@ -36,10 +36,19 @@ cdef class Investor:
                     ) 
 
                     if isnan(flow_fraction) == True:
-                        print(ind.excess_monthly_return)
+                        print(ind.excess_monthly_return * 100.)
+                        print(((ind.excess_monthly_return * 100.) ** 2.))
                         print(ind.age / 252.)
                         print(ind.previous_wealth / 1000000.)
                         raise RuntimeError('NaN flow fraction')
+                    
                     ind.net_flow = flow_fraction / 100.
+                    if ind.net_flow > 0.1:
+                        print(flow_fraction)
+                        print(ind.excess_monthly_return * 100.)
+                        print(((ind.excess_monthly_return * 100.) ** 2.))
+                        print(ind.age / 252.)
+                        print(ind.previous_wealth / 1000000.)
+                        print("Large fractional flow")
                     ind.cash += ind.net_flow * ind.previous_wealth
         

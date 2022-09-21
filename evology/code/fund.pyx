@@ -88,7 +88,7 @@ cdef class Fund:
         cdef int length 
 
         # Compute daily return
-        if self.previous_wealth != 0:
+        if self.previous_wealth != 0 and self.age > 0:
             self.daily_return = (
                 (self.wealth - self.net_flow) / self.previous_wealth
             ) - 1.0

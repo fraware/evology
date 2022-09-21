@@ -99,6 +99,14 @@ df["EMA_TF_flows"] = df["TF_flows"].ewm(span=span).mean()
 
 df.plot(
     x="Generation",
+    y=["NT_flows", "VI_flows", "TF_flows"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+df.plot(
+    x="Generation",
     y=["EMA_NT_flows", "EMA_VI_flows", "EMA_TF_flows"],
     kind="line",
     figsize=(15, 6),

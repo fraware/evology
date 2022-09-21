@@ -466,22 +466,29 @@ cdef class Population:
         cdef double NTflows
         cdef double VIflows
         cdef double TFflows
+        cdef int countNT = 0
+        cdef int countVI = 0
+        cdef int countTF = 0
+
         NTflows, VIflows, TFflows = 0.0, 0.0, 0.0
         for ind in self.agents:
             if isinstance(ind, NoiseTrader):
                 NTflows += ind.net_flow
+                countNT += 1
             elif isinstance(ind, ValueInvestor):
                 VIflows += ind.net_flow
+                countVI += 1
             elif isinstance(ind, TrendFollower):
                 TFflows += ind.net_flow
+                countTF += 1
 
-        total_flows = abs(NTflows) + abs(VIflows) + abs(TFflows)
-        if total_flows != 0:
-            self.NT_flows = NTflows / total_flows
-            self.VI_flows = VIflows / total_flows
-            self.TF_flows = TFflows / total_flows
-        else:
-            self.NT_flows, self.VI_flows, self.TF_flows = 0.0, 0.0, 0.0
+        # total_flows = abs(NTflows) + abs(VIflows) + abs(TFflows)
+        # if total_flows != 0:
+        self.NT_flows = NTflows / countNT
+        self.VI_flows = VIflows / countVI
+        self.TF_flows = TFflows / countTF
+        # else:
+        #     self.NT_flows, self.VI_flows, self.TF_flows = 0.0, 0.0, 0.0
 
     def get_positions(self):
 
