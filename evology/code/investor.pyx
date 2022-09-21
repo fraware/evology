@@ -23,23 +23,23 @@ cdef class Investor:
         if self.active == True:
             for ind in pop.agents:
                 if (
-                    isnan(ind.excess_monthly_return) == False and ind.previous_wealth > 0
+                    isnan(ind.excess_monthly_return) == False and ind.previous_wealth > 0 and ind.wealth > 0
                 ):
                     flow_fraction= (
                         (
-                            1.3401
-                            + 0.1649 * ind.excess_monthly_return * 100.
+                            # 1.3401
+                            0.1649 * ind.excess_monthly_return * 100.
                             + 0.0248 * ((ind.excess_monthly_return * 100.) ** 2.)
-                            - 1.2968 * log(ind.age / 252.)
-                            + 0.2946 * log(ind.previous_wealth / 1000000.)
+                            # - 1.2968 * log(ind.age / 252.)
+                            # + 0.2946 * log(ind.previous_wealth / 1000000.)
                             ) / 21.0
                     ) 
 
                     if isnan(flow_fraction) == True:
                         print(ind.excess_monthly_return * 100.)
                         print(((ind.excess_monthly_return * 100.) ** 2.))
-                        print(ind.age / 252.)
-                        print(ind.previous_wealth / 1000000.)
+                        #print(ind.age / 252.)
+                        #print(ind.previous_wealth / 1000000.)
                         raise RuntimeError('NaN flow fraction')
                     
                     ind.net_flow = flow_fraction / 100.
@@ -47,8 +47,8 @@ cdef class Investor:
                         print(flow_fraction)
                         print(ind.excess_monthly_return * 100.)
                         print(((ind.excess_monthly_return * 100.) ** 2.))
-                        print(ind.age / 252.)
-                        print(ind.previous_wealth / 1000000.)
+                        #print(ind.age / 252.)
+                        #print(ind.previous_wealth / 1000000.)
                         print("Large fractional flow")
                     ind.cash += ind.net_flow * ind.previous_wealth
         

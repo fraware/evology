@@ -24,10 +24,18 @@ label_size = 15
 
 ax_color = "black"
 
-fig, ax = plt.subplots(nrows=3, ncols=1, sharex=True, figsize=(10, 8))
+span = 252 * 10
+df["EMA_NT_flows"] = df["NT_flows"].ewm(span=span).mean()* 100.
+df["EMA_VI_flows"] = df["VI_flows"].ewm(span=span).mean()* 100.
+df["EMA_TF_flows"] = df["TF_flows"].ewm(span=span).mean()* 100.
+
+
+fig, ax = plt.subplots(nrows=4, ncols=1, sharex=True, figsize=(10, 10))
 ax[0].set_title("Stock Price & Fund. Value", fontsize=title_fontsize, color=ax_color)
 ax[1].set_title("Volume", fontsize=title_fontsize, color=ax_color)
 ax[2].set_title("Wealth Shares", fontsize=title_fontsize, color=ax_color)
+ax[3].set_title("Net fractional flows", fontsize=title_fontsize, color=ax_color)
+
 
 ax[0].plot(df.index, df["Price"], color="black", linewidth=1)
 ax[0].plot(df.index, df["VI_val"], color="red", linewidth=0.5)
@@ -36,9 +44,19 @@ ax[2].plot(df.index, df["WShare_VI"], color="red", label="Value investors", line
 ax[2].plot(
     df.index, df["WShare_TF"], color="blue", label="Trend followers", linewidth=1
 )
+ax[3].plot(
+    df.index, df["EMA_NT_flows"], color="green", label="Noise traders", linewidth=1
+)
+ax[3].plot(
+    df.index, df["EMA_VI_flows"], color="red", label="Value investors", linewidth=1
+)
+ax[3].plot(
+    df.index, df["EMA_TF_flows"], color="blue", label="Trend followers", linewidth=1
+)
 ax[1].plot(df.index, df["Volume"], color="black", linewidth=1)
 
-ax[2].set_xlabel("Time (days)", fontsize=label_size)
+ax[3].set_xlabel("Time (days)", fontsize=label_size)
+ax[3].set_ylabel("Frac. flow (%)", fontsize=label_size)
 ax[2].set_ylabel("Share", fontsize=label_size)
 ax[0].set_ylabel("Price", fontsize=label_size)
 ax[1].set_ylabel("Volume", fontsize=label_size)
@@ -53,8 +71,9 @@ ax[2].xaxis.label.set_color(ax_color)
 ax[1].xaxis.label.set_color(ax_color)
 ax[1].yaxis.label.set_color(ax_color)
 ax[2].yaxis.label.set_color(ax_color)
-ax[2].tick_params(axis="x", colors=ax_color)
+ax[3].tick_params(axis="x", colors=ax_color)
 ax[2].tick_params(axis="y", colors=ax_color)
+ax[3].tick_params(axis="y", colors=ax_color)
 plt.tight_layout()
 if sys.platform == "darwin":
     plt.savefig(
@@ -71,9 +90,9 @@ plt.show()
 
 # %%
 span = 252 * 10
-df["EMA_NT_ret"] = df["NT_returns"].ewm(span=span).mean()
-df["EMA_VI_ret"] = df["VI_returns"].ewm(span=span).mean()
-df["EMA_TF_ret"] = df["TF_returns"].ewm(span=span).mean()
+df["EMA_NT_ret"] = df["NT_returns"].ewm(span=span).mean() 
+df["EMA_VI_ret"] = df["VI_returns"].ewm(span=span).mean() 
+df["EMA_TF_ret"] = df["TF_returns"].ewm(span=span).mean() 
 
 df.plot(
     x="Generation",

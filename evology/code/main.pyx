@@ -20,11 +20,11 @@ def main(max_generations, population_size, wealth_coords, interest_rate, investm
 
 if __name__ == "__main__":
     coords = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
-    print(coords)
+    # print(coords)
     df = main(
-        max_generations=500,
+        max_generations=100000,
         population_size=3,
-        wealth_coords= [1/4, 1/2, 1/4], #coords, #
+        wealth_coords= [0.2, 0.75, 0.05], #coords, #
         interest_rate=0.01,
         investment_bool=True,
         seed=0,
