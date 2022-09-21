@@ -22,7 +22,7 @@ if __name__ == "__main__":
     coords = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
     print(coords)
     df = main(
-        max_generations=10000,
+        max_generations=50000,
         population_size=3,
         wealth_coords= coords, #[0.2, 0.75, 0.05], #
         interest_rate=0.01,

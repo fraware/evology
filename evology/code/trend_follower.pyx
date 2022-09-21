@@ -14,6 +14,7 @@ cdef class TrendFollower(Fund):
         self.type = "TF"
 
     def get_price_ema(self, price, price_ema):
+        self.price_ema = price_ema
         if isnan(price_ema) == False:
             # TFs stay around an allocation of 50% stocks, 50% bonds/cash
             # If price > price_ema, buy signal // inverse is a sell signal
@@ -26,8 +27,9 @@ cdef class TrendFollower(Fund):
 
         def func(price):
             if isnan(self.trading_signal) == False:
-                signal = tanh(self.signal_scale * (self.trading_signal + 0.0)) + 0.0
-                return self.leverage * signal * self.wealth / price - self.asset
+                # signal = tanh(self.signal_scale * (self.trading_signal + 0.0)) + 0.0
+                # return self.leverage * signal * self.wealth / price - self.asset
+                return self.leverage * tanh(log2(price / self.price_ema)) * self.wealth / price - self.asset
             else:
                 return 0
 

@@ -239,6 +239,7 @@ cdef class Population:
             multiplier_buy = 0.
             multiplier_sell = 0.
             if order_ratio == 0.:  # either noone buys, or no one sells
+                print(buy_orders, sell_orders)
                 warnings.warn("No orders will be executed (no supply or no demand)")
             elif order_ratio < 1.:
                 multiplier_buy = 1.
