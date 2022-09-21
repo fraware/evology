@@ -60,7 +60,7 @@ ax[3].set_ylabel("Frac. flow (%)", fontsize=label_size)
 ax[2].set_ylabel("Share", fontsize=label_size)
 ax[0].set_ylabel("Price", fontsize=label_size)
 ax[1].set_ylabel("Volume", fontsize=label_size)
-plt.legend(loc=8, fontsize=label_size)
+plt.legend(loc=2, fontsize=label_size)
 
 ax[0].yaxis.label.set_color(ax_color)
 ax[0].tick_params(axis="x", colors=ax_color)
