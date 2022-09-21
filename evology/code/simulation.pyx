@@ -86,6 +86,9 @@ cdef class Simulation:
             pop.get_activity_statistics()
             pop.get_positions()
             pop.get_investment_flows()
+            pop.count_wealth(asset.price)
+            pop.update_previous_wealth()
+            pop.aging()
             result.update_results(
                 self.generation,
                 asset.price,

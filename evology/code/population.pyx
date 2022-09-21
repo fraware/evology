@@ -634,3 +634,7 @@ cdef class Population:
         self.create_pop()
         self.count_wealth(price)
         self.update_previous_wealth()
+
+    def aging(self):
+        for fund in self.agents:
+            fund.age += 1

@@ -22,3 +22,4 @@ cdef class Fund:
     cdef public double net_flow 
     cdef public double max_short_size
     cdef public object excess_demand
+    cdef public int age

@@ -25,7 +25,7 @@ cdef class Fund:
         self.previous_wealth = 0.0
         self.annual_return = 0.0
         self.daily_return = 0.0
-        self.monthly_return = 0.0
+        self.monthly_return = NAN
         self.excess_10y_return = NAN
         self.return_10y = NAN
         self.excess_monthly_return = NAN
@@ -33,6 +33,7 @@ cdef class Fund:
         self.wealth_history_month = []
         self.net_flow = 0.0
         self.max_short_size = 500000.
+        self.age = 0
 
     def count_wealth(self, double price):
         """ Measure the wealth of the fund and raises error if it is NAN"""
@@ -40,6 +41,7 @@ cdef class Fund:
         if isnan(self.wealth) == True:
             print(self.type)
             print(self.wealth)
+            print(self.net_flow)
             print(self.cash) 
             print(self.asset)
             print(price)

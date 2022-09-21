@@ -7,7 +7,7 @@ cdef class Investor:
     cdef int seed
     cdef int max_generations
     cdef object rng
-    cdef object constant_history
-    cdef object month_coeff_history
-    cdef object year_coeff_history
+    #cdef object constant_history
+    #cdef object month_coeff_history
+    #cdef object year_coeff_history
 

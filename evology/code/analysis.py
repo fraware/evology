@@ -69,15 +69,28 @@ elif sys.platform == "win32":
 
 plt.show()
 
-
 # %%
-# df.plot(
-#     x="Generation",
-#     y=["NT_flows", "VI_flows", "TF_flows"],
-#     kind="line",
-#     figsize=(15, 6),
-# )
-# plt.show()
+span = 252 * 10
+df["EMA_NT_ret"] = df["NT_returns"].ewm(span=span).mean()
+df["EMA_VI_ret"] = df["VI_returns"].ewm(span=span).mean()
+df["EMA_TF_ret"] = df["TF_returns"].ewm(span=span).mean()
+
+df.plot(
+    x="Generation",
+    y=["NT_returns", "VI_returns", "TF_returns"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+
+df.plot(
+    x="Generation",
+    y=["EMA_NT_ret", "EMA_VI_ret", "EMA_TF_ret"],
+    kind="line",
+    figsize=(15, 6),
+)
+plt.show()
+# %%
 
 span = 252 * 10
 df["EMA_NT_flows"] = df["NT_flows"].ewm(span=span).mean()
@@ -152,32 +165,6 @@ df.plot(
 )
 plt.show()
 
-# %%
-df.tail(1000).plot(
-    x="Generation",
-    y=["Price_ema", "Price"],
-    kind="line",
-    figsize=(15, 6),
-)
-plt.show()
-
-df["Price/Ema"] = df["Price"] / df["Price_ema"]
-
-df.tail(1000).plot(
-    x="Generation",
-    y=["Price/Ema"],
-    kind="line",
-    figsize=(15, 6),
-)
-plt.show()
-
-df.tail(1000).plot(
-    x="Generation",
-    y=["WShare_NT", "WShare_VI", "WShare_TF"],
-    kind="line",
-    figsize=(15, 6),
-)
-plt.show()
 
 # %%
 df.plot(

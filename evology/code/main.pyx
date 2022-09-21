@@ -22,12 +22,12 @@ if __name__ == "__main__":
     coords = np.random.dirichlet(np.ones(3), size=1)[0].tolist()
     print(coords)
     df = main(
-        max_generations=50000,
+        max_generations=500,
         population_size=3,
-        wealth_coords= coords, #[1/4, 1/2, 1/4],
+        wealth_coords= [1/4, 1/2, 1/4], #coords, #
         interest_rate=0.01,
         investment_bool=True,
-        seed=11,
+        seed=0,
         reset=False,
     )
     df.to_csv("rundata/run_data.csv")

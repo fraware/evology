@@ -1,6 +1,6 @@
 #cython: boundscheck=False, wraparound=False, initializedcheck=False
 
-from libc.math cimport isnan
+from libc.math cimport isnan, log
 cimport cython
 cimport fund
 import numpy as np
@@ -13,37 +13,33 @@ cdef class Investor:
         self.seed = seed
         self.max_generations = max_generations
         rng = np.random.default_rng(seed=seed + 2)
-        self.constant_history = rng.normal(-0.0094, 0.005, self.max_generations)
-        self.month_coeff_history = rng.normal(0.1673, 0.096, self.max_generations)
-        self.year_coeff_history = rng.normal(0.0044, 0.02, self.max_generations)
+        #self.constant_history = rng.normal(-0.0094, 0.005, self.max_generations)
+        #self.month_coeff_history = rng.normal(0.1673, 0.096, self.max_generations)
+        #self.year_coeff_history = rng.normal(0.0044, 0.02, self.max_generations)
 
     def investment_flows(self, pop, int generation):
         cdef fund.Fund ind
-        cdef double invested_amount
-
-
+        cdef double flow_fraction
         if self.active == True:
-            # print(self.constant_history[generation], self.month_coeff_history[generation], self.year_coeff_history[generation])
             for ind in pop.agents:
-                # print(ind.monthly_return, ind.excess_monthly_return, ind.excess_10y_return)
-                
                 if (
-                    isnan(ind.excess_monthly_return) == False
-                    and isnan(ind.excess_10y_return) == False
+                    isnan(ind.excess_monthly_return) == False and ind.previous_wealth > 0
                 ):
-                    # print("Investing", generation)
-                    invested_amount = (
+                    flow_fraction= (
                         (
-                            self.constant_history[generation] 
-                            + self.month_coeff_history[generation] * ind.excess_monthly_return
-                            + self.year_coeff_history[generation] * ind.excess_10y_return
+                            1.3401
+                            + 0.1649 * ind.excess_monthly_return * 100.
+                            + 0.0248 * ((ind.excess_monthly_return * 100.) ** 2.)
+                            - 1.2968 * log(ind.age / 252.)
+                            + 0.2946 * log(ind.previous_wealth / 1000000.)
                             ) / 21.0
                     ) 
-                    ind.net_flow = invested_amount
-                    # print("-----")
-                    # print(self.constant_history[generation], self.month_coeff_history[generation], self.year_coeff_history[generation])      
-                    # print(ind.net_flow, ind.monthly_return, ind.excess_monthly_return, ind.excess_10y_return)
-                    # print(self.constant_history[generation], self.month_coeff_history[generation] * ind.excess_monthly_return, self.year_coeff_history[generation] * ind.excess_10y_return)
-                    # # print(ind.monthly_return, ind.wealth_history_month)
-                    ind.cash += ind.net_flow * ind.wealth
+
+                    if isnan(flow_fraction) == True:
+                        print(ind.excess_monthly_return)
+                        print(ind.age / 252.)
+                        print(ind.previous_wealth / 1000000.)
+                        raise RuntimeError('NaN flow fraction')
+                    ind.net_flow = flow_fraction / 100.
+                    ind.cash += ind.net_flow * ind.previous_wealth
         
