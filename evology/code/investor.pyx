@@ -7,7 +7,10 @@ import numpy as np
 
 cdef class Investor:
     """ Creates the investor object, who invests in funds based on their performance
-    net flows based on analysis based on the data of Ka and Ho, 2019 """
+    net flows based on analysis based on the data of Spielger et al 2013
+    
+    Note: include alternative investmenr mechanisms to test sensitivity of results to investment specification
+    """
     def __init__(self, investment_bool, seed, max_generations):
         self.active = investment_bool
         self.seed = seed
