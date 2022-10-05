@@ -7,8 +7,8 @@
 
 
 """ 
-python .\setup.py build_ext --inplace
-$ python setup.py build_ext --inplace
+python .\cy_setup.py build_ext --inplace
+$ python cy_setup.py build_ext --inplace
 Which will leave a file in your local directory called 
 helloworld.so in unix or helloworld.pyd in Windows. 
 """
